@@ -1,16 +1,1643 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Webpage</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#C9A574" />
+  <title>ගෞරව &amp; කෞශානි · මංගල ආරාධනය</title>
+  <meta name="description" content="ගෞරව හා කෞශානි මංගල්‍යය — හෙළ සිරිත. ඔබ සැම සාදරයෙන් ආරාධනා කරමු." />
+
+  <link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
+  <link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
+
+  <!-- Sinhala + Latin display fonts (Unicode Sinhala renders correctly on most devices) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <style>
+/* ════════════════════════════════════════════════════════════════════════
+ *  හෙළ සිරිත · STYLES  ·  assets/css/helasiritha.css   (PUBLIC SITE)
+ *  ────────────────────────────────────────────────────────────────────────
+ *  100% Sri Lankan · Sinhala · Kandyan (උඩරට) ceremonial aesthetic.
+ *  Colours are driven by CSS custom properties that the admin panel updates
+ *  LIVE (see data.js → applyTheme). Fully fluid + responsive on phones,
+ *  tablets, laptops and desktops. Unicode Sinhala via web fonts.
+ * ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --c-primary: #C9A574;   /* brass gold  */
+  --c-secondary:#F2E5C6;  /* ivory cream */
+  --c-accent:  #A48354;   /* deep accent */
+  --c-surface: #FFFBF2;   /* card paper  */
+  --c-ink:     #221C01;   /* text        */
+
+  --gold-grad: linear-gradient(135deg,#E7CE97 0%,#C9A574 38%,#8C6B36 70%,#E7CE97 100%);
+  --font-si: "Noto Serif Sinhala", serif;
+  --font-si-disp: "Abhaya Libre", "Noto Serif Sinhala", serif;
+  --font-en-disp: "Cormorant Garamond", serif;
+  --font-script: "Great Vibes", cursive;
+
+  --maxw: 1180px;
+  --r: 18px;
+  --shadow: 0 24px 60px -28px rgba(60,40,8,.55);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-si);
+  color: var(--c-ink);
+  background:
+    radial-gradient(1200px 700px at 50% -10%, color-mix(in srgb,var(--c-primary) 22%, transparent), transparent 60%),
+    radial-gradient(900px 700px at 100% 100%, color-mix(in srgb,var(--c-accent) 16%, transparent), transparent 55%),
+    var(--c-surface);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+body::before {  /* fine handloom/parchment grain */
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ───────────────────────── shared layout ─────────────────────────────── */
+.wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: clamp(18px, 5vw, 56px); position: relative; z-index: 1; }
+section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
+.center { text-align: center; }
+
+.kicker {
+  font-family: var(--font-si-disp);
+  letter-spacing: .26em; text-transform: none; font-size: clamp(.78rem,2.4vw,.96rem);
+  color: var(--c-accent); display: inline-flex; gap: .7em; align-items: center; justify-content: center;
+}
+.kicker::before, .kicker::after { content: "❖"; opacity: .7; font-size: .8em; }
+
+.title {
+  font-family: var(--font-si-disp); font-weight: 700;
+  font-size: clamp(1.7rem, 6vw, 3.1rem); line-height: 1.25; margin: .35em 0 .2em;
+}
+.subtitle { font-size: clamp(1rem,3.2vw,1.18rem); color: color-mix(in srgb,var(--c-ink) 72%, transparent); max-width: 46ch; margin: 0 auto; }
+
+/* gold foil text */
+.foil {
+  background: var(--gold-grad); background-size: 220% 220%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-fill-color: transparent; animation: shimmer 7s ease-in-out infinite;
+  text-shadow: 0 1px 0 rgba(255,255,255,.25);
+}
+@keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+/* brass card with corner flourishes */
+.card {
+  position: relative; background: color-mix(in srgb,var(--c-surface) 92%, #fff);
+  border: 1px solid color-mix(in srgb,var(--c-primary) 55%, transparent);
+  border-radius: var(--r); padding: clamp(22px,4vw,40px); box-shadow: var(--shadow);
+}
+.card::before, .card::after {
+  content: ""; position: absolute; width: 28px; height: 28px; pointer-events: none;
+  border: 2px solid var(--c-primary); opacity: .85;
+}
+.card::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+.card::after  { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+
+/* divider */
+.divider { display: block; width: min(560px, 80%); margin: clamp(18px,4vw,34px) auto; color: var(--c-primary); }
+.divider svg { width: 100%; height: auto; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55em;
+  font-family: var(--font-si-disp); font-size: clamp(.95rem,2.7vw,1.05rem); font-weight: 700;
+  padding: .85em 1.6em; border-radius: 999px; border: 1px solid transparent;
+  transition: transform .25s, box-shadow .25s, background .25s; min-height: 48px;
+}
+.btn-primary { background: var(--gold-grad); color: #2b2103; box-shadow: 0 10px 26px -12px color-mix(in srgb,var(--c-primary) 80%, transparent); }
+.btn-ghost { background: transparent; color: var(--c-ink); border-color: color-mix(in srgb,var(--c-primary) 60%, transparent); }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: 3px solid color-mix(in srgb,var(--c-accent) 70%, transparent); outline-offset: 3px; }
+
+/* ornament helpers */
+.orn-liyawela { width: 100%; height: auto; color: var(--c-primary); }
+.orn-kalasa, .orn-lotus, .orn-sesath, .orn-pahana, .orn-mandala, .orn-mayura, .orn-ring, .orn-feast { color: var(--c-primary); }
+.flame { transform-origin: 50% 100%; animation: flame 1.6s ease-in-out infinite; }
+@keyframes flame { 0%,100%{transform:scaleY(1) translateY(0)} 50%{transform:scaleY(1.08) translateY(-1px)} }
+
+/* reveal on scroll */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ═══════════════════ OPEN-INVITATION GATEWAY ═══════════════════════════ */
+#gateway {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; text-align: center;
+  background:
+    radial-gradient(800px 600px at 50% 30%, color-mix(in srgb,var(--c-primary) 30%, transparent), transparent 60%),
+    linear-gradient(180deg, #1c1402, #2a1f06);
+  color: var(--c-secondary); transition: opacity .9s ease, visibility .9s; padding: 24px;
+}
+#gateway.gone { opacity: 0; visibility: hidden; }
+#gateway .glamp { width: clamp(120px,30vw,180px); margin: 0 auto 14px; filter: drop-shadow(0 0 26px color-mix(in srgb,var(--c-primary) 80%, transparent)); color: var(--c-primary); }
+#gateway .ay { font-family: var(--font-si-disp); font-size: clamp(2rem,9vw,3.4rem); }
+#gateway .names { font-family: var(--font-script); font-size: clamp(1.6rem,7vw,2.6rem); color: var(--c-secondary); }
+#gateway .hint { opacity: .85; margin-top: 6px; font-size: .95rem; }
+#gateway .enter { margin-top: 22px; }
+.dust { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--c-primary); opacity: .0; animation: rise 5s linear infinite; }
+@keyframes rise { 0%{transform:translateY(20px);opacity:0} 20%{opacity:.9} 100%{transform:translateY(-220px);opacity:0} }
+
+/* ═══════════════════ FALLING PETALS ════════════════════════════════════ */
+#petals { position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
+.petal { position: absolute; top: -8%; color: var(--c-primary); opacity: .55; animation: fall linear infinite; }
+.petal svg { width: 100%; height: 100%; }
+@keyframes fall {
+  0% { transform: translateY(-10vh) translateX(0) rotate(0); opacity: 0; }
+  10% { opacity: .6; }
+  100% { transform: translateY(110vh) translateX(40px) rotate(360deg); opacity: 0; }
+}
+
+/* ═══════════════════ TOP BAR / MUSIC ═══════════════════════════════════ */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center;
+  padding: 12px clamp(14px,4vw,28px); transition: background .4s, box-shadow .4s; }
+.topbar.solid { background: color-mix(in srgb,var(--c-surface) 88%, transparent); backdrop-filter: blur(8px); box-shadow: 0 8px 24px -20px rgba(60,40,8,.7); }
+.brand { font-family: var(--font-si-disp); font-weight: 800; letter-spacing: .04em; font-size: clamp(1rem,3.4vw,1.25rem); }
+.icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid color-mix(in srgb,var(--c-primary) 55%, transparent); background: color-mix(in srgb,var(--c-surface) 70%, transparent); color: var(--c-ink); }
+.icon-btn svg { width: 22px; height: 22px; }
+.music-on .bar { animation: eq .9s ease-in-out infinite; }
+@keyframes eq { 0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)} }
+
+/* ═══════════════════ HERO (Poruwa) ═════════════════════════════════════ */
+.hero { min-height: 100svh; display: grid; place-items: center; text-align: center; padding-top: 84px; position: relative; }
+.hero .thorana { position: absolute; inset: clamp(60px,9vw,90px) clamp(8px,6vw,120px) 0; color: color-mix(in srgb,var(--c-primary) 70%, transparent); z-index: 0; pointer-events: none; }
+.hero .thorana svg { width: 100%; height: 100%; }
+.hero-inner { position: relative; z-index: 1; max-width: 760px; }
+.hero .ay { font-family: var(--font-si-disp); letter-spacing: .18em; color: var(--c-accent); font-size: clamp(1rem,3.6vw,1.3rem); }
+.hero .couple { font-family: var(--font-si-disp); font-weight: 800; line-height: 1.05; margin: .12em 0; font-size: clamp(2.6rem,12vw,5.4rem); }
+.hero .amp { font-family: var(--font-script); font-size: clamp(1.8rem,8vw,3rem); display: block; color: var(--c-accent); margin: .04em 0; }
+.hero .when { font-family: var(--font-si-disp); font-size: clamp(1.05rem,3.6vw,1.4rem); margin-top: .4em; }
+.hero .sesath-wrap { width: clamp(54px,12vw,84px); margin: 14px auto 6px; }
+.hero .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
+.scroll-prompt { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: .85rem; color: var(--c-accent); display: grid; place-items: center; gap: 4px; }
+.scroll-prompt .chev { width: 22px; height: 22px; animation: floaty 1.8s ease-in-out infinite; }
+@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+/* ═══════════════════ INVITATION ════════════════════════════════════════ */
+.invite-grid { display: grid; gap: clamp(20px,4vw,40px); align-items: center; }
+.parents { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(10px,3vw,26px); align-items: center; text-align: center; }
+.parents .side { font-family: var(--font-si-disp); }
+.parents .nm { font-size: clamp(1.2rem,5vw,1.8rem); font-weight: 800; }
+.parents .pr { color: color-mix(in srgb,var(--c-ink) 70%, transparent); font-size: clamp(.92rem,2.8vw,1.02rem); }
+.parents .mid { color: var(--c-primary); }
+.parents .mid svg { width: clamp(40px,9vw,64px); }
+.details { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 16px; margin-top: 8px; }
+.detail { display: grid; gap: 4px; padding: 16px; border-radius: 14px; background: color-mix(in srgb,var(--c-secondary) 40%, transparent); }
+.detail .lab { font-size: .82rem; letter-spacing: .14em; color: var(--c-accent); }
+.detail .val { font-family: var(--font-si-disp); font-weight: 700; font-size: clamp(1rem,3.2vw,1.15rem); }
+.invite-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 18px; }
+
+/* ═══════════════════ COUNTDOWN ═════════════════════════════════════════ */
+.cd { display: flex; gap: clamp(8px,2.6vw,20px); justify-content: center; flex-wrap: wrap; }
+.cd .unit { min-width: clamp(64px,18vw,110px); padding: clamp(12px,3vw,22px) clamp(8px,2vw,14px); border-radius: 16px;
+  background: color-mix(in srgb,var(--c-surface) 92%,#fff); border: 1px solid color-mix(in srgb,var(--c-primary) 45%, transparent);
+  box-shadow: var(--shadow); }
+.cd .num { font-family: var(--font-en-disp); font-weight: 700; font-size: clamp(2rem,9vw,3.4rem); line-height: 1; color: var(--c-accent); }
+.cd .lab { font-family: var(--font-si-disp); font-size: clamp(.8rem,2.6vw,1rem); margin-top: 6px; }
+
+/* ═══════════════════ RSVP + SEAT (forms) ═══════════════════════════════ */
+.field { display: grid; gap: 8px; margin-bottom: 16px; text-align: left; }
+.field label { font-family: var(--font-si-disp); font-weight: 600; }
+.input, .select, .textarea {
+  width: 100%; padding: 14px 16px; border-radius: 12px; font-family: var(--font-si); font-size: 1rem;
+  border: 1px solid color-mix(in srgb,var(--c-primary) 45%, transparent);
+  background: color-mix(in srgb,var(--c-surface) 96%,#fff); color: var(--c-ink);
+}
+.input:focus, .select:focus, .textarea:focus { outline: 2px solid color-mix(in srgb,var(--c-accent) 60%, transparent); }
+.textarea { min-height: 96px; resize: vertical; }
+.results { display: grid; gap: 8px; margin-top: 6px; }
+.guest-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid color-mix(in srgb,var(--c-primary) 35%, transparent); background: color-mix(in srgb,var(--c-secondary) 28%, transparent); text-align: left; width: 100%; }
+.guest-row:hover { border-color: var(--c-primary); }
+.guest-row .gn { font-family: var(--font-si-disp); font-weight: 700; }
+.guest-row .gf { font-size: .85rem; color: color-mix(in srgb,var(--c-ink) 65%, transparent); }
+.chip { font-size: .72rem; padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb,var(--c-primary) 22%, transparent); }
+.choice { display: flex; gap: 10px; flex-wrap: wrap; }
+.choice .opt { flex: 1 1 140px; padding: 14px; border-radius: 12px; text-align: center; border: 1px solid color-mix(in srgb,var(--c-primary) 40%, transparent); background: color-mix(in srgb,var(--c-surface) 92%,#fff); font-family: var(--font-si-disp); font-weight: 700; }
+.choice .opt.sel { background: var(--gold-grad); color: #2b2103; border-color: transparent; }
+.stepper { display: inline-flex; align-items: center; gap: 14px; }
+.stepper button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid color-mix(in srgb,var(--c-primary) 45%, transparent); background: color-mix(in srgb,var(--c-surface) 92%,#fff); font-size: 1.3rem; color: var(--c-ink); }
+.stepper .val { font-family: var(--font-en-disp); font-size: 1.5rem; min-width: 32px; text-align: center; }
+.thanks { text-align: center; }
+.thanks .glamp { width: clamp(90px,22vw,130px); margin: 0 auto 8px; color: var(--c-primary); }
+.muted { color: color-mix(in srgb,var(--c-ink) 60%, transparent); font-size: .9rem; }
+.seat-result { text-align: center; }
+.seat-num { font-family: var(--font-en-disp); font-weight: 700; font-size: clamp(3rem,16vw,6rem); color: var(--c-accent); line-height: 1; }
+
+/* ═══════════════════ AGENDA timeline ═══════════════════════════════════ */
+.timeline { position: relative; max-width: 720px; margin-inline: auto; padding-left: 8px; }
+.timeline::before { content: ""; position: absolute; left: clamp(22px,6vw,34px); top: 6px; bottom: 6px; width: 2px;
+  background: linear-gradient(var(--c-primary), color-mix(in srgb,var(--c-primary) 20%, transparent)); }
+.tl-item { position: relative; display: grid; grid-template-columns: clamp(52px,14vw,76px) 1fr; gap: clamp(12px,3vw,20px); padding-block: clamp(14px,3vw,22px); }
+.tl-icon { width: clamp(44px,12vw,64px); height: clamp(44px,12vw,64px); display: grid; place-items: center; border-radius: 50%;
+  background: color-mix(in srgb,var(--c-surface) 92%,#fff); border: 2px solid var(--c-primary); color: var(--c-primary); z-index: 1; }
+.tl-icon svg { width: 64%; }
+.tl-body .tl-time { font-family: var(--font-en-disp); font-weight: 700; color: var(--c-accent); font-size: clamp(1rem,3.4vw,1.3rem); }
+.tl-body .tl-title { font-family: var(--font-si-disp); font-weight: 800; font-size: clamp(1.1rem,4vw,1.4rem); }
+.tl-body .tl-desc { color: color-mix(in srgb,var(--c-ink) 72%, transparent); }
+
+/* ═══════════════════ GALLERY ═══════════════════════════════════════════ */
+.masonry { column-count: 3; column-gap: 14px; }
+.masonry .ph { break-inside: avoid; margin-bottom: 14px; border-radius: 14px; overflow: hidden; border: 1px solid color-mix(in srgb,var(--c-primary) 35%, transparent); box-shadow: var(--shadow); background: color-mix(in srgb,var(--c-secondary) 30%, transparent); }
+.masonry .ph img { width: 100%; transition: transform .6s; }
+.masonry .ph:hover img { transform: scale(1.05); }
+.lightbox { position: fixed; inset: 0; z-index: 70; display: none; place-items: center; background: rgba(20,14,2,.92); padding: 20px; }
+.lightbox.show { display: grid; }
+.lightbox img { max-width: 92vw; max-height: 86vh; border-radius: 12px; box-shadow: 0 40px 90px -30px #000; }
+.lightbox .x { position: absolute; top: 18px; right: 18px; color: var(--c-secondary); }
+
+/* ═══════════════════ BLESSING BOOK ═════════════════════════════════════ */
+.blessing-form { max-width: 640px; margin-inline: auto; }
+.suggest-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.blessings-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 14px; margin-top: 28px; }
+.bless { padding: 18px; border-radius: 14px; background: color-mix(in srgb,var(--c-secondary) 34%, transparent); border: 1px solid color-mix(in srgb,var(--c-primary) 30%, transparent); }
+.bless .bm { font-style: italic; }
+.bless .bn { margin-top: 10px; font-family: var(--font-si-disp); font-weight: 700; color: var(--c-accent); }
+.bless .bn::before { content: "— "; }
+
+/* ═══════════════════ PUN KALASA LAMP (live) ════════════════════════════ */
+.lamp-stage { display: grid; place-items: center; gap: 14px; }
+.lamp-stage .kalasa { width: clamp(150px,40vw,240px); color: var(--c-primary); position: relative; }
+.lamp-stage .kalasa svg { width: 100%; }
+.lamp-glow { filter: drop-shadow(0 0 26px color-mix(in srgb,var(--c-primary) 70%, transparent)); }
+.lamp-meter { width: min(420px,90%); height: 14px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb,var(--c-primary) 18%, transparent); border: 1px solid color-mix(in srgb,var(--c-primary) 40%, transparent); }
+.lamp-fill { height: 100%; width: 0; background: var(--gold-grad); transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
+.lamp-count { font-family: var(--font-en-disp); font-weight: 700; font-size: clamp(2rem,9vw,3rem); color: var(--c-accent); }
+
+/* ═══════════════════ LOVE NOTE / FOOTER ════════════════════════════════ */
+.lovenote { max-width: 640px; margin-inline: auto; text-align: center; font-size: clamp(1.05rem,3.4vw,1.25rem); font-style: italic; }
+.lovenote .sig { font-family: var(--font-script); font-size: clamp(1.6rem,7vw,2.4rem); color: var(--c-accent); margin-top: 12px; font-style: normal; }
+.site-footer { text-align: center; padding-block: clamp(40px,7vw,70px); }
+.site-footer .fnames { font-family: var(--font-script); font-size: clamp(1.6rem,7vw,2.4rem); color: var(--c-primary); }
+.site-footer .credit { margin-top: 8px; font-size: .82rem; color: color-mix(in srgb,var(--c-ink) 55%, transparent); }
+.to-top { position: fixed; right: 18px; bottom: 18px; z-index: 25; opacity: 0; transform: translateY(12px); transition: .3s; }
+.to-top.show { opacity: 1; transform: none; }
+
+/* setup notice */
+.setup-note { position: fixed; inset: auto 0 0 0; z-index: 80; background: #2a1f06; color: var(--c-secondary); text-align: center; padding: 12px 16px; font-size: .9rem; }
+
+/* ═══════════════════ RESPONSIVE ════════════════════════════════════════ */
+@media (max-width: 1024px) { .masonry { column-count: 2; } }
+@media (max-width: 760px) {
+  .parents { grid-template-columns: 1fr; gap: 6px; }
+  .parents .mid { transform: rotate(90deg); margin: 6px 0; }
+  .hero .thorana { inset: 70px 0 0; }
+  .timeline::before { left: clamp(20px,7vw,30px); }
+}
+@media (max-width: 480px) {
+  .masonry { column-count: 1; }
+  .cd .unit { min-width: 70px; flex: 1 1 40%; }
+  .btn { width: 100%; }
+  .hero .cta .btn { width: 100%; }
+}
+@media (min-width: 1440px) { :root { --maxw: 1280px; } }
+
+/* accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  #petals { display: none; }
+}
+
+/* themed scrollbar */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-thumb { background: var(--c-primary); border-radius: 999px; border: 3px solid var(--c-surface); }
+::selection { background: color-mix(in srgb,var(--c-primary) 45%, transparent); }
+
+/* ═══════════ 3D LAYER — suitable, subtle, performance-safe ═══════════ */
+/* Invitation card: true 3D tilt that follows the pointer (desktop), or a
+   gentle idle 3D sway (touch). Gallery photos lift in 3D. Lamp gains depth. */
+#invitation .wrap { perspective: 1100px; }
+.tilt3d {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .25s ease-out, box-shadow .25s ease-out;
+  will-change: transform;
+}
+.tilt3d:hover { box-shadow: 0 34px 70px -34px color-mix(in srgb, var(--c-accent) 55%, transparent); }
+.tilt3d > * { transform: translateZ(0); }
+.tilt3d .divider, .tilt3d .invite-actions { transform: translateZ(26px); }
+.tilt3d .parents { transform: translateZ(18px); }
+
+/* touch devices (no hover): gentle autonomous 3D sway instead */
+@media (hover: none) {
+  .tilt3d { animation: sway3d 9s ease-in-out infinite; }
+}
+@keyframes sway3d {
+  0%, 100% { transform: rotateX(0deg) rotateY(-1.6deg); }
+  25%      { transform: rotateX(1.4deg) rotateY(1.6deg); }
+  50%      { transform: rotateX(-1.2deg) rotateY(1.2deg); }
+  75%      { transform: rotateX(1.2deg) rotateY(-1.2deg); }
+}
+
+/* gallery: 3D lift + tip toward the light on hover */
+.masonry { perspective: 900px; }
+.masonry .ph { transform-style: preserve-3d; transition: transform .3s ease, box-shadow .3s ease; }
+.masonry .ph:hover { transform: translateZ(28px) rotateX(2.4deg) rotateY(-2.4deg); box-shadow: 0 30px 60px -28px rgba(60,40,5,.55); z-index: 2; }
+
+/* gateway lamp: breathing depth */
+#gateway { perspective: 800px; }
+#gateway .glamp { transform-style: preserve-3d; animation: lampFloat 5.5s ease-in-out infinite; }
+@keyframes lampFloat {
+  0%, 100% { transform: translateZ(0) rotateX(0deg); }
+  50%      { transform: translateZ(22px) rotateX(3deg); }
+}
+
+/* respect reduced-motion: switch all 3D motion off */
+@media (prefers-reduced-motion: reduce) {
+  .tilt3d, #gateway .glamp { animation: none !important; transform: none !important; }
+  .masonry .ph:hover { transform: none; }
+}
+
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ගෞරව & කෞශානි · මංගල ආරාධනය" />
+  <meta property="og:description" content="හෙළ සිරිත — අප හා එක්වන්න." />
+  <meta property="og:type" content="website" />
 </head>
 <body>
 
-    <h1>Welcome to My Website</h1>
-    <p>This is a simple paragraph of text on my new HTML page.</p>
-    
-    <a href="https://www.google.com">Visit Google</a>
+  <!-- ░░ OPEN-INVITATION GATEWAY ░░ -->
+  <div id="gateway" role="dialog" aria-label="ආරාධනා පත්‍රය">
+    <div>
+      <div id="glamp" class="glamp" role="button" tabindex="0" aria-label="ආරාධනය විවෘත කරන්න"></div>
+      <div class="ay foil">ආයුබෝවන්</div>
+      <div class="names">ගෞරව &amp; කෞශානි</div>
+      <p class="hint">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</p>
+      <button id="enterBtn" class="btn btn-primary enter">ආරාධනා පත්‍රය විවෘත කරන්න</button>
+    </div>
+  </div>
 
+  <!-- ░░ AMBIENT PETALS ░░ -->
+  <div id="petals" aria-hidden="true"></div>
+
+  <!-- ░░ TOP BAR ░░ -->
+  <header id="topbar" class="topbar">
+    <a id="brand" class="brand" href="#hero">හෙළ සිරිත</a>
+    <button id="musicBtn" class="icon-btn" aria-pressed="false" aria-label="සංගීතය">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect class="bar" x="4"  y="9"  width="2.4" height="6"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center"/>
+        <rect class="bar" x="9"  y="6"  width="2.4" height="12" rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.15s"/>
+        <rect class="bar" x="14" y="8"  width="2.4" height="8"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.3s"/>
+        <rect class="bar" x="19" y="10" width="2.4" height="4"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.45s"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ░░ MAIN ░░ -->
+  <main>
+    <section id="hero" class="hero"></section>
+    <section id="invitation"></section>
+    <section id="countdown"></section>
+    <section id="rsvp"></section>
+    <section id="seat"></section>
+    <section id="agenda"></section>
+    <section id="gallery"></section>
+    <section id="blessings"></section>
+    <section id="lamp"></section>
+    <section id="lovenote"></section>
+  </main>
+
+  <footer id="footer" class="site-footer"></footer>
+
+  <!-- ░░ TO-TOP ░░ -->
+  <button id="toTop" class="to-top icon-btn" aria-label="ඉහළට යන්න">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 15l6-6 6 6"/></svg>
+  </button>
+
+  <noscript>
+    <div style="padding:40px;text-align:center;font-family:serif">
+      මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.
+    </div>
+  </noscript>
+
+  <script type="module">
+/* helasiritha · single-file bundle (esbuild esm) — generated from the modular source.
+   Edit the source modules then re-bundle, OR edit inline strings/CSS directly. */
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
+// release/helasiritha-web/assets/js/firebase-config.js
+var FIREBASE_SDK_VERSION, SDK_BASE, FIREBASE_CONFIG, CLOUDINARY, FIREBASE_READY;
+var init_firebase_config = __esm({
+  "release/helasiritha-web/assets/js/firebase-config.js"() {
+    FIREBASE_SDK_VERSION = "12.14.0";
+    SDK_BASE = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;
+    FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",
+      authDomain: "helasiritha-official.firebaseapp.com",
+      projectId: "helasiritha-official",
+      storageBucket: "helasiritha-official.firebasestorage.app",
+      messagingSenderId: "993883662089",
+      appId: "1:993883662089:web:b583123218df07be9155d8",
+      measurementId: "G-PBJWLXWVD9"
+    };
+    CLOUDINARY = {
+      cloudName: "dzrfpc9be",
+      uploadPreset: "helasiritha_unsigned"
+    };
+    FIREBASE_READY = true;
+  }
+});
+
+// release/helasiritha-web/assets/js/i18n.js
+var SI;
+var init_i18n = __esm({
+  "release/helasiritha-web/assets/js/i18n.js"() {
+    SI = {
+      /* gateway / preloader */
+      ayubowan: "ආයුබෝවන්",
+      openInvitation: "ආරාධනා පත්‍රය විවෘත කරන්න",
+      loading: "මඳක් රැඳී සිටින්න…",
+      enterPrompt: "පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",
+      /* hero */
+      gettingMarried: "අප විවාහ දිවියට එළඹෙමු",
+      togetherWithFamilies: "උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",
+      joinUsOn: "අප හා එක්වන්න",
+      weddingOf: "මංගල දිනය",
+      rsvp: "පැමිණීම තහවුරු කිරීම",
+      findMySeat: "ඔබේ අසුන සොයන්න",
+      scrollPrompt: "පහළට ගෙන යන්න",
+      /* invitation */
+      invitationTitle: "ආරාධනාව",
+      requestPresence: "ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",
+      weddingDetails: "මංගල තොරතුරු",
+      date: "දිනය",
+      time: "වේලාව",
+      venue: "ස්ථානය",
+      viewLocation: "ස්ථානය සිතියමින් බලන්න",
+      reception: "පිළිගැනීමේ උත්සවය",
+      andSon: "ගේ පුත්",
+      andDaughter: "ගේ දියණිය",
+      /* countdown */
+      countdownTitle: "මංගල දිනයට තවත්",
+      days: "දින",
+      hours: "පැය",
+      minutes: "මිනිත්තු",
+      seconds: "තත්පර",
+      theDayHasArrived: "අද එම සුභ මංගල දිනයයි!",
+      /* rsvp */
+      rsvpTitle: "පැමිණීම තහවුරු කිරීම",
+      rsvpSub: "ඔබව සාදරයෙන් පිළිගනිමු",
+      rsvpHelp: "ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.",
+      familyNamePlaceholder: "ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",
+      searchGuestList: "ආරාධිත නාම ලේඛනය සොයන්න",
+      searching: "සොයමින්…",
+      noGuestFound: "කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය. නැවත උත්සාහ කරන්න.",
+      selectYourName: "කරුණාකර ඔබගේ නම තෝරන්න",
+      willYouAttend: "ඔබ සහභාගී වෙනවා ද?",
+      yesAttend: "ඔව්, සතුටින් පැමිණෙමි",
+      noAttend: "කනගාටුයි, පැමිණිය නොහැක",
+      takingLiquor: "මත්පැන් අවශ්‍ය ද?",
+      yes: "ඔව්",
+      no: "නැහැ",
+      guestCount: "පැමිණෙන සංඛ්‍යාව",
+      dietary: "ආහාර අවශ්‍යතා (ඇත්නම්)",
+      confirmRsvp: "පිළිතුර තහවුරු කරන්න",
+      sending: "යවමින්…",
+      rsvpThanks: "ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",
+      rsvpConfirmedMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",
+      rsvpDeclinedMsg: "ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",
+      changeResponse: "පිළිතුර වෙනස් කරන්න",
+      /* seat search */
+      seatTitle: "ඔබේ අසුන",
+      seatSub: "ඔබගේ නම සොයා, ඔබට වෙන් කළ මේස අංකය බලන්න.",
+      yourTableIs: "ඔබට වෙන් කළ මේසය",
+      tableNo: "මේස අංකය",
+      noTableYet: "ඔබගේ අසුන තවම වෙන් කර නැත. මඳක් පසුව නැවත පරීක්ෂා කරන්න.",
+      /* agenda */
+      agendaTitle: "මංගල වැඩසටහන් පෙළගැස්ම",
+      agendaSub: "අපගේ දිනයේ සුවිශේෂ මොහොත්",
+      /* gallery */
+      galleryTitle: "සෙනෙහසේ මංසලකුණු",
+      gallerySub: "සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…",
+      /* love note */
+      loveNoteTitle: "විශේෂ සටහන",
+      loveNoteSubtitle: "අපගේ ආදරණීය අමුත්තනට",
+      withLove: "සෙනෙහසින්,",
+      /* blessing book (innovation #1) */
+      blessingsTitle: "සුබ පැතුම් පොත",
+      blessingsSub: "අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",
+      yourName: "ඔබගේ නම",
+      yourBlessing: "ඔබගේ සුබ පැතුම",
+      composeBlessing: "සුබ පැතුමක් යෝජනා කරන්න",
+      composing: "රචනා කරමින්…",
+      sendBlessing: "සුබ පැතුම තැබීම",
+      blessingThanks: "ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",
+      awaitingBlessings: "පළමු සුබ පැතුම ඔබගෙන් වේවා…",
+      /* pun kalasa lamp (innovation #3) */
+      lampTitle: "මංගල පහන",
+      lampSub: "තහවුරු වන සෑම ආරාධිතයෙකු සමඟම පහන බැබළේ.",
+      guestsGathering: "ආරාධිතයන් රැස්වෙමින්",
+      confirmedCount: "තහවුරු වූ ආරාධිතයන්",
+      /* footer / misc */
+      backToTop: "ඉහළට යන්න",
+      callUs: "අමතන්න",
+      addToCalendar: "දින දර්ශනයට එක් කරන්න",
+      shareWhatsapp: "WhatsApp හරහා බෙදාගන්න",
+      celebrating: "සැමරුම",
+      menu: "මෙනුව",
+      setupPending: "පද්ධතිය සැකසෙමින් පවතී. මඳක් පසුව නැවත පිවිසෙන්න."
+    };
+  }
+});
+
+// release/helasiritha-web/assets/js/ornaments.js
+function ornamentIcon(key, cls) {
+  const fn = ORNAMENT_ICONS[key] || nelumMala;
+  return fn(cls);
+}
+var A, liyawela, punKalasa, nelumMala, sesath, pahana, liyaThorana, mandala, mayura, ring, feast, ORNAMENT_ICONS;
+var init_ornaments = __esm({
+  "release/helasiritha-web/assets/js/ornaments.js"() {
+    A = (cls = "") => `class="${cls}" fill="none" aria-hidden="true" focusable="false"`;
+    liyawela = (cls = "orn-liyawela") => `
+<svg ${A(cls)} viewBox="0 0 600 60">
+  <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+    <path d="M10 30 H230" opacity="0.45"/>
+    <path d="M370 30 H590" opacity="0.45"/>
+    <path d="M230 30c-18 0-26-12-44-12s-26 12-44 12 12 16 26 8 4-22-12-22"/>
+    <path d="M150 30c-14 6-30 2-30-10"/>
+    <path d="M188 22c8-6 6-16-4-16"/>
+    <path d="M370 30c18 0 26-12 44-12s26 12 44 12-12 16-26 8-4-22 12-22"/>
+    <path d="M450 30c14 6 30 2 30-10"/>
+    <path d="M412 22c-8-6-6-16 4-16"/>
+  </g>
+  <g fill="currentColor">
+    <path d="M300 14c8 6 12 16 12 24 0 0-12-2-12-14 0 12-12 14-12 14 0-8 4-18 12-24Z"/>
+    <circle cx="300" cy="44" r="3.5"/>
+  </g>
+</svg>`;
+    punKalasa = (cls = "orn-kalasa") => `
+<svg ${A(cls)} viewBox="0 0 120 150">
+  <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M60 8c0 18-10 26-10 38"/>
+    <path d="M60 8c0 18 10 26 10 38"/>
+    <path d="M60 16c-12 6-22 4-30-6 14-2 22 2 30 6Z" fill="currentColor" opacity="0.22"/>
+    <path d="M60 16c12 6 22 4 30-6-14-2-22 2-30 6Z" fill="currentColor" opacity="0.22"/>
+    <path d="M60 24c-8 8-18 8-26 4"/>
+    <path d="M60 24c8 8 18 8 26 4"/>
+    <path d="M44 46h32l-4 10H48l-4-10Z" fill="currentColor" opacity="0.18"/>
+    <path d="M48 56c-16 6-26 22-26 42 0 26 18 44 38 44s38-18 38-44c0-20-10-36-26-42"/>
+    <path d="M30 92h60" opacity="0.55"/>
+    <path d="M34 108c16 8 36 8 52 0" opacity="0.55"/>
+    <circle cx="60" cy="100" r="6" fill="currentColor" opacity="0.3"/>
+  </g>
+</svg>`;
+    nelumMala = (cls = "orn-lotus") => `
+<svg ${A(cls)} viewBox="0 0 100 70">
+  <g fill="currentColor">
+    <path d="M50 8c6 10 8 28 0 46-8-18-6-36 0-46Z" opacity="0.92"/>
+    <path d="M50 18c12 8 18 24 16 40-14-8-20-24-16-40Z" opacity="0.7"/>
+    <path d="M50 18c-12 8-18 24-16 40 14-8 20-24 16-40Z" opacity="0.7"/>
+    <path d="M50 26c16 4 26 18 28 34-16-4-26-18-28-34Z" opacity="0.48"/>
+    <path d="M50 26c-16 4-26 18-28 34 16-4 26-18 28-34Z" opacity="0.48"/>
+  </g>
+  <path d="M14 60c14 6 58 6 72 0" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
+</svg>`;
+    sesath = (cls = "orn-sesath") => {
+      let spokes = "";
+      const n = 16;
+      for (let i = 0; i < n; i++) {
+        const a = i / n * Math.PI * 2;
+        spokes += `<line x1="${(50 + Math.cos(a) * 9).toFixed(2)}" y1="${(46 + Math.sin(a) * 9).toFixed(2)}" x2="${(50 + Math.cos(a) * 34).toFixed(2)}" y2="${(46 + Math.sin(a) * 34).toFixed(2)}" opacity="0.55"/>`;
+      }
+      return `
+<svg ${A(cls)} viewBox="0 0 100 100">
+  <g stroke="currentColor" stroke-width="1.4">
+    <circle cx="50" cy="46" r="34" opacity="0.5"/>
+    <circle cx="50" cy="46" r="22" opacity="0.7"/>
+    <circle cx="50" cy="46" r="9" fill="currentColor" opacity="0.25"/>
+    ${spokes}
+    <line x1="50" y1="80" x2="50" y2="98" stroke-width="2"/>
+  </g>
+</svg>`;
+    };
+    pahana = (cls = "orn-pahana", lit = true) => `
+<svg ${A(cls)} viewBox="0 0 60 96">
+  ${lit ? `<g class="flame">
+    <path d="M30 4c6 8 9 14 9 21 0 6-4 11-9 11s-9-5-9-11c0-7 3-13 9-21Z" fill="currentColor" opacity="0.92"/>
+    <path d="M30 16c2 4 3 8 3 12 0 3-1 6-3 6s-3-3-3-6c0-4 1-8 3-12Z" fill="#FFF7DA"/>
+  </g>` : ``}
+  <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor">
+    <path d="M14 46h32l-6 8H20l-6-8Z" opacity="0.25"/>
+    <path d="M10 54c0 10 9 16 20 16s20-6 20-16H10Z" opacity="0.18"/>
+    <path d="M28 70h4v16h-4z"/>
+    <ellipse cx="30" cy="88" rx="14" ry="4" opacity="0.18"/>
+  </g>
+</svg>`;
+    liyaThorana = (cls = "orn-thorana") => `
+<svg ${A(cls)} viewBox="0 0 400 520" preserveAspectRatio="none">
+  <path d="M20 500V190C20 96 100 20 200 20s180 76 180 170v310" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
+  <path d="M34 500V192C34 106 108 36 200 36s166 70 166 156v308" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+  <g fill="currentColor" transform="translate(200 22)">
+    <path d="M0 0c5 6 7 14 0 24-7-10-5-18 0-24Z"/>
+  </g>
+</svg>`;
+    mandala = (cls = "orn-mandala") => {
+      let petals = "";
+      const n = 12;
+      for (let i = 0; i < n; i++) {
+        const a = i / n * 360;
+        petals += `<path d="M60 18c6 8 6 20 0 30-6-10-6-22 0-30Z" fill="currentColor" opacity="0.5" transform="rotate(${a} 60 60)"/>`;
+      }
+      let inner = "";
+      for (let i = 0; i < n; i++) {
+        const a = i / n * 360 + 15;
+        inner += `<path d="M60 34c4 5 4 13 0 20-4-7-4-15 0-20Z" fill="currentColor" opacity="0.7" transform="rotate(${a} 60 60)"/>`;
+      }
+      return `
+<svg ${A(cls)} viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="56" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+  <circle cx="60" cy="60" r="46" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+  ${petals}${inner}
+  <circle cx="60" cy="60" r="9" fill="currentColor" opacity="0.9"/>
+  <circle cx="60" cy="60" r="4" fill="#FFF7DA"/>
+</svg>`;
+    };
+    mayura = (cls = "orn-mayura") => `
+<svg ${A(cls)} viewBox="0 0 140 120">
+  <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 96c0-26 8-44 22-58" />
+    <path d="M70 96c0-26-8-44-22-58" />
+    <path d="M70 96c0-30 0-52 0-72" />
+    <path d="M70 26c-4-6-2-14 4-16 6 2 8 10 4 16" fill="currentColor" opacity="0.25"/>
+    <circle cx="92" cy="38" r="6" fill="currentColor" opacity="0.3"/>
+    <circle cx="48" cy="38" r="6" fill="currentColor" opacity="0.3"/>
+    <circle cx="70" cy="30" r="6" fill="currentColor" opacity="0.3"/>
+    <path d="M40 96c20 8 40 8 60 0" opacity="0.6"/>
+    <path d="M70 96l-6 14M70 96l6 14" />
+  </g>
+</svg>`;
+    ring = (cls = "orn-ring") => `
+<svg ${A(cls)} viewBox="0 0 100 100">
+  <g stroke="currentColor" stroke-width="2" fill="none">
+    <circle cx="38" cy="58" r="22" opacity="0.85"/>
+    <circle cx="62" cy="58" r="22" opacity="0.85"/>
+    <path d="M50 30l6 8h-12l6-8Z" fill="currentColor"/>
+  </g>
+</svg>`;
+    feast = (cls = "orn-feast") => `
+<svg ${A(cls)} viewBox="0 0 100 100">
+  <g stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+    <ellipse cx="50" cy="62" rx="34" ry="12" fill="currentColor" opacity="0.15"/>
+    <path d="M30 58c4-12 36-12 40 0" />
+    <circle cx="50" cy="46" r="7" fill="currentColor" opacity="0.4"/>
+    <path d="M24 40v22M22 40h4M78 40c0 8-4 10-4 14v8" />
+  </g>
+</svg>`;
+    ORNAMENT_ICONS = {
+      poruwa: punKalasa,
+      kalasa: punKalasa,
+      lamp: pahana,
+      pahana,
+      lotus: nelumMala,
+      sesath,
+      mandala,
+      mayura,
+      ring,
+      feast
+    };
+  }
+});
+
+// release/helasiritha-web/assets/js/data.js
+var data_exports = {};
+__export(data_exports, {
+  CLOUDINARY: () => CLOUDINARY,
+  applyTheme: () => applyTheme,
+  db: () => db,
+  postBlessing: () => postBlessing,
+  readLocalRsvp: () => readLocalRsvp,
+  searchGuests: () => searchGuests,
+  startRealtime: () => startRealtime,
+  state: () => state,
+  submitRsvp: () => submitRsvp,
+  subscribe: () => subscribe
+});
+function subscribe(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+function emit() {
+  listeners.forEach((fn) => fn(state));
+}
+function DEFAULT_SITE() {
+  return {
+    brideNameEn: "Kaushani",
+    groomNameEn: "Gaurawa",
+    brideNameSi: "කෞශානි",
+    groomNameSi: "ගෞරව",
+    weddingDateISO: "2028-01-12T09:15:00+05:30",
+    ceremonyTimeLabel: "පෙ.ව. 9.15 සිට",
+    venueName: "ද එපිටෝම් හෝටලය",
+    venueAddress: "කුරුණෑගල",
+    mapUrl: "https://maps.google.com/?q=The+Epitome+Hotel+Kurunegala",
+    brideParentsSi: "",
+    groomParentsSi: "",
+    inviteWordingSi: "අප දෙදෙනාගේ සෙනෙහසේ මංගල්‍යය වෙනුවෙන්, ඔබ සැම සාදරයෙන් ආරාධනා කරමු.",
+    loveNoteSi: "අප ජීවිතයේ සුවිශේෂ මොහොතක ඔබ අප සමඟ සිටීම, අප ලද වටිනාම ආශිර්වාදයයි. බොහෝ ස්තූතියි.",
+    whatsappNumber: "94705367980",
+    rsvpDeadlineISO: "2027-12-20T23:59:00+05:30",
+    allowLiquorPref: true,
+    allowDietaryPref: true,
+    images: { banner: "", rsvp: "", loveNote: "" },
+    ambientAudioUrl: ""
+  };
+}
+function DEFAULT_THEME() {
+  return { primary: "#C9A574", secondary: "#F2E5C6", accent: "#A48354", surface: "#FFFBF2", text: "#221C01" };
+}
+function DEFAULT_VISIBILITY() {
+  return { invite: true, invitationCard: true, countdown: true, rsvp: true, seating: true, agenda: true, gallery: true, blessings: true, loveNote: true };
+}
+function applyTheme(t) {
+  const r = document.documentElement.style;
+  r.setProperty("--c-primary", t.primary);
+  r.setProperty("--c-secondary", t.secondary);
+  r.setProperty("--c-accent", t.accent);
+  r.setProperty("--c-surface", t.surface);
+  r.setProperty("--c-ink", t.text);
+}
+function startRealtime() {
+  const { doc, onSnapshot, collection, query, orderBy, where, limit } = fs;
+  onSnapshot(doc(db, "config", "site"), (s) => {
+    if (s.exists()) state.site = { ...DEFAULT_SITE(), ...s.data() };
+    state.ready = true;
+    emit();
+  }, () => {
+    state.ready = true;
+    emit();
+  });
+  onSnapshot(doc(db, "config", "theme"), (s) => {
+    if (s.exists()) state.theme = { ...DEFAULT_THEME(), ...s.data() };
+    applyTheme(state.theme);
+    emit();
+  });
+  onSnapshot(doc(db, "config", "visibility"), (s) => {
+    if (s.exists()) state.visibility = { ...DEFAULT_VISIBILITY(), ...s.data() };
+    emit();
+  });
+  onSnapshot(doc(db, "config", "stats"), (s) => {
+    if (s.exists()) state.stats = { ...state.stats, ...s.data() };
+    emit();
+  });
+  onSnapshot(query(collection(db, "agenda"), orderBy("order", "asc")), (snap) => {
+    state.agenda = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((e) => e.visible !== false);
+    emit();
+  }, () => {
+  });
+  onSnapshot(query(collection(db, "gallery"), orderBy("order", "asc")), (snap) => {
+    state.gallery = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    emit();
+  }, () => {
+  });
+  onSnapshot(
+    /* equality-only query → no composite index required; sorted client-side */
+    query(collection(db, "blessings"), where("approved", "==", true), limit(100)),
+    (snap) => {
+      state.blessings = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      emit();
+    },
+    () => {
+    }
+  );
+  applyTheme(state.theme);
+}
+function normalize(s) {
+  return String(s || "").toLowerCase().normalize("NFC").replace(/[\u200b-\u200d\uFEFF]/g, "").replace(/\s+/g, " ").trim();
+}
+async function searchGuests(term) {
+  const { collection, query, where, getDocs, limit, orderBy } = fs;
+  const t = normalize(term);
+  if (t.length < 2) return [];
+  let out = [];
+  try {
+    const q = query(collection(db, "guests"), where("searchTokens", "array-contains", t), limit(25));
+    const snap = await getDocs(q);
+    out = snap.docs.map((d) => slimGuest(d));
+  } catch (_) {
+  }
+  if (out.length === 0) {
+    try {
+      const snap = await getDocs(query(collection(db, "guests"), orderBy("name"), limit(800)));
+      out = snap.docs.map((d) => slimGuest(d)).filter((g) => {
+        const hay = normalize(g.name + " " + g.familyName);
+        return hay.includes(t) || hay.replace(/\s/g, "").includes(t.replace(/\s/g, ""));
+      }).slice(0, 25);
+    } catch (_) {
+    }
+  }
+  return out;
+}
+function slimGuest(d) {
+  const g = d.data();
+  return {
+    id: d.id,
+    name: g.name || "",
+    familyName: g.familyName || "",
+    side: g.side || "groom",
+    tableNumber: g.tableNumber ?? null,
+    status: g.status || "pending"
+  };
+}
+async function submitRsvp({ guestId, guestName, side, attending, takingLiquor, partySize, dietary }) {
+  const { doc, setDoc, runTransaction } = fs;
+  const status = attending ? "confirmed" : "declined";
+  const prev = readLocalRsvp(guestId);
+  await setDoc(doc(db, "rsvps", guestId), {
+    guestId,
+    guestName: String(guestName || "").slice(0, 120),
+    side: side || "groom",
+    status,
+    takingLiquor: !!takingLiquor,
+    partySize: Math.min(30, Math.max(1, Number(partySize) || 1)),
+    dietary: String(dietary || "").slice(0, 280),
+    respondedAt: Date.now()
+  }, { merge: true });
+  try {
+    await runTransaction(db, async (tx) => {
+      const ref = doc(db, "config", "stats");
+      const s = await tx.get(ref);
+      const cur = s.exists() ? s.data() : { totalGuests: 0, confirmed: 0, pending: 0, declined: 0 };
+      const next = { ...cur };
+      const dec = (k) => {
+        next[k] = Math.max(0, (next[k] || 0) - 1);
+      };
+      const inc = (k) => {
+        next[k] = (next[k] || 0) + 1;
+      };
+      if (prev?.status === "confirmed") dec("confirmed");
+      if (prev?.status === "declined") dec("declined");
+      if (!prev) dec("pending");
+      inc(status);
+      next.updatedAt = Date.now();
+      tx.set(ref, next, { merge: true });
+    });
+  } catch (_) {
+  }
+  writeLocalRsvp(guestId, { status, takingLiquor: !!takingLiquor, partySize, dietary });
+  return status;
+}
+async function postBlessing(name, message) {
+  const { collection, addDoc } = fs;
+  const msg = String(message || "").trim().slice(0, 400);
+  if (!msg) {
+    const e = new Error("empty");
+    e.si = "කරුණාකර සුබ පැතුම ලියන්න.";
+    throw e;
+  }
+  await addDoc(collection(db, "blessings"), {
+    guestName: String(name || "").trim().slice(0, 60) || "ආගන්තුකයෙක්",
+    message: msg,
+    approved: false,
+    createdAt: Date.now()
+  });
+}
+function readLocalRsvp(guestId) {
+  try {
+    return JSON.parse(localStorage.getItem("hs_rsvp_" + guestId) || "null");
+  } catch (_) {
+    return null;
+  }
+}
+function writeLocalRsvp(guestId, payload) {
+  try {
+    localStorage.setItem("hs_rsvp_" + guestId, JSON.stringify(payload));
+  } catch (_) {
+  }
+}
+var initializeApp, fs, app, db, listeners, state;
+var init_data = __esm({
+  async "release/helasiritha-web/assets/js/data.js"() {
+    init_firebase_config();
+    ({ initializeApp } = await import(`${SDK_BASE}/firebase-app.js`));
+    fs = await import(`${SDK_BASE}/firebase-firestore.js`);
+    app = initializeApp(FIREBASE_CONFIG);
+    db = fs.getFirestore(app);
+    listeners = /* @__PURE__ */ new Set();
+    state = {
+      ready: false,
+      site: DEFAULT_SITE(),
+      theme: DEFAULT_THEME(),
+      visibility: DEFAULT_VISIBILITY(),
+      stats: { totalGuests: 0, confirmed: 0, pending: 0, declined: 0 },
+      agenda: [],
+      gallery: [],
+      blessings: []
+    };
+  }
+});
+
+// release/helasiritha-web/assets/js/utils.js
+function cld(url, width) {
+  if (!url || !url.includes("/upload/")) return url || "";
+  const t = ["f_auto", "q_auto"];
+  if (width) t.push(`w_${width}`, "c_limit", "dpr_auto");
+  return url.replace("/upload/", `/upload/${t.join(",")}/`);
+}
+function timeLeftUntil(iso) {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (Number.isNaN(diff) || diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
+  const s = Math.floor(diff / 1e3);
+  return {
+    days: Math.floor(s / 86400),
+    hours: Math.floor(s % 86400 / 3600),
+    minutes: Math.floor(s % 3600 / 60),
+    seconds: s % 60,
+    done: false
+  };
+}
+function whatsappLink(number, text) {
+  const n = String(number || "").replace(/[^\d]/g, "");
+  return `https://wa.me/${n}?text=${encodeURIComponent(text || "")}`;
+}
+function sinhalaDate(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return `${SI_DAYS[d.getDay()]}, ${d.getFullYear()} ${SI_MONTHS[d.getMonth()]} ${d.getDate()}`;
+}
+function downloadICS(site) {
+  const start = new Date(site.weddingDateISO);
+  const end = new Date(start.getTime() + 6 * 3600 * 1e3);
+  const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const esc2 = (s) => String(s || "").replace(/[,;\\]/g, (m) => "\\" + m).replace(/\n/g, "\\n");
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Helasiritha//Wedding//SI",
+    "BEGIN:VEVENT",
+    `UID:${Date.now()}@helasiritha`,
+    `DTSTAMP:${fmt(/* @__PURE__ */ new Date())}`,
+    `DTSTART:${fmt(start)}`,
+    `DTEND:${fmt(end)}`,
+    `SUMMARY:${esc2(site.groomNameSi + " ◇ " + site.brideNameSi + " මංගල්‍යය")}`,
+    `LOCATION:${esc2(site.venueName + ", " + site.venueAddress)}`,
+    `DESCRIPTION:${esc2(site.inviteWordingSi)}`,
+    "BEGIN:VALARM",
+    "TRIGGER:-P1D",
+    "ACTION:DISPLAY",
+    "DESCRIPTION:මංගල දිනය හෙට!",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "helasiritha-mangalya.ics";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]);
+}
+var SI_MONTHS, SI_DAYS;
+var init_utils = __esm({
+  "release/helasiritha-web/assets/js/utils.js"() {
+    SI_MONTHS = ["ජනවාරි", "පෙබරවාරි", "මාර්තු", "අප්‍රේල්", "මැයි", "ජූනි", "ජූලි", "අගෝස්තු", "සැප්තැම්බර්", "ඔක්තෝබර්", "නොවැම්බර්", "දෙසැම්බර්"];
+    SI_DAYS = ["ඉරිදා", "සඳුදා", "අඟහරුවාදා", "බදාදා", "බ්‍රහස්පතින්දා", "සිකුරාදා", "සෙනසුරාදා"];
+  }
+});
+
+// release/helasiritha-web/assets/js/ui.js
+var ui_exports = {};
+__export(ui_exports, {
+  renderAll: () => renderAll
+});
+function renderAll() {
+  const s = state, v = s.visibility;
+  $("#brand").textContent = `${s.site.groomNameSi} ◇ ${s.site.brideNameSi}`;
+  document.title = `${s.site.groomNameSi} & ${s.site.brideNameSi} · ${SI.celebrating}`;
+  renderHero(s);
+  toggleSection("invitation", v.invitationCard, () => renderInvitation(s));
+  toggleSection("countdown", v.countdown, () => renderCountdown(s));
+  toggleSection("rsvp", v.rsvp, () => renderRsvp(s));
+  toggleSection("seat", v.seating, () => renderSeat(s));
+  toggleSection("agenda", v.agenda && s.agenda.length > 0, () => renderAgenda(s));
+  toggleSection("gallery", v.gallery && s.gallery.length > 0, () => renderGallery(s));
+  toggleSection("blessings", v.blessings, () => renderBlessings(s));
+  toggleSection("lamp", v.rsvp, () => renderLamp(s));
+  toggleSection("lovenote", v.loveNote, () => renderLoveNote(s));
+  renderFooter(s);
+  observeReveals();
+}
+function toggleSection(id, show, fill) {
+  const el = $("#" + id);
+  if (!el) return;
+  el.hidden = !show;
+  if (show) fill();
+}
+function renderHero(s) {
+  $("#hero").innerHTML = `
+    <div class="thorana">${liyaThorana()}</div>
+    <div class="hero-inner reveal">
+      <div class="ay foil">${SI.gettingMarried}</div>
+      <div class="sesath-wrap">${sesath()}</div>
+      <h1 class="couple"><span class="foil">${esc(s.site.groomNameSi)}</span>
+        <span class="amp">හා</span>
+        <span class="foil">${esc(s.site.brideNameSi)}</span></h1>
+      <div class="when">${sinhalaDate(s.site.weddingDateISO)} · ${esc(s.site.ceremonyTimeLabel)}</div>
+      <div class="when muted">${esc(s.site.venueName)}, ${esc(s.site.venueAddress)}</div>
+      <div class="divider">${liyawela()}</div>
+      <div class="cta">
+        <a class="btn btn-primary" href="#rsvp">${SI.rsvp}</a>
+        <a class="btn btn-ghost" href="#seat">${SI.findMySeat}</a>
+      </div>
+    </div>
+    <a class="scroll-prompt" href="#invitation" aria-label="${SI.scrollPrompt}">
+      <span>${SI.scrollPrompt}</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </a>`;
+}
+function renderInvitation(s) {
+  const map = s.site.mapUrl ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${esc(s.site.mapUrl)}">📍 ${SI.viewLocation}</a>` : "";
+  const wa = s.site.whatsappNumber ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${whatsappLink(s.site.whatsappNumber, s.site.groomNameSi + " හා " + s.site.brideNameSi + " මංගල්‍යය")}">${SI.shareWhatsapp}</a>` : "";
+  const parents = s.site.groomParentsSi || s.site.brideParentsSi ? `
+    <div class="parents reveal">
+      <div class="side"><div class="pr">${esc(s.site.groomParentsSi)}</div><div class="nm foil">${esc(s.site.groomNameSi)}</div></div>
+      <div class="mid">${nelumMala()}</div>
+      <div class="side"><div class="pr">${esc(s.site.brideParentsSi)}</div><div class="nm foil">${esc(s.site.brideNameSi)}</div></div>
+    </div>` : "";
+  $("#invitation").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.invitationTitle}</div>
+      <h2 class="title">${SI.requestPresence}</h2>
+      <div class="card reveal tilt3d" data-tilt style="max-width:760px;margin-inline:auto;">
+        ${parents}
+        <p class="subtitle" style="margin-top:14px">${esc(s.site.inviteWordingSi)}</p>
+        <div class="divider">${liyawela()}</div>
+        <div class="details">
+          <div class="detail"><span class="lab">${SI.date}</span><span class="val">${sinhalaDate(s.site.weddingDateISO)}</span></div>
+          <div class="detail"><span class="lab">${SI.time}</span><span class="val">${esc(s.site.ceremonyTimeLabel)}</span></div>
+          <div class="detail"><span class="lab">${SI.venue}</span><span class="val">${esc(s.site.venueName)}<br><small class="muted">${esc(s.site.venueAddress)}</small></span></div>
+        </div>
+        <div class="invite-actions">
+          <button class="btn btn-primary" id="addCal">🗓 ${SI.addToCalendar}</button>
+          ${map}${wa}
+        </div>
+      </div>
+    </div>`;
+  $("#addCal").onclick = () => downloadICS(s.site);
+}
+function renderCountdown(s) {
+  $("#countdown").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.countdownTitle}</div>
+      <div class="cd reveal" id="cdUnits"></div>
+    </div>`;
+  tickCountdown(s);
+}
+function tickCountdown(s) {
+  const host = $("#cdUnits");
+  if (!host) return;
+  const upd = () => {
+    const t = timeLeftUntil(s.site.weddingDateISO);
+    if (t.done) {
+      host.innerHTML = `<h2 class="title foil">${SI.theDayHasArrived}</h2>`;
+      clearInterval(cdTimer);
+      return;
+    }
+    const u = [[t.days, SI.days], [t.hours, SI.hours], [t.minutes, SI.minutes], [t.seconds, SI.seconds]];
+    host.innerHTML = u.map(([n, l]) => `<div class="unit"><div class="num">${String(n).padStart(2, "0")}</div><div class="lab">${l}</div></div>`).join("");
+  };
+  clearInterval(cdTimer);
+  upd();
+  cdTimer = setInterval(upd, 1e3);
+}
+function renderRsvp(s) {
+  $("#rsvp").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.rsvpTitle}</div>
+      <h2 class="title">${SI.rsvpSub}</h2>
+      <p class="subtitle">${SI.rsvpHelp}</p>
+      <div class="card reveal" style="max-width:620px;margin:18px auto 0;text-align:left">
+        <div id="rsvpStage"></div>
+      </div>
+    </div>`;
+  rsvpSearchStage();
+}
+function rsvpSearchStage() {
+  rsvp.guest = null;
+  $("#rsvpStage").innerHTML = `
+    <div class="field">
+      <label>${SI.searchGuestList}</label>
+      <input class="input" id="rsvpQ" placeholder="${SI.familyNamePlaceholder}" autocomplete="off">
+    </div>
+    <button class="btn btn-primary" id="rsvpSearchBtn" style="width:100%">${SI.searchGuestList}</button>
+    <div class="results" id="rsvpResults"></div>`;
+  const q = $("#rsvpQ"), btn = $("#rsvpSearchBtn"), res = $("#rsvpResults");
+  const run = async () => {
+    const term = q.value.trim();
+    if (term.length < 2) {
+      res.innerHTML = "";
+      return;
+    }
+    btn.textContent = SI.searching;
+    btn.disabled = true;
+    const list = await searchGuests(term);
+    btn.textContent = SI.searchGuestList;
+    btn.disabled = false;
+    if (!list.length) {
+      res.innerHTML = `<p class="muted">${SI.noGuestFound}</p>`;
+      return;
+    }
+    res.innerHTML = list.map((g) => `
+      <button class="guest-row" data-id="${esc(g.id)}">
+        <span><span class="gn">${esc(g.name)}</span><br><span class="gf">${esc(g.familyName)}</span></span>
+        <span class="chip">${g.side === "bride" ? "මනාලියගේ" : "මනාලයාගේ"}</span>
+      </button>`).join("");
+    $$(".guest-row", res).forEach((row, i) => row.onclick = () => pickGuest(list[i]));
+  };
+  btn.onclick = run;
+  let deb;
+  q.oninput = () => {
+    clearTimeout(deb);
+    deb = setTimeout(run, 450);
+  };
+  q.onkeydown = (e) => {
+    if (e.key === "Enter") run();
+  };
+}
+function pickGuest(g) {
+  rsvp.guest = g;
+  const prior = readLocalRsvp(g.id);
+  rsvp.attending = prior ? prior.status === "confirmed" : null;
+  rsvp.liquor = prior ? !!prior.takingLiquor : false;
+  rsvp.party = prior ? prior.partySize || 1 : 1;
+  rsvp.dietary = prior ? prior.dietary || "" : "";
+  rsvpFormStage();
+}
+function rsvpFormStage() {
+  const s = state, g = rsvp.guest;
+  const liquor = s.site.allowLiquorPref ? `
+    <div class="field"><label>${SI.takingLiquor}</label>
+      <div class="choice" id="liqChoice">
+        <button class="opt ${rsvp.liquor ? "sel" : ""}" data-v="1">${SI.yes}</button>
+        <button class="opt ${!rsvp.liquor ? "sel" : ""}" data-v="0">${SI.no}</button>
+      </div></div>` : "";
+  const dietary = s.site.allowDietaryPref ? `
+    <div class="field"><label>${SI.dietary}</label>
+      <input class="input" id="rsvpDiet" value="${esc(rsvp.dietary)}"></div>` : "";
+  const attendingExtras = `
+    <div class="field"><label>${SI.guestCount}</label>
+      <div class="stepper"><button id="pMinus">−</button><span class="val" id="pVal">${rsvp.party}</span><button id="pPlus">+</button></div></div>
+    ${liquor}${dietary}`;
+  $("#rsvpStage").innerHTML = `
+    <p class="muted" style="margin-top:0">${esc(g.name)} · ${esc(g.familyName)}</p>
+    <div class="field"><label>${SI.willYouAttend}</label>
+      <div class="choice" id="attChoice">
+        <button class="opt ${rsvp.attending === true ? "sel" : ""}" data-v="1">${SI.yesAttend}</button>
+        <button class="opt ${rsvp.attending === false ? "sel" : ""}" data-v="0">${SI.noAttend}</button>
+      </div></div>
+    <div id="attExtras">${rsvp.attending ? attendingExtras : ""}</div>
+    <button class="btn btn-primary" id="rsvpSubmit" style="width:100%;margin-top:6px">${SI.confirmRsvp}</button>
+    <button class="btn btn-ghost" id="rsvpBack" style="width:100%;margin-top:8px">${SI.changeResponse}</button>`;
+  const refresh = () => rsvpFormStage();
+  $$("#attChoice .opt").forEach((b) => b.onclick = () => {
+    rsvp.attending = b.dataset.v === "1";
+    refresh();
+  });
+  if (rsvp.attending) {
+    $("#pMinus").onclick = () => {
+      rsvp.party = Math.max(1, rsvp.party - 1);
+      $("#pVal").textContent = rsvp.party;
+    };
+    $("#pPlus").onclick = () => {
+      rsvp.party = Math.min(20, rsvp.party + 1);
+      $("#pVal").textContent = rsvp.party;
+    };
+    $$("#liqChoice .opt").forEach((b) => b.onclick = () => {
+      rsvp.liquor = b.dataset.v === "1";
+      refresh();
+    });
+  }
+  $("#rsvpBack").onclick = rsvpSearchStage;
+  $("#rsvpSubmit").onclick = submit;
+  async function submit() {
+    if (rsvp.attending === null) {
+      alert(SI.willYouAttend);
+      return;
+    }
+    if (s.site.allowDietaryPref && $("#rsvpDiet")) rsvp.dietary = $("#rsvpDiet").value;
+    const btn = $("#rsvpSubmit");
+    btn.textContent = SI.sending;
+    btn.disabled = true;
+    try {
+      const status = await submitRsvp({
+        guestId: g.id,
+        guestName: g.name,
+        side: g.side,
+        attending: rsvp.attending,
+        takingLiquor: rsvp.liquor,
+        partySize: rsvp.party,
+        dietary: rsvp.dietary
+      });
+      rsvpThanksStage(status);
+    } catch (e) {
+      btn.textContent = SI.confirmRsvp;
+      btn.disabled = false;
+      alert("කණගාටුයි, පිළිතුර යැවීමේ දෝෂයක්. නැවත උත්සාහ කරන්න.");
+    }
+  }
+}
+function rsvpThanksStage(status) {
+  const msg = status === "confirmed" ? SI.rsvpConfirmedMsg : SI.rsvpDeclinedMsg;
+  $("#rsvpStage").innerHTML = `
+    <div class="thanks">
+      <div class="glamp lamp-glow">${pahana("", status === "confirmed")}</div>
+      <h3 class="title" style="margin:.2em 0">${SI.rsvpThanks}</h3>
+      <p class="subtitle">${msg}</p>
+      <button class="btn btn-ghost" id="rsvpAgain" style="margin-top:12px">${SI.changeResponse}</button>
+    </div>`;
+  $("#rsvpAgain").onclick = rsvpSearchStage;
+}
+function renderSeat(s) {
+  $("#seat").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.seatTitle}</div>
+      <h2 class="title">${SI.seatTitle}</h2>
+      <p class="subtitle">${SI.seatSub}</p>
+      <div class="card reveal" style="max-width:560px;margin:18px auto 0;text-align:left">
+        <div class="field"><label>${SI.searchGuestList}</label>
+          <input class="input" id="seatQ" placeholder="${SI.familyNamePlaceholder}" autocomplete="off"></div>
+        <button class="btn btn-primary" id="seatBtn" style="width:100%">${SI.findMySeat}</button>
+        <div class="results" id="seatResults"></div>
+      </div>
+    </div>`;
+  const q = $("#seatQ"), btn = $("#seatBtn"), res = $("#seatResults");
+  const run = async () => {
+    const term = q.value.trim();
+    if (term.length < 2) {
+      res.innerHTML = "";
+      return;
+    }
+    btn.textContent = SI.searching;
+    btn.disabled = true;
+    const list = await searchGuests(term);
+    btn.textContent = SI.findMySeat;
+    btn.disabled = false;
+    if (!list.length) {
+      res.innerHTML = `<p class="muted">${SI.noGuestFound}</p>`;
+      return;
+    }
+    res.innerHTML = list.map((g, i) => `<button class="guest-row" data-i="${i}"><span class="gn">${esc(g.name)}</span><span class="chip">${esc(g.familyName)}</span></button>`).join("");
+    $$(".guest-row", res).forEach((row, i) => row.onclick = () => showSeat(list[i]));
+  };
+  btn.onclick = run;
+  let deb;
+  q.oninput = () => {
+    clearTimeout(deb);
+    deb = setTimeout(run, 450);
+  };
+  q.onkeydown = (e) => {
+    if (e.key === "Enter") run();
+  };
+  function showSeat(g) {
+    res.innerHTML = g.tableNumber != null ? `<div class="seat-result"><p class="muted">${esc(g.name)}</p><div class="lab" style="color:var(--c-accent);letter-spacing:.14em">${SI.yourTableIs}</div><div class="seat-num foil">${esc(String(g.tableNumber))}</div><div class="kicker">${SI.tableNo}</div></div>` : `<p class="muted center">${SI.noTableYet}</p>`;
+  }
+}
+function renderAgenda(s) {
+  const src = s.agenda.length ? s.agenda : DEFAULT_AGENDA;
+  const items = src.map((e) => `
+    <div class="tl-item reveal">
+      <div class="tl-icon">${ornamentIcon(e.icon)}</div>
+      <div class="tl-body">
+        <div class="tl-time">${esc(e.timeLabel || "")}</div>
+        <div class="tl-title">${esc(e.titleSi || "")}</div>
+        <div class="tl-desc">${esc(e.descSi || "")}</div>
+      </div>
+    </div>`).join("");
+  $("#agenda").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.agendaTitle}</div>
+      <h2 class="title">${SI.agendaSub}</h2>
+      <div class="timeline" style="margin-top:24px">${items}</div>
+    </div>`;
+}
+function renderGallery(s) {
+  if (!s.gallery.length) {
+    $("#gallery").innerHTML = "";
+    return;
+  }
+  lightboxList = s.gallery.map((g) => cld(g.url, 1600));
+  const cells = s.gallery.map((g, i) => `
+    <button class="ph reveal" data-i="${i}" aria-label="${esc(g.alt || "")}">
+      <img loading="lazy" src="${cld(g.url, 700)}" alt="${esc(g.alt || "")}">
+    </button>`).join("");
+  $("#gallery").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.celebrating}</div>
+      <h2 class="title">${SI.galleryTitle}</h2>
+      <p class="subtitle">${SI.gallerySub}</p>
+      <div class="masonry" id="masonry" style="margin-top:24px">${cells}</div>
+    </div>`;
+  $$("#masonry .ph").forEach((b, i) => b.onclick = () => openLightbox(i));
+}
+function openLightbox(i) {
+  let lb = $("#lightbox");
+  if (!lb) {
+    lb = document.createElement("div");
+    lb.id = "lightbox";
+    lb.className = "lightbox";
+    document.body.appendChild(lb);
+  }
+  lb.innerHTML = `<button class="x icon-btn" aria-label="වසන්න">✕</button><img src="${lightboxList[i]}" alt="">`;
+  lb.classList.add("show");
+  lb.onclick = (e) => {
+    if (e.target === lb || e.target.classList.contains("x")) lb.classList.remove("show");
+  };
+}
+function renderBlessings(s) {
+  const list = s.blessings.length ? s.blessings.map((b) => `<div class="bless reveal"><p class="bm">“${esc(b.message)}”</p><div class="bn">${esc(b.guestName)}</div></div>`).join("") : `<p class="muted center" style="grid-column:1/-1">${SI.awaitingBlessings}</p>`;
+  $("#blessings").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.blessingsTitle}</div>
+      <h2 class="title">${SI.blessingsTitle}</h2>
+      <p class="subtitle">${SI.blessingsSub}</p>
+      <div class="card blessing-form reveal" style="text-align:left;margin-top:18px">
+        <div class="field"><label>${SI.yourName}</label><input class="input" id="blName"></div>
+        <div class="field"><label>${SI.yourBlessing}</label><textarea class="textarea" id="blMsg"></textarea></div>
+        <div class="suggest-row"><button class="btn btn-ghost" id="blCompose">✦ ${SI.composeBlessing}</button></div>
+        <button class="btn btn-primary" id="blSend" style="width:100%">${SI.sendBlessing}</button>
+        <p class="muted" id="blNote" style="margin:10px 0 0"></p>
+      </div>
+      <div class="blessings-list">${list}</div>
+    </div>`;
+  $("#blCompose").onclick = () => {
+    const pick = BLESSING_LIB[Math.floor(Math.random() * BLESSING_LIB.length)];
+    $("#blMsg").value = pick;
+  };
+  $("#blSend").onclick = async () => {
+    const name = $("#blName").value.trim(), msg = $("#blMsg").value.trim();
+    if (msg.length < 4) {
+      $("#blNote").textContent = SI.yourBlessing;
+      return;
+    }
+    const btn = $("#blSend");
+    btn.disabled = true;
+    btn.textContent = SI.sending;
+    try {
+      await postBlessing(name, msg);
+      $("#blMsg").value = "";
+      $("#blName").value = "";
+      $("#blNote").textContent = SI.blessingThanks;
+    } catch (_) {
+      $("#blNote").textContent = "කණගාටුයි, නැවත උත්සාහ කරන්න.";
+    }
+    btn.disabled = false;
+    btn.textContent = SI.sendBlessing;
+  };
+}
+function renderLamp(s) {
+  const st = s.stats || {};
+  const total = Math.max(st.totalGuests || 0, (st.confirmed || 0) + (st.pending || 0) + (st.declined || 0), 1);
+  const pct = Math.min(100, Math.round((st.confirmed || 0) / total * 100));
+  $("#lamp").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.lampTitle}</div>
+      <h2 class="title">${SI.lampTitle}</h2>
+      <p class="subtitle">${SI.lampSub}</p>
+      <div class="lamp-stage reveal" style="margin-top:18px">
+        <div class="kalasa ${pct > 0 ? "lamp-glow" : ""}">${punKalasa()}</div>
+        <div class="lamp-count foil">${st.confirmed || 0}</div>
+        <div class="kicker">${SI.confirmedCount}</div>
+        <div class="lamp-meter"><div class="lamp-fill" id="lampFill"></div></div>
+      </div>
+    </div>`;
+  requestAnimationFrame(() => {
+    const f = $("#lampFill");
+    if (f) f.style.width = pct + "%";
+  });
+}
+function renderLoveNote(s) {
+  $("#lovenote").innerHTML = `
+    <div class="wrap center">
+      <div class="kicker">${SI.loveNoteTitle}</div>
+      <h2 class="title">${SI.loveNoteSubtitle}</h2>
+      <div class="divider">${liyawela()}</div>
+      <div class="lovenote reveal">
+        <p>${esc(s.site.loveNoteSi)}</p>
+        <div class="sig">${esc(s.site.groomNameSi)} &amp; ${esc(s.site.brideNameSi)}</div>
+      </div>
+    </div>`;
+}
+function renderFooter(s) {
+  $("#footer").innerHTML = `
+    <div class="wrap center">
+      <div style="width:90px;margin:0 auto 6px;color:var(--c-primary)">${mandala()}</div>
+      <div class="fnames">${esc(s.site.groomNameSi)} &amp; ${esc(s.site.brideNameSi)}</div>
+      <div class="credit">හෙළ සිරිත · ${(/* @__PURE__ */ new Date()).getFullYear()}</div>
+    </div>`;
+}
+function observeReveals() {
+  if (!("IntersectionObserver" in window)) {
+    $$(".reveal").forEach((e) => e.classList.add("in"));
+    return;
+  }
+  io = io || new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) {
+        en.target.classList.add("in");
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  $$(".reveal:not(.in)").forEach((e) => io.observe(e));
+}
+var $, $$, rsvp, lightboxList, cdTimer, DEFAULT_AGENDA, BLESSING_LIB, io;
+var init_ui = __esm({
+  async "release/helasiritha-web/assets/js/ui.js"() {
+    await init_data();
+    init_i18n();
+    init_ornaments();
+    init_utils();
+    $ = (s, r = document) => r.querySelector(s);
+    $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    rsvp = { guest: null, attending: null, liquor: false, party: 1, dietary: "", done: null };
+    lightboxList = [];
+    cdTimer = null;
+    DEFAULT_AGENDA = [
+      { timeLabel: "", titleSi: "ආගන්තුක පිළිගැනීම", descSi: "මඟුල් බෙර හඬ මැද, සේසත් සෙවණේ ආරාධිතයන් සාදරයෙන් පිළිගැනීම.", icon: "sesath" },
+      { timeLabel: "", titleSi: "පෝරුවට වැඩම වීම", descSi: "ජයමංගල ගාථා ගායනය මධ්‍යයේ මනාල යුවළ පෝරුවට වැඩම කරවීම.", icon: "poruwa" },
+      { timeLabel: "", titleSi: "පෝරු චාරිත්‍ර", descSi: "බුලත් අතු හුවමාරුව, ඇඟිලි මුදු පැළඳවීම හා පිරිත් නූල් බැඳීම ඇතුළු සිරිත් විරිත්.", icon: "ring" },
+      { timeLabel: "", titleSi: "මඟුල් පහන දැල්වීම", descSi: "උභය පාර්ශවයේ ආශීර්වාදය මැද මඟුල් පහන දල්වා සුබ මොහොත සැමරීම.", icon: "lamp" },
+      { timeLabel: "", titleSi: "භෝජන සංග්‍රහය", descSi: "රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.", icon: "feast" },
+      { timeLabel: "", titleSi: "සැමරුම් හා නර්තන", descSi: "උඩරට නර්තන අංග හා සතුට බෙදාගන්නා සැමරුම් අවස්ථාව.", icon: "mayura" }
+    ];
+    BLESSING_LIB = [
+      "ඔබ දෙදෙනාගේ විවාහ දිවිය සැම කල්හිම සෙනෙහසින් හා සමඟියෙන් පිරී, දිගාසිරි සපිරි වේවා!",
+      "අෂ්ට ලෝක ධර්මයෙන් නොසැලී, සුව සේ දිගු කල් එක්ව වෙසෙත්වා!",
+      "සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ සෙනෙහස සදා බැබළේවා!",
+      "තෙරුවන් සරණයි! නිරෝගී සුවය හා දීර්ඝායුෂ ඔබ දෙපළට ලැබේවා!",
+      "පුතු දූ සම්පත්තියෙන් හා සශ්‍රීකත්වයෙන් ඔබ පවුල පිරී යේවා!",
+      "අලුත් ජීවිතය සුබ මොහොතින් ඇරඹේවා! ඔබ දෙදෙනාට සුබ පැතුම්!"
+    ];
+    subscribe(renderAll);
+  }
+});
+
+// release/helasiritha-web/assets/js/app.js
+init_firebase_config();
+init_i18n();
+init_ornaments();
+var $2 = (s) => document.querySelector(s);
+if (!FIREBASE_READY) {
+  const n = document.createElement("div");
+  n.className = "setup-note";
+  n.textContent = SI.setupPending + "  (assets/js/firebase-config.js)";
+  document.body.appendChild(n);
+}
+function seedDust() {
+  const g = $2("#gateway");
+  if (!g) return;
+  for (let i = 0; i < 26; i++) {
+    const d = document.createElement("span");
+    d.className = "dust";
+    d.style.left = Math.random() * 100 + "%";
+    d.style.bottom = Math.random() * 40 + "%";
+    d.style.animationDelay = Math.random() * 5 + "s";
+    d.style.animationDuration = 3.5 + Math.random() * 3 + "s";
+    g.appendChild(d);
+  }
+}
+$2("#glamp").innerHTML = pahana("", true);
+var entered = false;
+function enterSite() {
+  if (entered) return;
+  entered = true;
+  $2("#gateway").classList.add("gone");
+  document.body.style.overflow = "";
+  startMusic(true);
+  setTimeout(() => {
+    $2("#gateway").remove();
+  }, 1e3);
+}
+$2("#enterBtn").addEventListener("click", enterSite);
+$2("#glamp").addEventListener("click", enterSite);
+document.body.style.overflow = "hidden";
+function seedPetals() {
+  const host = $2("#petals");
+  if (!host) return;
+  const N = window.matchMedia("(max-width:600px)").matches ? 9 : 16;
+  for (let i = 0; i < N; i++) {
+    const p = document.createElement("div");
+    p.className = "petal";
+    const size = 14 + Math.random() * 22;
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = 9 + Math.random() * 10 + "s";
+    p.style.animationDelay = Math.random() * 10 + "s";
+    p.style.opacity = (0.3 + Math.random() * 0.4).toFixed(2);
+    p.innerHTML = Math.random() > 0.5 ? nelumMala("") : mandala("");
+    host.appendChild(p);
+  }
+}
+var audio = null;
+var playing = false;
+function ensureAudio() {
+  const url = window.__HS_AUDIO__;
+  if (!url) return null;
+  if (!audio) {
+    audio = new Audio(url);
+    audio.loop = true;
+    audio.volume = 0.5;
+  }
+  return audio;
+}
+function startMusic(auto) {
+  const a = ensureAudio();
+  if (!a) return;
+  a.play().then(() => {
+    playing = true;
+    reflectMusic();
+  }).catch(() => {
+    if (!auto) {
+    }
+  });
+}
+function reflectMusic() {
+  const btn = $2("#musicBtn");
+  btn.classList.toggle("music-on", playing);
+  btn.setAttribute("aria-pressed", String(playing));
+}
+$2("#musicBtn").addEventListener("click", () => {
+  const a = ensureAudio();
+  if (!a) {
+    return;
+  }
+  if (playing) {
+    a.pause();
+    playing = false;
+  } else {
+    a.play().then(() => {
+      playing = true;
+      reflectMusic();
+    }).catch(() => {
+    });
+  }
+  reflectMusic();
+});
+var topbar = $2("#topbar");
+var toTop = $2("#toTop");
+window.addEventListener("scroll", () => {
+  const y = window.scrollY;
+  topbar.classList.toggle("solid", y > 40);
+  toTop.classList.toggle("show", y > 600);
+}, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  let raf = 0;
+  document.addEventListener("pointermove", (e) => {
+    const el = e.target.closest && e.target.closest("[data-tilt]");
+    document.querySelectorAll("[data-tilt]").forEach((t) => {
+      if (t !== el) {
+        t.style.setProperty("--rx", "0deg");
+        t.style.setProperty("--ry", "0deg");
+      }
+    });
+    if (!el) return;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      el.style.setProperty("--ry", (px * 7).toFixed(2) + "deg");
+      el.style.setProperty("--rx", (-py * 7).toFixed(2) + "deg");
+    });
+  }, { passive: true });
+}
+seedDust();
+seedPetals();
+reflectMusic();
+init_ui().then(() => ui_exports).then(async () => {
+  if (!FIREBASE_READY) return;
+  const data = await init_data().then(() => data_exports);
+  data.subscribe((s) => {
+    window.__HS_AUDIO__ = s.site.ambientAudioUrl || "";
+  });
+  data.startRealtime();
+});
+
+  </script>
 </body>
 </html>
