@@ -172,7 +172,7 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 @keyframes eq { 0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)} }
 
 /* ═══════════════════ HERO (Poruwa) ═════════════════════════════════════ */
-.hero { min-height: 100svh; display: grid; place-items: center; text-align: center; padding-top: 84px; position: relative; }
+.hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 92px 16px 40px; position: relative; }
 .hero .thorana { position: absolute; inset: clamp(60px,9vw,90px) clamp(8px,6vw,120px) 0; color: color-mix(in srgb,var(--c-primary) 70%, transparent); z-index: 0; pointer-events: none; }
 .hero .thorana svg { width: 100%; height: 100%; }
 .hero-inner { position: relative; z-index: 1; max-width: 760px; }
@@ -188,7 +188,7 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 @keyframes kcSway { 0%,100% { transform: rotate(-1.4deg); } 50% { transform: rotate(1.4deg); } }
 @keyframes kcShimmer { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
 .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
-.scroll-prompt { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: .85rem; color: var(--c-accent); display: grid; place-items: center; gap: 4px; }
+.scroll-prompt { position: static; margin-top: 26px; transform: none; left: auto; bottom: auto; font-size: .85rem; color: var(--c-accent); display: grid; place-items: center; gap: 4px; }
 .scroll-prompt .chev { width: 22px; height: 22px; animation: floaty 1.8s ease-in-out infinite; }
 @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
 
@@ -386,26 +386,23 @@ body::after{
   background-size:84px 84px;
 }
 
-/* proud, traditional decorative Sinhala for every couple-name & signature */
-#gateway .names, .hero .couple, .hero .amp, .parents .nm,
-.lovenote .sig, .site-footer .fnames, .vel-akuru{
-  font-family:var(--font-si-deco) !important; letter-spacing:.012em; font-weight:800;
+/* Decorative traditional Sinhala ONLY for the love-note signature
+   (the "කෞශානි හා ගෞරව" beneath "අපගේ ආදරණීය අමුත්තනට").
+   Every other couple-name keeps its original clean Abhaya Libre face. */
+.lovenote .sig, .vel-akuru{
+  font-family:var(--font-si-deco); letter-spacing:.01em; font-weight:700;
 }
-.hero .amp{ font-weight:600; }
 
 /* ── EMBOSS: carved-into-ivory titles, raised gold foil ── */
 .title{ text-shadow:0 1px 0 var(--emboss-light), 0 2px 2px var(--emboss-dark); }
 .foil{
   text-shadow:
     0 1px 0 var(--emboss-light),
-    0 2px 1px rgba(60,40,8,.4),
-    0 0 20px color-mix(in srgb,var(--c-primary) 24%, transparent);
+    0 1px 1px rgba(60,40,8,.32),
+    0 0 12px color-mix(in srgb,var(--c-primary) 16%, transparent);
 }
 .hero .couple{
-  text-shadow:
-    0 1px 0 var(--emboss-light),
-    0 3px 2px rgba(60,40,8,.42),
-    0 0 26px color-mix(in srgb,var(--c-primary) 28%, transparent);
+  text-shadow:0 1px 0 var(--emboss-light), 0 1px 3px color-mix(in srgb,var(--c-primary) 16%, transparent);
 }
 .kicker{ text-shadow:0 1px 0 var(--emboss-light); }
 
@@ -471,6 +468,35 @@ body::after{
   body::after{ display:none; }
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+ *  ⟡  RESPONSIVE SAFETY (every device · no clipping · no overlap)  ⟡
+ * ════════════════════════════════════════════════════════════════════════ */
+html { overflow-x: hidden; }
+svg, img, canvas { max-width: 100%; }
+/* never let words/long Sinhala run under a decorative frame */
+.hero-inner, .wrap, .card, .panel { overflow-wrap: anywhere; }
+
+/* small phones — keep the arch clear of the couple & names, give breathing room */
+@media (max-width: 600px) {
+  .hero { padding: 84px 14px 34px; }
+  .hero .thorana { inset: 64px 2px auto; height: 62%; opacity: .9; }
+  .hero .couple-art { width: clamp(168px, 60vw, 250px); }
+  .hero .couple { font-size: clamp(2.2rem, 11vw, 3.2rem); }
+  .scroll-prompt { margin-top: 20px; }
+  .card { padding-left: 16px; padding-right: 16px; }
+  .invite-actions { flex-direction: column; }
+  .invite-actions .btn { width: 100%; }
+}
+/* very small phones */
+@media (max-width: 380px) {
+  .hero .couple { font-size: clamp(2rem, 13vw, 2.6rem); }
+  .parents .nm { font-size: clamp(1.6rem, 9vw, 2.2rem); }
+}
+/* large screens — keep the grand arch from stretching too wide */
+@media (min-width: 1100px) {
+  .hero .thorana { inset: 80px max(120px, calc(50% - 460px)) 0; }
+}
+
 </style>
 
   <!-- Open Graph -->
@@ -530,8 +556,8 @@ body::after{
   </noscript>
 
   <script type="module">
-var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{for(var i in e)Bt(t,i,{get:e[i],enumerable:!0})};var _t,H,nt,ot,P,q=M(()=>{_t="12.14.0",H=`https://www.gstatic.com/firebasejs/${_t}`,nt={apiKey:"AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",authDomain:"helasiritha-official.firebaseapp.com",projectId:"helasiritha-official",storageBucket:"helasiritha-official.firebasestorage.app",messagingSenderId:"993883662089",appId:"1:993883662089:web:b583123218df07be9155d8",measurementId:"G-PBJWLXWVD9"},ot={cloudName:"dzrfpc9be",uploadPreset:"helasiritha_unsigned"},P=!0});var r,G=M(()=>{r={ayubowan:"ආයුබෝවන්",openInvitation:"ආරාධනා පත්‍රය විවෘත කරන්න",loading:"මඳක් රැඳී සිටින්න…",enterPrompt:"පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",gettingMarried:"අප විවාහ දිවියට එළඹෙමු",togetherWithFamilies:"උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",joinUsOn:"අප හා එක්වන්න",weddingOf:"මංගල දිනය",rsvp:"පැමිණීම තහවුරු කිරීම",scrollPrompt:"පහළට ගෙන යන්න",invitationTitle:"ආරාධනාව",requestPresence:"ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",shubaMangalam:"ශ්‍රී සුබ මංගලම්",belovedDaughter:"ආදරණීය දියණිය",belovedSon:"ආදරණීය පුත්",weddingDetails:"මංගල තොරතුරු",date:"දිනය",time:"වේලාව",venue:"ස්ථානය",viewLocation:"ස්ථානය සිතියමින් බලන්න",reception:"පිළිගැනීමේ උත්සවය",andSon:"ගේ පුත්",andDaughter:"ගේ දියණිය",countdownTitle:"මංගල දිනයට තවත්",days:"දින",hours:"පැය",minutes:"මිනිත්තු",seconds:"තත්පර",theDayHasArrived:"අද එම සුභ මංගල දිනයයි!",rsvpTitle:"පැමිණීම තහවුරු කිරීම",rsvpSub:"ඔබව සාදරයෙන් පිළිගනිමු",rsvpHelp:"ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.",familyNamePlaceholder:"ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",searchGuestList:"ආරාධිත නාම ලේඛනය සොයන්න",searching:"සොයමින්…",noGuestFound:"කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය. නැවත උත්සාහ කරන්න.",selectYourName:"කරුණාකර ඔබගේ නම තෝරන්න",willYouAttend:"ඔබ සහභාගී වෙනවා ද?",yesAttend:"ඔව්, සතුටින් පැමිණෙමි",noAttend:"කනගාටුයි, පැමිණිය නොහැක",takingLiquor:"මත්පැන් අවශ්‍ය ද?",yes:"ඔව්",no:"නැහැ",guestCount:"පැමිණෙන සංඛ්‍යාව",dietary:"ආහාර අවශ්‍යතා (ඇත්නම්)",confirmRsvp:"පිළිතුර තහවුරු කරන්න",sending:"යවමින්…",rsvpThanks:"ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",rsvpConfirmedMsg:"ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",rsvpDeclinedMsg:"ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",changeResponse:"පිළිතුර වෙනස් කරන්න",agendaTitle:"මංගල වැඩසටහන් පෙළගැස්ම",agendaSub:"අපගේ දිනයේ සුවිශේෂ මොහොත්",galleryTitle:"සෙනෙහසේ මංසලකුණු",gallerySub:"සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…",loveNoteTitle:"විශේෂ සටහන",loveNoteSubtitle:"අපගේ ආදරණීය අමුත්තනට",withLove:"සෙනෙහසින්,",blessingsTitle:"සුබ පැතුම් පොත",blessingsSub:"අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",yourName:"ඔබගේ නම",yourBlessing:"ඔබගේ සුබ පැතුම",composeBlessing:"සුබ පැතුමක් යෝජනා කරන්න",composing:"රචනා කරමින්…",sendBlessing:"සුබ පැතුම තැබීම",blessingThanks:"ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",awaitingBlessings:"පළමු සුබ පැතුම ඔබගෙන් වේවා…",lampTitle:"මංගල පහන",lampSub:"තහවුරු වන සෑම ආරාධිතයෙකු සමඟම පහන බැබළේ.",guestsGathering:"ආරාධිතයන් රැස්වෙමින්",confirmedCount:"තහවුරු වූ ආරාධිතයන්",backToTop:"ඉහළට යන්න",callUs:"අමතන්න",addToCalendar:"දින දර්ශනයට එක් කරන්න",shareWhatsapp:"WhatsApp හරහා බෙදාගන්න",celebrating:"සැමරුම",menu:"මෙනුව",setupPending:"පද්ධතිය සැකසෙමින් පවතී. මඳක් පසුව නැවත පිවිසෙන්න."}});function pt(t,e){return(qt[t]||C)(e)}var v,D,lt,C,Ot,S,ct,L,Ft,Ht,Pt,dt,qt,U=M(()=>{v=(t="")=>`class="${t}" fill="none" aria-hidden="true" focusable="false"`,D=(t="orn-liyawela")=>`
-<svg ${v(t)} viewBox="0 0 600 60">
+var Bt=Object.defineProperty;var C=(t,e)=>()=>(t&&(e=t(t=0)),e);var st=(t,e)=>{for(var i in e)Bt(t,i,{get:e[i],enumerable:!0})};var _t,H,nt,ot,P,q=C(()=>{_t="12.14.0",H=`https://www.gstatic.com/firebasejs/${_t}`,nt={apiKey:"AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",authDomain:"helasiritha-official.firebaseapp.com",projectId:"helasiritha-official",storageBucket:"helasiritha-official.firebasestorage.app",messagingSenderId:"993883662089",appId:"1:993883662089:web:b583123218df07be9155d8",measurementId:"G-PBJWLXWVD9"},ot={cloudName:"dzrfpc9be",uploadPreset:"helasiritha_unsigned"},P=!0});var r,G=C(()=>{r={ayubowan:"ආයුබෝවන්",openInvitation:"ආරාධනා පත්‍රය විවෘත කරන්න",loading:"මඳක් රැඳී සිටින්න…",enterPrompt:"පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",gettingMarried:"අප විවාහ දිවියට එළඹෙමු",togetherWithFamilies:"උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",joinUsOn:"අප හා එක්වන්න",weddingOf:"මංගල දිනය",rsvp:"පැමිණීම තහවුරු කිරීම",scrollPrompt:"පහළට ගෙන යන්න",invitationTitle:"ආරාධනාව",requestPresence:"ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",shubaMangalam:"ශ්‍රී සුබ මංගලම්",belovedDaughter:"ආදරණීය දියණිය",belovedSon:"ආදරණීය පුත්",weddingDetails:"මංගල තොරතුරු",date:"දිනය",time:"වේලාව",venue:"ස්ථානය",viewLocation:"ස්ථානය සිතියමින් බලන්න",reception:"පිළිගැනීමේ උත්සවය",andSon:"ගේ පුත්",andDaughter:"ගේ දියණිය",countdownTitle:"මංගල දිනයට තවත්",days:"දින",hours:"පැය",minutes:"මිනිත්තු",seconds:"තත්පර",theDayHasArrived:"අද එම සුභ මංගල දිනයයි!",rsvpTitle:"පැමිණීම තහවුරු කිරීම",rsvpSub:"ඔබව සාදරයෙන් පිළිගනිමු",rsvpHelp:"ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.",familyNamePlaceholder:"ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",searchGuestList:"ආරාධිත නාම ලේඛනය සොයන්න",searching:"සොයමින්…",noGuestFound:"කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය. නැවත උත්සාහ කරන්න.",selectYourName:"කරුණාකර ඔබගේ නම තෝරන්න",willYouAttend:"ඔබ සහභාගී වෙනවා ද?",yesAttend:"ඔව්, සතුටින් පැමිණෙමි",noAttend:"කනගාටුයි, පැමිණිය නොහැක",takingLiquor:"මත්පැන් අවශ්‍ය ද?",yes:"ඔව්",no:"නැහැ",guestCount:"පැමිණෙන සංඛ්‍යාව",dietary:"ආහාර අවශ්‍යතා (ඇත්නම්)",confirmRsvp:"පිළිතුර තහවුරු කරන්න",sending:"යවමින්…",rsvpThanks:"ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",rsvpConfirmedMsg:"ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",rsvpDeclinedMsg:"ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",changeResponse:"පිළිතුර වෙනස් කරන්න",agendaTitle:"මංගල වැඩසටහන් පෙළගැස්ම",agendaSub:"අපගේ දිනයේ සුවිශේෂ මොහොත්",galleryTitle:"සෙනෙහසේ මංසලකුණු",gallerySub:"සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…",loveNoteTitle:"විශේෂ සටහන",loveNoteSubtitle:"අපගේ ආදරණීය අමුත්තනට",withLove:"සෙනෙහසින්,",blessingsTitle:"සුබ පැතුම් පොත",blessingsSub:"අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",yourName:"ඔබගේ නම",yourBlessing:"ඔබගේ සුබ පැතුම",composeBlessing:"සුබ පැතුමක් යෝජනා කරන්න",composing:"රචනා කරමින්…",sendBlessing:"සුබ පැතුම තැබීම",blessingThanks:"ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",awaitingBlessings:"පළමු සුබ පැතුම ඔබගෙන් වේවා…",lampTitle:"මංගල පහන",lampSub:"තහවුරු වන සෑම ආරාධිතයෙකු සමඟම පහන බැබළේ.",guestsGathering:"ආරාධිතයන් රැස්වෙමින්",confirmedCount:"තහවුරු වූ ආරාධිතයන්",backToTop:"ඉහළට යන්න",callUs:"අමතන්න",addToCalendar:"දින දර්ශනයට එක් කරන්න",shareWhatsapp:"WhatsApp හරහා බෙදාගන්න",celebrating:"සැමරුම",menu:"මෙනුව",setupPending:"පද්ධතිය සැකසෙමින් පවතී. මඳක් පසුව නැවත පිවිසෙන්න."}});function pt(t,e){return(qt[t]||S)(e)}var f,D,lt,S,Ft,M,ct,T,Ot,Ht,Pt,dt,qt,j=C(()=>{f=(t="")=>`class="${t}" fill="none" aria-hidden="true" focusable="false"`,D=(t="orn-liyawela")=>`
+<svg ${f(t)} viewBox="0 0 600 60">
   <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
     <path d="M10 30 H230" opacity="0.45"/>
     <path d="M370 30 H590" opacity="0.45"/>
@@ -547,7 +573,7 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <circle cx="300" cy="44" r="3.5"/>
   </g>
 </svg>`,lt=(t="orn-kalasa")=>`
-<svg ${v(t)} viewBox="0 0 120 150">
+<svg ${f(t)} viewBox="0 0 120 150">
   <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
     <path d="M60 8c0 18-10 26-10 38"/>
     <path d="M60 8c0 18 10 26 10 38"/>
@@ -561,8 +587,8 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <path d="M34 108c16 8 36 8 52 0" opacity="0.55"/>
     <circle cx="60" cy="100" r="6" fill="currentColor" opacity="0.3"/>
   </g>
-</svg>`,C=(t="orn-lotus")=>`
-<svg ${v(t)} viewBox="0 0 100 70">
+</svg>`,S=(t="orn-lotus")=>`
+<svg ${f(t)} viewBox="0 0 100 70">
   <g fill="currentColor">
     <path d="M50 8c6 10 8 28 0 46-8-18-6-36 0-46Z" opacity="0.92"/>
     <path d="M50 18c12 8 18 24 16 40-14-8-20-24-16-40Z" opacity="0.7"/>
@@ -571,8 +597,8 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <path d="M50 26c-16 4-26 18-28 34 16-4 26-18 28-34Z" opacity="0.48"/>
   </g>
   <path d="M14 60c14 6 58 6 72 0" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
-</svg>`,Ot=(t="orn-sesath")=>{let e="";for(let s=0;s<16;s++){let n=s/16*Math.PI*2;e+=`<line x1="${(50+Math.cos(n)*9).toFixed(2)}" y1="${(46+Math.sin(n)*9).toFixed(2)}" x2="${(50+Math.cos(n)*34).toFixed(2)}" y2="${(46+Math.sin(n)*34).toFixed(2)}" opacity="0.55"/>`}return`
-<svg ${v(t)} viewBox="0 0 100 100">
+</svg>`,Ft=(t="orn-sesath")=>{let e="";for(let a=0;a<16;a++){let n=a/16*Math.PI*2;e+=`<line x1="${(50+Math.cos(n)*9).toFixed(2)}" y1="${(46+Math.sin(n)*9).toFixed(2)}" x2="${(50+Math.cos(n)*34).toFixed(2)}" y2="${(46+Math.sin(n)*34).toFixed(2)}" opacity="0.55"/>`}return`
+<svg ${f(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="1.4">
     <circle cx="50" cy="46" r="34" opacity="0.5"/>
     <circle cx="50" cy="46" r="22" opacity="0.7"/>
@@ -580,8 +606,8 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     ${e}
     <line x1="50" y1="80" x2="50" y2="98" stroke-width="2"/>
   </g>
-</svg>`},S=(t="orn-pahana",e=!0)=>`
-<svg ${v(t)} viewBox="0 -14 60 110">
+</svg>`},M=(t="orn-pahana",e=!0)=>`
+<svg ${f(t)} viewBox="0 -14 60 110">
   ${e?`<g class="flame">
     <path d="M30 4c6 8 9 14 9 21 0 6-4 11-9 11s-9-5-9-11c0-7 3-13 9-21Z" fill="currentColor" opacity="0.92"/>
     <path d="M30 16c2 4 3 8 3 12 0 3-1 6-3 6s-3-3-3-6c0-4 1-8 3-12Z" fill="#FFF7DA"/>
@@ -593,21 +619,21 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <ellipse cx="30" cy="88" rx="14" ry="4" opacity="0.18"/>
   </g>
 </svg>`,ct=(t="orn-thorana")=>`
-<svg ${v(t)} viewBox="0 0 400 520" preserveAspectRatio="none">
+<svg ${f(t)} viewBox="0 0 400 520" preserveAspectRatio="none">
   <path d="M20 500V190C20 96 100 20 200 20s180 76 180 170v310" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
   <path d="M34 500V192C34 106 108 36 200 36s166 70 166 156v308" stroke="currentColor" stroke-width="1" opacity="0.4"/>
   <g fill="currentColor" transform="translate(200 22)">
     <path d="M0 0c5 6 7 14 0 24-7-10-5-18 0-24Z"/>
   </g>
-</svg>`,L=(t="orn-mandala")=>{let e="";for(let n=0;n<12;n++){let l=n/12*360;e+=`<path d="M60 18c6 8 6 20 0 30-6-10-6-22 0-30Z" fill="currentColor" opacity="0.5" transform="rotate(${l} 60 60)"/>`}let s="";for(let n=0;n<12;n++){let l=n/12*360+15;s+=`<path d="M60 34c4 5 4 13 0 20-4-7-4-15 0-20Z" fill="currentColor" opacity="0.7" transform="rotate(${l} 60 60)"/>`}return`
-<svg ${v(t)} viewBox="0 0 120 120">
+</svg>`,T=(t="orn-mandala")=>{let e="";for(let n=0;n<12;n++){let o=n/12*360;e+=`<path d="M60 18c6 8 6 20 0 30-6-10-6-22 0-30Z" fill="currentColor" opacity="0.5" transform="rotate(${o} 60 60)"/>`}let a="";for(let n=0;n<12;n++){let o=n/12*360+15;a+=`<path d="M60 34c4 5 4 13 0 20-4-7-4-15 0-20Z" fill="currentColor" opacity="0.7" transform="rotate(${o} 60 60)"/>`}return`
+<svg ${f(t)} viewBox="0 0 120 120">
   <circle cx="60" cy="60" r="56" stroke="currentColor" stroke-width="1" opacity="0.3"/>
   <circle cx="60" cy="60" r="46" stroke="currentColor" stroke-width="1" opacity="0.4"/>
-  ${e}${s}
+  ${e}${a}
   <circle cx="60" cy="60" r="9" fill="currentColor" opacity="0.9"/>
   <circle cx="60" cy="60" r="4" fill="#FFF7DA"/>
-</svg>`},Ft=(t="orn-mayura")=>`
-<svg ${v(t)} viewBox="0 0 140 120">
+</svg>`},Ot=(t="orn-mayura")=>`
+<svg ${f(t)} viewBox="0 0 140 120">
   <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M70 96c0-26 8-44 22-58" />
     <path d="M70 96c0-26-8-44-22-58" />
@@ -620,81 +646,129 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <path d="M70 96l-6 14M70 96l6 14" />
   </g>
 </svg>`,Ht=(t="orn-ring")=>`
-<svg ${v(t)} viewBox="0 0 100 100">
+<svg ${f(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="2" fill="none">
     <circle cx="38" cy="58" r="22" opacity="0.85"/>
     <circle cx="62" cy="58" r="22" opacity="0.85"/>
     <path d="M50 30l6 8h-12l6-8Z" fill="currentColor"/>
   </g>
 </svg>`,Pt=(t="orn-feast")=>`
-<svg ${v(t)} viewBox="0 0 100 100">
+<svg ${f(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="2" stroke-linejoin="round">
     <ellipse cx="50" cy="62" rx="34" ry="12" fill="currentColor" opacity="0.15"/>
     <path d="M30 58c4-12 36-12 40 0" />
     <circle cx="50" cy="46" r="7" fill="currentColor" opacity="0.4"/>
     <path d="M24 40v22M22 40h4M78 40c0 8-4 10-4 14v8" />
   </g>
-</svg>`,dt=(t="orn-couple")=>{let e="#E7C9A6",i="#2E2113",s="#1E2A4F",n="#FFFDF8",l="";for(let p=0;p<8;p++)l+=`<path d="M0 -13c3 4 3 9 0 13-3-4-3-9 0-13Z" fill="currentColor" opacity="0.65" transform="rotate(${p*45})"/>`;return`
-<svg ${v(t)} viewBox="0 0 360 340">
-  <ellipse cx="180" cy="320" rx="124" ry="14" fill="currentColor" opacity="0.12"/>
+</svg>`,dt=(t="orn-couple")=>{let e="#E8CBA8",i="#2A1E12",a="#1F2A44",n="#FBF5E8",o="#FFFFFF",p="#E2A08F",s="";for(let m=0;m<12;m++)s+=`<path d="M0 -11c2.4 3 2.4 8 0 11-2.4-3-2.4-8 0-11Z" fill="${o}" opacity="0.92" transform="rotate(${m*30})"/>`;let c=m=>m.map(([v,y])=>`<circle cx="${v}" cy="${y}" r="2.1" fill="currentColor" opacity="0.55"/>`).join("");return`
+<svg ${f(t)} viewBox="0 0 380 360" role="img" aria-label="උඩරට සිරිතින් සැරසුණු මනාලිය හා මනාලයා">
+  <ellipse cx="190" cy="340" rx="132" ry="13" fill="currentColor" opacity="0.12"/>
   <g class="kc-sway">
 
-    <!-- ░░░ BRIDE (left) ░░░ -->
+    <!-- ════ BRIDE · උඩරට ඔසරිය (left, facing in) ════ -->
     <g>
-      <path d="M120 152c-34 4-52 36-58 96-2 22 12 30 58 30s60-8 58-30c-6-60-24-92-58-96Z" fill="${n}" stroke="currentColor" stroke-width="1.4"/>
-      <path d="M120 154c-22 6-31 27-26 60 15-7 25-24 41-31Z" fill="#FBF1DB" stroke="currentColor" stroke-width="1"/>
-      <path d="M120 154c-22 6-31 27-26 60" stroke="currentColor" stroke-width="2" opacity="0.8" class="kc-shimmer"/>
-      <g fill="currentColor" opacity="0.5" class="kc-shimmer">
-        <circle cx="112" cy="212" r="2.4"/><circle cx="134" cy="228" r="2.4"/><circle cx="100" cy="246" r="2.4"/>
-        <circle cx="142" cy="254" r="2.4"/><circle cx="116" cy="270" r="2.4"/><circle cx="96" cy="280" r="2.4"/><circle cx="150" cy="282" r="2.4"/>
+      <!-- osariya skirt -->
+      <path d="M110 196 C92 216 78 268 72 320 C72 320 90 328 122 328 C154 328 172 320 172 320 C164 268 150 216 132 196 Z"
+            fill="${o}" stroke="currentColor" stroke-width="1.5"/>
+      <!-- pleat lines -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5" fill="none" class="kc-shimmer">
+        <path d="M120 200 C112 250 102 290 92 322"/>
+        <path d="M122 200 C122 252 122 292 122 324"/>
+        <path d="M124 200 C134 250 146 290 154 322"/>
       </g>
-      <path d="M120 150c-18 0-30 6-34 18 10 8 24 11 34 11s24-3 34-11c-4-12-16-18-34-18Z" fill="currentColor" opacity="0.85" class="kc-shimmer"/>
-      <path d="M150 180c14 2 26 9 30 19" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
-      <rect x="113" y="138" width="14" height="18" rx="6" fill="${e}"/>
-      <path d="M106 150c8 9 20 9 28 0" stroke="currentColor" stroke-width="2.4" fill="none" class="kc-shimmer"/>
-      <path d="M110 156c6 6 14 6 20 0" stroke="currentColor" stroke-width="1.6" fill="none" opacity="0.7"/>
-      <circle cx="120" cy="115" r="33" fill="${e}"/>
-      <path d="M120 82c-27 0-37 23-33 45 3-10 8-15 8-15 2-12 10-20 25-20s23 8 25 20c0 0 5 5 8 15 4-22-6-45-33-45Z" fill="${i}"/>
-      <circle cx="120" cy="78" r="13" fill="${i}"/>
-      <g fill="${n}"><circle cx="133" cy="77" r="3"/><circle cx="126" cy="68" r="3"/><circle cx="115" cy="68" r="3"/></g>
-      <path d="M99 103c14 8 28 8 42 0" stroke="currentColor" stroke-width="2" fill="none" class="kc-shimmer"/>
-      <path d="M120 103v9l-4 5h8l-4-5Z" fill="currentColor" class="kc-shimmer"/>
-      <path d="M109 119c3 3 7 3 10 0M122 119c3 3 7 3 10 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <path d="M113 131c5 4 12 4 17 0" stroke="#B6694F" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <circle cx="104" cy="127" r="4.5" fill="#E08DA0" opacity="0.25"/>
-      <circle cx="138" cy="127" r="4.5" fill="#E08DA0" opacity="0.25"/>
+      <!-- gold dot pattern -->
+      ${c([[100,238],[124,250],[146,240],[92,272],[122,284],[152,272],[108,306],[138,306]])}
+      <!-- pallu draped over far shoulder with tasselled fall -->
+      <path d="M132 198 C150 212 160 256 162 312 C162 312 152 314 150 312 C148 262 140 222 124 206 Z"
+            fill="${n}" stroke="currentColor" stroke-width="1.1" opacity="0.95"/>
+      <g stroke="currentColor" stroke-width="1.3" opacity="0.7">
+        <path d="M150 314v9M155 313v9M160 311v9"/>
+      </g>
+      <!-- bodice (hettuwa) -->
+      <path d="M103 170 C103 156 110 149 121 149 C132 149 139 156 139 170 L140 198 C128 204 114 204 102 198 Z"
+            fill="${n}" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M104 176 C116 182 126 182 138 176" stroke="currentColor" stroke-width="1" opacity="0.6" fill="none"/>
+      <!-- extended arm to joined hands -->
+      <path d="M134 174 C150 180 166 196 176 208" stroke="${n}" stroke-width="12" stroke-linecap="round" fill="none"/>
+      <path d="M168 202 c6 3 11 7 14 11" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <!-- neck + necklace -->
+      <rect x="114" y="138" width="13" height="16" rx="6" fill="${e}"/>
+      <path d="M106 152 C114 160 128 160 136 152" stroke="currentColor" stroke-width="2.4" fill="none" class="kc-shimmer"/>
+      <path d="M110 157 C116 162 126 162 132 157" stroke="currentColor" stroke-width="1.4" fill="none" opacity="0.7"/>
+      <!-- head -->
+      <circle cx="120" cy="116" r="29" fill="${e}"/>
+      <!-- hair + bun + flower -->
+      <path d="M120 87 C97 87 90 108 93 128 C95 119 99 113 99 113 C101 100 108 96 120 96 C132 96 139 100 141 113 C141 113 145 119 147 128 C150 108 143 87 120 87 Z" fill="${i}"/>
+      <circle cx="98" cy="120" r="14" fill="${i}"/>
+      <g><circle cx="92" cy="111" r="3.4" fill="${o}"/><circle cx="99" cy="106" r="3.4" fill="${o}"/><circle cx="105" cy="112" r="3.2" fill="${o}"/><circle cx="98" cy="114" r="2.2" fill="currentColor"/></g>
+      <!-- nalalpata (forehead chain + sun pendant) -->
+      <path d="M99 104 C108 97 132 97 141 104" stroke="currentColor" stroke-width="2.2" fill="none" class="kc-shimmer"/>
+      <path d="M120 104 v7" stroke="currentColor" stroke-width="1.6"/><circle cx="120" cy="114" r="3.1" fill="currentColor" class="kc-shimmer"/>
+      <!-- gentle face (turned in) -->
+      <path d="M124 116 c3 2.4 7 2.4 10 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M110 116 c2.4 2 5.6 2 8 0" stroke="${i}" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <path d="M118 130 c4 3 9 3 13 0" stroke="${p}" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="132" cy="126" r="4" fill="${p}" opacity="0.28"/>
     </g>
 
-    <!-- ░░░ GROOM (right) ░░░ -->
+    <!-- ════ GROOM · උඩරට නිලමේ (right, facing in) ════ -->
     <g>
-      <path d="M240 202c-30 2-44 30-50 90-2 20 14 28 50 28s52-8 50-28c-6-60-20-88-50-90Z" fill="${n}" stroke="currentColor" stroke-width="1.4"/>
-      <g fill="currentColor" opacity="0.45"><circle cx="222" cy="252" r="2.2"/><circle cx="246" cy="264" r="2.2"/><circle cx="262" cy="252" r="2.2"/><circle cx="232" cy="278" r="2.2"/><circle cx="258" cy="282" r="2.2"/></g>
-      <path d="M226 296c8 4 20 4 28 0" stroke="currentColor" stroke-width="2" opacity="0.7" fill="none"/>
-      <path d="M240 150c-26 0-40 14-40 40 0 18 4 30 8 38 8 4 18 6 32 6s24-2 32-6c4-8 8-20 8-38 0-26-14-40-40-40Z" fill="${s}" stroke="currentColor" stroke-width="1.2"/>
-      <path d="M200 190c0-26 14-40 40-40s40 14 40 40" stroke="currentColor" stroke-width="2" opacity="0.85" fill="none" class="kc-shimmer"/>
-      <path d="M216 232c8 4 16 6 24 6s16-2 24-6" stroke="currentColor" stroke-width="2" opacity="0.7" fill="none"/>
-      <g class="kc-shimmer" transform="translate(240 196)"><circle r="15" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.7"/>${l}<circle r="4" fill="currentColor"/></g>
-      <path d="M210 194c-15 0-27 7-31 17" stroke="${s}" stroke-width="11" stroke-linecap="round" fill="none"/>
-      <path d="M185 209c-4 2-7 7-8 13" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
-      <rect x="233" y="138" width="14" height="18" rx="6" fill="${e}"/>
-      <circle cx="240" cy="115" r="33" fill="${e}"/>
-      <path d="M240 86c-20 0-30 14-30 30 0 0 4-2 6-8 4 6 10 8 10 8 8-4 22-4 28 0 0 0 6-2 10-8 2 6 6 8 6 8 0-16-10-30-30-30Z" fill="${i}"/>
-      <path d="M214 123c3 14 12 22 26 22s23-8 26-22c-7 6-16 9-26 9s-19-3-26-9Z" fill="${i}"/>
+      <!-- mul anduma (sarong) -->
+      <path d="M218 204 C202 232 198 280 198 322 C198 322 216 330 252 330 C288 330 306 322 306 322 C306 280 304 232 290 204 Z"
+            fill="${n}" stroke="currentColor" stroke-width="1.5"/>
+      <!-- patterned hem border -->
+      <path d="M200 306 C218 312 286 312 304 306" stroke="currentColor" stroke-width="2.2" fill="none" opacity="0.8"/>
+      ${c([[214,316],[230,320],[250,322],[270,320],[288,316],[222,292],[252,296],[282,292],[238,272],[266,272]])}
+      <!-- pleat fall (front gather) -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5" fill="none">
+        <path d="M250 210 v112"/><path d="M242 212 C238 260 234 292 230 322"/><path d="M258 212 C262 260 266 292 270 322"/>
+      </g>
+      <!-- jacket (navy, embroidered) -->
+      <path d="M214 150 C203 150 197 160 197 180 C197 198 201 208 208 216 C220 222 284 222 296 216 C303 208 307 198 307 180 C307 160 301 150 290 150 C290 150 272 159 252 159 C232 159 214 150 214 150 Z"
+            fill="${a}" stroke="currentColor" stroke-width="1.2"/>
+      <!-- scalloped hem -->
+      <path d="M208 214 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.7"/>
+      <!-- white embroidery dots -->
+      <g fill="${o}" opacity="0.85"><circle cx="214" cy="172" r="2"/><circle cx="226" cy="200" r="2"/><circle cx="290" cy="172" r="2"/><circle cx="282" cy="202" r="2"/><circle cx="252" cy="208" r="2"/></g>
+      <!-- chest mandala -->
+      <g transform="translate(232 184)"><circle r="14" fill="none" stroke="${o}" stroke-width="1.3" opacity="0.85"/>${s}<circle r="3.4" fill="${o}"/></g>
+      <!-- collar -->
+      <path d="M236 156 C244 164 260 164 268 156" stroke="${o}" stroke-width="3" fill="none" opacity="0.9"/>
+      <!-- extended arm to joined hands -->
+      <path d="M214 176 C198 182 184 196 178 206" stroke="${a}" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M188 200 c-5 3 -9 6 -12 9" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <!-- neck -->
+      <rect x="245" y="140" width="14" height="16" rx="6" fill="${e}"/>
+      <!-- head + beard -->
+      <circle cx="252" cy="118" r="29" fill="${e}"/>
+      <path d="M226 120 C228 140 240 151 252 151 C264 151 276 140 278 120 C270 128 262 131 252 131 C242 131 234 128 226 120 Z" fill="${i}"/>
+      <path d="M226 112 C228 96 238 88 252 88 C266 88 276 96 278 112 C270 106 262 103 252 103 C242 103 234 106 226 112 Z" fill="${i}"/>
+      <!-- four-cornered Kandyan hat (toppi) -->
       <g>
-        <path d="M207 92c0-17 15-27 33-27s33 10 33 27c0 6-4 9-9 9H216c-5 0-9-3-9-9Z" fill="${s}" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M211 96h58" stroke="currentColor" stroke-width="3" opacity="0.85" class="kc-shimmer"/>
-        <g fill="currentColor" opacity="0.85" class="kc-shimmer"><circle cx="224" cy="84" r="2.4"/><circle cx="240" cy="80" r="2.4"/><circle cx="256" cy="84" r="2.4"/></g>
-        <path d="M240 65v-8" stroke="currentColor" stroke-width="2"/><circle cx="240" cy="55" r="3.2" fill="currentColor" class="kc-shimmer"/>
+        <path d="M224 92 C224 74 237 64 252 64 C267 64 280 74 280 92 C280 99 275 102 269 102 L235 102 C229 102 224 99 224 92 Z"
+              fill="${a}" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M226 90 L252 84 L278 90 L274 100 L230 100 Z" fill="${a}"/>
+        <path d="M228 94 H276" stroke="currentColor" stroke-width="2.6" opacity="0.85" class="kc-shimmer"/>
+        <g fill="${o}" opacity="0.9"><circle cx="236" cy="84" r="2.2"/><circle cx="252" cy="80" r="2.2"/><circle cx="268" cy="84" r="2.2"/><circle cx="244" cy="90" r="1.8"/><circle cx="260" cy="90" r="1.8"/></g>
+        <path d="M252 64 V55" stroke="currentColor" stroke-width="2"/><circle cx="252" cy="52" r="3.2" fill="currentColor" class="kc-shimmer"/>
       </g>
-      <path d="M225 117c3 3 7 3 10 0M245 117c3 3 7 3 10 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- eye toward bride -->
+      <path d="M236 116 c2.4 2 5.6 2 8 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
     </g>
 
-    <!-- joined hands + bouquet at centre -->
-    <ellipse cx="181" cy="214" rx="11" ry="8" fill="${e}"/>
-    <g class="kc-shimmer"><circle cx="181" cy="226" r="5.5" fill="${n}" stroke="currentColor" stroke-width="1"/><circle cx="173" cy="232" r="4.5" fill="${n}" stroke="currentColor" stroke-width="1"/><circle cx="189" cy="232" r="4.5" fill="${n}" stroke="currentColor" stroke-width="1"/><path d="M181 237v10M176 240l-4 8M186 240l4 8" stroke="currentColor" stroke-width="1.4" opacity="0.6"/></g>
+    <!-- ════ joined hands + nelum bouquet ════ -->
+    <ellipse cx="178" cy="208" rx="11" ry="8" fill="${e}"/>
+    <g class="kc-shimmer">
+      <circle cx="178" cy="222" r="6" fill="${o}" stroke="currentColor" stroke-width="1"/>
+      <circle cx="169" cy="228" r="5" fill="${o}" stroke="currentColor" stroke-width="1"/>
+      <circle cx="187" cy="228" r="5" fill="${o}" stroke="currentColor" stroke-width="1"/>
+      <circle cx="178" cy="234" r="4.5" fill="${o}" stroke="currentColor" stroke-width="1"/>
+      <path d="M168 232 l-5 12 M188 232 l5 12 M178 239 v13" stroke="#7c9a5e" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="178" cy="222" r="2" fill="currentColor"/>
+    </g>
   </g>
-</svg>`},qt={poruwa:lt,kalasa:lt,lamp:S,pahana:S,lotus:C,sesath:Ot,mandala:L,mayura:Ft,ring:Ht,feast:Pt}});var yt={};at(yt,{CLOUDINARY:()=>ot,applyTheme:()=>j,db:()=>g,postBlessing:()=>z,readLocalRsvp:()=>I,searchGuests:()=>V,startRealtime:()=>Zt,state:()=>m,submitRsvp:()=>K,subscribe:()=>Y});function Y(t){return Z.add(t),()=>Z.delete(t)}function w(){Z.forEach(t=>t(m))}function ht(){return{brideNameEn:"Kaushani",groomNameEn:"Gaurawa",brideNameSi:"කෞශානි",groomNameSi:"ගෞරව",weddingDateISO:"2028-01-12T09:15:00+05:30",ceremonyTimeLabel:"පෙ.ව. 9.15 සිට",venueName:"ද එපිටෝම් හෝටලය",venueAddress:"කුරුණෑගල",mapUrl:"https://maps.google.com/?q=The+Epitome+Hotel+Kurunegala",brideParentsSi:"",groomParentsSi:"",invitationHeadingSi:"ශ්‍රී සුබ මංගලම්",brideRelationSi:"ආදරණීය දියණිය",groomRelationSi:"ආදරණීය පුත්",inviteWordingSi:"අප දෙදෙනාගේ සෙනෙහසේ මංගල්‍යය වෙනුවෙන්, ඔබ සැම සාදරයෙන් ආරාධනා කරමු.",loveNoteSi:"අප ජීවිතයේ සුවිශේෂ මොහොතක ඔබ අප සමඟ සිටීම, අප ලද වටිනාම ආශිර්වාදයයි. බොහෝ ස්තූතියි.",whatsappNumber:"94705367980",rsvpDeadlineISO:"2027-12-20T23:59:00+05:30",allowLiquorPref:!0,allowDietaryPref:!0,images:{banner:"",rsvp:"",loveNote:""},ambientAudioUrl:""}}function vt(){return{primary:"#C9A574",secondary:"#F2E5C6",accent:"#A48354",surface:"#FFFBF2",text:"#221C01"}}function ft(){return{invite:!0,invitationCard:!0,countdown:!0,rsvp:!0,seating:!0,agenda:!0,gallery:!0,blessings:!0,loveNote:!0}}function j(t){let e=document.documentElement.style;e.setProperty("--c-primary",t.primary),e.setProperty("--c-secondary",t.secondary),e.setProperty("--c-accent",t.accent),e.setProperty("--c-surface",t.surface),e.setProperty("--c-ink",t.text)}function Zt(){let{doc:t,onSnapshot:e,collection:i,query:s,orderBy:n,where:l,limit:p}=E;e(t(g,"config","site"),a=>{a.exists()&&(m.site={...ht(),...a.data()}),m.ready=!0,w()},()=>{m.ready=!0,w()}),e(t(g,"config","theme"),a=>{a.exists()&&(m.theme={...vt(),...a.data()}),j(m.theme),w()}),e(t(g,"config","visibility"),a=>{a.exists()&&(m.visibility={...ft(),...a.data()}),w()}),e(t(g,"config","stats"),a=>{a.exists()&&(m.stats={...m.stats,...a.data()}),w()}),e(s(i(g,"agenda"),n("order","asc")),a=>{m.agenda=a.docs.map(c=>({id:c.id,...c.data()})).filter(c=>c.visible!==!1),w()},()=>{}),e(s(i(g,"gallery"),n("order","asc")),a=>{m.gallery=a.docs.map(c=>({id:c.id,...c.data()})),w()},()=>{}),e(s(i(g,"blessings"),l("approved","==",!0),p(100)),a=>{m.blessings=a.docs.map(c=>({id:c.id,...c.data()})).sort((c,h)=>(h.createdAt||0)-(c.createdAt||0)),w()},()=>{}),j(m.theme)}function mt(t){return String(t||"").toLowerCase().normalize("NFC").replace(/[\u200b-\u200d\uFEFF]/g,"").replace(/\s+/g," ").trim()}async function V(t){let{collection:e,query:i,where:s,getDocs:n,limit:l,orderBy:p}=E,a=mt(t);if(a.length<2)return[];let c=[];try{let h=i(e(g,"guests"),s("searchTokens","array-contains",a),l(25));c=(await n(h)).docs.map(b=>gt(b))}catch{}if(c.length===0)try{c=(await n(i(e(g,"guests"),p("name"),l(800)))).docs.map(f=>gt(f)).filter(f=>{let b=mt(f.name+" "+f.familyName);return b.includes(a)||b.replace(/\s/g,"").includes(a.replace(/\s/g,""))}).slice(0,25)}catch{}return c}function gt(t){let e=t.data();return{id:t.id,name:e.name||"",familyName:e.familyName||"",side:e.side||"groom",tableNumber:e.tableNumber??null,status:e.status||"pending"}}async function K({guestId:t,guestName:e,side:i,attending:s,takingLiquor:n,partySize:l,dietary:p}){let{doc:a,setDoc:c,runTransaction:h}=E,f=s?"confirmed":"declined",b=I(t);await c(a(g,"rsvps",t),{guestId:t,guestName:String(e||"").slice(0,120),side:i||"groom",status:f,takingLiquor:!!n,partySize:Math.min(30,Math.max(1,Number(l)||1)),dietary:String(p||"").slice(0,280),respondedAt:Date.now()},{merge:!0});try{await h(g,async O=>{let st=a(g,"config","stats"),rt=await O.get(st),k={...rt.exists()?rt.data():{totalGuests:0,confirmed:0,pending:0,declined:0}},F=A=>{k[A]=Math.max(0,(k[A]||0)-1)},Rt=A=>{k[A]=(k[A]||0)+1};b?.status==="confirmed"&&F("confirmed"),b?.status==="declined"&&F("declined"),b||F("pending"),Rt(f),k.updatedAt=Date.now(),O.set(st,k,{merge:!0})})}catch{}return jt(t,{status:f,takingLiquor:!!n,partySize:l,dietary:p}),f}async function z(t,e){let{collection:i,addDoc:s}=E,n=String(e||"").trim().slice(0,400);if(!n){let l=new Error("empty");throw l.si="කරුණාකර සුබ පැතුම ලියන්න.",l}await s(i(g,"blessings"),{guestName:String(t||"").trim().slice(0,60)||"ආගන්තුකයෙක්",message:n,approved:!1,createdAt:Date.now()})}function I(t){try{return JSON.parse(localStorage.getItem("hs_rsvp_"+t)||"null")}catch{return null}}function jt(t,e){try{localStorage.setItem("hs_rsvp_"+t,JSON.stringify(e))}catch{}}var Gt,E,Ut,g,Z,m,W=M(async()=>{q();({initializeApp:Gt}=await import(`${H}/firebase-app.js`)),E=await import(`${H}/firebase-firestore.js`),Ut=Gt(nt),g=E.getFirestore(Ut),Z=new Set,m={ready:!1,site:ht(),theme:vt(),visibility:ft(),stats:{totalGuests:0,confirmed:0,pending:0,declined:0},agenda:[],gallery:[],blessings:[]}});function J(t,e){if(!t||!t.includes("/upload/"))return t||"";let i=["f_auto","q_auto"];return e&&i.push(`w_${e}`,"c_limit","dpr_auto"),t.replace("/upload/",`/upload/${i.join(",")}/`)}function bt(t){let e=new Date(t).getTime()-Date.now();if(Number.isNaN(e)||e<=0)return{days:0,hours:0,minutes:0,seconds:0,done:!0};let i=Math.floor(e/1e3);return{days:Math.floor(i/86400),hours:Math.floor(i%86400/3600),minutes:Math.floor(i%3600/60),seconds:i%60,done:!1}}function Q(t){let e=new Date(t);return Number.isNaN(e.getTime())?t:`${Vt[e.getDay()]}, ${e.getFullYear()} ${Yt[e.getMonth()]} ${e.getDate()}`}function wt(t){let e=new Date(t.weddingDateISO),i=new Date(e.getTime()+6*3600*1e3),s=c=>c.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),n=c=>String(c||"").replace(/[,;\\]/g,h=>"\\"+h).replace(/\n/g,"\\n"),l=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Helasiritha//Wedding//SI","BEGIN:VEVENT",`UID:${Date.now()}@helasiritha`,`DTSTAMP:${s(new Date)}`,`DTSTART:${s(e)}`,`DTEND:${s(i)}`,`SUMMARY:${n(t.groomNameSi+" ◇ "+t.brideNameSi+" මංගල්‍යය")}`,`LOCATION:${n(t.venueName+", "+t.venueAddress)}`,`DESCRIPTION:${n(t.inviteWordingSi)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:මංගල දිනය හෙට!","END:VALARM","END:VEVENT","END:VCALENDAR"].join(`\r
-`),p=new Blob([l],{type:"text/calendar;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(p),a.download="helasiritha-mangalya.ics",document.body.appendChild(a),a.click(),a.remove(),URL.revokeObjectURL(a.href)}function d(t){return String(t??"").replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e])}var Yt,Vt,$t=M(()=>{Yt=["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජූනි","ජූලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"],Vt=["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"]});var Tt={};at(Tt,{renderAll:()=>Mt});function Mt(){let t=m,e=t.visibility;document.title=`${t.site.brideNameSi} & ${t.site.groomNameSi} · ${r.celebrating}`,Kt(t),$("invitation",e.invitationCard,()=>zt(t)),$("countdown",e.countdown,()=>Wt(t)),$("rsvp",e.rsvp,()=>Qt(t)),$("agenda",e.agenda&&t.agenda.length>0,()=>ie(t)),$("gallery",e.gallery&&t.gallery.length>0,()=>se(t)),$("blessings",e.blessings,()=>Ct(t)),$("lovenote",e.loveNote,()=>ae(t)),ne(t),Nt()}function $(t,e,i){let s=o("#"+t);s&&(s.hidden=!e,e&&i())}function Kt(t){o("#hero").innerHTML=`
+</svg>`},qt={poruwa:lt,kalasa:lt,lamp:M,pahana:M,lotus:S,sesath:Ft,mandala:T,mayura:Ot,ring:Ht,feast:Pt}});var yt={};st(yt,{CLOUDINARY:()=>ot,applyTheme:()=>Z,db:()=>g,postBlessing:()=>z,readLocalRsvp:()=>I,searchGuests:()=>V,startRealtime:()=>Ut,state:()=>h,submitRsvp:()=>K,subscribe:()=>Y});function Y(t){return U.add(t),()=>U.delete(t)}function w(){U.forEach(t=>t(h))}function gt(){return{brideNameEn:"Kaushani",groomNameEn:"Gaurawa",brideNameSi:"කෞශානි",groomNameSi:"ගෞරව",weddingDateISO:"2028-01-12T09:15:00+05:30",ceremonyTimeLabel:"පෙ.ව. 9.15 සිට",venueName:"ද එපිටෝම් හෝටලය",venueAddress:"කුරුණෑගල",mapUrl:"https://maps.google.com/?q=The+Epitome+Hotel+Kurunegala",brideParentsSi:"",groomParentsSi:"",invitationHeadingSi:"ශ්‍රී සුබ මංගලම්",brideRelationSi:"ආදරණීය දියණිය",groomRelationSi:"ආදරණීය පුත්",inviteWordingSi:"අප දෙදෙනාගේ සෙනෙහසේ මංගල්‍යය වෙනුවෙන්, ඔබ සැම සාදරයෙන් ආරාධනා කරමු.",loveNoteSi:"අප ජීවිතයේ සුවිශේෂ මොහොතක ඔබ අප සමඟ සිටීම, අප ලද වටිනාම ආශිර්වාදයයි. බොහෝ ස්තූතියි.",whatsappNumber:"94705367980",rsvpDeadlineISO:"2027-12-20T23:59:00+05:30",allowLiquorPref:!0,allowDietaryPref:!0,images:{banner:"",rsvp:"",loveNote:""},ambientAudioUrl:""}}function vt(){return{primary:"#C9A574",secondary:"#F2E5C6",accent:"#A48354",surface:"#FFFBF2",text:"#221C01"}}function ft(){return{invite:!0,invitationCard:!0,countdown:!0,rsvp:!0,seating:!0,agenda:!0,gallery:!0,blessings:!0,loveNote:!0}}function Z(t){let e=document.documentElement.style;e.setProperty("--c-primary",t.primary),e.setProperty("--c-secondary",t.secondary),e.setProperty("--c-accent",t.accent),e.setProperty("--c-surface",t.surface),e.setProperty("--c-ink",t.text)}function Ut(){let{doc:t,onSnapshot:e,collection:i,query:a,orderBy:n,where:o,limit:p}=E;e(t(g,"config","site"),s=>{s.exists()&&(h.site={...gt(),...s.data()}),h.ready=!0,w()},()=>{h.ready=!0,w()}),e(t(g,"config","theme"),s=>{s.exists()&&(h.theme={...vt(),...s.data()}),Z(h.theme),w()}),e(t(g,"config","visibility"),s=>{s.exists()&&(h.visibility={...ft(),...s.data()}),w()}),e(t(g,"config","stats"),s=>{s.exists()&&(h.stats={...h.stats,...s.data()}),w()}),e(a(i(g,"agenda"),n("order","asc")),s=>{h.agenda=s.docs.map(c=>({id:c.id,...c.data()})).filter(c=>c.visible!==!1),w()},()=>{}),e(a(i(g,"gallery"),n("order","asc")),s=>{h.gallery=s.docs.map(c=>({id:c.id,...c.data()})),w()},()=>{}),e(a(i(g,"blessings"),o("approved","==",!0),p(100)),s=>{h.blessings=s.docs.map(c=>({id:c.id,...c.data()})).sort((c,m)=>(m.createdAt||0)-(c.createdAt||0)),w()},()=>{}),Z(h.theme)}function ht(t){return String(t||"").toLowerCase().normalize("NFC").replace(/[\u200b-\u200d\uFEFF]/g,"").replace(/\s+/g," ").trim()}async function V(t){let{collection:e,query:i,where:a,getDocs:n,limit:o,orderBy:p}=E,s=ht(t);if(s.length<2)return[];let c=[];try{let m=i(e(g,"guests"),a("searchTokens","array-contains",s),o(25));c=(await n(m)).docs.map(y=>mt(y))}catch{}if(c.length===0)try{c=(await n(i(e(g,"guests"),p("name"),o(800)))).docs.map(v=>mt(v)).filter(v=>{let y=ht(v.name+" "+v.familyName);return y.includes(s)||y.replace(/\s/g,"").includes(s.replace(/\s/g,""))}).slice(0,25)}catch{}return c}function mt(t){let e=t.data();return{id:t.id,name:e.name||"",familyName:e.familyName||"",side:e.side||"groom",tableNumber:e.tableNumber??null,status:e.status||"pending"}}async function K({guestId:t,guestName:e,side:i,attending:a,takingLiquor:n,partySize:o,dietary:p}){let{doc:s,setDoc:c,runTransaction:m}=E,v=a?"confirmed":"declined",y=I(t);await c(s(g,"rsvps",t),{guestId:t,guestName:String(e||"").slice(0,120),side:i||"groom",status:v,takingLiquor:!!n,partySize:Math.min(30,Math.max(1,Number(o)||1)),dietary:String(p||"").slice(0,280),respondedAt:Date.now()},{merge:!0});try{await m(g,async F=>{let at=s(g,"config","stats"),rt=await F.get(at),x={...rt.exists()?rt.data():{totalGuests:0,confirmed:0,pending:0,declined:0}},O=A=>{x[A]=Math.max(0,(x[A]||0)-1)},Rt=A=>{x[A]=(x[A]||0)+1};y?.status==="confirmed"&&O("confirmed"),y?.status==="declined"&&O("declined"),y||O("pending"),Rt(v),x.updatedAt=Date.now(),F.set(at,x,{merge:!0})})}catch{}return Zt(t,{status:v,takingLiquor:!!n,partySize:o,dietary:p}),v}async function z(t,e){let{collection:i,addDoc:a}=E,n=String(e||"").trim().slice(0,400);if(!n){let o=new Error("empty");throw o.si="කරුණාකර සුබ පැතුම ලියන්න.",o}await a(i(g,"blessings"),{guestName:String(t||"").trim().slice(0,60)||"ආගන්තුකයෙක්",message:n,approved:!1,createdAt:Date.now()})}function I(t){try{return JSON.parse(localStorage.getItem("hs_rsvp_"+t)||"null")}catch{return null}}function Zt(t,e){try{localStorage.setItem("hs_rsvp_"+t,JSON.stringify(e))}catch{}}var Gt,E,jt,g,U,h,W=C(async()=>{q();({initializeApp:Gt}=await import(`${H}/firebase-app.js`)),E=await import(`${H}/firebase-firestore.js`),jt=Gt(nt),g=E.getFirestore(jt),U=new Set,h={ready:!1,site:gt(),theme:vt(),visibility:ft(),stats:{totalGuests:0,confirmed:0,pending:0,declined:0},agenda:[],gallery:[],blessings:[]}});function J(t,e){if(!t||!t.includes("/upload/"))return t||"";let i=["f_auto","q_auto"];return e&&i.push(`w_${e}`,"c_limit","dpr_auto"),t.replace("/upload/",`/upload/${i.join(",")}/`)}function bt(t){let e=new Date(t).getTime()-Date.now();if(Number.isNaN(e)||e<=0)return{days:0,hours:0,minutes:0,seconds:0,done:!0};let i=Math.floor(e/1e3);return{days:Math.floor(i/86400),hours:Math.floor(i%86400/3600),minutes:Math.floor(i%3600/60),seconds:i%60,done:!1}}function Q(t){let e=new Date(t);return Number.isNaN(e.getTime())?t:`${Vt[e.getDay()]}, ${e.getFullYear()} ${Yt[e.getMonth()]} ${e.getDate()}`}function wt(t){let e=new Date(t.weddingDateISO),i=new Date(e.getTime()+6*3600*1e3),a=c=>c.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),n=c=>String(c||"").replace(/[,;\\]/g,m=>"\\"+m).replace(/\n/g,"\\n"),o=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Helasiritha//Wedding//SI","BEGIN:VEVENT",`UID:${Date.now()}@helasiritha`,`DTSTAMP:${a(new Date)}`,`DTSTART:${a(e)}`,`DTEND:${a(i)}`,`SUMMARY:${n(t.groomNameSi+" ◇ "+t.brideNameSi+" මංගල්‍යය")}`,`LOCATION:${n(t.venueName+", "+t.venueAddress)}`,`DESCRIPTION:${n(t.inviteWordingSi)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:මංගල දිනය හෙට!","END:VALARM","END:VEVENT","END:VCALENDAR"].join(`\r
+`),p=new Blob([o],{type:"text/calendar;charset=utf-8"}),s=document.createElement("a");s.href=URL.createObjectURL(p),s.download="helasiritha-mangalya.ics",document.body.appendChild(s),s.click(),s.remove(),URL.revokeObjectURL(s.href)}function d(t){return String(t??"").replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e])}var Yt,Vt,$t=C(()=>{Yt=["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජූනි","ජූලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"],Vt=["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"]});var Nt={};st(Nt,{renderAll:()=>Ct});function Ct(){let t=h,e=t.visibility;document.title=`${t.site.brideNameSi} & ${t.site.groomNameSi} · ${r.celebrating}`,Kt(t),$("invitation",e.invitationCard,()=>zt(t)),$("countdown",e.countdown,()=>Wt(t)),$("rsvp",e.rsvp,()=>Qt(t)),$("agenda",e.agenda&&t.agenda.length>0,()=>ie(t)),$("gallery",e.gallery&&t.gallery.length>0,()=>ae(t)),$("blessings",e.blessings,()=>St(t)),$("lovenote",e.loveNote,()=>se(t)),ne(t),Lt()}function $(t,e,i){let a=l("#"+t);a&&(a.hidden=!e,e&&i())}function Kt(t){l("#hero").innerHTML=`
     <div class="thorana">${ct()}</div>
     <div class="hero-inner reveal">
       <div class="ay foil">${r.gettingMarried}</div>
@@ -712,26 +786,26 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
     <a class="scroll-prompt" href="#invitation" aria-label="${r.scrollPrompt}">
       <span>${r.scrollPrompt}</span>
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-    </a>`}function zt(t){let e=t.site.mapUrl?`<a class="btn btn-ghost" target="_blank" rel="noopener" href="${d(t.site.mapUrl)}">📍 ${r.viewLocation}</a>`:"",i=d(t.site.invitationHeadingSi||r.shubaMangalam),s=d(t.site.brideRelationSi||r.belovedDaughter),n=d(t.site.groomRelationSi||r.belovedSon),l=t.site.groomParentsSi||t.site.brideParentsSi?`
+    </a>`}function zt(t){let e=t.site.mapUrl?`<a class="btn btn-ghost" target="_blank" rel="noopener" href="${d(t.site.mapUrl)}">📍 ${r.viewLocation}</a>`:"",i=d(t.site.invitationHeadingSi||r.shubaMangalam),a=d(t.site.brideRelationSi||r.belovedDaughter),n=d(t.site.groomRelationSi||r.belovedSon),o=t.site.groomParentsSi||t.site.brideParentsSi?`
     <div class="parents reveal">
       <div class="heading foil">${i}</div>
       <div class="block">
         ${t.site.brideParentsSi?`<div class="pr">${d(t.site.brideParentsSi)}</div>`:""}
-        <div class="rel">${s}</div>
+        <div class="rel">${a}</div>
         <div class="nm foil">${d(t.site.brideNameSi)}</div>
       </div>
-      <div class="mid">${C()}</div>
+      <div class="mid">${S()}</div>
       <div class="block">
         ${t.site.groomParentsSi?`<div class="pr">${d(t.site.groomParentsSi)}</div>`:""}
         <div class="rel">${n}</div>
         <div class="nm foil">${d(t.site.groomNameSi)}</div>
       </div>
-    </div>`:"";o("#invitation").innerHTML=`
+    </div>`:"";l("#invitation").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.invitationTitle}</div>
       <h2 class="title">${r.requestPresence}</h2>
       <div class="card reveal tilt3d" data-tilt style="max-width:760px;margin-inline:auto;">
-        ${l}
+        ${o}
         <p class="subtitle" style="margin-top:14px">${d(t.site.inviteWordingSi)}</p>
         <div class="divider">${D()}</div>
         <div class="details">
@@ -744,11 +818,11 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
           ${e}
         </div>
       </div>
-    </div>`,o("#addCal").onclick=()=>wt(t.site)}function Wt(t){o("#countdown").innerHTML=`
+    </div>`,l("#addCal").onclick=()=>wt(t.site)}function Wt(t){l("#countdown").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.countdownTitle}</div>
       <div class="cd reveal" id="cdUnits"></div>
-    </div>`,Jt(t)}function Jt(t){let e=o("#cdUnits");if(!e)return;let i=()=>{let s=bt(t.site.weddingDateISO);if(s.done){e.innerHTML=`<h2 class="title foil">${r.theDayHasArrived}</h2>`,clearInterval(X);return}let n=[[s.days,r.days],[s.hours,r.hours],[s.minutes,r.minutes],[s.seconds,r.seconds]];e.innerHTML=n.map(([l,p])=>`<div class="unit"><div class="num">${String(l).padStart(2,"0")}</div><div class="lab">${p}</div></div>`).join("")};clearInterval(X),i(),X=setInterval(i,1e3)}function Qt(t){o("#rsvp").innerHTML=`
+    </div>`,Jt(t)}function Jt(t){let e=l("#cdUnits");if(!e)return;let i=()=>{let a=bt(t.site.weddingDateISO);if(a.done){e.innerHTML=`<h2 class="title foil">${r.theDayHasArrived}</h2>`,clearInterval(X);return}let n=[[a.days,r.days],[a.hours,r.hours],[a.minutes,r.minutes],[a.seconds,r.seconds]];e.innerHTML=n.map(([o,p])=>`<div class="unit"><div class="num">${String(o).padStart(2,"0")}</div><div class="lab">${p}</div></div>`).join("")};clearInterval(X),i(),X=setInterval(i,1e3)}function Qt(t){l("#rsvp").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.rsvpTitle}</div>
       <h2 class="title">${r.rsvpSub}</h2>
@@ -756,27 +830,27 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
       <div class="card reveal" style="max-width:620px;margin:18px auto 0;text-align:left">
         <div id="rsvpStage"></div>
       </div>
-    </div>`,tt()}function tt(){u.guest=null,o("#rsvpStage").innerHTML=`
+    </div>`,tt()}function tt(){u.guest=null,l("#rsvpStage").innerHTML=`
     <div class="field">
       <label>${r.searchGuestList}</label>
       <input class="input" id="rsvpQ" placeholder="${r.familyNamePlaceholder}" autocomplete="off">
     </div>
     <button class="btn btn-primary" id="rsvpSearchBtn" style="width:100%">${r.searchGuestList}</button>
-    <div class="results" id="rsvpResults"></div>`;let t=o("#rsvpQ"),e=o("#rsvpSearchBtn"),i=o("#rsvpResults"),s=async()=>{let l=t.value.trim();if(l.length<2){i.innerHTML="";return}e.textContent=r.searching,e.disabled=!0;let p=await V(l);if(e.textContent=r.searchGuestList,e.disabled=!1,!p.length){i.innerHTML=`<p class="muted">${r.noGuestFound}</p>`;return}i.innerHTML=p.map(a=>`
-      <button class="guest-row" data-id="${d(a.id)}">
-        <span><span class="gn">${d(a.name)}</span><br><span class="gf">${d(a.familyName)}</span></span>
-        <span class="chip">${a.side==="bride"?"මනාලියගේ":"මනාලයාගේ"}</span>
-      </button>`).join(""),N(".guest-row",i).forEach((a,c)=>a.onclick=()=>Xt(p[c]))};e.onclick=s;let n;t.oninput=()=>{clearTimeout(n),n=setTimeout(s,450)},t.onkeydown=l=>{l.key==="Enter"&&s()}}function Xt(t){u.guest=t;let e=I(t.id);u.attending=e?e.status==="confirmed":null,u.liquor=e?!!e.takingLiquor:!1,u.party=e&&e.partySize||1,u.dietary=e&&e.dietary||"",St()}function St(){let t=m,e=u.guest,i=t.site.allowLiquorPref?`
+    <div class="results" id="rsvpResults"></div>`;let t=l("#rsvpQ"),e=l("#rsvpSearchBtn"),i=l("#rsvpResults"),a=async()=>{let o=t.value.trim();if(o.length<2){i.innerHTML="";return}e.textContent=r.searching,e.disabled=!0;let p=await V(o);if(e.textContent=r.searchGuestList,e.disabled=!1,!p.length){i.innerHTML=`<p class="muted">${r.noGuestFound}</p>`;return}i.innerHTML=p.map(s=>`
+      <button class="guest-row" data-id="${d(s.id)}">
+        <span><span class="gn">${d(s.name)}</span><br><span class="gf">${d(s.familyName)}</span></span>
+        <span class="chip">${s.side==="bride"?"මනාලියගේ":"මනාලයාගේ"}</span>
+      </button>`).join(""),L(".guest-row",i).forEach((s,c)=>s.onclick=()=>Xt(p[c]))};e.onclick=a;let n;t.oninput=()=>{clearTimeout(n),n=setTimeout(a,450)},t.onkeydown=o=>{o.key==="Enter"&&a()}}function Xt(t){u.guest=t;let e=I(t.id);u.attending=e?e.status==="confirmed":null,u.liquor=e?!!e.takingLiquor:!1,u.party=e&&e.partySize||1,u.dietary=e&&e.dietary||"",Mt()}function Mt(){let t=h,e=u.guest,i=t.site.allowLiquorPref?`
     <div class="field"><label>${r.takingLiquor}</label>
       <div class="choice" id="liqChoice">
         <button class="opt ${u.liquor?"sel":""}" data-v="1">${r.yes}</button>
         <button class="opt ${u.liquor?"":"sel"}" data-v="0">${r.no}</button>
-      </div></div>`:"",s=t.site.allowDietaryPref?`
+      </div></div>`:"",a=t.site.allowDietaryPref?`
     <div class="field"><label>${r.dietary}</label>
       <input class="input" id="rsvpDiet" value="${d(u.dietary)}"></div>`:"",n=`
     <div class="field"><label>${r.guestCount}</label>
       <div class="stepper"><button id="pMinus">−</button><span class="val" id="pVal">${u.party}</span><button id="pPlus">+</button></div></div>
-    ${i}${s}`;o("#rsvpStage").innerHTML=`
+    ${i}${a}`;l("#rsvpStage").innerHTML=`
     <p class="muted" style="margin-top:0">${d(e.name)} · ${d(e.familyName)}</p>
     <div class="field"><label>${r.willYouAttend}</label>
       <div class="choice" id="attChoice">
@@ -785,37 +859,37 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
       </div></div>
     <div id="attExtras">${u.attending?n:""}</div>
     <button class="btn btn-primary" id="rsvpSubmit" style="width:100%;margin-top:6px">${r.confirmRsvp}</button>
-    <button class="btn btn-ghost" id="rsvpBack" style="width:100%;margin-top:8px">${r.changeResponse}</button>`;let l=()=>St();N("#attChoice .opt").forEach(a=>a.onclick=()=>{u.attending=a.dataset.v==="1",l()}),u.attending&&(o("#pMinus").onclick=()=>{u.party=Math.max(1,u.party-1),o("#pVal").textContent=u.party},o("#pPlus").onclick=()=>{u.party=Math.min(20,u.party+1),o("#pVal").textContent=u.party},N("#liqChoice .opt").forEach(a=>a.onclick=()=>{u.liquor=a.dataset.v==="1",l()})),o("#rsvpBack").onclick=tt,o("#rsvpSubmit").onclick=p;async function p(){if(u.attending===null){alert(r.willYouAttend);return}t.site.allowDietaryPref&&o("#rsvpDiet")&&(u.dietary=o("#rsvpDiet").value);let a=o("#rsvpSubmit");a.textContent=r.sending,a.disabled=!0;try{let c=await K({guestId:e.id,guestName:e.name,side:e.side,attending:u.attending,takingLiquor:u.liquor,partySize:u.party,dietary:u.dietary});te(c)}catch{a.textContent=r.confirmRsvp,a.disabled=!1,alert("කණගාටුයි, පිළිතුර යැවීමේ දෝෂයක්. නැවත උත්සාහ කරන්න.")}}}function te(t){let e=t==="confirmed"?r.rsvpConfirmedMsg:r.rsvpDeclinedMsg;o("#rsvpStage").innerHTML=`
+    <button class="btn btn-ghost" id="rsvpBack" style="width:100%;margin-top:8px">${r.changeResponse}</button>`;let o=()=>Mt();L("#attChoice .opt").forEach(s=>s.onclick=()=>{u.attending=s.dataset.v==="1",o()}),u.attending&&(l("#pMinus").onclick=()=>{u.party=Math.max(1,u.party-1),l("#pVal").textContent=u.party},l("#pPlus").onclick=()=>{u.party=Math.min(20,u.party+1),l("#pVal").textContent=u.party},L("#liqChoice .opt").forEach(s=>s.onclick=()=>{u.liquor=s.dataset.v==="1",o()})),l("#rsvpBack").onclick=tt,l("#rsvpSubmit").onclick=p;async function p(){if(u.attending===null){alert(r.willYouAttend);return}t.site.allowDietaryPref&&l("#rsvpDiet")&&(u.dietary=l("#rsvpDiet").value);let s=l("#rsvpSubmit");s.textContent=r.sending,s.disabled=!0;try{let c=await K({guestId:e.id,guestName:e.name,side:e.side,attending:u.attending,takingLiquor:u.liquor,partySize:u.party,dietary:u.dietary});te(c)}catch{s.textContent=r.confirmRsvp,s.disabled=!1,alert("කණගාටුයි, පිළිතුර යැවීමේ දෝෂයක්. නැවත උත්සාහ කරන්න.")}}}function te(t){let e=t==="confirmed"?r.rsvpConfirmedMsg:r.rsvpDeclinedMsg;l("#rsvpStage").innerHTML=`
     <div class="thanks">
-      <div class="glamp lamp-glow">${S("",t==="confirmed")}</div>
+      <div class="glamp lamp-glow">${M("",t==="confirmed")}</div>
       <h3 class="title" style="margin:.2em 0">${r.rsvpThanks}</h3>
       <p class="subtitle">${e}</p>
       <button class="btn btn-ghost" id="rsvpAgain" style="margin-top:12px">${r.changeResponse}</button>
-    </div>`,o("#rsvpAgain").onclick=tt}function ie(t){let i=(t.agenda.length?t.agenda:ee).map(s=>`
+    </div>`,l("#rsvpAgain").onclick=tt}function ie(t){let i=(t.agenda.length?t.agenda:ee).map(a=>`
     <div class="tl-item reveal">
-      <div class="tl-icon">${pt(s.icon)}</div>
+      <div class="tl-icon">${pt(a.icon)}</div>
       <div class="tl-body">
-        <div class="tl-time">${d(s.timeLabel||"")}</div>
-        <div class="tl-title">${d(s.titleSi||"")}</div>
-        <div class="tl-desc">${d(s.descSi||"")}</div>
+        <div class="tl-time">${d(a.timeLabel||"")}</div>
+        <div class="tl-title">${d(a.titleSi||"")}</div>
+        <div class="tl-desc">${d(a.descSi||"")}</div>
       </div>
-    </div>`).join("");o("#agenda").innerHTML=`
+    </div>`).join("");l("#agenda").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.agendaTitle}</div>
       <h2 class="title">${r.agendaSub}</h2>
       <div class="timeline" style="margin-top:24px">${i}</div>
-    </div>`}function se(t){if(!t.gallery.length){o("#gallery").innerHTML="";return}kt=t.gallery.map(i=>J(i.url,1600));let e=t.gallery.map((i,s)=>`
-    <button class="ph reveal" data-i="${s}" aria-label="${d(i.alt||"")}">
+    </div>`}function ae(t){if(!t.gallery.length){l("#gallery").innerHTML="";return}xt=t.gallery.map(i=>J(i.url,1600));let e=t.gallery.map((i,a)=>`
+    <button class="ph reveal" data-i="${a}" aria-label="${d(i.alt||"")}">
       <img loading="lazy" src="${J(i.url,700)}" alt="${d(i.alt||"")}">
-    </button>`).join("");o("#gallery").innerHTML=`
+    </button>`).join("");l("#gallery").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.celebrating}</div>
       <h2 class="title">${r.galleryTitle}</h2>
       <p class="subtitle">${r.gallerySub}</p>
       <div class="masonry" id="masonry" style="margin-top:24px">${e}</div>
-    </div>`,N("#masonry .ph").forEach((i,s)=>i.onclick=()=>re(s))}function re(t){let e=o("#lightbox");e||(e=document.createElement("div"),e.id="lightbox",e.className="lightbox",document.body.appendChild(e)),e.innerHTML=`<button class="x icon-btn" aria-label="වසන්න">✕</button><img src="${kt[t]}" alt="">`,e.classList.add("show"),e.onclick=i=>{(i.target===e||i.target.classList.contains("x"))&&e.classList.remove("show")}}function Ct(t){let e=[...t.blessings].sort((p,a)=>(a.createdAt||0)-(p.createdAt||0)),i=p=>`<div class="bless reveal"><p class="bm">“${d(p.message)}”</p><div class="bn">— ${d(p.guestName)}</div></div>`,s=R?e:e.slice(0,3),n=e.length?s.map(i).join(""):`<p class="muted center" style="grid-column:1/-1">${r.awaitingBlessings}</p>`,l=e.length>3?`<div class="bless-toggle center">
+    </div>`,L("#masonry .ph").forEach((i,a)=>i.onclick=()=>re(a))}function re(t){let e=l("#lightbox");e||(e=document.createElement("div"),e.id="lightbox",e.className="lightbox",document.body.appendChild(e)),e.innerHTML=`<button class="x icon-btn" aria-label="වසන්න">✕</button><img src="${xt[t]}" alt="">`,e.classList.add("show"),e.onclick=i=>{(i.target===e||i.target.classList.contains("x"))&&e.classList.remove("show")}}function St(t){let e=[...t.blessings].sort((p,s)=>(s.createdAt||0)-(p.createdAt||0)),i=p=>`<div class="bless reveal"><p class="bm">“${d(p.message)}”</p><div class="bn">— ${d(p.guestName)}</div></div>`,a=R?e:e.slice(0,3),n=e.length?a.map(i).join(""):`<p class="muted center" style="grid-column:1/-1">${r.awaitingBlessings}</p>`,o=e.length>3?`<div class="bless-toggle center">
          <button class="btn btn-ghost see-more" id="blToggle">${R?"අඩුවෙන් පෙන්වන්න ▴":`තවත් සුබ පැතුම් දැකගන්න (${e.length}) ▾`}</button>
-       </div>`:"";o("#blessings").innerHTML=`
+       </div>`:"";l("#blessings").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.blessingsTitle}</div>
       <h2 class="title">${r.blessingsTitle}</h2>
@@ -828,22 +902,22 @@ var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{f
         <p class="muted" id="blNote" style="margin:10px 0 0"></p>
       </div>
       <div class="blessings-list">${n}</div>
-      ${l}
-    </div>`,e.length>3&&(o("#blToggle").onclick=()=>{R=!R,Ct(m),Nt()}),o("#blCompose").onclick=()=>{let p=xt[Math.floor(Math.random()*xt.length)];o("#blMsg").value=p},o("#blSend").onclick=async()=>{let p=o("#blName").value.trim(),a=o("#blMsg").value.trim();if(a.length<4){o("#blNote").textContent=r.yourBlessing;return}let c=o("#blSend");c.disabled=!0,c.textContent=r.sending;try{await z(p,a),o("#blMsg").value="",o("#blName").value="",o("#blNote").textContent=r.blessingThanks}catch{o("#blNote").textContent="කණගාටුයි, නැවත උත්සාහ කරන්න."}c.disabled=!1,c.textContent=r.sendBlessing}}function ae(t){let e=String(t.site.loveNoteSi||""),i=e.split(/\n{2,}/).map(n=>n.trim()).filter(Boolean),s=(i.length?i:[e]).map(n=>`<p>${d(n).replace(/\n/g,"<br>")}</p>`).join("");o("#lovenote").innerHTML=`
+      ${o}
+    </div>`,e.length>3&&(l("#blToggle").onclick=()=>{R=!R,St(h),Lt()}),l("#blCompose").onclick=()=>{let p=kt[Math.floor(Math.random()*kt.length)];l("#blMsg").value=p},l("#blSend").onclick=async()=>{let p=l("#blName").value.trim(),s=l("#blMsg").value.trim();if(s.length<4){l("#blNote").textContent=r.yourBlessing;return}let c=l("#blSend");c.disabled=!0,c.textContent=r.sending;try{await z(p,s),l("#blMsg").value="",l("#blName").value="",l("#blNote").textContent=r.blessingThanks}catch{l("#blNote").textContent="කණගාටුයි, නැවත උත්සාහ කරන්න."}c.disabled=!1,c.textContent=r.sendBlessing}}function se(t){let e=String(t.site.loveNoteSi||""),i=e.split(/\n{2,}/).map(n=>n.trim()).filter(Boolean),a=(i.length?i:[e]).map(n=>`<p>${d(n).replace(/\n/g,"<br>")}</p>`).join("");l("#lovenote").innerHTML=`
     <div class="wrap center">
       <div class="kicker">${r.loveNoteTitle}</div>
       <h2 class="title">${r.loveNoteSubtitle}</h2>
       <div class="divider">${D()}</div>
       <div class="lovenote reveal">
-        ${s}
+        ${a}
         <div class="sig vel-akuru">${d(t.site.brideNameSi)} &amp; ${d(t.site.groomNameSi)}</div>
       </div>
-    </div>`}function ne(t){o("#footer").innerHTML=`
+    </div>`}function ne(t){l("#footer").innerHTML=`
     <div class="wrap center">
-      <div style="width:90px;margin:0 auto 6px;color:var(--c-primary)">${L()}</div>
+      <div style="width:90px;margin:0 auto 6px;color:var(--c-primary)">${T()}</div>
       <div class="fnames">${d(t.site.brideNameSi)} &amp; ${d(t.site.groomNameSi)}</div>
       <div class="credit">හෙළ සිරිත · ${new Date().getFullYear()}</div>
-    </div>`}function Nt(){if(!("IntersectionObserver"in window)){N(".reveal").forEach(t=>t.classList.add("in"));return}B=B||new IntersectionObserver(t=>{t.forEach(e=>{e.isIntersecting&&(e.target.classList.add("in"),B.unobserve(e.target))})},{threshold:.12}),N(".reveal:not(.in)").forEach(t=>B.observe(t))}var o,N,u,kt,X,ee,xt,R,B,At=M(async()=>{await W();G();U();$t();o=(t,e=document)=>e.querySelector(t),N=(t,e=document)=>Array.from(e.querySelectorAll(t)),u={guest:null,attending:null,liquor:!1,party:1,dietary:"",done:null},kt=[];X=null;ee=[{timeLabel:"",titleSi:"ආගන්තුක පිළිගැනීම",descSi:"මඟුල් බෙර හඬ මැද, සේසත් සෙවණේ ආරාධිතයන් සාදරයෙන් පිළිගැනීම.",icon:"sesath"},{timeLabel:"",titleSi:"පෝරුවට වැඩම වීම",descSi:"ජයමංගල ගාථා ගායනය මධ්‍යයේ මනාල යුවළ පෝරුවට වැඩම කරවීම.",icon:"poruwa"},{timeLabel:"",titleSi:"පෝරු චාරිත්‍ර",descSi:"බුලත් අතු හුවමාරුව, ඇඟිලි මුදු පැළඳවීම හා පිරිත් නූල් බැඳීම ඇතුළු සිරිත් විරිත්.",icon:"ring"},{timeLabel:"",titleSi:"මඟුල් පහන දැල්වීම",descSi:"උභය පාර්ශවයේ ආශීර්වාදය මැද මඟුල් පහන දල්වා සුබ මොහොත සැමරීම.",icon:"lamp"},{timeLabel:"",titleSi:"භෝජන සංග්‍රහය",descSi:"රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.",icon:"feast"},{timeLabel:"",titleSi:"සැමරුම් හා නර්තන",descSi:"උඩරට නර්තන අංග හා සතුට බෙදාගන්නා සැමරුම් අවස්ථාව.",icon:"mayura"}];xt=["ඔබ දෙදෙනාගේ විවාහ දිවිය සැම කල්හිම සෙනෙහසින් හා සමඟියෙන් පිරී, දිගාසිරි සපිරි වේවා!","අෂ්ට ලෝක ධර්මයෙන් නොසැලී, සුව සේ දිගු කල් එක්ව වෙසෙත්වා!","සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ සෙනෙහස සදා බැබළේවා!","තෙරුවන් සරණයි! නිරෝගී සුවය හා දීර්ඝායුෂ ඔබ දෙපළට ලැබේවා!","පුතු දූ සම්පත්තියෙන් හා සශ්‍රීකත්වයෙන් ඔබ පවුල පිරී යේවා!","අලුත් ජීවිතය සුබ මොහොතින් ඇරඹේවා! ඔබ දෙදෙනාට සුබ පැතුම්!"],R=!1;Y(Mt)});q();G();U();var y=t=>document.querySelector(t);"scrollRestoration"in history&&(history.scrollRestoration="manual");window.scrollTo(0,0);window.addEventListener("load",()=>window.scrollTo(0,0));window.addEventListener("pageshow",()=>window.scrollTo(0,0));if(!P){let t=document.createElement("div");t.className="setup-note",t.textContent=r.setupPending+"  (assets/js/firebase-config.js)",document.body.appendChild(t)}function oe(){let t=y("#gateway");if(t)for(let e=0;e<26;e++){let i=document.createElement("span");i.className="dust",i.style.left=Math.random()*100+"%",i.style.bottom=Math.random()*40+"%",i.style.animationDelay=Math.random()*5+"s",i.style.animationDuration=3.5+Math.random()*3+"s",t.appendChild(i)}}y("#glamp").innerHTML=S("",!0);var Lt=!1;function Et(){Lt||(Lt=!0,y("#gateway").classList.add("gone"),document.body.style.overflow="",ce(!0),setTimeout(()=>{y("#gateway").remove()},1e3))}y("#enterBtn").addEventListener("click",Et);y("#glamp").addEventListener("click",Et);document.body.style.overflow="hidden";function le(){let t=y("#petals");if(!t)return;let e=window.matchMedia("(max-width:600px)").matches?9:16;for(let i=0;i<e;i++){let s=document.createElement("div");s.className="petal";let n=14+Math.random()*22;s.style.width=n+"px",s.style.height=n+"px",s.style.left=Math.random()*100+"%",s.style.animationDuration=9+Math.random()*10+"s",s.style.animationDelay=Math.random()*10+"s",s.style.opacity=(.3+Math.random()*.4).toFixed(2),s.innerHTML=Math.random()>.5?C(""):L(""),t.appendChild(s)}}var x=null,T=!1;function it(){let t=window.__HS_AUDIO__;return t?(x||(x=new Audio(t),x.loop=!0,x.volume=.5,x.preload="auto"),x):null}function ce(t){let e=it();e&&e.play().then(()=>{T=!0,_()}).catch(()=>{})}function _(){let t=y("#musicBtn");t.classList.toggle("music-on",T),t.setAttribute("aria-pressed",String(T))}y("#musicBtn").addEventListener("click",()=>{let t=it();t&&(T?(t.pause(),T=!1):t.play().then(()=>{T=!0,_()}).catch(()=>{}),_())});var Dt=y("#toTop");window.addEventListener("scroll",()=>{Dt.classList.toggle("show",window.scrollY>600)},{passive:!0});var et=0;function It(t,e=950){cancelAnimationFrame(et);let i=window.scrollY,s=Math.round(t)-i;if(Math.abs(s)<2)return;if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){window.scrollTo(0,t);return}let n=performance.now(),l=a=>a<.5?4*a*a*a:1-Math.pow(-2*a+2,3)/2,p=a=>{let c=Math.min(1,(a-n)/e);window.scrollTo(0,i+s*l(c)),c<1&&(et=requestAnimationFrame(p))};et=requestAnimationFrame(p)}Dt.addEventListener("click",()=>It(0,1e3));document.addEventListener("click",t=>{let e=t.target.closest&&t.target.closest('a[href^="#"]');if(!e)return;let i=e.getAttribute("href").slice(1),s=i&&document.getElementById(i);s&&(t.preventDefault(),It(s.getBoundingClientRect().top+window.scrollY-8,1e3))});if(window.matchMedia("(hover: hover) and (pointer: fine)").matches){let t=0;document.addEventListener("pointermove",e=>{let i=e.target.closest&&e.target.closest("[data-tilt]");document.querySelectorAll("[data-tilt]").forEach(s=>{s!==i&&(s.style.setProperty("--rx","0deg"),s.style.setProperty("--ry","0deg"))}),i&&(cancelAnimationFrame(t),t=requestAnimationFrame(()=>{let s=i.getBoundingClientRect(),n=(e.clientX-s.left)/s.width-.5,l=(e.clientY-s.top)/s.height-.5;i.style.setProperty("--ry",(n*7).toFixed(2)+"deg"),i.style.setProperty("--rx",(-l*7).toFixed(2)+"deg")}))},{passive:!0})}oe();le();_();At().then(()=>Tt).then(async()=>{if(!P)return;let t=await W().then(()=>yt);t.subscribe(e=>{let i=e.site.ambientAudioUrl||"";i!==window.__HS_AUDIO__&&(window.__HS_AUDIO__=i,x=null);let s=it();if(s)try{s.load()}catch{}}),t.startRealtime()});
+    </div>`}function Lt(){if(!("IntersectionObserver"in window)){L(".reveal").forEach(t=>t.classList.add("in"));return}B=B||new IntersectionObserver(t=>{t.forEach(e=>{e.isIntersecting&&(e.target.classList.add("in"),B.unobserve(e.target))})},{threshold:.12}),L(".reveal:not(.in)").forEach(t=>B.observe(t))}var l,L,u,xt,X,ee,kt,R,B,At=C(async()=>{await W();G();j();$t();l=(t,e=document)=>e.querySelector(t),L=(t,e=document)=>Array.from(e.querySelectorAll(t)),u={guest:null,attending:null,liquor:!1,party:1,dietary:"",done:null},xt=[];X=null;ee=[{timeLabel:"",titleSi:"ආගන්තුක පිළිගැනීම",descSi:"මඟුල් බෙර හඬ මැද, සේසත් සෙවණේ ආරාධිතයන් සාදරයෙන් පිළිගැනීම.",icon:"sesath"},{timeLabel:"",titleSi:"පෝරුවට වැඩම වීම",descSi:"ජයමංගල ගාථා ගායනය මධ්‍යයේ මනාල යුවළ පෝරුවට වැඩම කරවීම.",icon:"poruwa"},{timeLabel:"",titleSi:"පෝරු චාරිත්‍ර",descSi:"බුලත් අතු හුවමාරුව, ඇඟිලි මුදු පැළඳවීම හා පිරිත් නූල් බැඳීම ඇතුළු සිරිත් විරිත්.",icon:"ring"},{timeLabel:"",titleSi:"මඟුල් පහන දැල්වීම",descSi:"උභය පාර්ශවයේ ආශීර්වාදය මැද මඟුල් පහන දල්වා සුබ මොහොත සැමරීම.",icon:"lamp"},{timeLabel:"",titleSi:"භෝජන සංග්‍රහය",descSi:"රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.",icon:"feast"},{timeLabel:"",titleSi:"සැමරුම් හා නර්තන",descSi:"උඩරට නර්තන අංග හා සතුට බෙදාගන්නා සැමරුම් අවස්ථාව.",icon:"mayura"}];kt=["ඔබ දෙදෙනාගේ විවාහ දිවිය සැම කල්හිම සෙනෙහසින් හා සමඟියෙන් පිරී, දිගාසිරි සපිරි වේවා!","අෂ්ට ලෝක ධර්මයෙන් නොසැලී, සුව සේ දිගු කල් එක්ව වෙසෙත්වා!","සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ සෙනෙහස සදා බැබළේවා!","තෙරුවන් සරණයි! නිරෝගී සුවය හා දීර්ඝායුෂ ඔබ දෙපළට ලැබේවා!","පුතු දූ සම්පත්තියෙන් හා සශ්‍රීකත්වයෙන් ඔබ පවුල පිරී යේවා!","අලුත් ජීවිතය සුබ මොහොතින් ඇරඹේවා! ඔබ දෙදෙනාට සුබ පැතුම්!"],R=!1;Y(Ct)});q();G();j();var b=t=>document.querySelector(t);"scrollRestoration"in history&&(history.scrollRestoration="manual");window.scrollTo(0,0);window.addEventListener("load",()=>window.scrollTo(0,0));window.addEventListener("pageshow",()=>window.scrollTo(0,0));if(!P){let t=document.createElement("div");t.className="setup-note",t.textContent=r.setupPending+"  (assets/js/firebase-config.js)",document.body.appendChild(t)}function oe(){let t=b("#gateway");if(t)for(let e=0;e<26;e++){let i=document.createElement("span");i.className="dust",i.style.left=Math.random()*100+"%",i.style.bottom=Math.random()*40+"%",i.style.animationDelay=Math.random()*5+"s",i.style.animationDuration=3.5+Math.random()*3+"s",t.appendChild(i)}}b("#glamp").innerHTML=M("",!0);var Tt=!1;function Et(){Tt||(Tt=!0,b("#gateway").classList.add("gone"),document.body.style.overflow="",ce(!0),setTimeout(()=>{b("#gateway").remove()},1e3))}b("#enterBtn").addEventListener("click",Et);b("#glamp").addEventListener("click",Et);document.body.style.overflow="hidden";function le(){let t=b("#petals");if(!t)return;let e=window.matchMedia("(max-width:600px)").matches?9:16;for(let i=0;i<e;i++){let a=document.createElement("div");a.className="petal";let n=14+Math.random()*22;a.style.width=n+"px",a.style.height=n+"px",a.style.left=Math.random()*100+"%",a.style.animationDuration=9+Math.random()*10+"s",a.style.animationDelay=Math.random()*10+"s",a.style.opacity=(.3+Math.random()*.4).toFixed(2),a.innerHTML=Math.random()>.5?S(""):T(""),t.appendChild(a)}}var k=null,N=!1;function it(){let t=window.__HS_AUDIO__;return t?(k||(k=new Audio(t),k.loop=!0,k.volume=.5,k.preload="auto"),k):null}function ce(t){let e=it();e&&e.play().then(()=>{N=!0,_()}).catch(()=>{})}function _(){let t=b("#musicBtn");t.classList.toggle("music-on",N),t.setAttribute("aria-pressed",String(N))}b("#musicBtn").addEventListener("click",()=>{let t=it();t&&(N?(t.pause(),N=!1):t.play().then(()=>{N=!0,_()}).catch(()=>{}),_())});var Dt=b("#toTop");window.addEventListener("scroll",()=>{Dt.classList.toggle("show",window.scrollY>600)},{passive:!0});var et=0;function It(t,e=950){cancelAnimationFrame(et);let i=window.scrollY,a=Math.round(t)-i;if(Math.abs(a)<2)return;if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){window.scrollTo(0,t);return}let n=performance.now(),o=s=>s<.5?4*s*s*s:1-Math.pow(-2*s+2,3)/2,p=s=>{let c=Math.min(1,(s-n)/e);window.scrollTo(0,i+a*o(c)),c<1&&(et=requestAnimationFrame(p))};et=requestAnimationFrame(p)}Dt.addEventListener("click",()=>It(0,1e3));document.addEventListener("click",t=>{let e=t.target.closest&&t.target.closest('a[href^="#"]');if(!e)return;let i=e.getAttribute("href").slice(1),a=i&&document.getElementById(i);a&&(t.preventDefault(),It(a.getBoundingClientRect().top+window.scrollY-8,1e3))});if(window.matchMedia("(hover: hover) and (pointer: fine)").matches){let t=0;document.addEventListener("pointermove",e=>{let i=e.target.closest&&e.target.closest("[data-tilt]");document.querySelectorAll("[data-tilt]").forEach(a=>{a!==i&&(a.style.setProperty("--rx","0deg"),a.style.setProperty("--ry","0deg"))}),i&&(cancelAnimationFrame(t),t=requestAnimationFrame(()=>{let a=i.getBoundingClientRect(),n=(e.clientX-a.left)/a.width-.5,o=(e.clientY-a.top)/a.height-.5;i.style.setProperty("--ry",(n*7).toFixed(2)+"deg"),i.style.setProperty("--rx",(-o*7).toFixed(2)+"deg")}))},{passive:!0})}oe();le();_();At().then(()=>Nt).then(async()=>{if(!P)return;let t=await W().then(()=>yt);t.subscribe(e=>{let i=e.site.ambientAudioUrl||"";i!==window.__HS_AUDIO__&&(window.__HS_AUDIO__=i,k=null);let a=it();if(a)try{a.load()}catch{}}),t.startRealtime()});
 
 </script>
 </body>
