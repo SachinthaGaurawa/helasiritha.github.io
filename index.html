@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#C9A574" />
-  <title>ගෞරව &amp; කෞශානි · මංගල ආරාධනය</title>
-  <meta name="description" content="ගෞරව හා කෞශානි මංගල්‍යය — හෙළ සිරිත. ඔබ සැම සාදරයෙන් ආරාධනා කරමු." />
+  <title>කෞශානි &amp; ගෞරව · මංගල ආරාධනය</title>
+  <meta name="description" content="කෞශානි හා ගෞරව මංගල්‍යය — හෙළ සිරිත. ඔබ සැම සාදරයෙන් ආරාධනා කරමු." />
 
   <link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
@@ -13,7 +13,7 @@
   <!-- Sinhala + Latin display fonts (Unicode Sinhala renders correctly on most devices) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Gemunu+Libre:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
 /* ════════════════════════════════════════════════════════════════════════
@@ -133,11 +133,14 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 
 /* ═══════════════════ OPEN-INVITATION GATEWAY ═══════════════════════════ */
 #gateway {
-  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; text-align: center;
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; flex-direction: column; align-items: center; justify-content: safe center;
+  overflow-y: auto; -webkit-overflow-scrolling: touch; text-align: center;
   background:
     radial-gradient(800px 600px at 50% 30%, color-mix(in srgb,var(--c-primary) 30%, transparent), transparent 60%),
     linear-gradient(180deg, #1c1402, #2a1f06);
-  color: var(--c-secondary); transition: opacity .9s ease, visibility .9s; padding: 24px;
+  color: var(--c-secondary); transition: opacity .9s ease, visibility .9s;
+  padding: max(28px, env(safe-area-inset-top, 0px)) 24px max(28px, env(safe-area-inset-bottom, 0px));
 }
 #gateway.gone { opacity: 0; visibility: hidden; }
 #gateway .glamp { width: clamp(120px,30vw,180px); margin: 0 auto 14px; filter: drop-shadow(0 0 26px color-mix(in srgb,var(--c-primary) 80%, transparent)); color: var(--c-primary); }
@@ -178,6 +181,12 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 .hero .amp { font-family: var(--font-script); font-size: clamp(1.8rem,8vw,3rem); display: block; color: var(--c-accent); margin: .04em 0; }
 .hero .when { font-family: var(--font-si-disp); font-size: clamp(1.05rem,3.6vw,1.4rem); margin-top: .4em; }
 .hero .sesath-wrap { width: clamp(54px,12vw,84px); margin: 14px auto 6px; }
+.hero .couple-art { width: clamp(190px,54vw,330px); margin: 8px auto 12px; color: var(--c-primary); filter: drop-shadow(0 18px 30px color-mix(in srgb,var(--c-accent) 28%, transparent)); }
+.hero .couple-art svg { width: 100%; height: auto; }
+.kc-sway { transform-origin: 50% 92%; animation: kcSway 7s ease-in-out infinite; }
+.kc-shimmer { animation: kcShimmer 3.2s ease-in-out infinite; }
+@keyframes kcSway { 0%,100% { transform: rotate(-1.4deg); } 50% { transform: rotate(1.4deg); } }
+@keyframes kcShimmer { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
 .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
 .scroll-prompt { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: .85rem; color: var(--c-accent); display: grid; place-items: center; gap: 4px; }
 .scroll-prompt .chev { width: 22px; height: 22px; animation: floaty 1.8s ease-in-out infinite; }
@@ -185,12 +194,14 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 
 /* ═══════════════════ INVITATION ════════════════════════════════════════ */
 .invite-grid { display: grid; gap: clamp(20px,4vw,40px); align-items: center; }
-.parents { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(10px,3vw,26px); align-items: center; text-align: center; }
-.parents .side { font-family: var(--font-si-disp); }
-.parents .nm { font-size: clamp(1.2rem,5vw,1.8rem); font-weight: 800; }
-.parents .pr { color: color-mix(in srgb,var(--c-ink) 70%, transparent); font-size: clamp(.92rem,2.8vw,1.02rem); }
-.parents .mid { color: var(--c-primary); }
-.parents .mid svg { width: clamp(40px,9vw,64px); }
+.parents { display: flex; flex-direction: column; align-items: center; gap: clamp(14px,3.4vw,26px); text-align: center; }
+.parents .heading { font-family: var(--font-si-disp); font-weight: 800; color: var(--c-accent); font-size: clamp(1.5rem,6vw,2.4rem); letter-spacing: .02em; }
+.parents .block { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.parents .pr { color: color-mix(in srgb,var(--c-ink) 78%, transparent); font-size: clamp(1rem,3.2vw,1.16rem); }
+.parents .rel { color: var(--c-accent); font-family: var(--font-si-disp); font-size: clamp(.95rem,3vw,1.1rem); }
+.parents .nm { font-family: var(--font-si-disp); font-weight: 800; font-size: clamp(1.8rem,8vw,3rem); line-height: 1.05; }
+.parents .mid { color: var(--c-primary); line-height: 0; }
+.parents .mid svg { width: clamp(36px,8vw,56px); }
 .details { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 16px; margin-top: 8px; }
 .detail { display: grid; gap: 4px; padding: 16px; border-radius: 14px; background: color-mix(in srgb,var(--c-secondary) 40%, transparent); }
 .detail .lab { font-size: .82rem; letter-spacing: .14em; color: var(--c-accent); }
@@ -288,8 +299,7 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 /* ═══════════════════ RESPONSIVE ════════════════════════════════════════ */
 @media (max-width: 1024px) { .masonry { column-count: 2; } }
 @media (max-width: 760px) {
-  .parents { grid-template-columns: 1fr; gap: 6px; }
-  .parents .mid { transform: rotate(90deg); margin: 6px 0; }
+  .parents { gap: clamp(12px,3vw,18px); }
   .hero .thorana { inset: 70px 0 0; }
   .timeline::before { left: clamp(20px,7vw,30px); }
 }
@@ -354,13 +364,117 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
 /* respect reduced-motion: switch all 3D motion off */
 @media (prefers-reduced-motion: reduce) {
   .tilt3d, #gateway .glamp { animation: none !important; transform: none !important; }
+  .kc-sway, .kc-shimmer { animation: none !important; }
   .masonry .ph:hover { transform: none; }
 }
 
-  </style>
+/* ════════════════════════════════════════════════════════════════════════
+ *  ⟡  KANDYAN GRANDEUR LAYER  ⟡   (appended last — refines the whole site)
+ *  100% Sri Lankan · Sinhala · උඩරට ceremonial: embossed gold, carved depth,
+ *  proud decorative lettering, woven motifs, and calm regal transitions.
+ * ════════════════════════════════════════════════════════════════════════ */
+:root{
+  --font-si-deco:"Gemunu Libre","Abhaya Libre","Noto Serif Sinhala",serif;
+  --emboss-dark:rgba(60,40,8,.55);
+  --emboss-light:rgba(255,249,230,.9);
+}
+
+/* woven "liya-vela" lattice watermark behind everything (very faint) */
+body::after{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cg fill='none' stroke='%23A48354' stroke-width='1'%3E%3Cpath d='M42 8 L64 42 L42 76 L20 42 Z'/%3E%3Ccircle cx='42' cy='42' r='5'/%3E%3Ccircle cx='42' cy='42' r='15'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:84px 84px;
+}
+
+/* proud, traditional decorative Sinhala for every couple-name & signature */
+#gateway .names, .hero .couple, .hero .amp, .parents .nm,
+.lovenote .sig, .site-footer .fnames, .vel-akuru{
+  font-family:var(--font-si-deco) !important; letter-spacing:.012em; font-weight:800;
+}
+.hero .amp{ font-weight:600; }
+
+/* ── EMBOSS: carved-into-ivory titles, raised gold foil ── */
+.title{ text-shadow:0 1px 0 var(--emboss-light), 0 2px 2px var(--emboss-dark); }
+.foil{
+  text-shadow:
+    0 1px 0 var(--emboss-light),
+    0 2px 1px rgba(60,40,8,.4),
+    0 0 20px color-mix(in srgb,var(--c-primary) 24%, transparent);
+}
+.hero .couple{
+  text-shadow:
+    0 1px 0 var(--emboss-light),
+    0 3px 2px rgba(60,40,8,.42),
+    0 0 26px color-mix(in srgb,var(--c-primary) 28%, transparent);
+}
+.kicker{ text-shadow:0 1px 0 var(--emboss-light); }
+
+/* ── CARDS: manuscript frame + raised emboss + soft depth ── */
+.card{
+  background:linear-gradient(180deg, color-mix(in srgb,var(--c-surface) 97%,#fff), color-mix(in srgb,var(--c-secondary) 26%, transparent));
+  outline:1px solid color-mix(in srgb,var(--c-primary) 26%, transparent); outline-offset:-11px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.75) inset,
+    0 30px 64px -32px var(--emboss-dark),
+    0 2px 0 color-mix(in srgb,var(--c-primary) 26%, transparent);
+}
+
+/* ── BUTTONS: pressed-metal emboss ── */
+.btn-primary{ box-shadow:0 1px 0 rgba(255,255,255,.55) inset, 0 12px 28px -13px color-mix(in srgb,var(--c-primary) 85%, transparent); }
+.btn-primary:active{ box-shadow:0 2px 4px rgba(60,40,8,.5) inset; transform:translateY(0); }
+.btn-ghost:hover{ background:color-mix(in srgb,var(--c-primary) 12%, transparent); }
+
+/* ── FLOATING MUSIC BUTTON (fixed, left) ── */
+.music-fab{
+  position:fixed; z-index:40;
+  top:max(16px, env(safe-area-inset-top,0px)); left:max(16px, env(safe-area-inset-left,0px));
+  width:54px; height:54px; border-radius:50%; display:grid; place-items:center; color:#2b2103;
+  background:var(--gold-grad); background-size:220% 220%;
+  border:1px solid color-mix(in srgb,#fff 45%, var(--c-primary));
+  box-shadow:0 1px 0 rgba(255,255,255,.65) inset, 0 14px 28px -13px var(--emboss-dark);
+  animation:shimmer 7s ease-in-out infinite; transition:transform .25s, box-shadow .25s;
+}
+.music-fab svg{ width:24px; height:24px; }
+.music-fab:hover{ transform:translateY(-2px) scale(1.05); }
+.music-fab:active{ transform:translateY(0) scale(.98); }
+.music-fab:focus-visible{ outline:3px solid color-mix(in srgb,var(--c-accent) 70%, transparent); outline-offset:3px; }
+.music-fab .bar{ animation:none; }
+.music-fab.music-on{ box-shadow:0 0 0 4px color-mix(in srgb,var(--c-primary) 28%, transparent), 0 14px 28px -13px var(--emboss-dark); }
+.music-fab.music-on .bar{ animation:eq .9s ease-in-out infinite; }
+
+/* ── SMOOTHER, more elegant reveal motion ── */
+.reveal{ transform:translateY(30px) scale(.985); transition:opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1); }
+
+/* extra ceremonial depth on art & agenda medallions */
+.hero .couple-art{ filter:drop-shadow(0 18px 30px color-mix(in srgb,var(--c-accent) 30%, transparent)) drop-shadow(0 0 16px color-mix(in srgb,var(--c-primary) 26%, transparent)); }
+.tl-icon{ box-shadow:0 1px 0 rgba(255,255,255,.75) inset, 0 10px 22px -14px var(--emboss-dark); }
+.detail{ box-shadow:0 1px 0 rgba(255,255,255,.6) inset; }
+
+/* ── LOVE NOTE: real paragraph rhythm + proud signature ── */
+.lovenote p{ margin:0 0 1.05em; }
+.lovenote p:last-of-type{ margin-bottom:0; }
+.lovenote .sig{ color:var(--c-accent); margin-top:.6em; }
+
+/* ── BLESSINGS: traditional "see more / less" toggle ── */
+.bless-toggle{ margin-top:22px; }
+.see-more{ font-family:var(--font-si-disp); letter-spacing:.03em; }
+.see-more::before, .see-more::after{ content:"❖"; color:var(--c-primary); margin:0 .55em; font-size:.82em; opacity:.75; }
+.bless{ box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 14px 30px -24px var(--emboss-dark); transition:transform .3s ease, box-shadow .3s ease; }
+.bless:hover{ transform:translateY(-3px); box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 22px 40px -26px var(--emboss-dark); }
+
+/* gateway: a touch more grandeur */
+#gateway .names{ text-shadow:0 2px 10px rgba(0,0,0,.4); }
+#gateway .ay{ text-shadow:0 1px 0 rgba(255,255,255,.25), 0 0 22px color-mix(in srgb,var(--c-primary) 35%, transparent); }
+
+@media (prefers-reduced-motion: reduce){
+  .music-fab{ animation:none !important; }
+  body::after{ display:none; }
+}
+
+</style>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="ගෞරව & කෞශානි · මංගල ආරාධනය" />
+  <meta property="og:title" content="කෞශානි & ගෞරව · මංගල ආරාධනය" />
   <meta property="og:description" content="හෙළ සිරිත — අප හා එක්වන්න." />
   <meta property="og:type" content="website" />
 </head>
@@ -371,7 +485,7 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
     <div>
       <div id="glamp" class="glamp" role="button" tabindex="0" aria-label="ආරාධනය විවෘත කරන්න"></div>
       <div class="ay foil">ආයුබෝවන්</div>
-      <div class="names">ගෞරව &amp; කෞශානි</div>
+      <div class="names">කෞශානි &amp; ගෞරව</div>
       <p class="hint">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</p>
       <button id="enterBtn" class="btn btn-primary enter">ආරාධනා පත්‍රය විවෘත කරන්න</button>
     </div>
@@ -380,18 +494,15 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
   <!-- ░░ AMBIENT PETALS ░░ -->
   <div id="petals" aria-hidden="true"></div>
 
-  <!-- ░░ TOP BAR ░░ -->
-  <header id="topbar" class="topbar">
-    <a id="brand" class="brand" href="#hero">හෙළ සිරිත</a>
-    <button id="musicBtn" class="icon-btn" aria-pressed="false" aria-label="සංගීතය">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <rect class="bar" x="4"  y="9"  width="2.4" height="6"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center"/>
-        <rect class="bar" x="9"  y="6"  width="2.4" height="12" rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.15s"/>
-        <rect class="bar" x="14" y="8"  width="2.4" height="8"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.3s"/>
-        <rect class="bar" x="19" y="10" width="2.4" height="4"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.45s"/>
-      </svg>
-    </button>
-  </header>
+  <!-- ░░ FLOATING MUSIC BUTTON (fixed, left) ░░ -->
+  <button id="musicBtn" class="music-fab" aria-pressed="false" aria-label="සංගීතය">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <rect class="bar" x="4"  y="9"  width="2.4" height="6"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center"/>
+      <rect class="bar" x="9"  y="6"  width="2.4" height="12" rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.15s"/>
+      <rect class="bar" x="14" y="8"  width="2.4" height="8"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.3s"/>
+      <rect class="bar" x="19" y="10" width="2.4" height="4"  rx="1" fill="currentColor" stroke="none" style="transform-origin:center;animation-delay:.45s"/>
+    </svg>
+  </button>
 
   <!-- ░░ MAIN ░░ -->
   <main>
@@ -399,11 +510,9 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
     <section id="invitation"></section>
     <section id="countdown"></section>
     <section id="rsvp"></section>
-    <section id="seat"></section>
     <section id="agenda"></section>
     <section id="gallery"></section>
     <section id="blessings"></section>
-    <section id="lamp"></section>
     <section id="lovenote"></section>
   </main>
 
@@ -421,154 +530,8 @@ section { padding-block: clamp(56px, 9vw, 120px); position: relative; }
   </noscript>
 
   <script type="module">
-/* helasiritha · single-file bundle (esbuild esm) — generated from the modular source.
-   Edit the source modules then re-bundle, OR edit inline strings/CSS directly. */
-var __defProp = Object.defineProperty;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-
-// release/helasiritha-web/assets/js/firebase-config.js
-var FIREBASE_SDK_VERSION, SDK_BASE, FIREBASE_CONFIG, CLOUDINARY, FIREBASE_READY;
-var init_firebase_config = __esm({
-  "release/helasiritha-web/assets/js/firebase-config.js"() {
-    FIREBASE_SDK_VERSION = "12.14.0";
-    SDK_BASE = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;
-    FIREBASE_CONFIG = {
-      apiKey: "AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",
-      authDomain: "helasiritha-official.firebaseapp.com",
-      projectId: "helasiritha-official",
-      storageBucket: "helasiritha-official.firebasestorage.app",
-      messagingSenderId: "993883662089",
-      appId: "1:993883662089:web:b583123218df07be9155d8",
-      measurementId: "G-PBJWLXWVD9"
-    };
-    CLOUDINARY = {
-      cloudName: "dzrfpc9be",
-      uploadPreset: "helasiritha_unsigned"
-    };
-    FIREBASE_READY = true;
-  }
-});
-
-// release/helasiritha-web/assets/js/i18n.js
-var SI;
-var init_i18n = __esm({
-  "release/helasiritha-web/assets/js/i18n.js"() {
-    SI = {
-      /* gateway / preloader */
-      ayubowan: "ආයුබෝවන්",
-      openInvitation: "ආරාධනා පත්‍රය විවෘත කරන්න",
-      loading: "මඳක් රැඳී සිටින්න…",
-      enterPrompt: "පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",
-      /* hero */
-      gettingMarried: "අප විවාහ දිවියට එළඹෙමු",
-      togetherWithFamilies: "උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",
-      joinUsOn: "අප හා එක්වන්න",
-      weddingOf: "මංගල දිනය",
-      rsvp: "පැමිණීම තහවුරු කිරීම",
-      findMySeat: "ඔබේ අසුන සොයන්න",
-      scrollPrompt: "පහළට ගෙන යන්න",
-      /* invitation */
-      invitationTitle: "ආරාධනාව",
-      requestPresence: "ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",
-      weddingDetails: "මංගල තොරතුරු",
-      date: "දිනය",
-      time: "වේලාව",
-      venue: "ස්ථානය",
-      viewLocation: "ස්ථානය සිතියමින් බලන්න",
-      reception: "පිළිගැනීමේ උත්සවය",
-      andSon: "ගේ පුත්",
-      andDaughter: "ගේ දියණිය",
-      /* countdown */
-      countdownTitle: "මංගල දිනයට තවත්",
-      days: "දින",
-      hours: "පැය",
-      minutes: "මිනිත්තු",
-      seconds: "තත්පර",
-      theDayHasArrived: "අද එම සුභ මංගල දිනයයි!",
-      /* rsvp */
-      rsvpTitle: "පැමිණීම තහවුරු කිරීම",
-      rsvpSub: "ඔබව සාදරයෙන් පිළිගනිමු",
-      rsvpHelp: "ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.",
-      familyNamePlaceholder: "ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",
-      searchGuestList: "ආරාධිත නාම ලේඛනය සොයන්න",
-      searching: "සොයමින්…",
-      noGuestFound: "කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය. නැවත උත්සාහ කරන්න.",
-      selectYourName: "කරුණාකර ඔබගේ නම තෝරන්න",
-      willYouAttend: "ඔබ සහභාගී වෙනවා ද?",
-      yesAttend: "ඔව්, සතුටින් පැමිණෙමි",
-      noAttend: "කනගාටුයි, පැමිණිය නොහැක",
-      takingLiquor: "මත්පැන් අවශ්‍ය ද?",
-      yes: "ඔව්",
-      no: "නැහැ",
-      guestCount: "පැමිණෙන සංඛ්‍යාව",
-      dietary: "ආහාර අවශ්‍යතා (ඇත්නම්)",
-      confirmRsvp: "පිළිතුර තහවුරු කරන්න",
-      sending: "යවමින්…",
-      rsvpThanks: "ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",
-      rsvpConfirmedMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",
-      rsvpDeclinedMsg: "ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",
-      changeResponse: "පිළිතුර වෙනස් කරන්න",
-      /* seat search */
-      seatTitle: "ඔබේ අසුන",
-      seatSub: "ඔබගේ නම සොයා, ඔබට වෙන් කළ මේස අංකය බලන්න.",
-      yourTableIs: "ඔබට වෙන් කළ මේසය",
-      tableNo: "මේස අංකය",
-      noTableYet: "ඔබගේ අසුන තවම වෙන් කර නැත. මඳක් පසුව නැවත පරීක්ෂා කරන්න.",
-      /* agenda */
-      agendaTitle: "මංගල වැඩසටහන් පෙළගැස්ම",
-      agendaSub: "අපගේ දිනයේ සුවිශේෂ මොහොත්",
-      /* gallery */
-      galleryTitle: "සෙනෙහසේ මංසලකුණු",
-      gallerySub: "සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…",
-      /* love note */
-      loveNoteTitle: "විශේෂ සටහන",
-      loveNoteSubtitle: "අපගේ ආදරණීය අමුත්තනට",
-      withLove: "සෙනෙහසින්,",
-      /* blessing book (innovation #1) */
-      blessingsTitle: "සුබ පැතුම් පොත",
-      blessingsSub: "අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",
-      yourName: "ඔබගේ නම",
-      yourBlessing: "ඔබගේ සුබ පැතුම",
-      composeBlessing: "සුබ පැතුමක් යෝජනා කරන්න",
-      composing: "රචනා කරමින්…",
-      sendBlessing: "සුබ පැතුම තැබීම",
-      blessingThanks: "ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",
-      awaitingBlessings: "පළමු සුබ පැතුම ඔබගෙන් වේවා…",
-      /* pun kalasa lamp (innovation #3) */
-      lampTitle: "මංගල පහන",
-      lampSub: "තහවුරු වන සෑම ආරාධිතයෙකු සමඟම පහන බැබළේ.",
-      guestsGathering: "ආරාධිතයන් රැස්වෙමින්",
-      confirmedCount: "තහවුරු වූ ආරාධිතයන්",
-      /* footer / misc */
-      backToTop: "ඉහළට යන්න",
-      callUs: "අමතන්න",
-      addToCalendar: "දින දර්ශනයට එක් කරන්න",
-      shareWhatsapp: "WhatsApp හරහා බෙදාගන්න",
-      celebrating: "සැමරුම",
-      menu: "මෙනුව",
-      setupPending: "පද්ධතිය සැකසෙමින් පවතී. මඳක් පසුව නැවත පිවිසෙන්න."
-    };
-  }
-});
-
-// release/helasiritha-web/assets/js/ornaments.js
-function ornamentIcon(key, cls) {
-  const fn = ORNAMENT_ICONS[key] || nelumMala;
-  return fn(cls);
-}
-var A, liyawela, punKalasa, nelumMala, sesath, pahana, liyaThorana, mandala, mayura, ring, feast, ORNAMENT_ICONS;
-var init_ornaments = __esm({
-  "release/helasiritha-web/assets/js/ornaments.js"() {
-    A = (cls = "") => `class="${cls}" fill="none" aria-hidden="true" focusable="false"`;
-    liyawela = (cls = "orn-liyawela") => `
-<svg ${A(cls)} viewBox="0 0 600 60">
+var Bt=Object.defineProperty;var M=(t,e)=>()=>(t&&(e=t(t=0)),e);var at=(t,e)=>{for(var i in e)Bt(t,i,{get:e[i],enumerable:!0})};var _t,H,nt,ot,P,q=M(()=>{_t="12.14.0",H=`https://www.gstatic.com/firebasejs/${_t}`,nt={apiKey:"AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",authDomain:"helasiritha-official.firebaseapp.com",projectId:"helasiritha-official",storageBucket:"helasiritha-official.firebasestorage.app",messagingSenderId:"993883662089",appId:"1:993883662089:web:b583123218df07be9155d8",measurementId:"G-PBJWLXWVD9"},ot={cloudName:"dzrfpc9be",uploadPreset:"helasiritha_unsigned"},P=!0});var r,G=M(()=>{r={ayubowan:"ආයුබෝවන්",openInvitation:"ආරාධනා පත්‍රය විවෘත කරන්න",loading:"මඳක් රැඳී සිටින්න…",enterPrompt:"පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",gettingMarried:"අප විවාහ දිවියට එළඹෙමු",togetherWithFamilies:"උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",joinUsOn:"අප හා එක්වන්න",weddingOf:"මංගල දිනය",rsvp:"පැමිණීම තහවුරු කිරීම",scrollPrompt:"පහළට ගෙන යන්න",invitationTitle:"ආරාධනාව",requestPresence:"ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",shubaMangalam:"ශ්‍රී සුබ මංගලම්",belovedDaughter:"ආදරණීය දියණිය",belovedSon:"ආදරණීය පුත්",weddingDetails:"මංගල තොරතුරු",date:"දිනය",time:"වේලාව",venue:"ස්ථානය",viewLocation:"ස්ථානය සිතියමින් බලන්න",reception:"පිළිගැනීමේ උත්සවය",andSon:"ගේ පුත්",andDaughter:"ගේ දියණිය",countdownTitle:"මංගල දිනයට තවත්",days:"දින",hours:"පැය",minutes:"මිනිත්තු",seconds:"තත්පර",theDayHasArrived:"අද එම සුභ මංගල දිනයයි!",rsvpTitle:"පැමිණීම තහවුරු කිරීම",rsvpSub:"ඔබව සාදරයෙන් පිළිගනිමු",rsvpHelp:"ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.",familyNamePlaceholder:"ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",searchGuestList:"ආරාධිත නාම ලේඛනය සොයන්න",searching:"සොයමින්…",noGuestFound:"කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය. නැවත උත්සාහ කරන්න.",selectYourName:"කරුණාකර ඔබගේ නම තෝරන්න",willYouAttend:"ඔබ සහභාගී වෙනවා ද?",yesAttend:"ඔව්, සතුටින් පැමිණෙමි",noAttend:"කනගාටුයි, පැමිණිය නොහැක",takingLiquor:"මත්පැන් අවශ්‍ය ද?",yes:"ඔව්",no:"නැහැ",guestCount:"පැමිණෙන සංඛ්‍යාව",dietary:"ආහාර අවශ්‍යතා (ඇත්නම්)",confirmRsvp:"පිළිතුර තහවුරු කරන්න",sending:"යවමින්…",rsvpThanks:"ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",rsvpConfirmedMsg:"ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",rsvpDeclinedMsg:"ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",changeResponse:"පිළිතුර වෙනස් කරන්න",agendaTitle:"මංගල වැඩසටහන් පෙළගැස්ම",agendaSub:"අපගේ දිනයේ සුවිශේෂ මොහොත්",galleryTitle:"සෙනෙහසේ මංසලකුණු",gallerySub:"සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…",loveNoteTitle:"විශේෂ සටහන",loveNoteSubtitle:"අපගේ ආදරණීය අමුත්තනට",withLove:"සෙනෙහසින්,",blessingsTitle:"සුබ පැතුම් පොත",blessingsSub:"අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",yourName:"ඔබගේ නම",yourBlessing:"ඔබගේ සුබ පැතුම",composeBlessing:"සුබ පැතුමක් යෝජනා කරන්න",composing:"රචනා කරමින්…",sendBlessing:"සුබ පැතුම තැබීම",blessingThanks:"ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",awaitingBlessings:"පළමු සුබ පැතුම ඔබගෙන් වේවා…",lampTitle:"මංගල පහන",lampSub:"තහවුරු වන සෑම ආරාධිතයෙකු සමඟම පහන බැබළේ.",guestsGathering:"ආරාධිතයන් රැස්වෙමින්",confirmedCount:"තහවුරු වූ ආරාධිතයන්",backToTop:"ඉහළට යන්න",callUs:"අමතන්න",addToCalendar:"දින දර්ශනයට එක් කරන්න",shareWhatsapp:"WhatsApp හරහා බෙදාගන්න",celebrating:"සැමරුම",menu:"මෙනුව",setupPending:"පද්ධතිය සැකසෙමින් පවතී. මඳක් පසුව නැවත පිවිසෙන්න."}});function pt(t,e){return(qt[t]||C)(e)}var v,D,lt,C,Ot,S,ct,L,Ft,Ht,Pt,dt,qt,U=M(()=>{v=(t="")=>`class="${t}" fill="none" aria-hidden="true" focusable="false"`,D=(t="orn-liyawela")=>`
+<svg ${v(t)} viewBox="0 0 600 60">
   <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
     <path d="M10 30 H230" opacity="0.45"/>
     <path d="M370 30 H590" opacity="0.45"/>
@@ -583,9 +546,8 @@ var init_ornaments = __esm({
     <path d="M300 14c8 6 12 16 12 24 0 0-12-2-12-14 0 12-12 14-12 14 0-8 4-18 12-24Z"/>
     <circle cx="300" cy="44" r="3.5"/>
   </g>
-</svg>`;
-    punKalasa = (cls = "orn-kalasa") => `
-<svg ${A(cls)} viewBox="0 0 120 150">
+</svg>`,lt=(t="orn-kalasa")=>`
+<svg ${v(t)} viewBox="0 0 120 150">
   <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
     <path d="M60 8c0 18-10 26-10 38"/>
     <path d="M60 8c0 18 10 26 10 38"/>
@@ -599,9 +561,8 @@ var init_ornaments = __esm({
     <path d="M34 108c16 8 36 8 52 0" opacity="0.55"/>
     <circle cx="60" cy="100" r="6" fill="currentColor" opacity="0.3"/>
   </g>
-</svg>`;
-    nelumMala = (cls = "orn-lotus") => `
-<svg ${A(cls)} viewBox="0 0 100 70">
+</svg>`,C=(t="orn-lotus")=>`
+<svg ${v(t)} viewBox="0 0 100 70">
   <g fill="currentColor">
     <path d="M50 8c6 10 8 28 0 46-8-18-6-36 0-46Z" opacity="0.92"/>
     <path d="M50 18c12 8 18 24 16 40-14-8-20-24-16-40Z" opacity="0.7"/>
@@ -610,69 +571,43 @@ var init_ornaments = __esm({
     <path d="M50 26c-16 4-26 18-28 34 16-4 26-18 28-34Z" opacity="0.48"/>
   </g>
   <path d="M14 60c14 6 58 6 72 0" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
-</svg>`;
-    sesath = (cls = "orn-sesath") => {
-      let spokes = "";
-      const n = 16;
-      for (let i = 0; i < n; i++) {
-        const a = i / n * Math.PI * 2;
-        spokes += `<line x1="${(50 + Math.cos(a) * 9).toFixed(2)}" y1="${(46 + Math.sin(a) * 9).toFixed(2)}" x2="${(50 + Math.cos(a) * 34).toFixed(2)}" y2="${(46 + Math.sin(a) * 34).toFixed(2)}" opacity="0.55"/>`;
-      }
-      return `
-<svg ${A(cls)} viewBox="0 0 100 100">
+</svg>`,Ot=(t="orn-sesath")=>{let e="";for(let s=0;s<16;s++){let n=s/16*Math.PI*2;e+=`<line x1="${(50+Math.cos(n)*9).toFixed(2)}" y1="${(46+Math.sin(n)*9).toFixed(2)}" x2="${(50+Math.cos(n)*34).toFixed(2)}" y2="${(46+Math.sin(n)*34).toFixed(2)}" opacity="0.55"/>`}return`
+<svg ${v(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="1.4">
     <circle cx="50" cy="46" r="34" opacity="0.5"/>
     <circle cx="50" cy="46" r="22" opacity="0.7"/>
     <circle cx="50" cy="46" r="9" fill="currentColor" opacity="0.25"/>
-    ${spokes}
+    ${e}
     <line x1="50" y1="80" x2="50" y2="98" stroke-width="2"/>
   </g>
-</svg>`;
-    };
-    pahana = (cls = "orn-pahana", lit = true) => `
-<svg ${A(cls)} viewBox="0 0 60 96">
-  ${lit ? `<g class="flame">
+</svg>`},S=(t="orn-pahana",e=!0)=>`
+<svg ${v(t)} viewBox="0 -14 60 110">
+  ${e?`<g class="flame">
     <path d="M30 4c6 8 9 14 9 21 0 6-4 11-9 11s-9-5-9-11c0-7 3-13 9-21Z" fill="currentColor" opacity="0.92"/>
     <path d="M30 16c2 4 3 8 3 12 0 3-1 6-3 6s-3-3-3-6c0-4 1-8 3-12Z" fill="#FFF7DA"/>
-  </g>` : ``}
+  </g>`:""}
   <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor">
     <path d="M14 46h32l-6 8H20l-6-8Z" opacity="0.25"/>
     <path d="M10 54c0 10 9 16 20 16s20-6 20-16H10Z" opacity="0.18"/>
     <path d="M28 70h4v16h-4z"/>
     <ellipse cx="30" cy="88" rx="14" ry="4" opacity="0.18"/>
   </g>
-</svg>`;
-    liyaThorana = (cls = "orn-thorana") => `
-<svg ${A(cls)} viewBox="0 0 400 520" preserveAspectRatio="none">
+</svg>`,ct=(t="orn-thorana")=>`
+<svg ${v(t)} viewBox="0 0 400 520" preserveAspectRatio="none">
   <path d="M20 500V190C20 96 100 20 200 20s180 76 180 170v310" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
   <path d="M34 500V192C34 106 108 36 200 36s166 70 166 156v308" stroke="currentColor" stroke-width="1" opacity="0.4"/>
   <g fill="currentColor" transform="translate(200 22)">
     <path d="M0 0c5 6 7 14 0 24-7-10-5-18 0-24Z"/>
   </g>
-</svg>`;
-    mandala = (cls = "orn-mandala") => {
-      let petals = "";
-      const n = 12;
-      for (let i = 0; i < n; i++) {
-        const a = i / n * 360;
-        petals += `<path d="M60 18c6 8 6 20 0 30-6-10-6-22 0-30Z" fill="currentColor" opacity="0.5" transform="rotate(${a} 60 60)"/>`;
-      }
-      let inner = "";
-      for (let i = 0; i < n; i++) {
-        const a = i / n * 360 + 15;
-        inner += `<path d="M60 34c4 5 4 13 0 20-4-7-4-15 0-20Z" fill="currentColor" opacity="0.7" transform="rotate(${a} 60 60)"/>`;
-      }
-      return `
-<svg ${A(cls)} viewBox="0 0 120 120">
+</svg>`,L=(t="orn-mandala")=>{let e="";for(let n=0;n<12;n++){let l=n/12*360;e+=`<path d="M60 18c6 8 6 20 0 30-6-10-6-22 0-30Z" fill="currentColor" opacity="0.5" transform="rotate(${l} 60 60)"/>`}let s="";for(let n=0;n<12;n++){let l=n/12*360+15;s+=`<path d="M60 34c4 5 4 13 0 20-4-7-4-15 0-20Z" fill="currentColor" opacity="0.7" transform="rotate(${l} 60 60)"/>`}return`
+<svg ${v(t)} viewBox="0 0 120 120">
   <circle cx="60" cy="60" r="56" stroke="currentColor" stroke-width="1" opacity="0.3"/>
   <circle cx="60" cy="60" r="46" stroke="currentColor" stroke-width="1" opacity="0.4"/>
-  ${petals}${inner}
+  ${e}${s}
   <circle cx="60" cy="60" r="9" fill="currentColor" opacity="0.9"/>
   <circle cx="60" cy="60" r="4" fill="#FFF7DA"/>
-</svg>`;
-    };
-    mayura = (cls = "orn-mayura") => `
-<svg ${A(cls)} viewBox="0 0 140 120">
+</svg>`},Ft=(t="orn-mayura")=>`
+<svg ${v(t)} viewBox="0 0 140 120">
   <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M70 96c0-26 8-44 22-58" />
     <path d="M70 96c0-26-8-44-22-58" />
@@ -684,960 +619,232 @@ var init_ornaments = __esm({
     <path d="M40 96c20 8 40 8 60 0" opacity="0.6"/>
     <path d="M70 96l-6 14M70 96l6 14" />
   </g>
-</svg>`;
-    ring = (cls = "orn-ring") => `
-<svg ${A(cls)} viewBox="0 0 100 100">
+</svg>`,Ht=(t="orn-ring")=>`
+<svg ${v(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="2" fill="none">
     <circle cx="38" cy="58" r="22" opacity="0.85"/>
     <circle cx="62" cy="58" r="22" opacity="0.85"/>
     <path d="M50 30l6 8h-12l6-8Z" fill="currentColor"/>
   </g>
-</svg>`;
-    feast = (cls = "orn-feast") => `
-<svg ${A(cls)} viewBox="0 0 100 100">
+</svg>`,Pt=(t="orn-feast")=>`
+<svg ${v(t)} viewBox="0 0 100 100">
   <g stroke="currentColor" stroke-width="2" stroke-linejoin="round">
     <ellipse cx="50" cy="62" rx="34" ry="12" fill="currentColor" opacity="0.15"/>
     <path d="M30 58c4-12 36-12 40 0" />
     <circle cx="50" cy="46" r="7" fill="currentColor" opacity="0.4"/>
     <path d="M24 40v22M22 40h4M78 40c0 8-4 10-4 14v8" />
   </g>
-</svg>`;
-    ORNAMENT_ICONS = {
-      poruwa: punKalasa,
-      kalasa: punKalasa,
-      lamp: pahana,
-      pahana,
-      lotus: nelumMala,
-      sesath,
-      mandala,
-      mayura,
-      ring,
-      feast
-    };
-  }
-});
+</svg>`,dt=(t="orn-couple")=>{let e="#E7C9A6",i="#2E2113",s="#1E2A4F",n="#FFFDF8",l="";for(let p=0;p<8;p++)l+=`<path d="M0 -13c3 4 3 9 0 13-3-4-3-9 0-13Z" fill="currentColor" opacity="0.65" transform="rotate(${p*45})"/>`;return`
+<svg ${v(t)} viewBox="0 0 360 340">
+  <ellipse cx="180" cy="320" rx="124" ry="14" fill="currentColor" opacity="0.12"/>
+  <g class="kc-sway">
 
-// release/helasiritha-web/assets/js/data.js
-var data_exports = {};
-__export(data_exports, {
-  CLOUDINARY: () => CLOUDINARY,
-  applyTheme: () => applyTheme,
-  db: () => db,
-  postBlessing: () => postBlessing,
-  readLocalRsvp: () => readLocalRsvp,
-  searchGuests: () => searchGuests,
-  startRealtime: () => startRealtime,
-  state: () => state,
-  submitRsvp: () => submitRsvp,
-  subscribe: () => subscribe
-});
-function subscribe(fn) {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-}
-function emit() {
-  listeners.forEach((fn) => fn(state));
-}
-function DEFAULT_SITE() {
-  return {
-    brideNameEn: "Kaushani",
-    groomNameEn: "Gaurawa",
-    brideNameSi: "කෞශානි",
-    groomNameSi: "ගෞරව",
-    weddingDateISO: "2028-01-12T09:15:00+05:30",
-    ceremonyTimeLabel: "පෙ.ව. 9.15 සිට",
-    venueName: "ද එපිටෝම් හෝටලය",
-    venueAddress: "කුරුණෑගල",
-    mapUrl: "https://maps.google.com/?q=The+Epitome+Hotel+Kurunegala",
-    brideParentsSi: "",
-    groomParentsSi: "",
-    inviteWordingSi: "අප දෙදෙනාගේ සෙනෙහසේ මංගල්‍යය වෙනුවෙන්, ඔබ සැම සාදරයෙන් ආරාධනා කරමු.",
-    loveNoteSi: "අප ජීවිතයේ සුවිශේෂ මොහොතක ඔබ අප සමඟ සිටීම, අප ලද වටිනාම ආශිර්වාදයයි. බොහෝ ස්තූතියි.",
-    whatsappNumber: "94705367980",
-    rsvpDeadlineISO: "2027-12-20T23:59:00+05:30",
-    allowLiquorPref: true,
-    allowDietaryPref: true,
-    images: { banner: "", rsvp: "", loveNote: "" },
-    ambientAudioUrl: ""
-  };
-}
-function DEFAULT_THEME() {
-  return { primary: "#C9A574", secondary: "#F2E5C6", accent: "#A48354", surface: "#FFFBF2", text: "#221C01" };
-}
-function DEFAULT_VISIBILITY() {
-  return { invite: true, invitationCard: true, countdown: true, rsvp: true, seating: true, agenda: true, gallery: true, blessings: true, loveNote: true };
-}
-function applyTheme(t) {
-  const r = document.documentElement.style;
-  r.setProperty("--c-primary", t.primary);
-  r.setProperty("--c-secondary", t.secondary);
-  r.setProperty("--c-accent", t.accent);
-  r.setProperty("--c-surface", t.surface);
-  r.setProperty("--c-ink", t.text);
-}
-function startRealtime() {
-  const { doc, onSnapshot, collection, query, orderBy, where, limit } = fs;
-  onSnapshot(doc(db, "config", "site"), (s) => {
-    if (s.exists()) state.site = { ...DEFAULT_SITE(), ...s.data() };
-    state.ready = true;
-    emit();
-  }, () => {
-    state.ready = true;
-    emit();
-  });
-  onSnapshot(doc(db, "config", "theme"), (s) => {
-    if (s.exists()) state.theme = { ...DEFAULT_THEME(), ...s.data() };
-    applyTheme(state.theme);
-    emit();
-  });
-  onSnapshot(doc(db, "config", "visibility"), (s) => {
-    if (s.exists()) state.visibility = { ...DEFAULT_VISIBILITY(), ...s.data() };
-    emit();
-  });
-  onSnapshot(doc(db, "config", "stats"), (s) => {
-    if (s.exists()) state.stats = { ...state.stats, ...s.data() };
-    emit();
-  });
-  onSnapshot(query(collection(db, "agenda"), orderBy("order", "asc")), (snap) => {
-    state.agenda = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((e) => e.visible !== false);
-    emit();
-  }, () => {
-  });
-  onSnapshot(query(collection(db, "gallery"), orderBy("order", "asc")), (snap) => {
-    state.gallery = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    emit();
-  }, () => {
-  });
-  onSnapshot(
-    /* equality-only query → no composite index required; sorted client-side */
-    query(collection(db, "blessings"), where("approved", "==", true), limit(100)),
-    (snap) => {
-      state.blessings = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-      emit();
-    },
-    () => {
-    }
-  );
-  applyTheme(state.theme);
-}
-function normalize(s) {
-  return String(s || "").toLowerCase().normalize("NFC").replace(/[\u200b-\u200d\uFEFF]/g, "").replace(/\s+/g, " ").trim();
-}
-async function searchGuests(term) {
-  const { collection, query, where, getDocs, limit, orderBy } = fs;
-  const t = normalize(term);
-  if (t.length < 2) return [];
-  let out = [];
-  try {
-    const q = query(collection(db, "guests"), where("searchTokens", "array-contains", t), limit(25));
-    const snap = await getDocs(q);
-    out = snap.docs.map((d) => slimGuest(d));
-  } catch (_) {
-  }
-  if (out.length === 0) {
-    try {
-      const snap = await getDocs(query(collection(db, "guests"), orderBy("name"), limit(800)));
-      out = snap.docs.map((d) => slimGuest(d)).filter((g) => {
-        const hay = normalize(g.name + " " + g.familyName);
-        return hay.includes(t) || hay.replace(/\s/g, "").includes(t.replace(/\s/g, ""));
-      }).slice(0, 25);
-    } catch (_) {
-    }
-  }
-  return out;
-}
-function slimGuest(d) {
-  const g = d.data();
-  return {
-    id: d.id,
-    name: g.name || "",
-    familyName: g.familyName || "",
-    side: g.side || "groom",
-    tableNumber: g.tableNumber ?? null,
-    status: g.status || "pending"
-  };
-}
-async function submitRsvp({ guestId, guestName, side, attending, takingLiquor, partySize, dietary }) {
-  const { doc, setDoc, runTransaction } = fs;
-  const status = attending ? "confirmed" : "declined";
-  const prev = readLocalRsvp(guestId);
-  await setDoc(doc(db, "rsvps", guestId), {
-    guestId,
-    guestName: String(guestName || "").slice(0, 120),
-    side: side || "groom",
-    status,
-    takingLiquor: !!takingLiquor,
-    partySize: Math.min(30, Math.max(1, Number(partySize) || 1)),
-    dietary: String(dietary || "").slice(0, 280),
-    respondedAt: Date.now()
-  }, { merge: true });
-  try {
-    await runTransaction(db, async (tx) => {
-      const ref = doc(db, "config", "stats");
-      const s = await tx.get(ref);
-      const cur = s.exists() ? s.data() : { totalGuests: 0, confirmed: 0, pending: 0, declined: 0 };
-      const next = { ...cur };
-      const dec = (k) => {
-        next[k] = Math.max(0, (next[k] || 0) - 1);
-      };
-      const inc = (k) => {
-        next[k] = (next[k] || 0) + 1;
-      };
-      if (prev?.status === "confirmed") dec("confirmed");
-      if (prev?.status === "declined") dec("declined");
-      if (!prev) dec("pending");
-      inc(status);
-      next.updatedAt = Date.now();
-      tx.set(ref, next, { merge: true });
-    });
-  } catch (_) {
-  }
-  writeLocalRsvp(guestId, { status, takingLiquor: !!takingLiquor, partySize, dietary });
-  return status;
-}
-async function postBlessing(name, message) {
-  const { collection, addDoc } = fs;
-  const msg = String(message || "").trim().slice(0, 400);
-  if (!msg) {
-    const e = new Error("empty");
-    e.si = "කරුණාකර සුබ පැතුම ලියන්න.";
-    throw e;
-  }
-  await addDoc(collection(db, "blessings"), {
-    guestName: String(name || "").trim().slice(0, 60) || "ආගන්තුකයෙක්",
-    message: msg,
-    approved: false,
-    createdAt: Date.now()
-  });
-}
-function readLocalRsvp(guestId) {
-  try {
-    return JSON.parse(localStorage.getItem("hs_rsvp_" + guestId) || "null");
-  } catch (_) {
-    return null;
-  }
-}
-function writeLocalRsvp(guestId, payload) {
-  try {
-    localStorage.setItem("hs_rsvp_" + guestId, JSON.stringify(payload));
-  } catch (_) {
-  }
-}
-var initializeApp, fs, app, db, listeners, state;
-var init_data = __esm({
-  async "release/helasiritha-web/assets/js/data.js"() {
-    init_firebase_config();
-    ({ initializeApp } = await import(`${SDK_BASE}/firebase-app.js`));
-    fs = await import(`${SDK_BASE}/firebase-firestore.js`);
-    app = initializeApp(FIREBASE_CONFIG);
-    db = fs.getFirestore(app);
-    listeners = /* @__PURE__ */ new Set();
-    state = {
-      ready: false,
-      site: DEFAULT_SITE(),
-      theme: DEFAULT_THEME(),
-      visibility: DEFAULT_VISIBILITY(),
-      stats: { totalGuests: 0, confirmed: 0, pending: 0, declined: 0 },
-      agenda: [],
-      gallery: [],
-      blessings: []
-    };
-  }
-});
+    <!-- ░░░ BRIDE (left) ░░░ -->
+    <g>
+      <path d="M120 152c-34 4-52 36-58 96-2 22 12 30 58 30s60-8 58-30c-6-60-24-92-58-96Z" fill="${n}" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M120 154c-22 6-31 27-26 60 15-7 25-24 41-31Z" fill="#FBF1DB" stroke="currentColor" stroke-width="1"/>
+      <path d="M120 154c-22 6-31 27-26 60" stroke="currentColor" stroke-width="2" opacity="0.8" class="kc-shimmer"/>
+      <g fill="currentColor" opacity="0.5" class="kc-shimmer">
+        <circle cx="112" cy="212" r="2.4"/><circle cx="134" cy="228" r="2.4"/><circle cx="100" cy="246" r="2.4"/>
+        <circle cx="142" cy="254" r="2.4"/><circle cx="116" cy="270" r="2.4"/><circle cx="96" cy="280" r="2.4"/><circle cx="150" cy="282" r="2.4"/>
+      </g>
+      <path d="M120 150c-18 0-30 6-34 18 10 8 24 11 34 11s24-3 34-11c-4-12-16-18-34-18Z" fill="currentColor" opacity="0.85" class="kc-shimmer"/>
+      <path d="M150 180c14 2 26 9 30 19" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <rect x="113" y="138" width="14" height="18" rx="6" fill="${e}"/>
+      <path d="M106 150c8 9 20 9 28 0" stroke="currentColor" stroke-width="2.4" fill="none" class="kc-shimmer"/>
+      <path d="M110 156c6 6 14 6 20 0" stroke="currentColor" stroke-width="1.6" fill="none" opacity="0.7"/>
+      <circle cx="120" cy="115" r="33" fill="${e}"/>
+      <path d="M120 82c-27 0-37 23-33 45 3-10 8-15 8-15 2-12 10-20 25-20s23 8 25 20c0 0 5 5 8 15 4-22-6-45-33-45Z" fill="${i}"/>
+      <circle cx="120" cy="78" r="13" fill="${i}"/>
+      <g fill="${n}"><circle cx="133" cy="77" r="3"/><circle cx="126" cy="68" r="3"/><circle cx="115" cy="68" r="3"/></g>
+      <path d="M99 103c14 8 28 8 42 0" stroke="currentColor" stroke-width="2" fill="none" class="kc-shimmer"/>
+      <path d="M120 103v9l-4 5h8l-4-5Z" fill="currentColor" class="kc-shimmer"/>
+      <path d="M109 119c3 3 7 3 10 0M122 119c3 3 7 3 10 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M113 131c5 4 12 4 17 0" stroke="#B6694F" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="104" cy="127" r="4.5" fill="#E08DA0" opacity="0.25"/>
+      <circle cx="138" cy="127" r="4.5" fill="#E08DA0" opacity="0.25"/>
+    </g>
 
-// release/helasiritha-web/assets/js/utils.js
-function cld(url, width) {
-  if (!url || !url.includes("/upload/")) return url || "";
-  const t = ["f_auto", "q_auto"];
-  if (width) t.push(`w_${width}`, "c_limit", "dpr_auto");
-  return url.replace("/upload/", `/upload/${t.join(",")}/`);
-}
-function timeLeftUntil(iso) {
-  const diff = new Date(iso).getTime() - Date.now();
-  if (Number.isNaN(diff) || diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
-  const s = Math.floor(diff / 1e3);
-  return {
-    days: Math.floor(s / 86400),
-    hours: Math.floor(s % 86400 / 3600),
-    minutes: Math.floor(s % 3600 / 60),
-    seconds: s % 60,
-    done: false
-  };
-}
-function whatsappLink(number, text) {
-  const n = String(number || "").replace(/[^\d]/g, "");
-  return `https://wa.me/${n}?text=${encodeURIComponent(text || "")}`;
-}
-function sinhalaDate(iso) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return `${SI_DAYS[d.getDay()]}, ${d.getFullYear()} ${SI_MONTHS[d.getMonth()]} ${d.getDate()}`;
-}
-function downloadICS(site) {
-  const start = new Date(site.weddingDateISO);
-  const end = new Date(start.getTime() + 6 * 3600 * 1e3);
-  const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  const esc2 = (s) => String(s || "").replace(/[,;\\]/g, (m) => "\\" + m).replace(/\n/g, "\\n");
-  const ics = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Helasiritha//Wedding//SI",
-    "BEGIN:VEVENT",
-    `UID:${Date.now()}@helasiritha`,
-    `DTSTAMP:${fmt(/* @__PURE__ */ new Date())}`,
-    `DTSTART:${fmt(start)}`,
-    `DTEND:${fmt(end)}`,
-    `SUMMARY:${esc2(site.groomNameSi + " ◇ " + site.brideNameSi + " මංගල්‍යය")}`,
-    `LOCATION:${esc2(site.venueName + ", " + site.venueAddress)}`,
-    `DESCRIPTION:${esc2(site.inviteWordingSi)}`,
-    "BEGIN:VALARM",
-    "TRIGGER:-P1D",
-    "ACTION:DISPLAY",
-    "DESCRIPTION:මංගල දිනය හෙට!",
-    "END:VALARM",
-    "END:VEVENT",
-    "END:VCALENDAR"
-  ].join("\r\n");
-  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "helasiritha-mangalya.ics";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(a.href);
-}
-function esc(s) {
-  return String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]);
-}
-var SI_MONTHS, SI_DAYS;
-var init_utils = __esm({
-  "release/helasiritha-web/assets/js/utils.js"() {
-    SI_MONTHS = ["ජනවාරි", "පෙබරවාරි", "මාර්තු", "අප්‍රේල්", "මැයි", "ජූනි", "ජූලි", "අගෝස්තු", "සැප්තැම්බර්", "ඔක්තෝබර්", "නොවැම්බර්", "දෙසැම්බර්"];
-    SI_DAYS = ["ඉරිදා", "සඳුදා", "අඟහරුවාදා", "බදාදා", "බ්‍රහස්පතින්දා", "සිකුරාදා", "සෙනසුරාදා"];
-  }
-});
+    <!-- ░░░ GROOM (right) ░░░ -->
+    <g>
+      <path d="M240 202c-30 2-44 30-50 90-2 20 14 28 50 28s52-8 50-28c-6-60-20-88-50-90Z" fill="${n}" stroke="currentColor" stroke-width="1.4"/>
+      <g fill="currentColor" opacity="0.45"><circle cx="222" cy="252" r="2.2"/><circle cx="246" cy="264" r="2.2"/><circle cx="262" cy="252" r="2.2"/><circle cx="232" cy="278" r="2.2"/><circle cx="258" cy="282" r="2.2"/></g>
+      <path d="M226 296c8 4 20 4 28 0" stroke="currentColor" stroke-width="2" opacity="0.7" fill="none"/>
+      <path d="M240 150c-26 0-40 14-40 40 0 18 4 30 8 38 8 4 18 6 32 6s24-2 32-6c4-8 8-20 8-38 0-26-14-40-40-40Z" fill="${s}" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M200 190c0-26 14-40 40-40s40 14 40 40" stroke="currentColor" stroke-width="2" opacity="0.85" fill="none" class="kc-shimmer"/>
+      <path d="M216 232c8 4 16 6 24 6s16-2 24-6" stroke="currentColor" stroke-width="2" opacity="0.7" fill="none"/>
+      <g class="kc-shimmer" transform="translate(240 196)"><circle r="15" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.7"/>${l}<circle r="4" fill="currentColor"/></g>
+      <path d="M210 194c-15 0-27 7-31 17" stroke="${s}" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M185 209c-4 2-7 7-8 13" stroke="${e}" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <rect x="233" y="138" width="14" height="18" rx="6" fill="${e}"/>
+      <circle cx="240" cy="115" r="33" fill="${e}"/>
+      <path d="M240 86c-20 0-30 14-30 30 0 0 4-2 6-8 4 6 10 8 10 8 8-4 22-4 28 0 0 0 6-2 10-8 2 6 6 8 6 8 0-16-10-30-30-30Z" fill="${i}"/>
+      <path d="M214 123c3 14 12 22 26 22s23-8 26-22c-7 6-16 9-26 9s-19-3-26-9Z" fill="${i}"/>
+      <g>
+        <path d="M207 92c0-17 15-27 33-27s33 10 33 27c0 6-4 9-9 9H216c-5 0-9-3-9-9Z" fill="${s}" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M211 96h58" stroke="currentColor" stroke-width="3" opacity="0.85" class="kc-shimmer"/>
+        <g fill="currentColor" opacity="0.85" class="kc-shimmer"><circle cx="224" cy="84" r="2.4"/><circle cx="240" cy="80" r="2.4"/><circle cx="256" cy="84" r="2.4"/></g>
+        <path d="M240 65v-8" stroke="currentColor" stroke-width="2"/><circle cx="240" cy="55" r="3.2" fill="currentColor" class="kc-shimmer"/>
+      </g>
+      <path d="M225 117c3 3 7 3 10 0M245 117c3 3 7 3 10 0" stroke="${i}" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </g>
 
-// release/helasiritha-web/assets/js/ui.js
-var ui_exports = {};
-__export(ui_exports, {
-  renderAll: () => renderAll
-});
-function renderAll() {
-  const s = state, v = s.visibility;
-  $("#brand").textContent = `${s.site.groomNameSi} ◇ ${s.site.brideNameSi}`;
-  document.title = `${s.site.groomNameSi} & ${s.site.brideNameSi} · ${SI.celebrating}`;
-  renderHero(s);
-  toggleSection("invitation", v.invitationCard, () => renderInvitation(s));
-  toggleSection("countdown", v.countdown, () => renderCountdown(s));
-  toggleSection("rsvp", v.rsvp, () => renderRsvp(s));
-  toggleSection("seat", v.seating, () => renderSeat(s));
-  toggleSection("agenda", v.agenda && s.agenda.length > 0, () => renderAgenda(s));
-  toggleSection("gallery", v.gallery && s.gallery.length > 0, () => renderGallery(s));
-  toggleSection("blessings", v.blessings, () => renderBlessings(s));
-  toggleSection("lamp", v.rsvp, () => renderLamp(s));
-  toggleSection("lovenote", v.loveNote, () => renderLoveNote(s));
-  renderFooter(s);
-  observeReveals();
-}
-function toggleSection(id, show, fill) {
-  const el = $("#" + id);
-  if (!el) return;
-  el.hidden = !show;
-  if (show) fill();
-}
-function renderHero(s) {
-  $("#hero").innerHTML = `
-    <div class="thorana">${liyaThorana()}</div>
+    <!-- joined hands + bouquet at centre -->
+    <ellipse cx="181" cy="214" rx="11" ry="8" fill="${e}"/>
+    <g class="kc-shimmer"><circle cx="181" cy="226" r="5.5" fill="${n}" stroke="currentColor" stroke-width="1"/><circle cx="173" cy="232" r="4.5" fill="${n}" stroke="currentColor" stroke-width="1"/><circle cx="189" cy="232" r="4.5" fill="${n}" stroke="currentColor" stroke-width="1"/><path d="M181 237v10M176 240l-4 8M186 240l4 8" stroke="currentColor" stroke-width="1.4" opacity="0.6"/></g>
+  </g>
+</svg>`},qt={poruwa:lt,kalasa:lt,lamp:S,pahana:S,lotus:C,sesath:Ot,mandala:L,mayura:Ft,ring:Ht,feast:Pt}});var yt={};at(yt,{CLOUDINARY:()=>ot,applyTheme:()=>j,db:()=>g,postBlessing:()=>z,readLocalRsvp:()=>I,searchGuests:()=>V,startRealtime:()=>Zt,state:()=>m,submitRsvp:()=>K,subscribe:()=>Y});function Y(t){return Z.add(t),()=>Z.delete(t)}function w(){Z.forEach(t=>t(m))}function ht(){return{brideNameEn:"Kaushani",groomNameEn:"Gaurawa",brideNameSi:"කෞශානි",groomNameSi:"ගෞරව",weddingDateISO:"2028-01-12T09:15:00+05:30",ceremonyTimeLabel:"පෙ.ව. 9.15 සිට",venueName:"ද එපිටෝම් හෝටලය",venueAddress:"කුරුණෑගල",mapUrl:"https://maps.google.com/?q=The+Epitome+Hotel+Kurunegala",brideParentsSi:"",groomParentsSi:"",invitationHeadingSi:"ශ්‍රී සුබ මංගලම්",brideRelationSi:"ආදරණීය දියණිය",groomRelationSi:"ආදරණීය පුත්",inviteWordingSi:"අප දෙදෙනාගේ සෙනෙහසේ මංගල්‍යය වෙනුවෙන්, ඔබ සැම සාදරයෙන් ආරාධනා කරමු.",loveNoteSi:"අප ජීවිතයේ සුවිශේෂ මොහොතක ඔබ අප සමඟ සිටීම, අප ලද වටිනාම ආශිර්වාදයයි. බොහෝ ස්තූතියි.",whatsappNumber:"94705367980",rsvpDeadlineISO:"2027-12-20T23:59:00+05:30",allowLiquorPref:!0,allowDietaryPref:!0,images:{banner:"",rsvp:"",loveNote:""},ambientAudioUrl:""}}function vt(){return{primary:"#C9A574",secondary:"#F2E5C6",accent:"#A48354",surface:"#FFFBF2",text:"#221C01"}}function ft(){return{invite:!0,invitationCard:!0,countdown:!0,rsvp:!0,seating:!0,agenda:!0,gallery:!0,blessings:!0,loveNote:!0}}function j(t){let e=document.documentElement.style;e.setProperty("--c-primary",t.primary),e.setProperty("--c-secondary",t.secondary),e.setProperty("--c-accent",t.accent),e.setProperty("--c-surface",t.surface),e.setProperty("--c-ink",t.text)}function Zt(){let{doc:t,onSnapshot:e,collection:i,query:s,orderBy:n,where:l,limit:p}=E;e(t(g,"config","site"),a=>{a.exists()&&(m.site={...ht(),...a.data()}),m.ready=!0,w()},()=>{m.ready=!0,w()}),e(t(g,"config","theme"),a=>{a.exists()&&(m.theme={...vt(),...a.data()}),j(m.theme),w()}),e(t(g,"config","visibility"),a=>{a.exists()&&(m.visibility={...ft(),...a.data()}),w()}),e(t(g,"config","stats"),a=>{a.exists()&&(m.stats={...m.stats,...a.data()}),w()}),e(s(i(g,"agenda"),n("order","asc")),a=>{m.agenda=a.docs.map(c=>({id:c.id,...c.data()})).filter(c=>c.visible!==!1),w()},()=>{}),e(s(i(g,"gallery"),n("order","asc")),a=>{m.gallery=a.docs.map(c=>({id:c.id,...c.data()})),w()},()=>{}),e(s(i(g,"blessings"),l("approved","==",!0),p(100)),a=>{m.blessings=a.docs.map(c=>({id:c.id,...c.data()})).sort((c,h)=>(h.createdAt||0)-(c.createdAt||0)),w()},()=>{}),j(m.theme)}function mt(t){return String(t||"").toLowerCase().normalize("NFC").replace(/[\u200b-\u200d\uFEFF]/g,"").replace(/\s+/g," ").trim()}async function V(t){let{collection:e,query:i,where:s,getDocs:n,limit:l,orderBy:p}=E,a=mt(t);if(a.length<2)return[];let c=[];try{let h=i(e(g,"guests"),s("searchTokens","array-contains",a),l(25));c=(await n(h)).docs.map(b=>gt(b))}catch{}if(c.length===0)try{c=(await n(i(e(g,"guests"),p("name"),l(800)))).docs.map(f=>gt(f)).filter(f=>{let b=mt(f.name+" "+f.familyName);return b.includes(a)||b.replace(/\s/g,"").includes(a.replace(/\s/g,""))}).slice(0,25)}catch{}return c}function gt(t){let e=t.data();return{id:t.id,name:e.name||"",familyName:e.familyName||"",side:e.side||"groom",tableNumber:e.tableNumber??null,status:e.status||"pending"}}async function K({guestId:t,guestName:e,side:i,attending:s,takingLiquor:n,partySize:l,dietary:p}){let{doc:a,setDoc:c,runTransaction:h}=E,f=s?"confirmed":"declined",b=I(t);await c(a(g,"rsvps",t),{guestId:t,guestName:String(e||"").slice(0,120),side:i||"groom",status:f,takingLiquor:!!n,partySize:Math.min(30,Math.max(1,Number(l)||1)),dietary:String(p||"").slice(0,280),respondedAt:Date.now()},{merge:!0});try{await h(g,async O=>{let st=a(g,"config","stats"),rt=await O.get(st),k={...rt.exists()?rt.data():{totalGuests:0,confirmed:0,pending:0,declined:0}},F=A=>{k[A]=Math.max(0,(k[A]||0)-1)},Rt=A=>{k[A]=(k[A]||0)+1};b?.status==="confirmed"&&F("confirmed"),b?.status==="declined"&&F("declined"),b||F("pending"),Rt(f),k.updatedAt=Date.now(),O.set(st,k,{merge:!0})})}catch{}return jt(t,{status:f,takingLiquor:!!n,partySize:l,dietary:p}),f}async function z(t,e){let{collection:i,addDoc:s}=E,n=String(e||"").trim().slice(0,400);if(!n){let l=new Error("empty");throw l.si="කරුණාකර සුබ පැතුම ලියන්න.",l}await s(i(g,"blessings"),{guestName:String(t||"").trim().slice(0,60)||"ආගන්තුකයෙක්",message:n,approved:!1,createdAt:Date.now()})}function I(t){try{return JSON.parse(localStorage.getItem("hs_rsvp_"+t)||"null")}catch{return null}}function jt(t,e){try{localStorage.setItem("hs_rsvp_"+t,JSON.stringify(e))}catch{}}var Gt,E,Ut,g,Z,m,W=M(async()=>{q();({initializeApp:Gt}=await import(`${H}/firebase-app.js`)),E=await import(`${H}/firebase-firestore.js`),Ut=Gt(nt),g=E.getFirestore(Ut),Z=new Set,m={ready:!1,site:ht(),theme:vt(),visibility:ft(),stats:{totalGuests:0,confirmed:0,pending:0,declined:0},agenda:[],gallery:[],blessings:[]}});function J(t,e){if(!t||!t.includes("/upload/"))return t||"";let i=["f_auto","q_auto"];return e&&i.push(`w_${e}`,"c_limit","dpr_auto"),t.replace("/upload/",`/upload/${i.join(",")}/`)}function bt(t){let e=new Date(t).getTime()-Date.now();if(Number.isNaN(e)||e<=0)return{days:0,hours:0,minutes:0,seconds:0,done:!0};let i=Math.floor(e/1e3);return{days:Math.floor(i/86400),hours:Math.floor(i%86400/3600),minutes:Math.floor(i%3600/60),seconds:i%60,done:!1}}function Q(t){let e=new Date(t);return Number.isNaN(e.getTime())?t:`${Vt[e.getDay()]}, ${e.getFullYear()} ${Yt[e.getMonth()]} ${e.getDate()}`}function wt(t){let e=new Date(t.weddingDateISO),i=new Date(e.getTime()+6*3600*1e3),s=c=>c.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),n=c=>String(c||"").replace(/[,;\\]/g,h=>"\\"+h).replace(/\n/g,"\\n"),l=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Helasiritha//Wedding//SI","BEGIN:VEVENT",`UID:${Date.now()}@helasiritha`,`DTSTAMP:${s(new Date)}`,`DTSTART:${s(e)}`,`DTEND:${s(i)}`,`SUMMARY:${n(t.groomNameSi+" ◇ "+t.brideNameSi+" මංගල්‍යය")}`,`LOCATION:${n(t.venueName+", "+t.venueAddress)}`,`DESCRIPTION:${n(t.inviteWordingSi)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:මංගල දිනය හෙට!","END:VALARM","END:VEVENT","END:VCALENDAR"].join(`\r
+`),p=new Blob([l],{type:"text/calendar;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(p),a.download="helasiritha-mangalya.ics",document.body.appendChild(a),a.click(),a.remove(),URL.revokeObjectURL(a.href)}function d(t){return String(t??"").replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e])}var Yt,Vt,$t=M(()=>{Yt=["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජූනි","ජූලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"],Vt=["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"]});var Tt={};at(Tt,{renderAll:()=>Mt});function Mt(){let t=m,e=t.visibility;document.title=`${t.site.brideNameSi} & ${t.site.groomNameSi} · ${r.celebrating}`,Kt(t),$("invitation",e.invitationCard,()=>zt(t)),$("countdown",e.countdown,()=>Wt(t)),$("rsvp",e.rsvp,()=>Qt(t)),$("agenda",e.agenda&&t.agenda.length>0,()=>ie(t)),$("gallery",e.gallery&&t.gallery.length>0,()=>se(t)),$("blessings",e.blessings,()=>Ct(t)),$("lovenote",e.loveNote,()=>ae(t)),ne(t),Nt()}function $(t,e,i){let s=o("#"+t);s&&(s.hidden=!e,e&&i())}function Kt(t){o("#hero").innerHTML=`
+    <div class="thorana">${ct()}</div>
     <div class="hero-inner reveal">
-      <div class="ay foil">${SI.gettingMarried}</div>
-      <div class="sesath-wrap">${sesath()}</div>
-      <h1 class="couple"><span class="foil">${esc(s.site.groomNameSi)}</span>
+      <div class="ay foil">${r.gettingMarried}</div>
+      <div class="couple-art">${dt()}</div>
+      <h1 class="couple"><span class="foil">${d(t.site.brideNameSi)}</span>
         <span class="amp">හා</span>
-        <span class="foil">${esc(s.site.brideNameSi)}</span></h1>
-      <div class="when">${sinhalaDate(s.site.weddingDateISO)} · ${esc(s.site.ceremonyTimeLabel)}</div>
-      <div class="when muted">${esc(s.site.venueName)}, ${esc(s.site.venueAddress)}</div>
-      <div class="divider">${liyawela()}</div>
+        <span class="foil">${d(t.site.groomNameSi)}</span></h1>
+      <div class="when">${Q(t.site.weddingDateISO)} · ${d(t.site.ceremonyTimeLabel)}</div>
+      <div class="when muted">${d(t.site.venueName)}, ${d(t.site.venueAddress)}</div>
+      <div class="divider">${D()}</div>
       <div class="cta">
-        <a class="btn btn-primary" href="#rsvp">${SI.rsvp}</a>
-        <a class="btn btn-ghost" href="#seat">${SI.findMySeat}</a>
+        <a class="btn btn-primary" href="#rsvp">${r.rsvp}</a>
       </div>
     </div>
-    <a class="scroll-prompt" href="#invitation" aria-label="${SI.scrollPrompt}">
-      <span>${SI.scrollPrompt}</span>
+    <a class="scroll-prompt" href="#invitation" aria-label="${r.scrollPrompt}">
+      <span>${r.scrollPrompt}</span>
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-    </a>`;
-}
-function renderInvitation(s) {
-  const map = s.site.mapUrl ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${esc(s.site.mapUrl)}">📍 ${SI.viewLocation}</a>` : "";
-  const wa = s.site.whatsappNumber ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${whatsappLink(s.site.whatsappNumber, s.site.groomNameSi + " හා " + s.site.brideNameSi + " මංගල්‍යය")}">${SI.shareWhatsapp}</a>` : "";
-  const parents = s.site.groomParentsSi || s.site.brideParentsSi ? `
+    </a>`}function zt(t){let e=t.site.mapUrl?`<a class="btn btn-ghost" target="_blank" rel="noopener" href="${d(t.site.mapUrl)}">📍 ${r.viewLocation}</a>`:"",i=d(t.site.invitationHeadingSi||r.shubaMangalam),s=d(t.site.brideRelationSi||r.belovedDaughter),n=d(t.site.groomRelationSi||r.belovedSon),l=t.site.groomParentsSi||t.site.brideParentsSi?`
     <div class="parents reveal">
-      <div class="side"><div class="pr">${esc(s.site.groomParentsSi)}</div><div class="nm foil">${esc(s.site.groomNameSi)}</div></div>
-      <div class="mid">${nelumMala()}</div>
-      <div class="side"><div class="pr">${esc(s.site.brideParentsSi)}</div><div class="nm foil">${esc(s.site.brideNameSi)}</div></div>
-    </div>` : "";
-  $("#invitation").innerHTML = `
+      <div class="heading foil">${i}</div>
+      <div class="block">
+        ${t.site.brideParentsSi?`<div class="pr">${d(t.site.brideParentsSi)}</div>`:""}
+        <div class="rel">${s}</div>
+        <div class="nm foil">${d(t.site.brideNameSi)}</div>
+      </div>
+      <div class="mid">${C()}</div>
+      <div class="block">
+        ${t.site.groomParentsSi?`<div class="pr">${d(t.site.groomParentsSi)}</div>`:""}
+        <div class="rel">${n}</div>
+        <div class="nm foil">${d(t.site.groomNameSi)}</div>
+      </div>
+    </div>`:"";o("#invitation").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.invitationTitle}</div>
-      <h2 class="title">${SI.requestPresence}</h2>
+      <div class="kicker">${r.invitationTitle}</div>
+      <h2 class="title">${r.requestPresence}</h2>
       <div class="card reveal tilt3d" data-tilt style="max-width:760px;margin-inline:auto;">
-        ${parents}
-        <p class="subtitle" style="margin-top:14px">${esc(s.site.inviteWordingSi)}</p>
-        <div class="divider">${liyawela()}</div>
+        ${l}
+        <p class="subtitle" style="margin-top:14px">${d(t.site.inviteWordingSi)}</p>
+        <div class="divider">${D()}</div>
         <div class="details">
-          <div class="detail"><span class="lab">${SI.date}</span><span class="val">${sinhalaDate(s.site.weddingDateISO)}</span></div>
-          <div class="detail"><span class="lab">${SI.time}</span><span class="val">${esc(s.site.ceremonyTimeLabel)}</span></div>
-          <div class="detail"><span class="lab">${SI.venue}</span><span class="val">${esc(s.site.venueName)}<br><small class="muted">${esc(s.site.venueAddress)}</small></span></div>
+          <div class="detail"><span class="lab">${r.date}</span><span class="val">${Q(t.site.weddingDateISO)}</span></div>
+          <div class="detail"><span class="lab">${r.time}</span><span class="val">${d(t.site.ceremonyTimeLabel)}</span></div>
+          <div class="detail"><span class="lab">${r.venue}</span><span class="val">${d(t.site.venueName)}<br><small class="muted">${d(t.site.venueAddress)}</small></span></div>
         </div>
         <div class="invite-actions">
-          <button class="btn btn-primary" id="addCal">🗓 ${SI.addToCalendar}</button>
-          ${map}${wa}
+          <button class="btn btn-primary" id="addCal">🗓 ${r.addToCalendar}</button>
+          ${e}
         </div>
       </div>
-    </div>`;
-  $("#addCal").onclick = () => downloadICS(s.site);
-}
-function renderCountdown(s) {
-  $("#countdown").innerHTML = `
+    </div>`,o("#addCal").onclick=()=>wt(t.site)}function Wt(t){o("#countdown").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.countdownTitle}</div>
+      <div class="kicker">${r.countdownTitle}</div>
       <div class="cd reveal" id="cdUnits"></div>
-    </div>`;
-  tickCountdown(s);
-}
-function tickCountdown(s) {
-  const host = $("#cdUnits");
-  if (!host) return;
-  const upd = () => {
-    const t = timeLeftUntil(s.site.weddingDateISO);
-    if (t.done) {
-      host.innerHTML = `<h2 class="title foil">${SI.theDayHasArrived}</h2>`;
-      clearInterval(cdTimer);
-      return;
-    }
-    const u = [[t.days, SI.days], [t.hours, SI.hours], [t.minutes, SI.minutes], [t.seconds, SI.seconds]];
-    host.innerHTML = u.map(([n, l]) => `<div class="unit"><div class="num">${String(n).padStart(2, "0")}</div><div class="lab">${l}</div></div>`).join("");
-  };
-  clearInterval(cdTimer);
-  upd();
-  cdTimer = setInterval(upd, 1e3);
-}
-function renderRsvp(s) {
-  $("#rsvp").innerHTML = `
+    </div>`,Jt(t)}function Jt(t){let e=o("#cdUnits");if(!e)return;let i=()=>{let s=bt(t.site.weddingDateISO);if(s.done){e.innerHTML=`<h2 class="title foil">${r.theDayHasArrived}</h2>`,clearInterval(X);return}let n=[[s.days,r.days],[s.hours,r.hours],[s.minutes,r.minutes],[s.seconds,r.seconds]];e.innerHTML=n.map(([l,p])=>`<div class="unit"><div class="num">${String(l).padStart(2,"0")}</div><div class="lab">${p}</div></div>`).join("")};clearInterval(X),i(),X=setInterval(i,1e3)}function Qt(t){o("#rsvp").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.rsvpTitle}</div>
-      <h2 class="title">${SI.rsvpSub}</h2>
-      <p class="subtitle">${SI.rsvpHelp}</p>
+      <div class="kicker">${r.rsvpTitle}</div>
+      <h2 class="title">${r.rsvpSub}</h2>
+      <p class="subtitle">${r.rsvpHelp}</p>
       <div class="card reveal" style="max-width:620px;margin:18px auto 0;text-align:left">
         <div id="rsvpStage"></div>
       </div>
-    </div>`;
-  rsvpSearchStage();
-}
-function rsvpSearchStage() {
-  rsvp.guest = null;
-  $("#rsvpStage").innerHTML = `
+    </div>`,tt()}function tt(){u.guest=null,o("#rsvpStage").innerHTML=`
     <div class="field">
-      <label>${SI.searchGuestList}</label>
-      <input class="input" id="rsvpQ" placeholder="${SI.familyNamePlaceholder}" autocomplete="off">
+      <label>${r.searchGuestList}</label>
+      <input class="input" id="rsvpQ" placeholder="${r.familyNamePlaceholder}" autocomplete="off">
     </div>
-    <button class="btn btn-primary" id="rsvpSearchBtn" style="width:100%">${SI.searchGuestList}</button>
-    <div class="results" id="rsvpResults"></div>`;
-  const q = $("#rsvpQ"), btn = $("#rsvpSearchBtn"), res = $("#rsvpResults");
-  const run = async () => {
-    const term = q.value.trim();
-    if (term.length < 2) {
-      res.innerHTML = "";
-      return;
-    }
-    btn.textContent = SI.searching;
-    btn.disabled = true;
-    const list = await searchGuests(term);
-    btn.textContent = SI.searchGuestList;
-    btn.disabled = false;
-    if (!list.length) {
-      res.innerHTML = `<p class="muted">${SI.noGuestFound}</p>`;
-      return;
-    }
-    res.innerHTML = list.map((g) => `
-      <button class="guest-row" data-id="${esc(g.id)}">
-        <span><span class="gn">${esc(g.name)}</span><br><span class="gf">${esc(g.familyName)}</span></span>
-        <span class="chip">${g.side === "bride" ? "මනාලියගේ" : "මනාලයාගේ"}</span>
-      </button>`).join("");
-    $$(".guest-row", res).forEach((row, i) => row.onclick = () => pickGuest(list[i]));
-  };
-  btn.onclick = run;
-  let deb;
-  q.oninput = () => {
-    clearTimeout(deb);
-    deb = setTimeout(run, 450);
-  };
-  q.onkeydown = (e) => {
-    if (e.key === "Enter") run();
-  };
-}
-function pickGuest(g) {
-  rsvp.guest = g;
-  const prior = readLocalRsvp(g.id);
-  rsvp.attending = prior ? prior.status === "confirmed" : null;
-  rsvp.liquor = prior ? !!prior.takingLiquor : false;
-  rsvp.party = prior ? prior.partySize || 1 : 1;
-  rsvp.dietary = prior ? prior.dietary || "" : "";
-  rsvpFormStage();
-}
-function rsvpFormStage() {
-  const s = state, g = rsvp.guest;
-  const liquor = s.site.allowLiquorPref ? `
-    <div class="field"><label>${SI.takingLiquor}</label>
+    <button class="btn btn-primary" id="rsvpSearchBtn" style="width:100%">${r.searchGuestList}</button>
+    <div class="results" id="rsvpResults"></div>`;let t=o("#rsvpQ"),e=o("#rsvpSearchBtn"),i=o("#rsvpResults"),s=async()=>{let l=t.value.trim();if(l.length<2){i.innerHTML="";return}e.textContent=r.searching,e.disabled=!0;let p=await V(l);if(e.textContent=r.searchGuestList,e.disabled=!1,!p.length){i.innerHTML=`<p class="muted">${r.noGuestFound}</p>`;return}i.innerHTML=p.map(a=>`
+      <button class="guest-row" data-id="${d(a.id)}">
+        <span><span class="gn">${d(a.name)}</span><br><span class="gf">${d(a.familyName)}</span></span>
+        <span class="chip">${a.side==="bride"?"මනාලියගේ":"මනාලයාගේ"}</span>
+      </button>`).join(""),N(".guest-row",i).forEach((a,c)=>a.onclick=()=>Xt(p[c]))};e.onclick=s;let n;t.oninput=()=>{clearTimeout(n),n=setTimeout(s,450)},t.onkeydown=l=>{l.key==="Enter"&&s()}}function Xt(t){u.guest=t;let e=I(t.id);u.attending=e?e.status==="confirmed":null,u.liquor=e?!!e.takingLiquor:!1,u.party=e&&e.partySize||1,u.dietary=e&&e.dietary||"",St()}function St(){let t=m,e=u.guest,i=t.site.allowLiquorPref?`
+    <div class="field"><label>${r.takingLiquor}</label>
       <div class="choice" id="liqChoice">
-        <button class="opt ${rsvp.liquor ? "sel" : ""}" data-v="1">${SI.yes}</button>
-        <button class="opt ${!rsvp.liquor ? "sel" : ""}" data-v="0">${SI.no}</button>
-      </div></div>` : "";
-  const dietary = s.site.allowDietaryPref ? `
-    <div class="field"><label>${SI.dietary}</label>
-      <input class="input" id="rsvpDiet" value="${esc(rsvp.dietary)}"></div>` : "";
-  const attendingExtras = `
-    <div class="field"><label>${SI.guestCount}</label>
-      <div class="stepper"><button id="pMinus">−</button><span class="val" id="pVal">${rsvp.party}</span><button id="pPlus">+</button></div></div>
-    ${liquor}${dietary}`;
-  $("#rsvpStage").innerHTML = `
-    <p class="muted" style="margin-top:0">${esc(g.name)} · ${esc(g.familyName)}</p>
-    <div class="field"><label>${SI.willYouAttend}</label>
+        <button class="opt ${u.liquor?"sel":""}" data-v="1">${r.yes}</button>
+        <button class="opt ${u.liquor?"":"sel"}" data-v="0">${r.no}</button>
+      </div></div>`:"",s=t.site.allowDietaryPref?`
+    <div class="field"><label>${r.dietary}</label>
+      <input class="input" id="rsvpDiet" value="${d(u.dietary)}"></div>`:"",n=`
+    <div class="field"><label>${r.guestCount}</label>
+      <div class="stepper"><button id="pMinus">−</button><span class="val" id="pVal">${u.party}</span><button id="pPlus">+</button></div></div>
+    ${i}${s}`;o("#rsvpStage").innerHTML=`
+    <p class="muted" style="margin-top:0">${d(e.name)} · ${d(e.familyName)}</p>
+    <div class="field"><label>${r.willYouAttend}</label>
       <div class="choice" id="attChoice">
-        <button class="opt ${rsvp.attending === true ? "sel" : ""}" data-v="1">${SI.yesAttend}</button>
-        <button class="opt ${rsvp.attending === false ? "sel" : ""}" data-v="0">${SI.noAttend}</button>
+        <button class="opt ${u.attending===!0?"sel":""}" data-v="1">${r.yesAttend}</button>
+        <button class="opt ${u.attending===!1?"sel":""}" data-v="0">${r.noAttend}</button>
       </div></div>
-    <div id="attExtras">${rsvp.attending ? attendingExtras : ""}</div>
-    <button class="btn btn-primary" id="rsvpSubmit" style="width:100%;margin-top:6px">${SI.confirmRsvp}</button>
-    <button class="btn btn-ghost" id="rsvpBack" style="width:100%;margin-top:8px">${SI.changeResponse}</button>`;
-  const refresh = () => rsvpFormStage();
-  $$("#attChoice .opt").forEach((b) => b.onclick = () => {
-    rsvp.attending = b.dataset.v === "1";
-    refresh();
-  });
-  if (rsvp.attending) {
-    $("#pMinus").onclick = () => {
-      rsvp.party = Math.max(1, rsvp.party - 1);
-      $("#pVal").textContent = rsvp.party;
-    };
-    $("#pPlus").onclick = () => {
-      rsvp.party = Math.min(20, rsvp.party + 1);
-      $("#pVal").textContent = rsvp.party;
-    };
-    $$("#liqChoice .opt").forEach((b) => b.onclick = () => {
-      rsvp.liquor = b.dataset.v === "1";
-      refresh();
-    });
-  }
-  $("#rsvpBack").onclick = rsvpSearchStage;
-  $("#rsvpSubmit").onclick = submit;
-  async function submit() {
-    if (rsvp.attending === null) {
-      alert(SI.willYouAttend);
-      return;
-    }
-    if (s.site.allowDietaryPref && $("#rsvpDiet")) rsvp.dietary = $("#rsvpDiet").value;
-    const btn = $("#rsvpSubmit");
-    btn.textContent = SI.sending;
-    btn.disabled = true;
-    try {
-      const status = await submitRsvp({
-        guestId: g.id,
-        guestName: g.name,
-        side: g.side,
-        attending: rsvp.attending,
-        takingLiquor: rsvp.liquor,
-        partySize: rsvp.party,
-        dietary: rsvp.dietary
-      });
-      rsvpThanksStage(status);
-    } catch (e) {
-      btn.textContent = SI.confirmRsvp;
-      btn.disabled = false;
-      alert("කණගාටුයි, පිළිතුර යැවීමේ දෝෂයක්. නැවත උත්සාහ කරන්න.");
-    }
-  }
-}
-function rsvpThanksStage(status) {
-  const msg = status === "confirmed" ? SI.rsvpConfirmedMsg : SI.rsvpDeclinedMsg;
-  $("#rsvpStage").innerHTML = `
+    <div id="attExtras">${u.attending?n:""}</div>
+    <button class="btn btn-primary" id="rsvpSubmit" style="width:100%;margin-top:6px">${r.confirmRsvp}</button>
+    <button class="btn btn-ghost" id="rsvpBack" style="width:100%;margin-top:8px">${r.changeResponse}</button>`;let l=()=>St();N("#attChoice .opt").forEach(a=>a.onclick=()=>{u.attending=a.dataset.v==="1",l()}),u.attending&&(o("#pMinus").onclick=()=>{u.party=Math.max(1,u.party-1),o("#pVal").textContent=u.party},o("#pPlus").onclick=()=>{u.party=Math.min(20,u.party+1),o("#pVal").textContent=u.party},N("#liqChoice .opt").forEach(a=>a.onclick=()=>{u.liquor=a.dataset.v==="1",l()})),o("#rsvpBack").onclick=tt,o("#rsvpSubmit").onclick=p;async function p(){if(u.attending===null){alert(r.willYouAttend);return}t.site.allowDietaryPref&&o("#rsvpDiet")&&(u.dietary=o("#rsvpDiet").value);let a=o("#rsvpSubmit");a.textContent=r.sending,a.disabled=!0;try{let c=await K({guestId:e.id,guestName:e.name,side:e.side,attending:u.attending,takingLiquor:u.liquor,partySize:u.party,dietary:u.dietary});te(c)}catch{a.textContent=r.confirmRsvp,a.disabled=!1,alert("කණගාටුයි, පිළිතුර යැවීමේ දෝෂයක්. නැවත උත්සාහ කරන්න.")}}}function te(t){let e=t==="confirmed"?r.rsvpConfirmedMsg:r.rsvpDeclinedMsg;o("#rsvpStage").innerHTML=`
     <div class="thanks">
-      <div class="glamp lamp-glow">${pahana("", status === "confirmed")}</div>
-      <h3 class="title" style="margin:.2em 0">${SI.rsvpThanks}</h3>
-      <p class="subtitle">${msg}</p>
-      <button class="btn btn-ghost" id="rsvpAgain" style="margin-top:12px">${SI.changeResponse}</button>
-    </div>`;
-  $("#rsvpAgain").onclick = rsvpSearchStage;
-}
-function renderSeat(s) {
-  $("#seat").innerHTML = `
-    <div class="wrap center">
-      <div class="kicker">${SI.seatTitle}</div>
-      <h2 class="title">${SI.seatTitle}</h2>
-      <p class="subtitle">${SI.seatSub}</p>
-      <div class="card reveal" style="max-width:560px;margin:18px auto 0;text-align:left">
-        <div class="field"><label>${SI.searchGuestList}</label>
-          <input class="input" id="seatQ" placeholder="${SI.familyNamePlaceholder}" autocomplete="off"></div>
-        <button class="btn btn-primary" id="seatBtn" style="width:100%">${SI.findMySeat}</button>
-        <div class="results" id="seatResults"></div>
-      </div>
-    </div>`;
-  const q = $("#seatQ"), btn = $("#seatBtn"), res = $("#seatResults");
-  const run = async () => {
-    const term = q.value.trim();
-    if (term.length < 2) {
-      res.innerHTML = "";
-      return;
-    }
-    btn.textContent = SI.searching;
-    btn.disabled = true;
-    const list = await searchGuests(term);
-    btn.textContent = SI.findMySeat;
-    btn.disabled = false;
-    if (!list.length) {
-      res.innerHTML = `<p class="muted">${SI.noGuestFound}</p>`;
-      return;
-    }
-    res.innerHTML = list.map((g, i) => `<button class="guest-row" data-i="${i}"><span class="gn">${esc(g.name)}</span><span class="chip">${esc(g.familyName)}</span></button>`).join("");
-    $$(".guest-row", res).forEach((row, i) => row.onclick = () => showSeat(list[i]));
-  };
-  btn.onclick = run;
-  let deb;
-  q.oninput = () => {
-    clearTimeout(deb);
-    deb = setTimeout(run, 450);
-  };
-  q.onkeydown = (e) => {
-    if (e.key === "Enter") run();
-  };
-  function showSeat(g) {
-    res.innerHTML = g.tableNumber != null ? `<div class="seat-result"><p class="muted">${esc(g.name)}</p><div class="lab" style="color:var(--c-accent);letter-spacing:.14em">${SI.yourTableIs}</div><div class="seat-num foil">${esc(String(g.tableNumber))}</div><div class="kicker">${SI.tableNo}</div></div>` : `<p class="muted center">${SI.noTableYet}</p>`;
-  }
-}
-function renderAgenda(s) {
-  const src = s.agenda.length ? s.agenda : DEFAULT_AGENDA;
-  const items = src.map((e) => `
+      <div class="glamp lamp-glow">${S("",t==="confirmed")}</div>
+      <h3 class="title" style="margin:.2em 0">${r.rsvpThanks}</h3>
+      <p class="subtitle">${e}</p>
+      <button class="btn btn-ghost" id="rsvpAgain" style="margin-top:12px">${r.changeResponse}</button>
+    </div>`,o("#rsvpAgain").onclick=tt}function ie(t){let i=(t.agenda.length?t.agenda:ee).map(s=>`
     <div class="tl-item reveal">
-      <div class="tl-icon">${ornamentIcon(e.icon)}</div>
+      <div class="tl-icon">${pt(s.icon)}</div>
       <div class="tl-body">
-        <div class="tl-time">${esc(e.timeLabel || "")}</div>
-        <div class="tl-title">${esc(e.titleSi || "")}</div>
-        <div class="tl-desc">${esc(e.descSi || "")}</div>
+        <div class="tl-time">${d(s.timeLabel||"")}</div>
+        <div class="tl-title">${d(s.titleSi||"")}</div>
+        <div class="tl-desc">${d(s.descSi||"")}</div>
       </div>
-    </div>`).join("");
-  $("#agenda").innerHTML = `
+    </div>`).join("");o("#agenda").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.agendaTitle}</div>
-      <h2 class="title">${SI.agendaSub}</h2>
-      <div class="timeline" style="margin-top:24px">${items}</div>
-    </div>`;
-}
-function renderGallery(s) {
-  if (!s.gallery.length) {
-    $("#gallery").innerHTML = "";
-    return;
-  }
-  lightboxList = s.gallery.map((g) => cld(g.url, 1600));
-  const cells = s.gallery.map((g, i) => `
-    <button class="ph reveal" data-i="${i}" aria-label="${esc(g.alt || "")}">
-      <img loading="lazy" src="${cld(g.url, 700)}" alt="${esc(g.alt || "")}">
-    </button>`).join("");
-  $("#gallery").innerHTML = `
+      <div class="kicker">${r.agendaTitle}</div>
+      <h2 class="title">${r.agendaSub}</h2>
+      <div class="timeline" style="margin-top:24px">${i}</div>
+    </div>`}function se(t){if(!t.gallery.length){o("#gallery").innerHTML="";return}kt=t.gallery.map(i=>J(i.url,1600));let e=t.gallery.map((i,s)=>`
+    <button class="ph reveal" data-i="${s}" aria-label="${d(i.alt||"")}">
+      <img loading="lazy" src="${J(i.url,700)}" alt="${d(i.alt||"")}">
+    </button>`).join("");o("#gallery").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.celebrating}</div>
-      <h2 class="title">${SI.galleryTitle}</h2>
-      <p class="subtitle">${SI.gallerySub}</p>
-      <div class="masonry" id="masonry" style="margin-top:24px">${cells}</div>
-    </div>`;
-  $$("#masonry .ph").forEach((b, i) => b.onclick = () => openLightbox(i));
-}
-function openLightbox(i) {
-  let lb = $("#lightbox");
-  if (!lb) {
-    lb = document.createElement("div");
-    lb.id = "lightbox";
-    lb.className = "lightbox";
-    document.body.appendChild(lb);
-  }
-  lb.innerHTML = `<button class="x icon-btn" aria-label="වසන්න">✕</button><img src="${lightboxList[i]}" alt="">`;
-  lb.classList.add("show");
-  lb.onclick = (e) => {
-    if (e.target === lb || e.target.classList.contains("x")) lb.classList.remove("show");
-  };
-}
-function renderBlessings(s) {
-  const list = s.blessings.length ? s.blessings.map((b) => `<div class="bless reveal"><p class="bm">“${esc(b.message)}”</p><div class="bn">${esc(b.guestName)}</div></div>`).join("") : `<p class="muted center" style="grid-column:1/-1">${SI.awaitingBlessings}</p>`;
-  $("#blessings").innerHTML = `
+      <div class="kicker">${r.celebrating}</div>
+      <h2 class="title">${r.galleryTitle}</h2>
+      <p class="subtitle">${r.gallerySub}</p>
+      <div class="masonry" id="masonry" style="margin-top:24px">${e}</div>
+    </div>`,N("#masonry .ph").forEach((i,s)=>i.onclick=()=>re(s))}function re(t){let e=o("#lightbox");e||(e=document.createElement("div"),e.id="lightbox",e.className="lightbox",document.body.appendChild(e)),e.innerHTML=`<button class="x icon-btn" aria-label="වසන්න">✕</button><img src="${kt[t]}" alt="">`,e.classList.add("show"),e.onclick=i=>{(i.target===e||i.target.classList.contains("x"))&&e.classList.remove("show")}}function Ct(t){let e=[...t.blessings].sort((p,a)=>(a.createdAt||0)-(p.createdAt||0)),i=p=>`<div class="bless reveal"><p class="bm">“${d(p.message)}”</p><div class="bn">— ${d(p.guestName)}</div></div>`,s=R?e:e.slice(0,3),n=e.length?s.map(i).join(""):`<p class="muted center" style="grid-column:1/-1">${r.awaitingBlessings}</p>`,l=e.length>3?`<div class="bless-toggle center">
+         <button class="btn btn-ghost see-more" id="blToggle">${R?"අඩුවෙන් පෙන්වන්න ▴":`තවත් සුබ පැතුම් දැකගන්න (${e.length}) ▾`}</button>
+       </div>`:"";o("#blessings").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.blessingsTitle}</div>
-      <h2 class="title">${SI.blessingsTitle}</h2>
-      <p class="subtitle">${SI.blessingsSub}</p>
+      <div class="kicker">${r.blessingsTitle}</div>
+      <h2 class="title">${r.blessingsTitle}</h2>
+      <p class="subtitle">${r.blessingsSub}</p>
       <div class="card blessing-form reveal" style="text-align:left;margin-top:18px">
-        <div class="field"><label>${SI.yourName}</label><input class="input" id="blName"></div>
-        <div class="field"><label>${SI.yourBlessing}</label><textarea class="textarea" id="blMsg"></textarea></div>
-        <div class="suggest-row"><button class="btn btn-ghost" id="blCompose">✦ ${SI.composeBlessing}</button></div>
-        <button class="btn btn-primary" id="blSend" style="width:100%">${SI.sendBlessing}</button>
+        <div class="field"><label>${r.yourName}</label><input class="input" id="blName"></div>
+        <div class="field"><label>${r.yourBlessing}</label><textarea class="textarea" id="blMsg"></textarea></div>
+        <div class="suggest-row"><button class="btn btn-ghost" id="blCompose">✦ ${r.composeBlessing}</button></div>
+        <button class="btn btn-primary" id="blSend" style="width:100%">${r.sendBlessing}</button>
         <p class="muted" id="blNote" style="margin:10px 0 0"></p>
       </div>
-      <div class="blessings-list">${list}</div>
-    </div>`;
-  $("#blCompose").onclick = () => {
-    const pick = BLESSING_LIB[Math.floor(Math.random() * BLESSING_LIB.length)];
-    $("#blMsg").value = pick;
-  };
-  $("#blSend").onclick = async () => {
-    const name = $("#blName").value.trim(), msg = $("#blMsg").value.trim();
-    if (msg.length < 4) {
-      $("#blNote").textContent = SI.yourBlessing;
-      return;
-    }
-    const btn = $("#blSend");
-    btn.disabled = true;
-    btn.textContent = SI.sending;
-    try {
-      await postBlessing(name, msg);
-      $("#blMsg").value = "";
-      $("#blName").value = "";
-      $("#blNote").textContent = SI.blessingThanks;
-    } catch (_) {
-      $("#blNote").textContent = "කණගාටුයි, නැවත උත්සාහ කරන්න.";
-    }
-    btn.disabled = false;
-    btn.textContent = SI.sendBlessing;
-  };
-}
-function renderLamp(s) {
-  const st = s.stats || {};
-  const total = Math.max(st.totalGuests || 0, (st.confirmed || 0) + (st.pending || 0) + (st.declined || 0), 1);
-  const pct = Math.min(100, Math.round((st.confirmed || 0) / total * 100));
-  $("#lamp").innerHTML = `
+      <div class="blessings-list">${n}</div>
+      ${l}
+    </div>`,e.length>3&&(o("#blToggle").onclick=()=>{R=!R,Ct(m),Nt()}),o("#blCompose").onclick=()=>{let p=xt[Math.floor(Math.random()*xt.length)];o("#blMsg").value=p},o("#blSend").onclick=async()=>{let p=o("#blName").value.trim(),a=o("#blMsg").value.trim();if(a.length<4){o("#blNote").textContent=r.yourBlessing;return}let c=o("#blSend");c.disabled=!0,c.textContent=r.sending;try{await z(p,a),o("#blMsg").value="",o("#blName").value="",o("#blNote").textContent=r.blessingThanks}catch{o("#blNote").textContent="කණගාටුයි, නැවත උත්සාහ කරන්න."}c.disabled=!1,c.textContent=r.sendBlessing}}function ae(t){let e=String(t.site.loveNoteSi||""),i=e.split(/\n{2,}/).map(n=>n.trim()).filter(Boolean),s=(i.length?i:[e]).map(n=>`<p>${d(n).replace(/\n/g,"<br>")}</p>`).join("");o("#lovenote").innerHTML=`
     <div class="wrap center">
-      <div class="kicker">${SI.lampTitle}</div>
-      <h2 class="title">${SI.lampTitle}</h2>
-      <p class="subtitle">${SI.lampSub}</p>
-      <div class="lamp-stage reveal" style="margin-top:18px">
-        <div class="kalasa ${pct > 0 ? "lamp-glow" : ""}">${punKalasa()}</div>
-        <div class="lamp-count foil">${st.confirmed || 0}</div>
-        <div class="kicker">${SI.confirmedCount}</div>
-        <div class="lamp-meter"><div class="lamp-fill" id="lampFill"></div></div>
-      </div>
-    </div>`;
-  requestAnimationFrame(() => {
-    const f = $("#lampFill");
-    if (f) f.style.width = pct + "%";
-  });
-}
-function renderLoveNote(s) {
-  $("#lovenote").innerHTML = `
-    <div class="wrap center">
-      <div class="kicker">${SI.loveNoteTitle}</div>
-      <h2 class="title">${SI.loveNoteSubtitle}</h2>
-      <div class="divider">${liyawela()}</div>
+      <div class="kicker">${r.loveNoteTitle}</div>
+      <h2 class="title">${r.loveNoteSubtitle}</h2>
+      <div class="divider">${D()}</div>
       <div class="lovenote reveal">
-        <p>${esc(s.site.loveNoteSi)}</p>
-        <div class="sig">${esc(s.site.groomNameSi)} &amp; ${esc(s.site.brideNameSi)}</div>
+        ${s}
+        <div class="sig vel-akuru">${d(t.site.brideNameSi)} &amp; ${d(t.site.groomNameSi)}</div>
       </div>
-    </div>`;
-}
-function renderFooter(s) {
-  $("#footer").innerHTML = `
+    </div>`}function ne(t){o("#footer").innerHTML=`
     <div class="wrap center">
-      <div style="width:90px;margin:0 auto 6px;color:var(--c-primary)">${mandala()}</div>
-      <div class="fnames">${esc(s.site.groomNameSi)} &amp; ${esc(s.site.brideNameSi)}</div>
-      <div class="credit">හෙළ සිරිත · ${(/* @__PURE__ */ new Date()).getFullYear()}</div>
-    </div>`;
-}
-function observeReveals() {
-  if (!("IntersectionObserver" in window)) {
-    $$(".reveal").forEach((e) => e.classList.add("in"));
-    return;
-  }
-  io = io || new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (en.isIntersecting) {
-        en.target.classList.add("in");
-        io.unobserve(en.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  $$(".reveal:not(.in)").forEach((e) => io.observe(e));
-}
-var $, $$, rsvp, lightboxList, cdTimer, DEFAULT_AGENDA, BLESSING_LIB, io;
-var init_ui = __esm({
-  async "release/helasiritha-web/assets/js/ui.js"() {
-    await init_data();
-    init_i18n();
-    init_ornaments();
-    init_utils();
-    $ = (s, r = document) => r.querySelector(s);
-    $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-    rsvp = { guest: null, attending: null, liquor: false, party: 1, dietary: "", done: null };
-    lightboxList = [];
-    cdTimer = null;
-    DEFAULT_AGENDA = [
-      { timeLabel: "", titleSi: "ආගන්තුක පිළිගැනීම", descSi: "මඟුල් බෙර හඬ මැද, සේසත් සෙවණේ ආරාධිතයන් සාදරයෙන් පිළිගැනීම.", icon: "sesath" },
-      { timeLabel: "", titleSi: "පෝරුවට වැඩම වීම", descSi: "ජයමංගල ගාථා ගායනය මධ්‍යයේ මනාල යුවළ පෝරුවට වැඩම කරවීම.", icon: "poruwa" },
-      { timeLabel: "", titleSi: "පෝරු චාරිත්‍ර", descSi: "බුලත් අතු හුවමාරුව, ඇඟිලි මුදු පැළඳවීම හා පිරිත් නූල් බැඳීම ඇතුළු සිරිත් විරිත්.", icon: "ring" },
-      { timeLabel: "", titleSi: "මඟුල් පහන දැල්වීම", descSi: "උභය පාර්ශවයේ ආශීර්වාදය මැද මඟුල් පහන දල්වා සුබ මොහොත සැමරීම.", icon: "lamp" },
-      { timeLabel: "", titleSi: "භෝජන සංග්‍රහය", descSi: "රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.", icon: "feast" },
-      { timeLabel: "", titleSi: "සැමරුම් හා නර්තන", descSi: "උඩරට නර්තන අංග හා සතුට බෙදාගන්නා සැමරුම් අවස්ථාව.", icon: "mayura" }
-    ];
-    BLESSING_LIB = [
-      "ඔබ දෙදෙනාගේ විවාහ දිවිය සැම කල්හිම සෙනෙහසින් හා සමඟියෙන් පිරී, දිගාසිරි සපිරි වේවා!",
-      "අෂ්ට ලෝක ධර්මයෙන් නොසැලී, සුව සේ දිගු කල් එක්ව වෙසෙත්වා!",
-      "සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ සෙනෙහස සදා බැබළේවා!",
-      "තෙරුවන් සරණයි! නිරෝගී සුවය හා දීර්ඝායුෂ ඔබ දෙපළට ලැබේවා!",
-      "පුතු දූ සම්පත්තියෙන් හා සශ්‍රීකත්වයෙන් ඔබ පවුල පිරී යේවා!",
-      "අලුත් ජීවිතය සුබ මොහොතින් ඇරඹේවා! ඔබ දෙදෙනාට සුබ පැතුම්!"
-    ];
-    subscribe(renderAll);
-  }
-});
+      <div style="width:90px;margin:0 auto 6px;color:var(--c-primary)">${L()}</div>
+      <div class="fnames">${d(t.site.brideNameSi)} &amp; ${d(t.site.groomNameSi)}</div>
+      <div class="credit">හෙළ සිරිත · ${new Date().getFullYear()}</div>
+    </div>`}function Nt(){if(!("IntersectionObserver"in window)){N(".reveal").forEach(t=>t.classList.add("in"));return}B=B||new IntersectionObserver(t=>{t.forEach(e=>{e.isIntersecting&&(e.target.classList.add("in"),B.unobserve(e.target))})},{threshold:.12}),N(".reveal:not(.in)").forEach(t=>B.observe(t))}var o,N,u,kt,X,ee,xt,R,B,At=M(async()=>{await W();G();U();$t();o=(t,e=document)=>e.querySelector(t),N=(t,e=document)=>Array.from(e.querySelectorAll(t)),u={guest:null,attending:null,liquor:!1,party:1,dietary:"",done:null},kt=[];X=null;ee=[{timeLabel:"",titleSi:"ආගන්තුක පිළිගැනීම",descSi:"මඟුල් බෙර හඬ මැද, සේසත් සෙවණේ ආරාධිතයන් සාදරයෙන් පිළිගැනීම.",icon:"sesath"},{timeLabel:"",titleSi:"පෝරුවට වැඩම වීම",descSi:"ජයමංගල ගාථා ගායනය මධ්‍යයේ මනාල යුවළ පෝරුවට වැඩම කරවීම.",icon:"poruwa"},{timeLabel:"",titleSi:"පෝරු චාරිත්‍ර",descSi:"බුලත් අතු හුවමාරුව, ඇඟිලි මුදු පැළඳවීම හා පිරිත් නූල් බැඳීම ඇතුළු සිරිත් විරිත්.",icon:"ring"},{timeLabel:"",titleSi:"මඟුල් පහන දැල්වීම",descSi:"උභය පාර්ශවයේ ආශීර්වාදය මැද මඟුල් පහන දල්වා සුබ මොහොත සැමරීම.",icon:"lamp"},{timeLabel:"",titleSi:"භෝජන සංග්‍රහය",descSi:"රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.",icon:"feast"},{timeLabel:"",titleSi:"සැමරුම් හා නර්තන",descSi:"උඩරට නර්තන අංග හා සතුට බෙදාගන්නා සැමරුම් අවස්ථාව.",icon:"mayura"}];xt=["ඔබ දෙදෙනාගේ විවාහ දිවිය සැම කල්හිම සෙනෙහසින් හා සමඟියෙන් පිරී, දිගාසිරි සපිරි වේවා!","අෂ්ට ලෝක ධර්මයෙන් නොසැලී, සුව සේ දිගු කල් එක්ව වෙසෙත්වා!","සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ සෙනෙහස සදා බැබළේවා!","තෙරුවන් සරණයි! නිරෝගී සුවය හා දීර්ඝායුෂ ඔබ දෙපළට ලැබේවා!","පුතු දූ සම්පත්තියෙන් හා සශ්‍රීකත්වයෙන් ඔබ පවුල පිරී යේවා!","අලුත් ජීවිතය සුබ මොහොතින් ඇරඹේවා! ඔබ දෙදෙනාට සුබ පැතුම්!"],R=!1;Y(Mt)});q();G();U();var y=t=>document.querySelector(t);"scrollRestoration"in history&&(history.scrollRestoration="manual");window.scrollTo(0,0);window.addEventListener("load",()=>window.scrollTo(0,0));window.addEventListener("pageshow",()=>window.scrollTo(0,0));if(!P){let t=document.createElement("div");t.className="setup-note",t.textContent=r.setupPending+"  (assets/js/firebase-config.js)",document.body.appendChild(t)}function oe(){let t=y("#gateway");if(t)for(let e=0;e<26;e++){let i=document.createElement("span");i.className="dust",i.style.left=Math.random()*100+"%",i.style.bottom=Math.random()*40+"%",i.style.animationDelay=Math.random()*5+"s",i.style.animationDuration=3.5+Math.random()*3+"s",t.appendChild(i)}}y("#glamp").innerHTML=S("",!0);var Lt=!1;function Et(){Lt||(Lt=!0,y("#gateway").classList.add("gone"),document.body.style.overflow="",ce(!0),setTimeout(()=>{y("#gateway").remove()},1e3))}y("#enterBtn").addEventListener("click",Et);y("#glamp").addEventListener("click",Et);document.body.style.overflow="hidden";function le(){let t=y("#petals");if(!t)return;let e=window.matchMedia("(max-width:600px)").matches?9:16;for(let i=0;i<e;i++){let s=document.createElement("div");s.className="petal";let n=14+Math.random()*22;s.style.width=n+"px",s.style.height=n+"px",s.style.left=Math.random()*100+"%",s.style.animationDuration=9+Math.random()*10+"s",s.style.animationDelay=Math.random()*10+"s",s.style.opacity=(.3+Math.random()*.4).toFixed(2),s.innerHTML=Math.random()>.5?C(""):L(""),t.appendChild(s)}}var x=null,T=!1;function it(){let t=window.__HS_AUDIO__;return t?(x||(x=new Audio(t),x.loop=!0,x.volume=.5,x.preload="auto"),x):null}function ce(t){let e=it();e&&e.play().then(()=>{T=!0,_()}).catch(()=>{})}function _(){let t=y("#musicBtn");t.classList.toggle("music-on",T),t.setAttribute("aria-pressed",String(T))}y("#musicBtn").addEventListener("click",()=>{let t=it();t&&(T?(t.pause(),T=!1):t.play().then(()=>{T=!0,_()}).catch(()=>{}),_())});var Dt=y("#toTop");window.addEventListener("scroll",()=>{Dt.classList.toggle("show",window.scrollY>600)},{passive:!0});var et=0;function It(t,e=950){cancelAnimationFrame(et);let i=window.scrollY,s=Math.round(t)-i;if(Math.abs(s)<2)return;if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){window.scrollTo(0,t);return}let n=performance.now(),l=a=>a<.5?4*a*a*a:1-Math.pow(-2*a+2,3)/2,p=a=>{let c=Math.min(1,(a-n)/e);window.scrollTo(0,i+s*l(c)),c<1&&(et=requestAnimationFrame(p))};et=requestAnimationFrame(p)}Dt.addEventListener("click",()=>It(0,1e3));document.addEventListener("click",t=>{let e=t.target.closest&&t.target.closest('a[href^="#"]');if(!e)return;let i=e.getAttribute("href").slice(1),s=i&&document.getElementById(i);s&&(t.preventDefault(),It(s.getBoundingClientRect().top+window.scrollY-8,1e3))});if(window.matchMedia("(hover: hover) and (pointer: fine)").matches){let t=0;document.addEventListener("pointermove",e=>{let i=e.target.closest&&e.target.closest("[data-tilt]");document.querySelectorAll("[data-tilt]").forEach(s=>{s!==i&&(s.style.setProperty("--rx","0deg"),s.style.setProperty("--ry","0deg"))}),i&&(cancelAnimationFrame(t),t=requestAnimationFrame(()=>{let s=i.getBoundingClientRect(),n=(e.clientX-s.left)/s.width-.5,l=(e.clientY-s.top)/s.height-.5;i.style.setProperty("--ry",(n*7).toFixed(2)+"deg"),i.style.setProperty("--rx",(-l*7).toFixed(2)+"deg")}))},{passive:!0})}oe();le();_();At().then(()=>Tt).then(async()=>{if(!P)return;let t=await W().then(()=>yt);t.subscribe(e=>{let i=e.site.ambientAudioUrl||"";i!==window.__HS_AUDIO__&&(window.__HS_AUDIO__=i,x=null);let s=it();if(s)try{s.load()}catch{}}),t.startRealtime()});
 
-// release/helasiritha-web/assets/js/app.js
-init_firebase_config();
-init_i18n();
-init_ornaments();
-var $2 = (s) => document.querySelector(s);
-if (!FIREBASE_READY) {
-  const n = document.createElement("div");
-  n.className = "setup-note";
-  n.textContent = SI.setupPending + "  (assets/js/firebase-config.js)";
-  document.body.appendChild(n);
-}
-function seedDust() {
-  const g = $2("#gateway");
-  if (!g) return;
-  for (let i = 0; i < 26; i++) {
-    const d = document.createElement("span");
-    d.className = "dust";
-    d.style.left = Math.random() * 100 + "%";
-    d.style.bottom = Math.random() * 40 + "%";
-    d.style.animationDelay = Math.random() * 5 + "s";
-    d.style.animationDuration = 3.5 + Math.random() * 3 + "s";
-    g.appendChild(d);
-  }
-}
-$2("#glamp").innerHTML = pahana("", true);
-var entered = false;
-function enterSite() {
-  if (entered) return;
-  entered = true;
-  $2("#gateway").classList.add("gone");
-  document.body.style.overflow = "";
-  startMusic(true);
-  setTimeout(() => {
-    $2("#gateway").remove();
-  }, 1e3);
-}
-$2("#enterBtn").addEventListener("click", enterSite);
-$2("#glamp").addEventListener("click", enterSite);
-document.body.style.overflow = "hidden";
-function seedPetals() {
-  const host = $2("#petals");
-  if (!host) return;
-  const N = window.matchMedia("(max-width:600px)").matches ? 9 : 16;
-  for (let i = 0; i < N; i++) {
-    const p = document.createElement("div");
-    p.className = "petal";
-    const size = 14 + Math.random() * 22;
-    p.style.width = size + "px";
-    p.style.height = size + "px";
-    p.style.left = Math.random() * 100 + "%";
-    p.style.animationDuration = 9 + Math.random() * 10 + "s";
-    p.style.animationDelay = Math.random() * 10 + "s";
-    p.style.opacity = (0.3 + Math.random() * 0.4).toFixed(2);
-    p.innerHTML = Math.random() > 0.5 ? nelumMala("") : mandala("");
-    host.appendChild(p);
-  }
-}
-var audio = null;
-var playing = false;
-function ensureAudio() {
-  const url = window.__HS_AUDIO__;
-  if (!url) return null;
-  if (!audio) {
-    audio = new Audio(url);
-    audio.loop = true;
-    audio.volume = 0.5;
-  }
-  return audio;
-}
-function startMusic(auto) {
-  const a = ensureAudio();
-  if (!a) return;
-  a.play().then(() => {
-    playing = true;
-    reflectMusic();
-  }).catch(() => {
-    if (!auto) {
-    }
-  });
-}
-function reflectMusic() {
-  const btn = $2("#musicBtn");
-  btn.classList.toggle("music-on", playing);
-  btn.setAttribute("aria-pressed", String(playing));
-}
-$2("#musicBtn").addEventListener("click", () => {
-  const a = ensureAudio();
-  if (!a) {
-    return;
-  }
-  if (playing) {
-    a.pause();
-    playing = false;
-  } else {
-    a.play().then(() => {
-      playing = true;
-      reflectMusic();
-    }).catch(() => {
-    });
-  }
-  reflectMusic();
-});
-var topbar = $2("#topbar");
-var toTop = $2("#toTop");
-window.addEventListener("scroll", () => {
-  const y = window.scrollY;
-  topbar.classList.toggle("solid", y > 40);
-  toTop.classList.toggle("show", y > 600);
-}, { passive: true });
-toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-  let raf = 0;
-  document.addEventListener("pointermove", (e) => {
-    const el = e.target.closest && e.target.closest("[data-tilt]");
-    document.querySelectorAll("[data-tilt]").forEach((t) => {
-      if (t !== el) {
-        t.style.setProperty("--rx", "0deg");
-        t.style.setProperty("--ry", "0deg");
-      }
-    });
-    if (!el) return;
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      el.style.setProperty("--ry", (px * 7).toFixed(2) + "deg");
-      el.style.setProperty("--rx", (-py * 7).toFixed(2) + "deg");
-    });
-  }, { passive: true });
-}
-seedDust();
-seedPetals();
-reflectMusic();
-init_ui().then(() => ui_exports).then(async () => {
-  if (!FIREBASE_READY) return;
-  const data = await init_data().then(() => data_exports);
-  data.subscribe((s) => {
-    window.__HS_AUDIO__ = s.site.ambientAudioUrl || "";
-  });
-  data.startRealtime();
-});
-
-  </script>
+</script>
 </body>
 </html>
