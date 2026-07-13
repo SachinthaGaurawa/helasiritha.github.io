@@ -3,114 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#5A1410" />
+  <meta name="theme-color" content="#8B1A1A" />
   <title>කෞශානි &amp; ගෞරව · මංගල ආරාධනය</title>
   <meta name="description" content="කෞශානි හා ගෞරව මංගල්‍යය — හෙළ සිරිත. ඔබ සැම සාදරයෙන් ආරාධනා කරමු." />
-
   <link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
 
-  <!-- Sinhala + Latin display fonts -->
+  <!-- Fonts: Sinhala + English display -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Gemunu+Libre:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* ── Translate toggle button (fixed, top-right) ── */
+    /* Translate button */
     .translate-btn{
-      position:fixed;z-index:50;top:72px;right:max(1rem,3vw);
+      position:fixed;z-index:50;top:74px;right:max(1rem,3vw);
       display:inline-flex;align-items:center;gap:.5rem;
-      padding:.55rem 1.1rem;border-radius:999px;
+      padding:.55rem 1.15rem;border-radius:999px;
       font-family:var(--f-disp);font-weight:700;font-size:.88rem;
-      color:var(--maroon-2);
-      background:linear-gradient(180deg,#FAF1DE,#F0E2C5);
-      border:1.5px solid rgba(154,112,56,.5);
-      box-shadow:0 8px 22px rgba(58,18,12,.18),inset 0 1px 0 rgba(255,250,232,.7);
-      cursor:pointer;transition:all .35s var(--ease);
+      color:var(--wood-dark);background:var(--gold-metallic);
+      border:1.5px solid rgba(184,134,11,.5);
+      box-shadow:var(--emboss-light);cursor:pointer;transition:all .35s var(--ease);
     }
-    .translate-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(58,18,12,.25),var(--glow-gold)}
+    .translate-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(212,168,68,.4),var(--emboss-light)}
     .translate-btn svg{width:18px;height:18px;flex:none}
-    @media(max-width:760px){
-      .translate-btn{top:64px;right:max(.7rem,2vw);padding:.45rem .85rem;font-size:.8rem}
-    }
-
-    /* ── English body overrides ── */
+    @media(max-width:760px){.translate-btn{top:66px;right:max(.7rem,2vw);padding:.45rem .85rem;font-size:.8rem}}
+    /* English overrides */
     body.en{font-family:'Cormorant Garamond','Abhaya Libre',serif}
-    body.en .sec-title,body.en .shubha,body.en .inv-name,body.en .ag-title,
-    body.en .gw-ayu,body.en .gw-couple{font-family:'Cormorant Garamond','Abhaya Libre',serif}
+    body.en .sec-title,body.en .shubha,body.en .inv-name,body.en .ag-title,body.en .gw-ayu{font-family:'Cormorant Garamond','Abhaya Libre',serif}
     body.en .hero-names{font-family:'Great Vibes','Cormorant Garamond',cursive}
-    body.en .cd-lbl,body.en .inv-when .lbl,body.en .bless-name{font-family:'Cormorant Garamond',serif;letter-spacing:.12em;text-transform:uppercase}
     body.en .love-text{font-family:'Cormorant Garamond',serif}
-
-    /* ── 3D floating particles (canvas) ── */
-    #particles3d{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.6}
-    body.lite #particles3d{display:none}
-
-    /* ── Premium shimmer on section titles ── */
-    .sec-title.brass-text{
-      background:var(--foil);background-size:200% 100%;
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      -webkit-text-fill-color:transparent;
-      filter:drop-shadow(0 2px 3px rgba(40,22,10,.3));
-      animation:foil-sheen 9s ease-in-out infinite;
-    }
-
-    /* ── Floating lotus petals (enhanced) ── */
-    .petal-lotus{
-      position:absolute;width:12px;height:12px;
-      background:radial-gradient(ellipse at 40% 30%,#FBE8C4,#D9AF61 60%,transparent 100%);
-      border-radius:60% 0 60% 0;opacity:.55;
-      animation:fall-lotus linear infinite;
-      filter:blur(.3px);
-    }
-    @keyframes fall-lotus{
-      0%{transform:translateY(-40px) rotate(0deg) translateX(0);opacity:0}
-      12%{opacity:.6}
-      100%{transform:translateY(108vh) rotate(540deg) translateX(30px);opacity:0}
-    }
-
-    /* ── Premium card hover lift ── */
-    .panel{transition:transform .5s var(--ease),box-shadow .5s ease}
-    .panel:hover{transform:translateY(-4px);box-shadow:var(--raise-3)}
-
-    /* ── Enhanced gateway candle glow ── */
-    .gw-lamp-glow{
-      position:absolute;width:200px;height:200px;border-radius:50%;
-      background:radial-gradient(circle,rgba(240,178,80,.35),transparent 70%);
-      pointer-events:none;animation:pulse-glow 3s ease-in-out infinite;
-    }
-    @keyframes pulse-glow{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.15);opacity:1}}
-    body.lite .gw-lamp-glow{animation:none}
-
-    /* ── Print ── */
-    @media print{
-      .translate-btn,#particles3d,#petals,.fab{display:none!important}
-    }
+    /* Print */
+    @media print{.translate-btn{display:none!important}}
   </style>
 </head>
 <body>
-
-  <!-- ░░ 3D PARTICLES CANVAS ░░ -->
   <canvas id="particles3d" aria-hidden="true"></canvas>
-
-  <!-- ░░ FALLING PETALS ░░ -->
   <div id="petals" aria-hidden="true"></div>
 
-  <!-- ░░ GATEWAY / PRELOADER ░░ -->
+  <!-- ░░ GATEWAY — Royal Palace Entrance ░░ -->
   <section id="gateway">
-    <div class="gw-lamp-glow"></div>
     <div class="scroll-panel">
-      <div style="position:relative;display:inline-block">
-        <div class="gw-lamp" id="gwLamp"></div>
-      </div>
-      <div class="gw-ayu brass-text" data-si="ආයුබෝවන්" data-en="Welcome">ආයුබෝවන්</div>
+      <div id="gwLamp"></div>
+      <div class="gw-ayu gold-leaf-text" data-si="ආයුබෝවන්" data-en="Welcome">ආයුබෝවන්</div>
       <div class="gw-couple" data-si="කෞශානි <span class='amp'>&amp;</span> ගෞරව" data-en="Kaushani <span class='amp'>&amp;</span> Gaurawa">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
       <div class="gw-prompt" data-si="පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න" data-en="Touch the lamp to open the invitation">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</div>
       <button class="gw-enter" id="gwEnter" data-si="ආරාධනා පත්‍රය විවෘත කරන්න" data-en="Open the Invitation">ආරාධනා පත්‍රය විවෘත කරන්න</button>
     </div>
-    <!-- Dust particles -->
     <div class="dust" style="left:15%;animation-delay:0s"></div>
     <div class="dust" style="left:30%;animation-delay:1.2s"></div>
     <div class="dust" style="left:50%;animation-delay:.6s"></div>
@@ -124,7 +65,7 @@
     <div class="navlinks">
       <a href="#invitation" data-si="ආරාධනාව" data-en="Invitation">ආරාධනාව</a>
       <a href="#countdown" data-si="කාල ගණනය" data-en="Countdown">කාල ගණනය</a>
-      <a href="#rsvp" data-si="RSVP" data-en="RSVP">RSVP</a>
+      <a href="#rsvp">RSVP</a>
       <a href="#agenda" data-si="වැඩසටහන" data-en="Agenda">වැඩසටහන</a>
       <a href="#gallery" data-si="ඡායාරූප" data-en="Gallery">ඡායාරූප</a>
     </div>
@@ -132,41 +73,30 @@
 
   <!-- ░░ TRANSLATE BUTTON ░░ -->
   <button class="translate-btn" id="translateBtn" aria-label="Translate to English">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1"/>
-      <path d="M22 22l-5-10-5 10M14 18h6"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1"/><path d="M22 22l-5-10-5 10M14 18h6"/></svg>
     <span data-si="English" data-en="සිංහල">English</span>
   </button>
 
   <!-- ░░ MAIN CONTENT ░░ -->
   <main>
-
     <!-- ═══ HERO ═══ -->
     <section id="hero">
+      <div id="heroThorana"></div>
       <div class="hero-grid">
         <div class="hero-sesath left" aria-hidden="true" id="sesathL"></div>
         <div class="hero-core reveal">
           <div class="couple-frame">
-            <div class="empty" id="heroEmpty">
-              <div id="heroLotus"></div>
-              <span data-si="කෞශානි & ගෞරව" data-en="Kaushani & Gaurawa">කෞශානි & ගෞරව</span>
-            </div>
+            <div class="empty" id="heroEmpty"></div>
             <img id="heroImg" alt="කෞශානි & ගෞරව" loading="eager" decoding="async" style="display:none" />
           </div>
-          <div class="hero-names brass-text" id="heroNames">
-            කෞශානි <span class="amp">&amp;</span> ගෞරව
-          </div>
-          <div class="hero-names-si" id="heroNamesSi" data-si="කෞශානි & ගෞරව" data-en="Kaushani & Gaurawa">කෞශානි & ගෞරව</div>
+          <div class="hero-names gold-leaf-text" id="heroNames">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
+          <div class="hero-names-si" id="heroNamesSi">කෞශානි & ගෞරව</div>
           <div class="hero-tag" data-si="අප විවාහ දිවියට එළඹෙමු" data-en="We are getting married">අප විවාහ දිවියට එළඹෙමු</div>
           <div class="hero-meta">
             <div class="hero-date" id="heroDate">2028.01.12</div>
-            <div class="hero-venue" id="heroVenue" data-si="The Epitome Hotel, කුරුණෑගල" data-en="The Epitome Hotel, Kurunegala">The Epitome Hotel, කුරුණෑගල</div>
+            <div class="hero-venue" id="heroVenue">The Epitome Hotel, කුරුණෑගල</div>
           </div>
-          <div class="scroll-cue">
-            <span></span>
-            <small data-si="පහළට ගෙන යන්න" data-en="Scroll Down">පහළට ගෙන යන්න</small>
-          </div>
+          <div class="scroll-cue"><span></span><small data-si="පහළට ගෙන යන්න" data-en="Scroll Down">පහළට ගෙන යන්න</small></div>
         </div>
         <div class="hero-sesath right" aria-hidden="true" id="sesathR"></div>
       </div>
@@ -177,36 +107,27 @@
       <div class="wrap center">
         <div class="reveal">
           <div id="invThorana" style="width:min(100%,560px);margin:0 auto -1rem"></div>
-          <div class="shubha brass-text" data-si="ශ්‍රී සුබ මංගලම්" data-en="Ausicious Blessings">ශ්‍රී සුබ මංගලම්</div>
+          <div class="shubha gold-leaf-text" data-si="ශ්‍රී සුබ මංගලම්" data-en="Auspicious Blessings">ශ්‍රී සුබ මංගලම්</div>
         </div>
         <div class="panel invite-card reveal">
           <div class="inv-block">
             <div class="inv-pre" id="invPreBride" data-si="මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය" data-en="The beloved daughter of">මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය</div>
-            <div class="inv-name brass-text" id="invBrideName">කෞශානි</div>
+            <div class="inv-name gold-leaf-text" id="invBrideName">කෞශානි</div>
           </div>
-          <div class="inv-amp" data-si="&" data-en="&">&amp;</div>
+          <div class="inv-amp">&amp;</div>
           <div class="inv-block">
             <div class="inv-pre" id="invPreGroom" data-si="මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත්" data-en="The beloved son of">මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත්</div>
-            <div class="inv-name brass-text" id="invGroomName">ගෞරව</div>
+            <div class="inv-name gold-leaf-text" id="invGroomName">ගෞරව</div>
           </div>
           <div class="inv-line" id="invLine" data-si="ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු" data-en="We earnestly request your gracious presence">ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු</div>
           <div class="inv-when">
-            <div class="blk">
-              <div class="lbl" data-si="දිනය" data-en="Date">දිනය</div>
-              <div class="val" id="invDate">2028 ජනවාරි 12</div>
-            </div>
+            <div class="blk"><div class="lbl" data-si="දිනය" data-en="Date">දිනය</div><div class="val" id="invDate">—</div></div>
             <div class="sep"></div>
-            <div class="blk">
-              <div class="lbl" data-si="වේලාව" data-en="Time">වේලාව</div>
-              <div class="val" id="invTime">පෙ.ව. 9.15 සිට</div>
-            </div>
+            <div class="blk"><div class="lbl" data-si="වේලාව" data-en="Time">වේලාව</div><div class="val" id="invTime">—</div></div>
             <div class="sep"></div>
-            <div class="blk">
-              <div class="lbl" data-si="ස්ථානය" data-en="Venue">ස්ථානය</div>
-              <div class="val" id="invVenue">The Epitome Hotel</div>
-            </div>
+            <div class="blk"><div class="lbl" data-si="ස්ථානය" data-en="Venue">ස්ථානය</div><div class="val" id="invVenue">—</div></div>
           </div>
-          <div class="inv-close" id="invFrom" data-si="උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ" data-en="With both families' relatives and friends">උචය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
+          <div class="inv-close" id="invFrom" data-si="උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ" data-en="With both families' relatives and friends">උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
           <div class="inv-from" id="invParents"></div>
           <div class="kalasa-inline" id="invKalasa"></div>
           <a class="maplink" id="mapLink" href="#" target="_blank" rel="noopener" data-si="📍 ස්ථානය සිතියමින් බලන්න" data-en="📍 View on Map">📍 ස්ථානය සිතියමින් බලන්න</a>
@@ -218,7 +139,7 @@
     <section id="countdown">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title brass-text" data-si="මංගල දිනයට තවත්" data-en="Counting Down to the Big Day">මංගල දිනයට තවත්</div>
+          <div class="sec-title gold-leaf-text" data-si="මංගල දිනයට තවත්" data-en="Counting Down to the Big Day">මංගල දිනයට තවත්</div>
           <div class="sec-sub" data-si="අපගේ විශේෂ දිනය ආසන්නයි" data-en="Our special day is approaching">අපගේ විශේෂ දිනය ආසන්නයි</div>
         </div>
         <div class="cd-grid reveal" id="cdGrid">
@@ -228,7 +149,7 @@
           <div class="cd-cell"><div class="cd-num" id="cdSecs">00</div><div class="cd-lbl" data-si="තත්පර" data-en="Seconds">තත්පර</div></div>
         </div>
         <div class="cd-done" id="cdDone" style="display:none" data-si="අද එම සුභ මංගල දිනයයි!" data-en="Today is the auspicious day!">අද එම සුභ මංගල දිනයයි!</div>
-        <div class="lamp-wrap reveal" style="margin-top:2rem">
+        <div class="lamp-wrap reveal" style="margin-top:2.5rem">
           <div id="mangalaLamp"></div>
           <div class="lamp-count" id="lampCount">0</div>
           <div class="lamp-cap" data-si="තහවුරු වූ ආරාධිතයන්" data-en="Confirmed Guests">තහවුරු වූ ආරාධිතයන්</div>
@@ -240,65 +161,42 @@
     <section id="rsvp">
       <div class="wrap">
         <div class="center reveal">
-          <div class="sec-title brass-text" data-si="ඔබගේ කාරුණික පැමිණීම දන්වන්න" data-en="Confirm Your Gracious Attendance">ඔබගේ කාරුණික පැමිණීම දන්වන්න</div>
+          <div class="sec-title gold-leaf-text" data-si="ඔබගේ කාරුණික පැමිණීම දන්වන්න" data-en="Confirm Your Gracious Attendance">ඔබගේ කාරුණික පැමිණීම දන්වන්න</div>
           <div class="sec-sub" data-si="ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි" data-en="Your presence would bring us great joy">ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි</div>
         </div>
         <div class="rsvp-grid">
           <div class="rsvp-sesath" aria-hidden="true" id="rsvpSesathL"></div>
           <div class="panel rsvp-card reveal">
-            <!-- Stage 1: Search -->
             <div class="rsvp-stage active" id="rsvpSearch">
-              <h3 style="text-align:center;margin-bottom:1rem" data-si="ආරාධිත නාම ලේඛනය සොයන්න" data-en="Search the Guest List">ආරාධිත නාම ලේඛනය සොයන්න</h3>
+              <h3 style="text-align:center;margin-bottom:1rem;font-family:var(--f-disp);color:var(--kandyan-red)" data-si="ආරාධිත නාම ලේඛනය සොයන්න" data-en="Search the Guest List">ආරාධිත නාම ලේඛනය සොයන්න</h3>
               <div class="search-row">
                 <input class="inp" id="rsvpInput" type="text" data-placeholder-si="ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" data-placeholder-en="Enter your name or family name" placeholder="ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" />
                 <button class="btn" id="rsvpSearchBtn" data-si="සොයන්න" data-en="Search">සොයන්න</button>
               </div>
               <div class="guest-results" id="rsvpResults"></div>
-              <p class="note" id="rsvpNote" data-si="ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
+              <p class="note" data-si="ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
             </div>
-            <!-- Stage 2: Choose -->
             <div class="rsvp-stage" id="rsvpChoose">
-              <div style="text-align:center">
-                <div style="font-weight:700;font-size:1.2rem;color:var(--maroon-2);margin-bottom:.4rem" id="rsvpGuestName"></div>
-                <div class="muted" id="rsvpGuestFamily"></div>
-              </div>
-              <div style="text-align:center;margin:1.2rem 0" data-si="ඔබ සහභාගී වෙනවා ද?" data-en="Will you be attending?">ඔබ සහභාගී වෙනවා ද?</div>
+              <div style="text-align:center"><div style="font-weight:700;font-size:1.2rem;color:var(--kandyan-red);margin-bottom:.4rem" id="rsvpGuestName"></div><div class="muted" id="rsvpGuestFamily"></div></div>
+              <div style="text-align:center;margin:1.3rem 0;font-size:1.1rem" data-si="ඔබ සහභාගී වෙනවා ද?" data-en="Will you be attending?">ඔබ සහභාගී වෙනවා ද?</div>
               <div class="choice-row">
                 <button class="choice yes" id="rsvpYes" data-si="ඔව්, සතුටින් පැමිණෙමි" data-en="Yes, happily attending">ඔව්, සතුටින් පැමිණෙමි</button>
                 <button class="choice no" id="rsvpNo" data-si="කනගාටුයි, පැමිණිය නොහැක" data-en="Sorry, cannot attend">කනගාටුයි, පැමිණිය නොහැක</button>
               </div>
             </div>
-            <!-- Stage 3: Details -->
             <div class="rsvp-stage" id="rsvpDetails">
-              <div class="field">
-                <label data-si="පැමිණෙන සංඛ්‍යාව" data-en="Number of Guests">පැමිණෙන සංඛ්‍යාව</label>
-                <div class="party-row">
-                  <button class="party-btn" id="partyMinus">−</button>
-                  <span class="party-val" id="partyVal">1</span>
-                  <button class="party-btn" id="partyPlus">+</button>
-                </div>
+              <div class="field"><label data-si="පැමිණෙන සංඛ්‍යාව" data-en="Number of Guests">පැමිණෙන සංඛ්‍යාව</label>
+                <div class="party-row"><button class="party-btn" id="partyMinus">−</button><span class="party-val" id="partyVal">1</span><button class="party-btn" id="partyPlus">+</button></div>
               </div>
-              <div class="field" id="liquorField" style="display:none">
-                <label data-si="මත්පැන් අවශ්‍ය ද?" data-en="Do you drink alcohol?">මත්පැන් අවශ්‍ය ද?</label>
-                <div class="choice-row" style="justify-content:flex-start">
-                  <button class="choice" id="liquorYes" style="flex:0 1 120px;min-width:80px" data-si="ඔව්" data-en="Yes">ඔව්</button>
-                  <button class="choice" id="liquorNo" style="flex:0 1 120px;min-width:80px" data-si="නැහැ" data-en="No">නැහැ</button>
-                </div>
+              <div class="field" id="liquorField" style="display:none"><label data-si="මත්පැන් අවශ්‍ය ද?" data-en="Do you drink alcohol?">මත්පැන් අවශ්‍ය ද?</label>
+                <div class="choice-row" style="justify-content:flex-start"><button class="choice" id="liquorYes" style="flex:0 1 120px;min-width:80px" data-si="ඔව්" data-en="Yes">ඔව්</button><button class="choice" id="liquorNo" style="flex:0 1 120px;min-width:80px" data-si="නැහැ" data-en="No">නැහැ</button></div>
               </div>
-              <div class="field" id="dietaryField" style="display:none">
-                <label data-si="ආහාර අවශ්‍යතා (ඇත්නම්)" data-en="Dietary Requirements (if any)">ආහාර අවශ්‍යතා (ඇත්නම්)</label>
-                <textarea class="inp" id="dietaryInput" rows="2"></textarea>
-              </div>
+              <div class="field" id="dietaryField" style="display:none"><label data-si="ආහාර අවශ්‍යතා (ඇත්නම්)" data-en="Dietary Requirements (if any)">ආහාර අවශ්‍යතා (ඇත්නම්)</label><textarea class="inp" id="dietaryInput" rows="2"></textarea></div>
               <button class="btn" id="rsvpSubmit" style="width:100%;margin-top:1rem" data-si="කාරුණික පිළිතුර එවන්න" data-en="Submit Response">කාරුණික පිළිතුර එවන්න</button>
               <button class="btn ghost" id="rsvpBack" style="width:100%;margin-top:.6rem" data-si="ආපසු" data-en="Back">ආපසු</button>
             </div>
-            <!-- Stage 4: Thanks -->
             <div class="rsvp-stage" id="rsvpThanks">
-              <div class="rsvp-thanks">
-                <div class="big" id="thanksTitle" data-si="ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!" data-en="Thank you for your response!">ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!</div>
-                <p id="thanksMsg" style="margin-top:.8rem;color:var(--ink-soft)" data-si="ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු." data-en="We look forward to seeing you.">ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.</p>
-                <button class="btn ghost" id="rsvpChange" style="margin-top:1.2rem" data-si="පිළිතුර වෙනස් කරන්න" data-en="Change Response">පිළිතුර වෙනස් කරන්න</button>
-              </div>
+              <div class="rsvp-thanks"><div class="big" id="thanksTitle" data-si="ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!" data-en="Thank you for your response!">ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!</div><p id="thanksMsg" style="margin-top:.8rem;color:var(--ink-soft)"></p><button class="btn ghost" id="rsvpChange" style="margin-top:1.2rem" data-si="පිළිතුර වෙනස් කරන්න" data-en="Change Response">පිළිතුර වෙනස් කරන්න</button></div>
             </div>
           </div>
           <div class="rsvp-sesath right" aria-hidden="true" id="rsvpSesathR"></div>
@@ -310,12 +208,10 @@
     <section id="agenda">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title brass-text" data-si="මංගල සභාවේ සැලැස්ම" data-en="Wedding Day Agenda">මංගල සභාවේ සැලැස්ම</div>
+          <div class="sec-title gold-leaf-text" data-si="මංගල සභාවේ සැලැස්ම" data-en="Wedding Day Agenda">මංගල සභාවේ සැලැස්ම</div>
           <div class="sec-sub" data-si="අපගේ දිනයේ සුවිශේෂ මොහොත්" data-en="Special moments of our day">අපගේ දිනයේ සුවිශේෂ මොහොත්</div>
         </div>
-        <div class="agenda-list" id="agendaList">
-          <!-- Populated by JS -->
-        </div>
+        <div class="agenda-list" id="agendaList"></div>
         <div class="gallery-empty" id="agendaEmpty" style="display:none" data-si="වැඩසටහන ඉක්මනින් එක් කරනු ලැබේ." data-en="Agenda will be added soon.">වැඩසටහන ඉක්මනින් එක් කරනු ලැබේ.</div>
       </div>
     </section>
@@ -324,12 +220,10 @@
     <section id="gallery">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title brass-text" data-si="සෙනෙහසේ මංසලකුණු" data-en="Moments of Love">සෙනෙහසේ මංසලකුණු</div>
+          <div class="sec-title gold-leaf-text" data-si="සෙනෙහසේ මංසලකුණු" data-en="Moments of Love">සෙනෙහසේ මංසලකුණු</div>
           <div class="sec-sub" data-si="සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…" data-en="Smiles, quiet moments and little dreams — every step that brought us here…">සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…</div>
         </div>
-        <div class="masonry reveal" id="galleryGrid">
-          <!-- Populated by JS -->
-        </div>
+        <div class="masonry reveal" id="galleryGrid"></div>
         <div class="gallery-empty" id="galleryEmpty" style="display:none" data-si="ඡායාරූප ඉක්මනින් එක් කරනු ලැබේ." data-en="Photos will be added soon.">ඡායාරූප ඉක්මනින් එක් කරනු ලැබේ.</div>
       </div>
     </section>
@@ -338,16 +232,12 @@
     <section id="lovenote">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title brass-text" data-si="විශේෂ සටහන" data-en="A Special Note">විශේෂ සටහන</div>
+          <div class="sec-title gold-leaf-text" data-si="විශේෂ සටහන" data-en="A Special Note">විශේෂ සටහන</div>
           <div class="sec-sub" data-si="අපගේ ආදරණීය අමුත්තනට" data-en="To our beloved guests">අපගේ ආදරණීය අමුත්තනට</div>
         </div>
-        <div class="panel reveal" style="max-width:760px;margin:1.5rem auto 0">
-          <div class="love-text" id="loveText" data-si="අපගේ මංගල උත්සවයට ඔබ පැමිණීමෙන් අප හට ලැබෙන සතුට වචනයෙන් ප්‍රකාශ කළ නොහැක. ඔබගේ ආශිර්වාදය අපගේ ජීවිතයේ විශේෂතම මොහොතට එළියක් වනු ඇත. ස්තූතියි." data-en="We cannot express in words the joy your presence at our wedding brings us. Your blessings will illuminate the most special moment of our lives. Thank you.">
-            අපගේ මංගල උත්සවයට ඔබ පැමිණීමෙන් අප හට ලැබෙන සතුට වචනයෙන් ප්‍රකාශ කළ නොහැක. ඔබගේ ආශිර්වාදය අපගේ ජීවිතයේ විශේෂතම මොහොතට එළියක් වනු ඇත. ස්තූතියි.
-          </div>
-          <div class="love-sign">
-            කෞශානි <span class="amp">&amp;</span> ගෞරව
-          </div>
+        <div class="panel reveal" style="max-width:780px;margin:1.6rem auto 0">
+          <div class="love-text" id="loveText"></div>
+          <div class="love-sign">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
         </div>
       </div>
     </section>
@@ -356,28 +246,19 @@
     <section id="blessings">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title brass-text" data-si="සුබ පැතුම් පොත" data-en="Blessings Book">සුබ පැතුම් පොත</div>
+          <div class="sec-title gold-leaf-text" data-si="සුබ පැතුම් පොත" data-en="Blessings Book">සුබ පැතුම් පොත</div>
           <div class="sec-sub" data-si="අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න." data-en="Leave a blessing for us.">අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.</div>
         </div>
-        <div class="bless-grid reveal" id="blessGrid">
-          <!-- Populated by JS -->
-        </div>
+        <div class="bless-grid reveal" id="blessGrid"></div>
         <div class="bless-empty" id="blessEmpty" style="display:none" data-si="පළමු සුබ පැතුම ඔබගෙන් වේවා…" data-en="Be the first to leave a blessing…">පළමු සුබ පැතුම ඔබගෙන් වේවා…</div>
         <form class="bless-form reveal" id="blessForm">
-          <div class="field">
-            <label data-si="ඔබගේ නම" data-en="Your Name">ඔබගේ නම</label>
-            <input class="inp" id="blessName" type="text" required maxlength="60" data-placeholder-si="නම ඇතුළත් කරන්න" data-placeholder-en="Enter your name" placeholder="නම ඇතුළත් කරන්න" />
-          </div>
-          <div class="field">
-            <label data-si="ඔබගේ සුබ පැතුම" data-en="Your Blessing">ඔබගේ සුබ පැතුම</label>
-            <textarea class="inp" id="blessMsg" rows="3" required maxlength="400" data-placeholder-si="සුබ පැතුම ලියන්න…" data-placeholder-en="Write your blessing…" placeholder="සුබ පැතුම ලියන්න…"></textarea>
-          </div>
+          <div class="field"><label data-si="ඔබගේ නම" data-en="Your Name">ඔබගේ නම</label><input class="inp" id="blessName" type="text" required maxlength="60" data-placeholder-si="නම ඇතුළත් කරන්න" data-placeholder-en="Enter your name" placeholder="නම ඇතුළත් කරන්න" /></div>
+          <div class="field"><label data-si="ඔබගේ සුබ පැතුම" data-en="Your Blessing">ඔබගේ සුබ පැතුම</label><textarea class="inp" id="blessMsg" rows="3" required maxlength="400" data-placeholder-si="සුබ පැතුම ලියන්න…" data-placeholder-en="Write your blessing…" placeholder="සුබ පැතුම ලියන්න…"></textarea></div>
           <button class="btn" type="submit" id="blessSubmit" data-si="සුබ පැතුම තැබීම" data-en="Submit Blessing">සුබ පැතුම තැබීම</button>
           <p class="note" id="blessThanks" style="display:none" data-si="ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ." data-en="Thank you! Your blessing will appear after approval.">ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.</p>
         </form>
       </div>
     </section>
-
   </main>
 
   <!-- ░░ FOOTER ░░ -->
@@ -390,22 +271,13 @@
         <button class="btn ghost" id="calBtn" data-si="📅 දින දර්ශනයට එක් කරන්න" data-en="📅 Add to Calendar">📅 දින දර්ශනයට එක් කරන්න</button>
         <a class="btn ghost" id="waShare" href="#" target="_blank" rel="noopener" data-si="💬 WhatsApp හරහා බෙදාගන්න" data-en="💬 Share on WhatsApp">💬 WhatsApp හරහා බෙදාගන්න</a>
       </div>
-      <div class="foot-credit">
-        <span data-si="සෙනෙහසින් නිර්මාණය කරන ලදී" data-en="Crafted with love">සෙනෙහසින් නිර්මාණය කරන ලදී</span> <span class="heart">♥</span> <span data-si="හෙළ සිරිත" data-en="Helasiritha">හෙළ සිරිත</span>
-      </div>
+      <div class="foot-credit"><span data-si="සෙනෙහසින් නිර්මාණය කරන ලදී" data-en="Crafted with love">සෙනෙහසින් නිර්මාණය කරන ලදී</span> <span class="heart">♥</span> <span data-si="හෙළ සිරිත" data-en="Helasiritha">හෙළ සිරිත</span></div>
     </div>
   </footer>
 
-  <!-- ░░ TO-TOP BUTTON ░░ -->
-  <button id="toTop" class="fab" style="right:max(1rem,3vw);bottom:calc(max(1rem,env(safe-area-inset-bottom)) + 64px);opacity:0;pointer-events:none" aria-label="ඉහළට යන්න">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 15l6-6 6 6"/></svg>
-  </button>
-
-  <!-- ░░ MUSIC BUTTON ░░ -->
-  <button id="musicBtn" class="fab" style="right:max(1rem,3vw);bottom:max(1rem,env(safe-area-inset-bottom))" aria-label="සංගීතය">
-    <svg class="mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.08"/></svg>
-    <svg class="wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="8" width="3" height="8" rx="1"/><rect x="10" y="5" width="3" height="14" rx="1"/><rect x="16" y="10" width="3" height="6" rx="1"/></svg>
-  </button>
+  <!-- ░░ FLOATING BUTTONS ░░ -->
+  <button id="toTop" class="fab" style="right:max(1rem,3vw);bottom:calc(max(1rem,env(safe-area-inset-bottom)) + 66px);opacity:0;pointer-events:none" aria-label="ඉහළට යන්න"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 15l6-6 6 6"/></svg></button>
+  <button id="musicBtn" class="fab" style="right:max(1rem,3vw);bottom:max(1rem,env(safe-area-inset-bottom))" aria-label="සංගීතය"><svg class="mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.08"/></svg><svg class="wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="8" width="3" height="8" rx="1"/><rect x="10" y="5" width="3" height="14" rx="1"/><rect x="16" y="10" width="3" height="6" rx="1"/></svg></button>
 
   <!-- ░░ LIGHTBOX ░░ -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
@@ -416,984 +288,9 @@
     <div class="lb-cap" id="lbCap"></div>
   </div>
 
-  <!-- ░░ NOSCRIPT ░░ -->
-  <noscript>
-    <div style="padding:40px;text-align:center;font-family:serif">
-      මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.
-    </div>
-  </noscript>
+  <noscript><div style="padding:40px;text-align:center;font-family:serif">මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.</div></noscript>
 
-  <!-- ═══════════════════════════════════════════════════════════════════ -->
-  <!-- ░░ APPLICATION JAVASCRIPT ░░ -->
-  <!-- ═══════════════════════════════════════════════════════════════════ -->
-  <script type="module">
-    /* ════════════════════════════════════════════════════════════════════
-     *  හෙළ සිරිත · PUBLIC APP — "Rajavansha" Edition
-     *  Firebase real-time sync · Translate · Premium UI
-     * ════════════════════════════════════════════════════════════════════ */
-
-    // ── Firebase Config ──
-    const FB_VER = "12.14.0";
-    const FB_URL = `https://www.gstatic.com/firebasejs/${FB_VER}`;
-    const FB_CONFIG = {
-      apiKey: "AIzaSyD2HEO-yoV6RLsD1iYgj_EocItqotAh3Qk",
-      authDomain: "helasiritha-official.firebaseapp.com",
-      projectId: "helasiritha-official",
-      storageBucket: "helasiritha-official.firebasestorage.app",
-      messagingSenderId: "993883662089",
-      appId: "1:993883662089:web:b583123218df07be9155d8",
-      measurementId: "G-PBJWLXWVD9"
-    };
-    const CLOUDINARY = { cloudName: "dzrfpc9be", uploadPreset: "helasiritha_unsigned" };
-
-    // ── Translations ──
-    const SI = {
-      ayubowan: "ආයුබෝවන්",
-      gettingMarried: "අප විවාහ දිවියට එළඹෙමු",
-      shubaMangalam: "ශ්‍රී සුබ මංගලම්",
-      belovedDaughter: "මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය",
-      belovedSon: "මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත්",
-      requestPresence: "ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු",
-      date: "දිනය", time: "වේලාව", venue: "ස්ථානය",
-      viewLocation: "ස්ථානය සිතියමින් බලන්න",
-      bothFamilies: "උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ",
-      countdownTitle: "මංගල දිනයට තවත්",
-      days: "දින", hours: "පැය", minutes: "මිනිත්තු", seconds: "තත්පර",
-      theDayHasArrived: "අද එම සුභ මංගල දිනයයි!",
-      rsvpTitle: "ඔබගේ කාරුණික පැමිණීම දන්වන්න",
-      rsvpSub: "ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි",
-      searchGuestList: "ආරාධිත නාම ලේඛනය සොයන්න",
-      familyNamePlaceholder: "ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න",
-      searching: "සොයමින්…",
-      noGuestFound: "කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය.",
-      selectYourName: "කරුණාකර ඔබගේ නම තෝරන්න",
-      willYouAttend: "ඔබ සහභාගී වෙනවා ද?",
-      yesAttend: "ඔව්, සතුටින් පැමිණෙමි",
-      noAttend: "කනගාටුයි, පැමිණිය නොහැක",
-      takingLiquor: "මත්පැන් අවශ්‍ය ද?",
-      yes: "ඔව්", no: "නැහැ",
-      guestCount: "පැමිණෙන සංඛ්‍යාව",
-      dietary: "ආහාර අවශ්‍යතා (ඇත්නම්)",
-      confirmRsvp: "කාරුණික පිළිතුර එවන්න",
-      sending: "යවමින්…",
-      rsvpThanks: "ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!",
-      rsvpConfirmedMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු.",
-      rsvpDeclinedMsg: "ඔබගේ සුබ පැතුම් අප හට ලැබේවා. ස්තූතියි.",
-      changeResponse: "පිළිතුර වෙනස් කරන්න",
-      agendaTitle: "මංගල සභාවේ සැලැස්ම",
-      agendaSub: "අපගේ දිනයේ සුවිශේෂ මොහොත්",
-      galleryTitle: "සෙනෙහසේ මංසලකුණු",
-      gallerySub: "සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී…",
-      loveNoteTitle: "විශේෂ සටහන",
-      loveNoteSubtitle: "අපගේ ආදරණීය අමුත්තනට",
-      blessingsTitle: "සුබ පැතුම් පොත",
-      blessingsSub: "අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.",
-      yourName: "ඔබගේ නම",
-      yourBlessing: "ඔබගේ සුබ පැතුම",
-      sendBlessing: "සුබ පැතුම තැබීම",
-      composing: "රචනා කරමින්…",
-      blessingThanks: "ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",
-      awaitingBlessings: "පළමු සුබ පැතුම ඔබගෙන් වේවා…",
-      lampTitle: "මංගල පහන",
-      confirmedCount: "තහවුරු වූ ආරාධිතයන්",
-      scrollPrompt: "පහළට ගෙන යන්න",
-      search: "සොයන්න",
-      back: "ආපසු",
-      submitting: "යවමින්…",
-      enterOpen: "ආරාධනා පත්‍රය විවෘත කරන්න",
-      lampPrompt: "පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න",
-      addToCalendar: "📅 දින දර්ශනයට එක් කරන්න",
-      shareWhatsapp: "💬 WhatsApp හරහා බෙදාගන්න",
-      withLove: "සෙනෙහසින් නිර්මාණය කරන ලදී",
-      celebrating: "හෙළ සිරිත",
-      backToTop: "ඉහළට යන්න",
-      brideDefault: "කෞශානි", groomDefault: "ගෞරව",
-      coupleNamesSi: "කෞශානි & ගෞරව",
-      coupleNamesEn: "Kaushani & Gaurawa",
-    };
-
-    const EN = {
-      ayubowan: "Welcome",
-      gettingMarried: "We are getting married",
-      shubaMangalam: "Auspicious Blessings",
-      belovedDaughter: "The beloved daughter of",
-      belovedSon: "The beloved son of",
-      requestPresence: "We earnestly request your gracious presence",
-      date: "Date", time: "Time", venue: "Venue",
-      viewLocation: "View Location on Map",
-      bothFamilies: "With both families' relatives and friends",
-      countdownTitle: "Counting Down to the Big Day",
-      days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
-      theDayHasArrived: "Today is the auspicious day!",
-      rsvpTitle: "Confirm Your Gracious Attendance",
-      rsvpSub: "Your presence would bring us great joy",
-      searchGuestList: "Search the Guest List",
-      familyNamePlaceholder: "Enter your name or family name",
-      searching: "Searching…",
-      noGuestFound: "Sorry, no guest found with that name.",
-      selectYourName: "Please select your name",
-      willYouAttend: "Will you be attending?",
-      yesAttend: "Yes, happily attending",
-      noAttend: "Sorry, cannot attend",
-      takingLiquor: "Do you drink alcohol?",
-      yes: "Yes", no: "No",
-      guestCount: "Number of Guests",
-      dietary: "Dietary Requirements (if any)",
-      confirmRsvp: "Submit Response",
-      sending: "Sending…",
-      rsvpThanks: "Thank you for your response!",
-      rsvpConfirmedMsg: "We look forward to seeing you.",
-      rsvpDeclinedMsg: "May your blessings reach us. Thank you.",
-      changeResponse: "Change Response",
-      agendaTitle: "Wedding Day Agenda",
-      agendaSub: "Special moments of our day",
-      galleryTitle: "Moments of Love",
-      gallerySub: "Smiles, quiet moments and little dreams — every step that brought us here…",
-      loveNoteTitle: "A Special Note",
-      loveNoteSubtitle: "To our beloved guests",
-      blessingsTitle: "Blessings Book",
-      blessingsSub: "Leave a blessing for us.",
-      yourName: "Your Name",
-      yourBlessing: "Your Blessing",
-      sendBlessing: "Submit Blessing",
-      composing: "Composing…",
-      blessingThanks: "Thank you! Your blessing will appear after approval.",
-      awaitingBlessings: "Be the first to leave a blessing…",
-      lampTitle: "Mangala Lamp",
-      confirmedCount: "Confirmed Guests",
-      scrollPrompt: "Scroll Down",
-      search: "Search",
-      back: "Back",
-      submitting: "Submitting…",
-      enterOpen: "Open the Invitation",
-      lampPrompt: "Touch the lamp to open the invitation",
-      addToCalendar: "📅 Add to Calendar",
-      shareWhatsapp: "💬 Share on WhatsApp",
-      withLove: "Crafted with love",
-      celebrating: "Helasiritha",
-      backToTop: "Back to Top",
-      brideDefault: "Kaushani", groomDefault: "Gaurawa",
-      coupleNamesSi: "Kaushani & Gaurawa",
-      coupleNamesEn: "Kaushani & Gaurawa",
-    };
-
-    // ── Sinhala months & days ──
-    const SI_MONTHS = ["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජූනි","ජූලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"];
-    const SI_DAYS = ["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"];
-    const EN_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-    // ── Default data ──
-    function defaultSite() {
-      return {
-        brideNameSi: "කෞශානි", groomNameSi: "ගෞරව",
-        brideNameEn: "Kaushani", groomNameEn: "Gaurawa",
-        brideParentsSi: "", groomParentsSi: "",
-        brideRelationSi: "ආදරණීය දියණිය", groomRelationSi: "ආදරණීය පුත්",
-        invitationHeadingSi: "ශ්‍රී සුබ මංගලම්",
-        weddingDateISO: "2028-01-12T09:15:00+05:30",
-        ceremonyTimeLabel: "පෙ.ව. 9.15 සිට",
-        venueName: "The Epitome Hotel",
-        venueAddress: "කුරුණෑගල",
-        mapUrl: "",
-        rsvpDeadlineISO: "2027-12-20T23:59:00+05:30",
-        allowLiquorPref: true,
-        allowDietaryPref: true,
-        coupleImageUrl: "",
-        inviteWordingSi: "",
-        loveNoteSi: "",
-        ambientAudioUrl: ""
-      };
-    }
-    function defaultTheme() {
-      return { primary: "#C9A574", secondary: "#F2E5C6", accent: "#A48354", surface: "#FFFBF2", text: "#221C01" };
-    }
-    function defaultVisibility() {
-      return { invitationCard: true, countdown: true, rsvp: true, agenda: true, gallery: true, blessings: true, loveNote: true };
-    }
-
-    // ── State ──
-    const state = {
-      ready: false,
-      site: defaultSite(),
-      theme: defaultTheme(),
-      visibility: defaultVisibility(),
-      stats: { totalGuests: 0, confirmed: 0, pending: 0, declined: 0 },
-      agenda: [],
-      gallery: [],
-      blessings: [],
-      lang: 'si' // 'si' or 'en'
-    };
-
-    // ── Helpers ──
-    const $ = (s, r = document) => r.querySelector(s);
-    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-    function normalize(s) {
-      return String(s || '').toLowerCase().normalize('NFC')
-        .replace(/[\u200b-\u200d\uFEFF]/g, '').replace(/\s+/g, ' ').trim();
-    }
-
-    function applyTheme(t) {
-      const s = document.documentElement.style;
-      s.setProperty('--c-primary', t.primary);
-      s.setProperty('--c-secondary', t.secondary);
-      s.setProperty('--c-accent', t.accent);
-      s.setProperty('--c-surface', t.surface);
-      s.setProperty('--c-ink', t.text);
-    }
-
-    function optImgUrl(url, w) {
-      if (!url || !url.includes('/upload/')) return url || '';
-      const tx = ['f_auto', 'q_auto'];
-      if (w) tx.push(`w_${w}`, 'c_limit', 'dpr_auto');
-      return url.replace('/upload/', `/upload/${tx.join(',')}/`);
-    }
-
-    // ── SVG Ornaments ──
-    function ornLamp() {
-      return `<svg class="orn-pahana" viewBox="0 -14 60 110" fill="none" aria-hidden="true">
-        <g class="flame"><path d="M30 4c6 8 9 14 9 21 0 6-4 11-9 11s-9-5-9-11c0-7 3-13 9-21Z" fill="currentColor" opacity=".92"/>
-        <path d="M30 16c2 4 3 8 3 12 0 3-1 6-3 6s-3-3-3-6c0-4 1-8 3-12Z" fill="#FFF7DA"/></g>
-        <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor">
-          <path d="M14 46h32l-6 8H20l-6-8Z" opacity=".25"/>
-          <path d="M10 54c0 10 9 16 20 16s20-6 20-16H10Z" opacity=".18"/>
-          <path d="M28 70h4v16h-4z"/><ellipse cx="30" cy="88" rx="14" ry="4" opacity=".18"/>
-        </g></svg>`;
-    }
-
-    function ornSesath() {
-      let rays = '', petals = '';
-      const n = 28, a = 26;
-      for (let i = 0; i < n; i++) {
-        const ang = i / n * Math.PI * 2;
-        rays += `<line x1="${(70+Math.cos(ang)*17).toFixed(1)}" y1="${(92+Math.sin(ang)*17).toFixed(1)}" x2="${(70+Math.cos(ang)*58).toFixed(1)}" y2="${(92+Math.sin(ang)*58).toFixed(1)}" opacity="0.4"/>`;
-      }
-      for (let i = 0; i < a; i++) {
-        const a1 = i / a * Math.PI * 2, a2 = (i + .5) / a * Math.PI * 2, a3 = (i + 1) / a * Math.PI * 2;
-        const x1 = 70 + Math.cos(a1) * 58, y1 = 92 + Math.sin(a1) * 58;
-        const cx = 70 + Math.cos(a2) * 69, cy = 92 + Math.sin(a2) * 69;
-        const x2 = 70 + Math.cos(a3) * 58, y2 = 92 + Math.sin(a3) * 58;
-        petals += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" opacity="0.75"/>`;
-      }
-      return `<svg class="orn-sesath" viewBox="0 0 140 460" fill="none" aria-hidden="true">
-        <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M70 8c5 8 7 15 0 25-7-10-5-17 0-25Z" fill="currentColor" opacity=".9"/>
-          <line x1="70" y1="30" x2="70" y2="36" stroke-width="2"/>${petals}
-          <circle cx="70" cy="92" r="58" opacity=".5"/><circle cx="70" cy="92" r="45" opacity=".4"/>
-          <circle cx="70" cy="92" r="17" opacity=".6"/>${rays}
-          <circle cx="70" cy="92" r="7" fill="currentColor" opacity=".5"/>
-          <line x1="70" y1="158" x2="70" y2="448" stroke-width="2.6"/>
-          <line x1="60" y1="200" x2="80" y2="200" stroke-width="2"/>
-          <line x1="60" y1="212" x2="80" y2="212" stroke-width="2"/>
-          <path d="M70 158c-9 4-9 15 0 19 9-4 9-15 0-19Z" opacity=".4"/>
-          <circle cx="70" cy="180" r="3" fill="currentColor" opacity=".5"/>
-        </g></svg>`;
-    }
-
-    function ornLotus() {
-      return `<svg class="orn-lotus" viewBox="0 0 100 70" fill="none" aria-hidden="true">
-        <g fill="currentColor">
-          <path d="M50 8c6 10 8 28 0 46-8-18-6-36 0-46Z" opacity=".92"/>
-          <path d="M50 18c12 8 18 24 16 40-14-8-20-24-16-40Z" opacity=".7"/>
-          <path d="M50 18c-12 8-18 24-16 40 14-8 20-24 16-40Z" opacity=".7"/>
-          <path d="M50 26c16 4 26 18 28 34-16-4-26-18-28-34Z" opacity=".48"/>
-          <path d="M50 26c-16 4-26 18-28 34 16-4 26-18 28-34Z" opacity=".48"/>
-        </g><path d="M14 60c14 6 58 6 72 0" stroke="currentColor" stroke-width="1.4" opacity=".5"/>
-      </svg>`;
-    }
-
-    function ornKalasa() {
-      return `<svg class="orn-kalasa" viewBox="0 0 120 150" fill="none" aria-hidden="true">
-        <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
-          <path d="M60 8c0 18-10 26-10 38"/><path d="M60 8c0 18 10 26 10 38"/>
-          <path d="M60 16c-12 6-22 4-30-6 14-2 22 2 30 6Z" fill="currentColor" opacity=".22"/>
-          <path d="M60 16c12 6 22 4 30-6-14-2-22 2-30 6Z" fill="currentColor" opacity=".22"/>
-          <path d="M60 24c-8 8-18 8-26 4"/><path d="M60 24c8 8 18 8 26 4"/>
-          <path d="M44 46h32l-4 10H48l-4-10Z" fill="currentColor" opacity=".18"/>
-          <path d="M48 56c-16 6-26 22-26 42 0 26 18 44 38 44s38-18 38-44c0-20-10-36-26-42"/>
-          <path d="M30 92h60" opacity=".55"/><path d="M34 108c16 8 36 8 52 0" opacity=".55"/>
-          <circle cx="60" cy="100" r="6" fill="currentColor" opacity=".3"/>
-        </g></svg>`;
-    }
-
-    function ornLiaywela() {
-      return `<svg class="orn-liyawela divider" viewBox="0 0 600 60" fill="none" aria-hidden="true">
-        <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-          <path d="M10 30 H230" opacity="0.45"/><path d="M370 30 H590" opacity="0.45"/>
-          <path d="M230 30c-18 0-26-12-44-12s-26 12-44 12 12 16 26 8 4-22-12-22"/>
-          <path d="M150 30c-14 6-30 2-30-10"/><path d="M188 22c8-6 6-16-4-16"/>
-          <path d="M370 30c18 0 26-12 44-12s26 12 44 12-12 16-26 8-4-22 12-22"/>
-          <path d="M450 30c14 6 30 2 30-10"/><path d="M412 22c-8-6-6-16 4-16"/>
-        </g>
-        <g fill="currentColor">
-          <path d="M300 14c8 6 12 16 12 24 0 0-12-2-12-14 0 12-12 14-12 14 0-8 4-18 12-24Z"/>
-          <circle cx="300" cy="44" r="3.5"/>
-        </g></svg>`;
-    }
-
-    // Agenda icons
-    const AG_ICONS = {
-      poruwa: ornLotus, lamp: () => ornLamp(), lotus: ornLotus,
-      sesath: () => `<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="30" cy="30" r="24" opacity=".5"/><circle cx="30" cy="30" r="12" opacity=".7"/><path d="M30 6v48M6 30h48" opacity=".3"/></svg>`,
-      mandala: () => `<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="30" cy="30" r="26" opacity=".4"/><circle cx="30" cy="30" r="16" opacity=".5"/><circle cx="30" cy="30" r="6" fill="currentColor" opacity=".6"/></svg>`,
-      ring: () => `<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><circle cx="30" cy="32" r="16"/><path d="M22 18l8-8 8 8" stroke-width="2.5"/></svg>`,
-      feast: () => `<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="30" cy="38" rx="22" ry="10"/><path d="M8 38c0-16 10-28 22-28s22 12 22 28"/></svg>`,
-    };
-
-    // ── Firebase Init ──
-    let db, firestore;
-    async function initFirebase() {
-      const { initializeApp } = await import(`${FB_URL}/firebase-app.js`);
-      firestore = await import(`${FB_URL}/firebase-firestore.js`);
-      const app = initializeApp(FB_CONFIG);
-      db = firestore.getFirestore(app);
-    }
-
-    // ── Real-time Listeners ──
-    function startListeners() {
-      const { doc, onSnapshot, collection, query, orderBy, where, limit } = firestore;
-
-      onSnapshot(doc(db, 'config', 'site'), snap => {
-        if (snap.exists()) state.site = { ...defaultSite(), ...snap.data() };
-        state.ready = true;
-        render();
-      }, () => { state.ready = true; render(); });
-
-      onSnapshot(doc(db, 'config', 'theme'), snap => {
-        if (snap.exists()) state.theme = { ...defaultTheme(), ...snap.data() };
-        applyTheme(state.theme);
-      });
-
-      onSnapshot(doc(db, 'config', 'visibility'), snap => {
-        if (snap.exists()) state.visibility = { ...defaultVisibility(), ...snap.data() };
-        render();
-      });
-
-      onSnapshot(doc(db, 'config', 'stats'), snap => {
-        if (snap.exists()) state.stats = { ...state.stats, ...snap.data() };
-        render();
-      });
-
-      onSnapshot(query(collection(db, 'agenda'), orderBy('order', 'asc')), snap => {
-        state.agenda = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(d => d.visible !== false);
-        render();
-      }, () => {});
-
-      onSnapshot(query(collection(db, 'gallery'), orderBy('order', 'asc')), snap => {
-        state.gallery = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        render();
-      }, () => {});
-
-      onSnapshot(query(collection(db, 'blessings'), where('approved', '==', true), limit(100)), snap => {
-        state.blessings = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        render();
-      }, () => {});
-
-      applyTheme(state.theme);
-    }
-
-    // ── Guest Search ──
-    async function searchGuests(q) {
-      const { collection, query, where, getDocs, orderBy, limit } = firestore;
-      const n = normalize(q);
-      if (n.length < 2) return [];
-      let results = [];
-      try {
-        const snap = await getDocs(query(collection(db, 'guests'), where('searchTokens', 'array-contains', n), limit(25)));
-        results = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      } catch {}
-      if (!results.length) {
-        try {
-          const all = await getDocs(query(collection(db, 'guests'), orderBy('name'), limit(800)));
-          results = all.docs.map(d => ({ id: d.id, ...d.data() })).filter(g => {
-            const gn = normalize(g.name + ' ' + g.familyName);
-            return gn.includes(n) || gn.replace(/\s/g, '').includes(n.replace(/\s/g, ''));
-          }).slice(0, 25);
-        } catch {}
-      }
-      return results;
-    }
-
-    // ── RSVP Submit ──
-    async function submitRsvp({ guestId, guestName, side, attending, takingLiquor, partySize, dietary }) {
-      const { doc, setDoc } = firestore;
-      const status = attending ? 'confirmed' : 'declined';
-      await setDoc(doc(db, 'rsvps', guestId), {
-        guestId, guestName: String(guestName || '').slice(0, 120),
-        side: side || 'groom', status,
-        takingLiquor: !!takingLiquor,
-        partySize: Math.min(30, Math.max(1, Number(partySize) || 1)),
-        dietary: String(dietary || '').slice(0, 280),
-        respondedAt: Date.now()
-      }, { merge: true });
-      // Cache in localStorage
-      try { localStorage.setItem(`hs_rsvp_${guestId}`, JSON.stringify({ status, takingLiquor, partySize, dietary })); } catch {}
-      return status;
-    }
-
-    // ── Blessing Submit ──
-    async function submitBlessing(name, msg) {
-      const { collection, addDoc } = firestore;
-      const message = String(msg || '').trim().slice(0, 400);
-      if (!message) throw new Error('empty');
-      await addDoc(collection(db, 'blessings'), {
-        guestName: String(name || '').trim().slice(0, 60) || (state.lang === 'en' ? 'Guest' : 'ආගන්තුකයෙක්'),
-        message, approved: false, createdAt: Date.now()
-      });
-    }
-
-    // ── Countdown ──
-    function getCountdown(dateISO) {
-      const diff = new Date(dateISO).getTime() - Date.now();
-      if (isNaN(diff) || diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
-      const s = Math.floor(diff / 1000);
-      return { days: Math.floor(s / 86400), hours: Math.floor(s % 86400 / 3600), minutes: Math.floor(s % 3600 / 60), seconds: s % 60, done: false };
-    }
-    let cdInterval;
-    function startCountdown() {
-      clearInterval(cdInterval);
-      cdInterval = setInterval(() => {
-        const cd = getCountdown(state.site.weddingDateISO);
-        const t = state.lang === 'en' ? EN : SI;
-        $('#cdDays').textContent = String(cd.days).padStart(3, '0');
-        $('#cdHours').textContent = String(cd.hours).padStart(2, '0');
-        $('#cdMins').textContent = String(cd.minutes).padStart(2, '0');
-        $('#cdSecs').textContent = String(cd.seconds).padStart(2, '0');
-        if (cd.done) {
-          $('#cdGrid').style.display = 'none';
-          $('#cdDone').style.display = 'block';
-        }
-      }, 1000);
-    }
-
-    // ── Format date ──
-    function formatDateSi(iso) {
-      const d = new Date(iso);
-      if (isNaN(d.getTime())) return iso;
-      return `${SI_DAYS[d.getDay()]}, ${d.getFullYear()} ${SI_MONTHS[d.getMonth()]} ${d.getDate()}`;
-    }
-    function formatDateEn(iso) {
-      const d = new Date(iso);
-      if (isNaN(d.getTime())) return iso;
-      return `${EN_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-    }
-
-    // ── Calendar export ──
-    function exportCalendar(site) {
-      const e = new Date(site.weddingDateISO);
-      const end = new Date(e.getTime() + 6 * 3600 * 1000);
-      const fmt = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-      const escIcs = s => String(s || '').replace(/[,;\\]/g, c => '\\' + c).replace(/\n/g, '\\n');
-      const ics = [
-        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Helasiritha//Wedding//SI',
-        'BEGIN:VEVENT', `UID:${Date.now()}@helasiritha`,
-        `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(e)}`, `DTEND:${fmt(end)}`,
-        `SUMMARY:${escIcs(site.groomNameSi + ' ◇ ' + site.brideNameSi + ' Wedding')}`,
-        `LOCATION:${escIcs(site.venueName + ', ' + site.venueAddress)}`,
-        `DESCRIPTION:${escIcs(site.inviteWordingSi)}`,
-        'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:Wedding tomorrow!', 'END:VALARM',
-        'END:VEVENT', 'END:VCALENDAR'
-      ].join('\r\n');
-      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'helasiritha-wedding.ics';
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(a.href);
-    }
-
-    // ── RENDER ──
-    function render() {
-      const s = state.site, v = state.visibility, t = state.lang === 'en' ? EN : SI;
-
-      // Visibility
-      const show = (id, cond) => { const el = $(`#${id}`); if (el) el.hidden = !cond; };
-      show('invitation', v.invitationCard);
-      show('countdown', v.countdown);
-      show('rsvp', v.rsvp);
-      show('agenda', v.agenda && state.agenda.length > 0);
-      show('gallery', v.gallery && state.gallery.length > 0);
-      show('blessings', v.blessings);
-      show('lovenote', v.loveNote);
-
-      // Gateway ornaments
-      $('#gwLamp').innerHTML = ornLamp();
-
-      // Hero
-      if (s.coupleImageUrl) {
-        $('#heroImg').src = optImgUrl(s.coupleImageUrl, 800);
-        $('#heroImg').style.display = 'block';
-        $('#heroEmpty').style.display = 'none';
-      } else {
-        $('#heroEmpty').innerHTML = `${ornLotus()}<span>${esc(t.coupleNamesSi)}</span>`;
-      }
-      $('#heroNames').innerHTML = `${esc(s.brideNameSi)} <span class="amp">&amp;</span> ${esc(s.groomNameSi)}`;
-      $('#heroNamesSi').textContent = `${s.brideNameSi} & ${s.groomNameSi}`;
-
-      // Date formatting
-      const dateStr = state.lang === 'en' ? formatDateEn(s.weddingDateISO) : formatDateSi(s.weddingDateISO);
-      $('#heroDate').textContent = new Date(s.weddingDateISO).toISOString().slice(0, 10).replace(/-/g, '.');
-      $('#heroVenue').textContent = `${s.venueName}, ${s.venueAddress}`;
-      $('#invDate').textContent = dateStr;
-      $('#invTime').textContent = s.ceremonyTimeLabel || '';
-      $('#invVenue').textContent = s.venueName || '';
-
-      // Invitation
-      $('#invBrideName').textContent = s.brideNameSi;
-      $('#invGroomName').textContent = s.groomNameSi;
-      $('#invPreBride').textContent = t.belovedDaughter;
-      $('#invPreGroom').textContent = t.belovedSon;
-      $('#invLine').textContent = t.requestPresence;
-      $('#invFrom').textContent = t.bothFamilies;
-      if (s.brideParentsSi || s.groomParentsSi) {
-        $('#invParents').textContent = `${s.brideParentsSi} & ${s.groomParentsSi}`;
-      }
-      $('#invKalasa').innerHTML = ornKalasa();
-      if (s.mapUrl) {
-        $('#mapLink').href = s.mapUrl;
-        $('#mapLink').style.display = '';
-      } else {
-        $('#mapLink').style.display = 'none';
-      }
-
-      // Hero sesath
-      $('#sesathL').innerHTML = ornSesath();
-      $('#sesathR').innerHTML = ornSesath();
-
-      // Invitation thorana
-      $('#invThorana').innerHTML = ornLiaywela();
-
-      // RSVP sesath
-      $('#rsvpSesathL').innerHTML = ornSesath();
-      $('#rsvpSesathR').innerHTML = ornSesath();
-
-      // Lamp / confirmed count
-      $('#mangalaLamp').innerHTML = ornLamp();
-      $('#lampCount').textContent = state.stats.confirmed || 0;
-
-      // Agenda
-      const agendaList = $('#agendaList');
-      if (state.agenda.length) {
-        agendaList.innerHTML = state.agenda.map(item => {
-          const iconFn = AG_ICONS[item.icon] || AG_ICONS.lotus;
-          return `<div class="ag-item reveal">
-            <div class="ag-icon">${iconFn()}</div>
-            <div class="ag-body">
-              <div class="ag-time">${esc(item.timeLabel || '')}</div>
-              <div class="ag-title">${esc(item.titleSi || '')}</div>
-              ${item.descSi ? `<div class="ag-desc">${esc(item.descSi)}</div>` : ''}
-            </div>
-          </div>`;
-        }).join('');
-        $('#agendaEmpty').style.display = 'none';
-      } else {
-        agendaList.innerHTML = '';
-        $('#agendaEmpty').style.display = '';
-      }
-
-      // Gallery
-      const galGrid = $('#galleryGrid');
-      if (state.gallery.length) {
-        galGrid.innerHTML = state.gallery.map((item, i) => {
-          const url = optImgUrl(item.url, 600);
-          return `<figure data-idx="${i}"><img loading="lazy" src="${esc(url)}" alt="${esc(item.alt || '')}"/>
-            ${item.alt ? `<figcaption>${esc(item.alt)}</figcaption>` : ''}</figure>`;
-        }).join('');
-        $('#galleryEmpty').style.display = 'none';
-        // Click to open lightbox
-        $$('figure', galGrid).forEach(fig => {
-          fig.onclick = () => openLightbox(parseInt(fig.dataset.idx));
-        });
-      } else {
-        galGrid.innerHTML = '';
-        $('#galleryEmpty').style.display = '';
-      }
-
-      // Blessings
-      const blessGrid = $('#blessGrid');
-      if (state.blessings.length) {
-        blessGrid.innerHTML = state.blessings.map(b => `
-          <div class="bless-card">
-            <div class="bless-msg">"${esc(b.message)}"</div>
-            <div class="bless-name">— ${esc(b.guestName)}</div>
-          </div>`).join('');
-        $('#blessEmpty').style.display = 'none';
-      } else {
-        blessGrid.innerHTML = '';
-        $('#blessEmpty').style.display = '';
-      }
-
-      // Footer
-      $('#footKalasa').innerHTML = ornKalasa();
-      const wd = new Date(s.weddingDateISO);
-      $('#footDate').textContent = `${String(wd.getDate()).padStart(2,'0')} · ${String(wd.getMonth()+1).padStart(2,'0')} · ${wd.getFullYear()}`;
-
-      // Love note
-      if (s.loveNoteSi) {
-        const paragraphs = s.loveNoteSi.split(/\n\s*\n/).map(p => esc(p.trim())).filter(Boolean).join('<br><br>');
-        $('#loveText').innerHTML = paragraphs;
-      }
-
-      // Title
-      document.title = `${s.brideNameSi} & ${s.groomNameSi} · මංගල ආරාධනය`;
-
-      // WhatsApp share
-      const waText = encodeURIComponent(`${s.brideNameSi} & ${s.groomNameSi} — ${dateStr}\n${s.venueName}\n${location.href}`);
-      $('#waShare').href = `https://wa.me/?text=${waText}`;
-
-      // Init reveals
-      initReveal();
-    }
-
-    // ── Reveal on scroll ──
-    function initReveal() {
-      const els = $$('.reveal:not(.in)');
-      if (!els.length) return;
-      if ('IntersectionObserver' in window) {
-        const obs = new IntersectionObserver((entries) => {
-          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        els.forEach(el => obs.observe(el));
-      } else {
-        els.forEach(el => el.classList.add('in'));
-      }
-    }
-
-    // ── Gateway ──
-    function initGateway() {
-      const gw = $('#gateway');
-      const enter = () => {
-        gw.classList.add('gone');
-        setTimeout(() => { gw.style.display = 'none'; }, 1200);
-        startCountdown();
-      };
-      $('#gwEnter').addEventListener('click', enter);
-      $('#gwLamp').addEventListener('click', enter);
-      // Touch/click anywhere on scroll-panel
-      $('.scroll-panel').addEventListener('click', (e) => {
-        if (e.target.closest('.gw-enter') || e.target.closest('.gw-lamp')) return;
-      });
-    }
-
-    // ── Translate ──
-    function initTranslate() {
-      const btn = $('#translateBtn');
-      btn.addEventListener('click', () => {
-        state.lang = state.lang === 'si' ? 'en' : 'si';
-        document.body.classList.toggle('en', state.lang === 'en');
-        document.documentElement.lang = state.lang === 'en' ? 'en' : 'si';
-
-        // Update button label
-        const label = btn.querySelector('span');
-        label.textContent = state.lang === 'si' ? 'English' : 'සිංහල';
-
-        // Update all [data-si] / [data-en] elements
-        $$('[data-si]').forEach(el => {
-          const val = el.getAttribute(state.lang === 'en' ? 'data-en' : 'data-si');
-          if (val !== null) el.innerHTML = val;
-        });
-
-        // Update placeholders
-        $$('[data-placeholder-si]').forEach(el => {
-          el.placeholder = el.getAttribute(state.lang === 'en' ? 'data-placeholder-en' : 'data-placeholder-si') || '';
-        });
-
-        // Re-render with new language
-        render();
-        startCountdown();
-      });
-    }
-
-    // ── RSVP Logic ──
-    let currentGuest = null;
-    let rsvpState = 'search'; // search | choose | details | thanks
-    let isAttending = true;
-    let takingLiquor = false;
-    let partySize = 1;
-
-    function initRSVP() {
-      const input = $('#rsvpInput');
-      const searchBtn = $('#rsvpSearchBtn');
-      const results = $('#rsvpResults');
-
-      async function doSearch() {
-        const q = input.value.trim();
-        if (q.length < 2) { results.innerHTML = `<p class="note">${esc(state.lang === 'en' ? 'Type at least 2 characters.' : 'අකුරු 2ක්වත් ටයිප් කරන්න.')}</p>`; return; }
-        results.innerHTML = `<p class="note">${esc(SI.searching)}</p>`;
-        const guests = await searchGuests(q);
-        if (!guests.length) {
-          results.innerHTML = `<p class="note">${esc(state.lang === 'en' ? 'No guest found.' : 'ආරාධිතයෙකු හමු නොවීය.')}</p>`;
-          return;
-        }
-        results.innerHTML = guests.map(g => `
-          <button class="guest-pick" data-id="${g.id}">
-            <div><div class="gn">${esc(g.name)}</div><div class="gfam">${esc(g.familyName || '')}</div></div>
-            <span style="color:var(--gold-deep)">→</span>
-          </button>`).join('');
-        $$('.guest-pick', results).forEach(btn => {
-          btn.addEventListener('click', () => {
-            const g = guests.find(x => x.id === btn.dataset.id);
-            if (!g) return;
-            currentGuest = g;
-            showRsvpStage('choose');
-            $('#rsvpGuestName').textContent = g.name;
-            $('#rsvpGuestFamily').textContent = g.familyName || '';
-          });
-        });
-      }
-
-      searchBtn.addEventListener('click', doSearch);
-      input.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-
-      // Choose stage
-      $('#rsvpYes').addEventListener('click', () => {
-        isAttending = true;
-        $$('.choice.yes,#rsvpYes').forEach(el => el.classList.add('sel'));
-        $('#rsvpNo').classList.remove('sel');
-        partySize = 1;
-        $('#partyVal').textContent = '1';
-        // Show liquor/dietary if enabled
-        $('#liquorField').style.display = state.site.allowLiquorPref ? '' : 'none';
-        $('#dietaryField').style.display = state.site.allowDietaryPref ? '' : 'none';
-        showRsvpStage('details');
-      });
-
-      $('#rsvpNo').addEventListener('click', () => {
-        isAttending = false;
-        $('#rsvpYes').classList.remove('sel');
-        $('#rsvpNo').classList.add('sel');
-        showRsvpStage('details');
-        $('#liquorField').style.display = 'none';
-        $('#dietaryField').style.display = 'none';
-      });
-
-      // Details stage
-      $('#partyMinus').addEventListener('click', () => { if (partySize > 1) { partySize--; $('#partyVal').textContent = partySize; } });
-      $('#partyPlus').addEventListener('click', () => { if (partySize < 30) { partySize++; $('#partyVal').textContent = partySize; } });
-
-      $('#liquorYes').addEventListener('click', () => { takingLiquor = true; $('#liquorYes').classList.add('sel'); $('#liquorNo').classList.remove('sel'); });
-      $('#liquorNo').addEventListener('click', () => { takingLiquor = false; $('#liquorNo').classList.add('sel'); $('#liquorYes').classList.remove('sel'); });
-      // Default liquor to "No"
-      takingLiquor = false;
-      $('#liquorNo').classList.add('sel');
-
-      $('#rsvpBack').addEventListener('click', () => showRsvpStage('choose'));
-
-      $('#rsvpSubmit').addEventListener('click', async () => {
-        if (!currentGuest) return;
-        const btn = $('#rsvpSubmit');
-        btn.disabled = true;
-        btn.textContent = state.lang === 'en' ? 'Sending…' : 'යවමින්…';
-        try {
-          await submitRsvp({
-            guestId: currentGuest.id,
-            guestName: currentGuest.name,
-            side: currentGuest.side,
-            attending: isAttending,
-            takingLiquor,
-            partySize,
-            dietary: $('#dietaryInput').value
-          });
-          // Show thanks
-          const t = state.lang === 'en' ? EN : SI;
-          $('#thanksTitle').textContent = t.rsvpThanks;
-          $('#thanksMsg').textContent = isAttending ? t.rsvpConfirmedMsg : t.rsvpDeclinedMsg;
-          showRsvpStage('thanks');
-        } catch (err) {
-          alert(state.lang === 'en' ? 'Error submitting. Please try again.' : 'දෝෂයක් සිදු විය. නැවත උත්සාහ කරන්න.');
-        }
-        btn.disabled = false;
-        btn.textContent = state.lang === 'en' ? 'Submit Response' : 'කාරුණික පිළිතුර එවන්න';
-      });
-
-      $('#rsvpChange').addEventListener('click', () => {
-        currentGuest = null;
-        showRsvpStage('search');
-        input.value = '';
-        results.innerHTML = '';
-      });
-    }
-
-    function showRsvpStage(stage) {
-      rsvpState = stage;
-      $$('.rsvp-stage').forEach(el => el.classList.remove('active'));
-      $(`#rsvp${stage.charAt(0).toUpperCase() + stage.slice(1)}`).classList.add('active');
-    }
-
-    // ── Blessings Form ──
-    function initBlessings() {
-      $('#blessForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = $('#blessSubmit');
-        btn.disabled = true;
-        const origText = btn.textContent;
-        btn.textContent = state.lang === 'en' ? 'Composing…' : 'රචනා කරමින්…';
-        try {
-          await submitBlessing($('#blessName').value, $('#blessMsg').value);
-          $('#blessName').value = '';
-          $('#blessMsg').value = '';
-          $('#blessThanks').style.display = '';
-          setTimeout(() => { $('#blessThanks').style.display = 'none'; }, 5000);
-        } catch {
-          alert(state.lang === 'en' ? 'Please write a blessing.' : 'කරුණාකර සුබ පැතුමක් ලියන්න.');
-        }
-        btn.disabled = false;
-        btn.textContent = origText;
-      });
-    }
-
-    // ── Lightbox ──
-    let lbIdx = 0;
-    function openLightbox(idx) {
-      lbIdx = idx;
-      const item = state.gallery[idx];
-      if (!item) return;
-      $('#lbImg').src = optImgUrl(item.url, 1600);
-      $('#lbCap').textContent = item.alt || '';
-      $('#lightbox').classList.add('open');
-    }
-    function initLightbox() {
-      $('#lbClose').addEventListener('click', () => $('#lightbox').classList.remove('open'));
-      $('#lbPrev').addEventListener('click', () => { lbIdx = (lbIdx - 1 + state.gallery.length) % state.gallery.length; openLightbox(lbIdx); });
-      $('#lbNext').addEventListener('click', () => { lbIdx = (lbIdx + 1) % state.gallery.length; openLightbox(lbIdx); });
-      $('#lightbox').addEventListener('click', e => { if (e.target === $('#lightbox')) $('#lightbox').classList.remove('open'); });
-      document.addEventListener('keydown', e => {
-        if (!$('#lightbox').classList.contains('open')) return;
-        if (e.key === 'Escape') $('#lightbox').classList.remove('open');
-        if (e.key === 'ArrowLeft') { lbIdx = (lbIdx - 1 + state.gallery.length) % state.gallery.length; openLightbox(lbIdx); }
-        if (e.key === 'ArrowRight') { lbIdx = (lbIdx + 1) % state.gallery.length; openLightbox(lbIdx); }
-      });
-    }
-
-    // ── Top bar scroll effect ──
-    function initTopbar() {
-      let ticking = false;
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            $('#topbar').classList.toggle('solid', window.scrollY > 80);
-            const toTop = $('#toTop');
-            if (window.scrollY > 600) { toTop.style.opacity = '1'; toTop.style.pointerEvents = 'auto'; }
-            else { toTop.style.opacity = '0'; toTop.style.pointerEvents = 'none'; }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      });
-      $('#toTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    }
-
-    // ── Calendar button ──
-    function initCalendar() {
-      $('#calBtn').addEventListener('click', () => exportCalendar(state.site));
-    }
-
-    // ── Falling Petals ──
-    function initPetals() {
-      const container = $('#petals');
-      if (document.body.classList.contains('lite') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      for (let i = 0; i < 18; i++) {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-        petal.innerHTML = `<svg viewBox="0 0 20 20" width="${8 + Math.random() * 10}" height="${8 + Math.random() * 10}"><ellipse cx="10" cy="10" rx="8" ry="5" fill="currentColor" opacity=".5"/></svg>`;
-        petal.style.cssText = `left:${Math.random()*100}%;animation-duration:${8+Math.random()*8}s;animation-delay:${Math.random()*10}s;opacity:${.2+Math.random()*.4}`;
-        container.appendChild(petal);
-      }
-    }
-
-    // ── 3D Particles (simple canvas gold dust) ──
-    function initParticles3D() {
-      const canvas = $('#particles3d');
-      if (!canvas || document.body.classList.contains('lite')) return;
-      const ctx = canvas.getContext('2d');
-      let w, h, particles = [];
-
-      function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-      }
-
-      function createParticles() {
-        particles = [];
-        const count = Math.min(60, Math.floor(w * h / 20000));
-        for (let i = 0; i < count; i++) {
-          particles.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            z: Math.random() * 3 + 0.5,
-            vx: (Math.random() - 0.5) * 0.3,
-            vy: -Math.random() * 0.2 - 0.05,
-            r: Math.random() * 1.5 + 0.5,
-            a: Math.random() * 0.5 + 0.2
-          });
-        }
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, w, h);
-        for (const p of particles) {
-          p.x += p.vx * p.z;
-          p.y += p.vy * p.z;
-          if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
-          if (p.x < -10) p.x = w + 10;
-          if (p.x > w + 10) p.x = -10;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * p.z * 0.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(201,165,116,${p.a * 0.6})`;
-          ctx.fill();
-        }
-        requestAnimationFrame(draw);
-      }
-
-      resize();
-      createParticles();
-      draw();
-      window.addEventListener('resize', () => { resize(); createParticles(); });
-    }
-
-    // ── Music Button ──
-    function initMusic() {
-      const btn = $('#musicBtn');
-      let audio = null;
-      btn.addEventListener('click', () => {
-        if (!state.site.ambientAudioUrl) return;
-        if (!audio) {
-          audio = new Audio(state.site.ambientAudioUrl);
-          audio.loop = true;
-          audio.volume = 0.4;
-        }
-        if (audio.paused) {
-          audio.play().catch(() => {});
-          btn.classList.add('on');
-        } else {
-          audio.pause();
-          btn.classList.remove('on');
-        }
-      });
-    }
-
-    // ── BOOT ──
-    async function boot() {
-      await initFirebase();
-      initGateway();
-      initTranslate();
-      initRSVP();
-      initBlessings();
-      initLightbox();
-      initTopbar();
-      initCalendar();
-      initPetals();
-      initParticles3D();
-      initMusic();
-      startListeners();
-    }
-
-    boot().catch(err => {
-      console.error('[Helasiritha] Boot failed:', err);
-      // Still show basic content
-      render();
-    });
-  </script>
+  <!-- ░░ APP ░░ -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
