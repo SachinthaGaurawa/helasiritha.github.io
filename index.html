@@ -30,11 +30,45 @@
     .translate-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(212,168,68,.4),var(--emboss-light)}
     .translate-btn svg{width:18px;height:18px;flex:none}
     @media(max-width:760px){.translate-btn{top:66px;right:max(.7rem,2vw);padding:.45rem .85rem;font-size:.8rem}}
+    
     /* English overrides */
     body.en{font-family:'Cormorant Garamond','Abhaya Libre',serif}
     body.en .sec-title,body.en .shubha,body.en .inv-name,body.en .ag-title,body.en .gw-ayu{font-family:'Cormorant Garamond','Abhaya Libre',serif}
     body.en .hero-names{font-family:'Great Vibes','Cormorant Garamond',cursive}
     body.en .love-text{font-family:'Cormorant Garamond',serif}
+    
+    /* Photorealistic ornament styling */
+    .makara-thorana,.sesath,.punkalasa,.liyawala,.mangala-lamp,.sandakada-pahana,.corner-ornament{
+      max-width:100%;height:auto;display:block;
+      filter:drop-shadow(0 10px 30px rgba(139,105,20,0.4));
+    }
+    
+    /* Gateway lamp */
+    #gwLamp{margin-bottom:1rem}
+    #gwLamp img{max-width:120px;margin:0 auto}
+    
+    /* Hero ornaments */
+    #heroThorana{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(90vw,800px);opacity:0.12;pointer-events:none;z-index:0;}
+    .hero-sesath{height:clamp(300px,48vh,480px);align-self:end;opacity:.95;}
+    .hero-sesath.left{justify-self:end}
+    .hero-sesath.right{justify-self:start;transform:scaleX(-1)}
+    
+    /* Invitation ornaments */
+    #invThorana{width:min(100%,600px);margin:0 auto -1rem}
+    .kalasa-inline{width:clamp(120px,16vw,180px);margin:.7rem auto 0}
+    
+    /* RSVP ornaments */
+    .rsvp-sesath{height:clamp(240px,42vh,380px);align-self:end}
+    .rsvp-sesath.right{transform:scaleX(-1)}
+    
+    /* Lamp */
+    .lamp-wrap #mangalaLamp{max-width:180px;margin:0 auto 1rem}
+    .lamp-wrap #mangalaLamp img{width:100%;height:auto}
+    
+    /* Footer */
+    .foot-kalasa{width:clamp(140px,18vw,200px);margin:0 auto 1.2rem}
+    .foot-kalasa img{width:100%;height:auto}
+    
     /* Print */
     @media print{.translate-btn{display:none!important}}
   </style>
@@ -47,7 +81,7 @@
   <section id="gateway">
     <div class="scroll-panel">
       <div id="gwLamp"></div>
-      <div class="gw-ayu gold-leaf-text" data-si="ආයුබෝවන්" data-en="Welcome">ආයුබෝවන්</div>
+      <div class="gw-ayu gold-leaf-text" data-si="ආයුබෝවන්" data-en="Welcome">යුබෝවන්</div>
       <div class="gw-couple" data-si="කෞශානි <span class='amp'>&amp;</span> ගෞරව" data-en="Kaushani <span class='amp'>&amp;</span> Gaurawa">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
       <div class="gw-prompt" data-si="පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න" data-en="Touch the lamp to open the invitation">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</div>
       <button class="gw-enter" id="gwEnter" data-si="ආරාධනා පත්‍රය විවෘත කරන්න" data-en="Open the Invitation">ආරාධනා පත්‍රය විවෘත කරන්න</button>
@@ -67,7 +101,7 @@
       <a href="#countdown" data-si="කාල ගණනය" data-en="Countdown">කාල ගණනය</a>
       <a href="#rsvp">RSVP</a>
       <a href="#agenda" data-si="වැඩසටහන" data-en="Agenda">වැඩසටහන</a>
-      <a href="#gallery" data-si="ඡායාරූප" data-en="Gallery">ඡායාරූප</a>
+      <a href="#gallery" data-si="ායාරූප" data-en="Gallery">ඡායාරූප</a>
     </div>
   </nav>
 
@@ -82,7 +116,7 @@
     <!-- ═══ HERO ═══ -->
     <section id="hero">
       <div id="heroThorana"></div>
-      <div class="hero-grid">
+      <div class="hero-grid" style="position:relative;z-index:1;">
         <div class="hero-sesath left" aria-hidden="true" id="sesathL"></div>
         <div class="hero-core reveal">
           <div class="couple-frame">
@@ -91,10 +125,10 @@
           </div>
           <div class="hero-names gold-leaf-text" id="heroNames">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
           <div class="hero-names-si" id="heroNamesSi">කෞශානි & ගෞරව</div>
-          <div class="hero-tag" data-si="අප විවාහ දිවියට එළඹෙමු" data-en="We are getting married">අප විවාහ දිවියට එළඹෙමු</div>
+          <div class="hero-tag" data-si="අප විවාහ දිවියට එළෙමු" data-en="We are getting married">අප විවාහ දිවියට එළඹෙමු</div>
           <div class="hero-meta">
             <div class="hero-date" id="heroDate">2028.01.12</div>
-            <div class="hero-venue" id="heroVenue">The Epitome Hotel, කුරුණෑගල</div>
+            <div class="hero-venue" id="heroVenue">The Epitome Hotel, කුරුණගල</div>
           </div>
           <div class="scroll-cue"><span></span><small data-si="පහළට ගෙන යන්න" data-en="Scroll Down">පහළට ගෙන යන්න</small></div>
         </div>
@@ -102,11 +136,11 @@
       </div>
     </section>
 
-    <!-- ═══ INVITATION ═══ -->
+    <!-- ═══ INVITATION ══ -->
     <section id="invitation">
       <div class="wrap center">
         <div class="reveal">
-          <div id="invThorana" style="width:min(100%,560px);margin:0 auto -1rem"></div>
+          <div id="invThorana"></div>
           <div class="shubha gold-leaf-text" data-si="ශ්‍රී සුබ මංගලම්" data-en="Auspicious Blessings">ශ්‍රී සුබ මංගලම්</div>
         </div>
         <div class="panel invite-card reveal">
@@ -127,7 +161,7 @@
             <div class="sep"></div>
             <div class="blk"><div class="lbl" data-si="ස්ථානය" data-en="Venue">ස්ථානය</div><div class="val" id="invVenue">—</div></div>
           </div>
-          <div class="inv-close" id="invFrom" data-si="උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ" data-en="With both families' relatives and friends">උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
+          <div class="inv-close" id="invFrom" data-si="භය පාර්ශවයේ ාති මිත්‍රාදීන් සමඟ" data-en="With both families' relatives and friends">උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
           <div class="inv-from" id="invParents"></div>
           <div class="kalasa-inline" id="invKalasa"></div>
           <a class="maplink" id="mapLink" href="#" target="_blank" rel="noopener" data-si="📍 ස්ථානය සිතියමින් බලන්න" data-en="📍 View on Map">📍 ස්ථානය සිතියමින් බලන්න</a>
@@ -157,7 +191,7 @@
       </div>
     </section>
 
-    <!-- ═══ RSVP ═══ -->
+    <!-- ══ RSVP ═══ -->
     <section id="rsvp">
       <div class="wrap">
         <div class="center reveal">
@@ -174,7 +208,7 @@
                 <button class="btn" id="rsvpSearchBtn" data-si="සොයන්න" data-en="Search">සොයන්න</button>
               </div>
               <div class="guest-results" id="rsvpResults"></div>
-              <p class="note" data-si="ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
+              <p class="note" data-si="ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">බගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
             </div>
             <div class="rsvp-stage" id="rsvpChoose">
               <div style="text-align:center"><div style="font-weight:700;font-size:1.2rem;color:var(--kandyan-red);margin-bottom:.4rem" id="rsvpGuestName"></div><div class="muted" id="rsvpGuestFamily"></div></div>
@@ -188,12 +222,12 @@
               <div class="field"><label data-si="පැමිණෙන සංඛ්‍යාව" data-en="Number of Guests">පැමිණෙන සංඛ්‍යාව</label>
                 <div class="party-row"><button class="party-btn" id="partyMinus">−</button><span class="party-val" id="partyVal">1</span><button class="party-btn" id="partyPlus">+</button></div>
               </div>
-              <div class="field" id="liquorField" style="display:none"><label data-si="මත්පැන් අවශ්‍ය ද?" data-en="Do you drink alcohol?">මත්පැන් අවශ්‍ය ද?</label>
+              <div class="field" id="liquorField" style="display:none"><label data-si="මත්පැන් අවශ්ය ද?" data-en="Do you drink alcohol?">මත්පැන් අවශ්‍ය ද?</label>
                 <div class="choice-row" style="justify-content:flex-start"><button class="choice" id="liquorYes" style="flex:0 1 120px;min-width:80px" data-si="ඔව්" data-en="Yes">ඔව්</button><button class="choice" id="liquorNo" style="flex:0 1 120px;min-width:80px" data-si="නැහැ" data-en="No">නැහැ</button></div>
               </div>
-              <div class="field" id="dietaryField" style="display:none"><label data-si="ආහාර අවශ්‍යතා (ඇත්නම්)" data-en="Dietary Requirements (if any)">ආහාර අවශ්‍යතා (ඇත්නම්)</label><textarea class="inp" id="dietaryInput" rows="2"></textarea></div>
+              <div class="field" id="dietaryField" style="display:none"><label data-si="ආහාර අවශ්යතා (ඇත්නම්)" data-en="Dietary Requirements (if any)">ආහාර අවශ්‍යතා (ඇත්නම්)</label><textarea class="inp" id="dietaryInput" rows="2"></textarea></div>
               <button class="btn" id="rsvpSubmit" style="width:100%;margin-top:1rem" data-si="කාරුණික පිළිතුර එවන්න" data-en="Submit Response">කාරුණික පිළිතුර එවන්න</button>
-              <button class="btn ghost" id="rsvpBack" style="width:100%;margin-top:.6rem" data-si="ආපසු" data-en="Back">ආපසු</button>
+              <button class="btn ghost" id="rsvpBack" style="width:100%;margin-top:.6rem" data-si="ආපසු" data-en="Back">පසු</button>
             </div>
             <div class="rsvp-stage" id="rsvpThanks">
               <div class="rsvp-thanks"><div class="big" id="thanksTitle" data-si="ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!" data-en="Thank you for your response!">ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!</div><p id="thanksMsg" style="margin-top:.8rem;color:var(--ink-soft)"></p><button class="btn ghost" id="rsvpChange" style="margin-top:1.2rem" data-si="පිළිතුර වෙනස් කරන්න" data-en="Change Response">පිළිතුර වෙනස් කරන්න</button></div>
@@ -221,10 +255,10 @@
       <div class="wrap center">
         <div class="reveal">
           <div class="sec-title gold-leaf-text" data-si="සෙනෙහසේ මංසලකුණු" data-en="Moments of Love">සෙනෙහසේ මංසලකුණු</div>
-          <div class="sec-sub" data-si="සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…" data-en="Smiles, quiet moments and little dreams — every step that brought us here…">සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…</div>
+          <div class="sec-sub" data-si="සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…" data-en="Smiles, quiet moments and little dreams — every step that brought us here…">සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන  සෑම පියවරක්ම…</div>
         </div>
         <div class="masonry reveal" id="galleryGrid"></div>
-        <div class="gallery-empty" id="galleryEmpty" style="display:none" data-si="ඡායාරූප ඉක්මනින් එක් කරනු ලැබේ." data-en="Photos will be added soon.">ඡායාරූප ඉක්මනින් එක් කරනු ලැබේ.</div>
+        <div class="gallery-empty" id="galleryEmpty" style="display:none" data-si="ඡායාරූප ඉක්මනින් එක් කරනු ලැබේ." data-en="Photos will be added soon.">ායාරූප ඉක්මනින් එක් කරනු ලැබේ.</div>
       </div>
     </section>
 
@@ -232,7 +266,7 @@
     <section id="lovenote">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title gold-leaf-text" data-si="විශේෂ සටහන" data-en="A Special Note">විශේෂ සටහන</div>
+          <div class="sec-title gold-leaf-text" data-si="විශේ සටහන" data-en="A Special Note">විශේෂ සටහන</div>
           <div class="sec-sub" data-si="අපගේ ආදරණීය අමුත්තනට" data-en="To our beloved guests">අපගේ ආදරණීය අමුත්තනට</div>
         </div>
         <div class="panel reveal" style="max-width:780px;margin:1.6rem auto 0">
@@ -265,10 +299,10 @@
   <footer>
     <div class="wrap center">
       <div class="foot-kalasa" id="footKalasa"></div>
-      <div class="foot-names">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
+      <div class="foot-names">කශානි <span class="amp">&amp;</span> ගෞරව</div>
       <div class="foot-date" id="footDate">12 · 01 · 2028</div>
       <div class="foot-actions">
-        <button class="btn ghost" id="calBtn" data-si="📅 දින දර්ශනයට එක් කරන්න" data-en="📅 Add to Calendar">📅 දින දර්ශනයට එක් කරන්න</button>
+        <button class="btn ghost" id="calBtn" data-si="📅 දින දර්ශනයට එක් කරන්න" data-en="📅 Add to Calendar"> දින දර්ශනයට එක් කරන්න</button>
         <a class="btn ghost" id="waShare" href="#" target="_blank" rel="noopener" data-si="💬 WhatsApp හරහා බෙදාගන්න" data-en="💬 Share on WhatsApp">💬 WhatsApp හරහා බෙදාගන්න</a>
       </div>
       <div class="foot-credit"><span data-si="සෙනෙහසින් නිර්මාණය කරන ලදී" data-en="Crafted with love">සෙනෙහසින් නිර්මාණය කරන ලදී</span> <span class="heart">♥</span> <span data-si="හෙළ සිරිත" data-en="Helasiritha">හෙළ සිරිත</span></div>

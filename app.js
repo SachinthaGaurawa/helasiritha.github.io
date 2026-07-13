@@ -226,12 +226,13 @@ function exportCalendar(site){
 
 // ═══ AGENDA ICONS ═══
 const AG_ICONS={
-  poruwa:()=>punkalasa('orn-punkalasa','100%'),
-  lamp:()=>mangalaLamp('orn-lamp','100%'),
-  lotus:()=>`<svg viewBox="0 0 60 60" fill="none" style="width:100%;height:100%;color:var(--temple-gold-dark)"><g fill="currentColor"><path d="M30 5c4 8 6 22 0 38-6-16-4-30 0-38Z" opacity=".9"/><path d="M30 14c10 6 14 18 12 32-10-6-14-18-12-32Z" opacity=".7"/><path d="M30 14c-10 6-14 18-12 32 10-6 14-18 12-32Z" opacity=".7"/></g></svg>`,
-  ring:()=>`<svg viewBox="0 0 60 60" fill="none" style="width:100%;height:100%;color:var(--temple-gold-dark)"><circle cx="30" cy="34" r="14" stroke="currentColor" stroke-width="3" fill="none"/><path d="M22 20l8-8 8 8" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
-  feast:()=>`<svg viewBox="0 0 60 60" fill="none" style="width:100%;height:100%;color:var(--temple-gold-dark)"><ellipse cx="30" cy="40" rx="20" ry="8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M10 40c0-14 8-24 20-24s20 10 20 24" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
-  sesath:()=>sesath('orn-sesath','5'),'default':()=>`<svg viewBox="0 0 60 60" fill="none" style="width:100%;height:100%;color:var(--temple-gold-dark)"><circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width="2" fill="none" opacity=".5"/><circle cx="30" cy="30" r="12" stroke="currentColor" stroke-width="2" fill="none" opacity=".6"/><circle cx="30" cy="30" r="5" fill="currentColor" opacity=".7"/></svg>`
+  poruwa:()=>punkalasa('punkalasa'),
+  lamp:()=>mangalaLamp('mangala-lamp'),
+  lotus:()=>punkalasa('punkalasa'),
+  ring:()=>punkalasa('punkalasa'),
+  feast:()=>punkalasa('punkalasa'),
+  sesath:()=>sesath('sesath'),
+  'default':()=>punkalasa('punkalasa')
 };
 
 // ═══ RENDER ═══
@@ -244,12 +245,12 @@ function render(){
   show('agenda',v.agenda&&state.agenda.length>0);show('gallery',v.gallery&&state.gallery.length>0);
   show('blessings',v.blessings);show('lovenote',v.loveNote);
 
-  // Gateway ornaments
-  $('#gwLamp').innerHTML=mangalaLamp('orn-lamp');
+  // Gateway ornaments - Mangala Lamp
+  $('#gwLamp').innerHTML=mangalaLamp('mangala-lamp');
 
   // Hero
   if(s.coupleImageUrl){$('#heroImg').src=optImgUrl(s.coupleImageUrl,800);$('#heroImg').style.display='block';$('#heroEmpty').style.display='none'}
-  else{$('#heroEmpty').style.display='';$('#heroEmpty').innerHTML=`<div style="width:100px">${punkalasa('orn-punkalasa')}</div><span>${esc(t.coupleNames)}</span>`}
+  else{$('#heroEmpty').style.display='';$('#heroEmpty').innerHTML=`<div style="width:120px">${punkalasa('punkalasa')}</div><span>${esc(t.coupleNames)}</span>`}
 
   // Hero names
   $('#heroNames').innerHTML=`${esc(state.lang==='en'?s.brideNameEn:s.brideNameSi)} <span class="amp">&amp;</span> ${esc(state.lang==='en'?s.groomNameEn:s.groomNameSi)}`;
@@ -260,12 +261,12 @@ function render(){
   $('#heroDate').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
   $('#heroVenue').textContent=`${s.venueName}, ${s.venueAddress}`;
 
-  // Makara Thorana behind hero
-  $('#heroThorana').innerHTML=makaraThorana('hero-thorana');
+  // Makara Thorana behind hero (large, faded background)
+  $('#heroThorana').innerHTML=makaraThorana('makara-thorana');
 
-  // Sesath (Royal Umbrellas)
-  $('#sesathL').innerHTML=sesath('orn-sesath',7);
-  $('#sesathR').innerHTML=sesath('orn-sesath',7);
+  // Sesath (Royal Umbrellas) on sides
+  $('#sesathL').innerHTML=sesath('sesath');
+  $('#sesathR').innerHTML=sesath('sesath');
 
   // Invitation
   const dateStr=state.lang==='en'?formatDateSi(s.weddingDateISO).replace(/,/,''):formatDateSi(s.weddingDateISO);
@@ -278,18 +279,18 @@ function render(){
   $('#invDate').textContent=dateStr;
   $('#invTime').textContent=s.ceremonyTimeLabel||'';
   $('#invVenue').textContent=s.venueName||'';
-  $('#invKalasa').innerHTML=punkalasa('orn-punkalasa');
+  $('#invKalasa').innerHTML=punkalasa('punkalasa');
   // Liyawala under invitation heading
-  $('#invThorana').innerHTML=liyawala('orn-liyawala');
+  $('#invThorana').innerHTML=liyawala('liyawala');
   if(s.brideParentsSi||s.groomParentsSi)$('#invParents').textContent=`${s.brideParentsSi} & ${s.groomParentsSi}`;
   if(s.mapUrl){$('#mapLink').href=s.mapUrl;$('#mapLink').style.display=''}else{$('#mapLink').style.display='none'}
 
   // RSVP sesath
-  $('#rsvpSesathL').innerHTML=sesath('orn-sesath',7);
-  $('#rsvpSesathR').innerHTML=sesath('orn-sesath',7);
+  $('#rsvpSesathL').innerHTML=sesath('sesath');
+  $('#rsvpSesathR').innerHTML=sesath('sesath');
 
   // Lamp / confirmed count
-  $('#mangalaLamp').innerHTML=mangalaLamp('orn-lamp');
+  $('#mangalaLamp').innerHTML=mangalaLamp('mangala-lamp');
   $('#lampCount').textContent=state.stats.confirmed||0;
 
   // Agenda
@@ -317,8 +318,8 @@ function render(){
     $('#blessEmpty').style.display='none';
   }else{blessGrid.innerHTML='';$('#blessEmpty').style.display=''}
 
-  // Footer
-  $('#footKalasa').innerHTML=punkalasa('orn-punkalasa');
+  // Footer - Punkalasa
+  $('#footKalasa').innerHTML=punkalasa('punkalasa');
   const wd=new Date(s.weddingDateISO);
   $('#footDate').textContent=`${String(wd.getDate()).padStart(2,'0')} · ${String(wd.getMonth()+1).padStart(2,'0')} · ${wd.getFullYear()}`;
 
