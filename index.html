@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#5A1410" />
-  <title>කෞශානි &amp; ගෞරව · මංගල ආරාධනය</title>
+  <title>කෞශානි &amp; ගෞරව · මංගල ආආරාධනය</title>
   <meta name="description" content="කෞශානි හා ගෞරව මංගල්‍යය — හෙළ සිරිත. ඔබ සැම සාදරයෙන් ආරාධනා කරමු." />
   <link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
@@ -17,6 +17,31 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+  
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner"></div>
+    <div class="spinner-text">පූරණය වෙමින්...</div>
+  </div>
+  
+  <!-- Floating Section Navigation -->
+  <div class="section-nav" id="sectionNav">
+    <button class="nav-dot" data-section="hero" title="මුල් පිටුව"></button>
+    <button class="nav-dot" data-section="invitation" title="ආරාධනාව"></button>
+    <button class="nav-dot" data-section="story" title="කතාව"></button>
+    <button class="nav-dot" data-section="countdown" title="කාල ගණනය"></button>
+    <button class="nav-dot" data-section="rsvp" title="RSVP"></button>
+    <button class="nav-dot" data-section="venue" title="ස්ථානය"></button>
+    <button class="nav-dot" data-section="agenda" title="වැඩසටහන"></button>
+    <button class="nav-dot" data-section="gallery" title="ඡායාරූප"></button>
+    <button class="nav-dot" data-section="blessings" title="සුබ පැතුම්"></button>
+  </div>
+  
+  <!-- Confetti Container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+  
   <canvas id="particles3d" aria-hidden="true"></canvas>
   <div id="petals" aria-hidden="true"></div>
 
@@ -41,7 +66,7 @@
         </div>
         
         <!-- Instruction -->
-        <div class="gw-prompt" data-si="පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න" data-en="Touch the lamp to open the invitation">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</div>
+        <div class="gw-prompt" data-si="පහන් දැල්ල ස්පර්ශ කර ආආරාධනය විවෘත කරන්න" data-en="Touch the lamp to open the invitation">පහන් දැල්ල ස්පර්ශ කර ආආරාධනය විවෘත කරන්න</div>
         
         <!-- Enter Button -->
         <button class="gw-enter" id="gwEnter" data-si="ආරාධනා පත්රය විවෘත කරන්න" data-en="Open the Invitation">ආරාධනා පත්‍රය විවෘත කරන්න</button>
@@ -64,7 +89,7 @@
       <a href="#countdown" data-si="කාල ගණනය" data-en="Countdown">කාල ගණනය</a>
       <a href="#rsvp">RSVP</a>
       <a href="#agenda" data-si="වැඩසටහන" data-en="Agenda">වැඩසටහන</a>
-      <a href="#gallery" data-si="ඡායාරූප" data-en="Gallery">ඡායාරප</a>
+      <a href="#gallery" data-si="ඡායාරූප" data-en="Gallery">ඡඡායාරූප</a>
     </div>
   </nav>
 
@@ -88,7 +113,7 @@
           </div>
           <div class="hero-names gold-leaf-text" id="heroNames">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
           <div class="hero-names-si" id="heroNamesSi">කෞශානි & ගෞරව</div>
-          <div class="hero-tag" data-si="අප විවාහ දිවියට එළඹෙමු" data-en="We are getting married">අප විවාහ දිවියට එළඹෙමු</div>
+          <div class="hero-tag" data-si="අප විවිවාහ දිවියට එළඹෙමු" data-en="We are getting married">අප විවිවාහ දිවියට එළඹෙමු</div>
           <div class="hero-meta">
             <div class="hero-date" id="heroDate">2028.01.12</div>
             <div class="hero-venue" id="heroVenue">The Epitome Hotel, කුරුණගල</div>
@@ -108,12 +133,12 @@
         </div>
         <div class="panel invite-card reveal">
           <div class="inv-block">
-            <div class="inv-pre" id="invPreBride" data-si="මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය" data-en="The beloved daughter of">මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය</div>
+            <div class="inv-pre" id="invPreBride" data-si="මහත්මා සහ එම මැතිනියගේ ආආදරණීය දියණිය" data-en="The beloved daughter of">මහත්මා සහ එම මැතිනියගේ ආආදරණීය දියණිය</div>
             <div class="inv-name gold-leaf-text" id="invBrideName">කෞශානි</div>
           </div>
           <div class="inv-amp">&amp;</div>
           <div class="inv-block">
-            <div class="inv-pre" id="invPreGroom" data-si="මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත්" data-en="The beloved son of">මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත්</div>
+            <div class="inv-pre" id="invPreGroom" data-si="මහත්මා සහ එම මැතිනියගේ ආආදරණීය පුත්" data-en="The beloved son of">මහත්මා සහ එම මැතිනියගේ ආආදරණීය පුත්</div>
             <div class="inv-name gold-leaf-text" id="invGroomName">ගෞරව</div>
           </div>
           <div class="inv-line" id="invLine" data-si="ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු" data-en="We earnestly request your gracious presence">ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු</div>
@@ -122,12 +147,102 @@
             <div class="sep"></div>
             <div class="blk"><div class="lbl" data-si="වේලාව" data-en="Time">වේලාව</div><div class="val" id="invTime">—</div></div>
             <div class="sep"></div>
-            <div class="blk"><div class="lbl" data-si="ස්ානය" data-en="Venue">ස්ථානය</div><div class="val" id="invVenue">—</div></div>
+            <div class="blk"><div class="lbl" data-si="ස්ථානය" data-en="Venue">ස්ථානය</div><div class="val" id="invVenue">—</div></div>
           </div>
           <div class="inv-close" id="invFrom" data-si="උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ" data-en="With both families' relatives and friends">උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
           <div class="inv-from" id="invParents"></div>
           <div class="kalasa-inline" id="invKalasa"></div>
           <a class="maplink" id="mapLink" href="#" target="_blank" rel="noopener" data-si="📍 ස්ථානය සිතියමින් බලන්න" data-en="📍 View on Map">📍 ස්ථානය සිතියමින් බලන්න</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ COUPLE STORY ═══ -->
+    <section id="story">
+      <div class="wrap center">
+        <div class="reveal">
+          <div class="sec-title gold-leaf-text" data-si="අපේ කතාව" data-en="Our Love Story">අපේ කතාව</div>
+          <div class="sec-sub" data-si="සෙනෙහසින් පිරුණු ගමනක්" data-en="A journey filled with love">සෙනෙහසින් පිරුණු ගමනක්</div>
+        </div>
+        <div class="story-timeline reveal">
+          <div class="story-item">
+            <div class="story-year">2020</div>
+            <div class="story-content">
+              <h3 data-si="පළමු හමුවීම" data-en="First Meeting">පළමු හමුවීම</h3>
+              <p data-si="අපි පළමු වරට හමු වූයේ..." data-en="We first met when...">අපි පළමු වරට හමු වූයේ...</p>
+            </div>
+          </div>
+          <div class="story-item">
+            <div class="story-year">2022</div>
+            <div class="story-content">
+              <h3 data-si="ප්රේම සම්බන්ධය" data-en="Falling in Love">ප්‍රේම සම්බන්ධය</h3>
+              <p data-si="අපි එකිනෙකාට ආදරය කිරීමට පටන් ගත්තෙමු..." data-en="We started falling in love...">අපි එකිනෙකාට දරය කිරීමට පටන් ගත්තෙමු...</p>
+            </div>
+          </div>
+          <div class="story-item">
+            <div class="story-year">2027</div>
+            <div class="story-content">
+              <h3 data-si="විවාහ යෝජනාව" data-en="The Proposal">විවාහ යෝජනාව</h3>
+              <p data-si="ගෞරව කෞශානිට විවාහ යෝජනාවක් ඉදිරිපත් කළා..." data-en="Gaurawa proposed to Kaushani...">ගෞරව කෞශානිට විවාහ යෝජනාවක් දිරිපත් කළා...</p>
+            </div>
+          </div>
+          <div class="story-item">
+            <div class="story-year">2028</div>
+            <div class="story-content">
+              <h3 data-si="මංගල්‍යය" data-en="The Wedding">මංගල්‍යය</h3>
+              <p data-si="අපගේ සිහින මංගල්‍යය..." data-en="Our dream wedding...">අපගේ සිහින මංගල්‍යය...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ VENUE & DETAILS ═══ -->
+    <section id="venue">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="sec-title gold-leaf-text" data-si="උත්සව ස්ථානය" data-en="Wedding Venue">උත්සව ස්ථානය</div>
+          <div class="sec-sub" data-si="The Epitome Hotel, කුරුණෑගල" data-en="The Epitome Hotel, Kurunegala">The Epitome Hotel, කුරුණෑගල</div>
+        </div>
+        <div class="venue-grid reveal">
+          <div class="venue-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.0!2d80.3625!3d7.4951!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjknNDIuNCJOIDgwwrAyMSc0NS4wIkU!5e0!3m2!1sen!2slk!4v1234567890" width="100%" height="400" style="border:0;border-radius:16px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <div class="venue-details">
+            <div class="venue-card">
+              <h3 data-si="විවාහ උත්සවය" data-en="Wedding Ceremony">විවාහ ත්සවය</h3>
+              <div class="venue-info">
+                <div class="venue-row">
+                  <span class="venue-icon"></span>
+                  <span data-si="දිනය: 2028 නවාරි 12" data-en="Date: January 12, 2028">දිනය: 2028 ජනවාරි 12</span>
+                </div>
+                <div class="venue-row">
+                  <span class="venue-icon"></span>
+                  <span data-si="වේලාව: පෙ.ව. 9.15" data-en="Time: 9:15 AM">වේලාව: පෙ.ව. 9.15</span>
+                </div>
+                <div class="venue-row">
+                  <span class="venue-icon">📍</span>
+                  <span data-si="ස්ථානය: The Epitome Hotel" data-en="Venue: The Epitome Hotel">ස්ථානය: The Epitome Hotel</span>
+                </div>
+              </div>
+            </div>
+            <div class="venue-card dress-code">
+              <h3 data-si="ඇඳුම් කේතය" data-en="Dress Code">ඇඳුම් කේතය</h3>
+              <div class="dress-colors">
+                <div class="color-swatch" style="background:#5A1410" title="Maroon"></div>
+                <div class="color-swatch" style="background:#D4A844" title="Gold"></div>
+                <div class="color-swatch" style="background:#F5ECD7" title="Ivory"></div>
+                <div class="color-swatch" style="background:#2D5A27" title="Green"></div>
+              </div>
+              <p data-si="කන්දය රාජකීය වර්ණ" data-en="Kandyan Royal Colors">කන්දය රාජකීය වර්ණ</p>
+            </div>
+            <div class="venue-card hashtag">
+              <h3 data-si="විවාහ හැෂ්ටැග්" data-en="Wedding Hashtag">විවාහ හැෂ්ටැග්</h3>
+              <div class="hashtag-display">#KaushaniAndGaurawa2028</div>
+              <button class="btn-ghost" onclick="navigator.clipboard.writeText('#KaushaniAndGaurawa2028').then(()=>alert('Hashtag copied!'))" data-si="පිටපත් කරන්න" data-en="Copy">පිටපත් කරන්න</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -159,7 +274,7 @@
       <div class="wrap">
         <div class="center reveal">
           <div class="sec-title gold-leaf-text" data-si="ඔබගේ කාරුණික පැමිණීම දන්වන්න" data-en="Confirm Your Gracious Attendance">ඔබගේ කාරුණික පැමිණීම දන්වන්න</div>
-          <div class="sec-sub" data-si="ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි" data-en="Your presence would bring us great joy">බ සැමගේ පැමිණීම අප හට මහත් සතුටකි</div>
+          <div class="sec-sub" data-si="ඔඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි" data-en="Your presence would bring us great joy">ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි</div>
         </div>
         <div class="rsvp-grid">
           <div class="rsvp-sesath" id="rsvpSesathL"></div>
@@ -167,11 +282,11 @@
             <div class="rsvp-stage active" id="rsvpSearch">
               <h3 style="text-align:center;margin-bottom:1rem;font-family:var(--f-disp);color:var(--kandyan-red)" data-si="ආරාධිත නාම ලේඛනය සොයන්න" data-en="Search the Guest List">ආරාධිත නාම ලේඛනය සොයන්න</h3>
               <div class="search-row">
-                <input class="inp" id="rsvpInput" type="text" data-placeholder-si="ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" data-placeholder-en="Enter your name or family name" placeholder="ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" />
+                <input class="inp" id="rsvpInput" type="text" data-placeholder-si="ඔඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" data-placeholder-en="Enter your name or family name" placeholder="ඔඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" />
                 <button class="btn" id="rsvpSearchBtn" data-si="සොයන්න" data-en="Search">සොයන්න</button>
               </div>
               <div class="guest-results" id="rsvpResults"></div>
-              <p class="note" data-si="ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
+              <p class="note" data-si="ඔඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න." data-en="Search by your name or family name.">ඔඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
             </div>
             <div class="rsvp-stage" id="rsvpChoose">
               <div style="text-align:center"><div style="font-weight:700;font-size:1.2rem;color:var(--kandyan-red);margin-bottom:.4rem" id="rsvpGuestName"></div><div class="muted" id="rsvpGuestFamily"></div></div>
@@ -205,7 +320,7 @@
     <section id="agenda">
       <div class="wrap center">
         <div class="reveal">
-          <div class="sec-title gold-leaf-text" data-si="මංගල සාවේ සැලැස්ම" data-en="Wedding Day Agenda">මංගල සාවේ සැලැස්ම</div>
+          <div class="sec-title gold-leaf-text" data-si="මංගල සභාවේ සැලැස්ම" data-en="Wedding Day Agenda">මංගල සභාවේ සැලැස්ම</div>
           <div class="sec-sub" data-si="අපගේ දිනයේ සුවිශේෂ මොහොත්" data-en="Special moments of our day">අපගේ දිනයේ සුවිශේෂ මොහොත්</div>
         </div>
         <div class="agenda-list" id="agendaList"></div>
@@ -230,7 +345,7 @@
       <div class="wrap center">
         <div class="reveal">
           <div class="sec-title gold-leaf-text" data-si="විශේ සටහන" data-en="A Special Note">විශේෂ සටහන</div>
-          <div class="sec-sub" data-si="අපගේ ආදරණීය අමුත්තනට" data-en="To our beloved guests">අපගේ ආදරණීය අමුත්තනට</div>
+          <div class="sec-sub" data-si="අපගේ ආආදරණීය අමුත්තනට" data-en="To our beloved guests">අපගේ ආආදරණීය අමුත්තනට</div>
         </div>
         <div class="panel reveal" style="max-width:780px;margin:1.6rem auto 0">
           <div class="love-text" id="loveText"></div>
@@ -249,7 +364,7 @@
         <div class="bless-grid reveal" id="blessGrid"></div>
         <div class="bless-empty" id="blessEmpty" style="display:none" data-si="පළමු සුබ පැතුම ඔබගෙන් වේවා…" data-en="Be the first to leave a blessing…">පළමු සුබ පැතුම ඔබගෙන් වේවා…</div>
         <form class="bless-form reveal" id="blessForm">
-          <div class="field"><label data-si="ඔබගේ නම" data-en="Your Name">බගේ නම</label><input class="inp" id="blessName" type="text" required maxlength="60" data-placeholder-si="නම ඇතුළත් කරන්න" data-placeholder-en="Enter your name" placeholder="නම ඇතුළත් කරන්න" /></div>
+          <div class="field"><label data-si="ඔඔබගේ නම" data-en="Your Name">ඔබගේ නම</label><input class="inp" id="blessName" type="text" required maxlength="60" data-placeholder-si="නම ඇතුළත් කරන්න" data-placeholder-en="Enter your name" placeholder="නම ඇතුළත් කරන්න" /></div>
           <div class="field"><label data-si="ඔබගේ සුබ පැතුම" data-en="Your Blessing">ඔබගේ සුබ පැතුම</label><textarea class="inp" id="blessMsg" rows="3" required maxlength="400" data-placeholder-si="සුබ පැතුම ලියන්න…" data-placeholder-en="Write your blessing…" placeholder="සුබ පැතුම ලියන්න…"></textarea></div>
           <button class="btn" type="submit" id="blessSubmit" data-si="සුබ පැතුම තැබීම" data-en="Submit Blessing">සුබ පැතුම තැබීම</button>
           <p class="note" id="blessThanks" style="display:none" data-si="ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ." data-en="Thank you! Your blessing will appear after approval.">ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.</p>
@@ -285,7 +400,7 @@
     <div class="lb-cap" id="lbCap"></div>
   </div>
 
-  <noscript><div style="padding:40px;text-align:center;font-family:serif">මෙම රාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.</div></noscript>
+  <noscript><div style="padding:40px;text-align:center;font-family:serif">මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.</div></noscript>
 
   <!-- ░░ APP ░░ -->
   <script type="module" src="app.js"></script>

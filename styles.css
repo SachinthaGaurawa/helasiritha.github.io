@@ -464,3 +464,118 @@ body.en .love-text{font-family:'Cormorant Garamond',serif}
 @media(max-width:600px){body{line-height:1.85}section{padding:clamp(3rem,9vw,4.2rem) clamp(1rem,5vw,1.4rem)}.ag-item{gap:1rem;padding:1.2rem}.bless-grid{grid-template-columns:1fr}}
 @media(max-width:380px){.hero-names{font-size:clamp(2.6rem,13vw,3.3rem)}.cd-num{font-size:clamp(1.8rem,11vw,2.4rem)}.inv-name{font-size:clamp(1.8rem,11vw,2.5rem)}.lb-btn{width:44px;height:44px}section{padding-inline:1rem}}
 @media print{.translate-btn,.fab,#petals,#particles3d,.scroll-cue,footer .foot-actions{display:none!important}body{background:#fff}.panel,.ag-item,.bless-card{box-shadow:none;border:1px solid rgba(212,168,68,.4)}}
+
+/* ════════════════════════════════════════════════════════════════════════
+   NEW FEATURES CSS
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ─ Scroll Progress Bar ── */
+.scroll-progress{
+  position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,#FFD700,#D4A844,#B8860B);
+  transition:width .1s linear;box-shadow:0 0 10px rgba(212,168,68,.8);
+}
+
+/* ── Loading Spinner ─ */
+.loading-spinner{
+  position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,#3A0E0A,#1A0604);
+  display:grid;place-items:center;flex-direction:column;gap:1rem;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+.loading-spinner.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.spinner{
+  width:80px;height:80px;border:4px solid rgba(212,168,68,.2);
+  border-top:4px solid #D4A844;border-radius:50%;animation:spin 1s linear infinite;
+}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.spinner-text{color:var(--gold-light);font-family:var(--f-disp);font-size:1.1rem;letter-spacing:.1em}
+
+/* ── Section Navigation Dots ─ */
+.section-nav{
+  position:fixed;right:max(1rem,3vw);top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;gap:12px;
+}
+.nav-dot{
+  width:12px;height:12px;border-radius:50%;border:2px solid rgba(212,168,68,.6);
+  background:transparent;cursor:pointer;transition:all .3s ease;position:relative;
+}
+.nav-dot:hover,.nav-dot.active{background:var(--gold-light);border-color:var(--gold);transform:scale(1.3);box-shadow:0 0 12px rgba(212,168,68,.6)}
+.nav-dot::before{
+  content:attr(title);position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  background:rgba(44,24,16,.9);color:var(--gold-light);padding:4px 10px;border-radius:6px;
+  font-size:.75rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;
+  font-family:var(--f-disp);
+}
+.nav-dot:hover::before{opacity:1}
+@media(max-width:760px){.section-nav{display:none}}
+
+/* ── Couple Story Timeline ── */
+.story-timeline{max-width:700px;margin:2rem auto;position:relative;padding-left:2rem}
+.story-timeline::before{
+  content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent,var(--gold) 10%,var(--gold) 90%,transparent);
+}
+.story-item{position:relative;margin-bottom:2rem;padding-left:2rem}
+.story-year{
+  position:absolute;left:-2rem;top:0;width:18px;height:18px;border-radius:50%;
+  background:var(--gold-metallic);border:2px solid var(--gold-dark);
+  box-shadow:0 0 12px rgba(212,168,68,.5);z-index:1;
+}
+.story-content{
+  background:linear-gradient(180deg,rgba(245,236,215,.95),rgba(224,209,174,.95));
+  padding:1.5rem;border-radius:14px;border:1px solid rgba(212,168,68,.4);
+  box-shadow:var(--temple-shadow);
+}
+.story-content h3{font-family:var(--f-disp);font-weight:700;color:var(--maroon);font-size:1.2rem;margin-bottom:.5rem}
+.story-content p{color:var(--ink-soft);line-height:1.8;font-size:1rem}
+
+/* ── Venue Grid ── */
+.venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;align-items:start}
+.venue-map{border-radius:16px;overflow:hidden;box-shadow:var(--temple-shadow);border:2px solid rgba(212,168,68,.4)}
+.venue-map iframe{display:block;width:100%;height:400px}
+.venue-details{display:flex;flex-direction:column;gap:1.2rem}
+.venue-card{
+  background:linear-gradient(180deg,rgba(245,236,215,.95),rgba(224,209,174,.95));
+  padding:1.5rem;border-radius:14px;border:1px solid rgba(212,168,68,.4);
+  box-shadow:var(--temple-shadow);
+}
+.venue-card h3{font-family:var(--f-disp);font-weight:700;color:var(--maroon);font-size:1.15rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(212,168,68,.3)}}
+.venue-row{display:flex;align-items:center;gap:.8rem;padding:.5rem 0;font-size:1rem;color:var(--ink)}
+.venue-icon{font-size:1.2rem;width:24px;text-align:center}
+.dress-colors{display:flex;gap:.8rem;margin:.8rem 0;flex-wrap:wrap}
+.color-swatch{width:40px;height:40px;border-radius:50%;border:2px solid rgba(212,168,68,.5);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;transition:transform .3s}
+.color-swatch:hover{transform:scale(1.15)}
+.dress-code p{color:var(--ink-soft);font-size:.9rem;margin-top:.5rem}
+.hashtag-display{
+  font-family:var(--f-disp);font-weight:700;font-size:1.3rem;color:var(--maroon);
+  background:rgba(212,168,68,.1);padding:1rem;border-radius:10px;text-align:center;
+  margin:.8rem 0;border:1px dashed rgba(212,168,68,.4);
+}
+.btn-ghost{
+  display:inline-block;padding:.6rem 1.5rem;border-radius:999px;
+  font-family:var(--f-disp);font-weight:700;font-size:.95rem;
+  color:var(--gold);border:1.5px solid rgba(212,168,68,.5);background:transparent;
+  cursor:pointer;transition:all .3s ease;
+}
+.btn-ghost:hover{background:rgba(212,168,68,.15);border-color:var(--gold)}
+
+@media(max-width:760px){
+  .venue-grid{grid-template-columns:1fr}
+  .venue-map iframe{height:300px}
+}
+
+/* ── Confetti ── */
+.confetti-container{position:fixed;inset:0;z-index:998;pointer-events:none;overflow:hidden}
+.confetti{
+  position:absolute;width:10px;height:10px;top:-20px;
+  animation:confetti-fall linear forwards;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(0) rotate(0);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* ── 3D Tilt Effect on Cards ── */
+.panel{transition:transform .3s ease}
+.panel:hover{transform:perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-4px)}
+

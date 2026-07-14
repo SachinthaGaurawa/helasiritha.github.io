@@ -490,3 +490,189 @@ async function boot(){
   startListeners();
 }
 boot().catch(err=>{console.error('[Helasiritha] Boot failed:',err);render()});
+
+// ═══════════════════════════════════════════════════════════════════
+// NEW FEATURES
+// ══════════════════════════════════════════════════════════════════
+
+// ── Scroll Progress Bar ──
+function initScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    bar.style.width = scrolled + '%';
+  });
+}
+
+// ── Loading Spinner ──
+function initLoadingSpinner() {
+  const spinner = document.getElementById('loadingSpinner');
+  if (!spinner) return;
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      spinner.classList.add('hidden');
+      setTimeout(() => spinner.remove(), 800);
+    }, 500);
+  });
+  // Fallback timeout
+  setTimeout(() => {
+    if (spinner && !spinner.classList.contains('hidden')) {
+      spinner.classList.add('hidden');
+    }
+  }, 3000);
+}
+
+// ── Section Navigation Dots ─
+function initSectionNav() {
+  const nav = document.getElementById('sectionNav');
+  if (!nav) return;
+  const dots = nav.querySelectorAll('.nav-dot');
+  const sections = ['hero', 'invitation', 'story', 'countdown', 'rsvp', 'venue', 'agenda', 'gallery', 'blessings'];
+  
+  // Click to scroll
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const section = dot.dataset.section;
+      const el = document.getElementById(section);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  
+  // Active state on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        dots.forEach(d => d.classList.remove('active'));
+        const activeDot = nav.querySelector(`[data-section="${entry.target.id}"]`);
+        if (activeDot) activeDot.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+}
+
+// ── Confetti Effect ──
+function fireConfetti() {
+  const container = document.getElementById('confettiContainer');
+  if (!container) return;
+  const colors = ['#FFD700', '#D4A844', '#B8860B', '#5A1410', '#2D5A27', '#FF1744'];
+  for (let i = 0; i < 100; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    confetti.style.animationDelay = Math.random() * 2 + 's';
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+    container.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 5000);
+  }
+}
+
+// ── 3D Tilt Effect on Cards ──
+function init3DTilt() {
+  document.querySelectorAll('.panel').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / 20;
+      const rotateY = (centerX - x) / 20;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+// ── Parallax Effect on Ornaments ──
+function initParallax() {
+  window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const heroThorana = document.getElementById('heroThorana');
+    if (heroThorana) {
+      heroThorana.style.transform = `translate(-50%, calc(-50% + ${scrolled * 0.3}px))`;
+    }
+    const sesathL = document.getElementById('sesathL');
+    const sesathR = document.getElementById('sesathR');
+    if (sesathL) sesathL.style.transform = `translateY(${scrolled * 0.15}px)`;
+    if (sesathR) sesathR.style.transform = `scaleX(-1) translateY(${scrolled * 0.15}px)`;
+  });
+}
+
+// ── Sound Effects on Interactions ──
+function playSound(type) {
+  // Create simple beep using Web Audio API
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.frequency.value = type === 'click' ? 800 : 600;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.1);
+  } catch (e) {
+    // Silently fail if audio not supported
+  }
+}
+
+// ── Touch-friendly improvements ──
+function initTouchFriendly() {
+  // Add active class on touch for better feedback
+  document.querySelectorAll('.btn, .choice, .guest-pick').forEach(el => {
+    el.addEventListener('touchstart', () => el.classList.add('active'));
+    el.addEventListener('touchend', () => setTimeout(() => el.classList.remove('active'), 100));
+  });
+}
+
+// ── Guest Count Visualization ──
+function animateCount(element, target) {
+  let current = 0;
+  const increment = target / 50;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    element.textContent = Math.floor(current);
+  }, 30);
+}
+
+// ── Initialize all new features ──
+function initNewFeatures() {
+  initScrollProgress();
+  initLoadingSpinner();
+  initSectionNav();
+  init3DTilt();
+  initParallax();
+  initTouchFriendly();
+  
+  // Add click sounds to buttons
+  document.querySelectorAll('.btn, .nav-dot, .gw-enter').forEach(btn => {
+    btn.addEventListener('click', () => playSound('click'));
+  });
+}
+
+// Call when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNewFeatures);
+} else {
+  initNewFeatures();
+}
