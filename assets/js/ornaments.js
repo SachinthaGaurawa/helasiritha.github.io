@@ -1,15 +1,9 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * හෙළ සිරිත · Kandyan Royal Ornaments — CDN + Safe SVG Fallback
+ * හෙළ සිරිත · Kandyan Royal Ornaments — Transparent PNG + SVG Fallback
  * ═══════════════════════════════════════════════════════════════════
- * Primary: Cloudinary CDN photorealistic images
- * Fallback: Detailed inline SVG Kandyan art (safe, no text-leaking)
- * ══════════════════════════════════════════════════════════════════
  */
 
-// ═══════════════════════════════════════════════════════════════════
-// CLOUDINARY CDN URLs — Photorealistic temple-grade ornaments
-// ═══════════════════════════════════════════════════════════════════
 const CDN_BASE = "https://res.cloudinary.com/dzrfpc9be/image/upload";
 const CDN_URLS = {
   makaraThorana:  `${CDN_BASE}/helasiritha_ornaments/makara-thorana.png`,
@@ -23,10 +17,7 @@ const CDN_URLS = {
   cornerOrnament: `${CDN_BASE}/helasiritha_ornaments/corner-ornament.png`,
 };
 
-// ═══════════════════════════════════════════════════════════════════
-// SVG FALLBACKS — Stored in global object, NOT in onerror attributes
-// This prevents quote-escaping bugs that caused text-leaking before
-// ═══════════════════════════════════════════════════════════════════
+// SVG fallbacks stored globally to prevent text-leaking bugs
 window.__HS_SVG = window.__HS_SVG || {};
 
 function svgDefs(id) {
@@ -53,7 +44,7 @@ function svgDefs(id) {
   </defs>`;
 }
 
-// ── SVG MAKARA THORANA ───
+// SVG MAKARA THORANA
 window.__HS_SVG.makaraThorana = function() {
   const id = 'mkt';
   return `<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px;height:auto;display:block;">
@@ -63,7 +54,6 @@ window.__HS_SVG.makaraThorana = function() {
     <circle cx="120" cy="472" r="8" fill="url(#ruby_${id})" opacity="0.7"/>
     <circle cx="780" cy="472" r="8" fill="url(#ruby_${id})" opacity="0.7"/>
     <circle cx="450" cy="472" r="10" fill="url(#emerald_${id})" opacity="0.7"/>
-    <!-- Left Makara Dragon -->
     <g filter="url(#ds_${id})">
       <path d="M 180 450 Q 170 360 195 280 Q 220 200 270 140 Q 320 90 380 70 Q 430 58 460 52" fill="none" stroke="url(#g1_${id})" stroke-width="48" stroke-linecap="round"/>
       <path d="M 186 444 Q 176 356 200 276 Q 224 198 274 138 Q 324 88 384 68 Q 434 56 464 50" fill="none" stroke="#FFF6DC" stroke-width="14" stroke-linecap="round" opacity="0.25"/>
@@ -87,7 +77,6 @@ window.__HS_SVG.makaraThorana = function() {
       <path d="M 410 75 Q 400 60 395 48 Q 392 38 400 30 Q 412 24 422 32 Q 428 44 422 55" fill="none" stroke="url(#g1_${id})" stroke-width="7" stroke-linecap="round"/>
       <ellipse cx="400" cy="26" rx="6" ry="10" fill="url(#g1_${id})"/>
     </g>
-    <!-- Right Makara Dragon (mirrored) -->
     <g filter="url(#ds_${id})" transform="translate(900,0) scale(-1,1)">
       <path d="M 180 450 Q 170 360 195 280 Q 220 200 270 140 Q 320 90 380 70 Q 430 58 460 52" fill="none" stroke="url(#g1_${id})" stroke-width="48" stroke-linecap="round"/>
       <path d="M 186 444 Q 176 356 200 276 Q 224 198 274 138 Q 324 88 384 68 Q 434 56 464 50" fill="none" stroke="#FFF6DC" stroke-width="14" stroke-linecap="round" opacity="0.25"/>
@@ -111,7 +100,6 @@ window.__HS_SVG.makaraThorana = function() {
       <path d="M 410 75 Q 400 60 395 48 Q 392 38 400 30 Q 412 24 422 32 Q 428 44 422 55" fill="none" stroke="url(#g1_${id})" stroke-width="7" stroke-linecap="round"/>
       <ellipse cx="400" cy="26" rx="6" ry="10" fill="url(#g1_${id})"/>
     </g>
-    <!-- Arch -->
     <g filter="url(#ds_${id})">
       <path d="M 460 52 Q 520 15 590 10 Q 660 8 730 10 Q 800 15 860 52" fill="none" stroke="url(#g1_${id})" stroke-width="38" stroke-linecap="round"/>
       <path d="M 470 48 Q 528 18 595 14 Q 665 12 735 14 Q 802 18 850 48" fill="none" stroke="url(#g2_${id})" stroke-width="14" stroke-linecap="round"/>
@@ -135,7 +123,7 @@ window.__HS_SVG.makaraThorana = function() {
   </svg>`;
 };
 
-// ─── SVG SESATH ───
+// SVG SESATH
 window.__HS_SVG.sesath = function() {
   const id = 'ss';
   let tiers = '';
@@ -171,7 +159,7 @@ window.__HS_SVG.sesath = function() {
   </svg>`;
 };
 
-// ─── SVG PUNKALASA ───
+// SVG PUNKALASA
 window.__HS_SVG.punkalasa = function() {
   const id = 'pk';
   return `<svg viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;height:auto;display:block;">
@@ -206,7 +194,7 @@ window.__HS_SVG.punkalasa = function() {
   </svg>`;
 };
 
-// ─── SVG LIYAWALA ───
+// SVG LIYAWALA
 window.__HS_SVG.liyawala = function() {
   const id = 'ly';
   return `<svg viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;height:auto;display:block;margin:2rem auto;">
@@ -228,7 +216,7 @@ window.__HS_SVG.liyawala = function() {
   </svg>`;
 };
 
-// ─── SVG MANGALA LAMP ───
+// SVG MANGALA LAMP
 window.__HS_SVG.mangalaLamp = function() {
   const id = 'ml';
   return `<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:140px;height:auto;display:block;">
@@ -256,10 +244,7 @@ window.__HS_SVG.mangalaLamp = function() {
   </svg>`;
 };
 
-// ─── SAFE ORNAMENT BUILDER ───
-// Uses CDN image with onerror that calls global function to swap to SVG
-// SVG content is stored in window.__HS_SVG (NOT in the onerror attribute)
-// This prevents the quote-escaping bug that caused text-leaking
+// SAFE ORNAMENT BUILDER
 function buildOrnament(key, className, style) {
   const url = CDN_URLS[key];
   if (!url || !window.__HS_SVG[key]) return '';
@@ -267,49 +252,35 @@ function buildOrnament(key, className, style) {
     onerror="var e=this;var fn=window.__HS_SVG['${key}'];if(fn){e.parentElement.innerHTML=fn();e.parentElement.firstChild.style.cssText='${style.replace(/'/g,'')}';}"/>`;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// EXPORTED ORNAMENT FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════
+// EXPORTED FUNCTIONS
 export function makaraThorana(cls = '') {
   return buildOrnament('makaraThorana', cls, 'width:100%;max-width:800px;height:auto;display:block;filter:drop-shadow(0 10px 30px rgba(139,105,20,0.4))');
 }
-
 export function sesath(cls = '') {
   return buildOrnament('sesath', cls, 'width:100%;max-width:280px;height:auto;display:block;filter:drop-shadow(0 15px 35px rgba(139,105,20,0.5))');
 }
-
 export function punkalasa(cls = '') {
   return buildOrnament('punkalasa', cls, 'width:100%;max-width:180px;height:auto;display:block;filter:drop-shadow(0 12px 28px rgba(139,105,20,0.45))');
 }
-
 export function liyawala(cls = '') {
   return buildOrnament('liyawala', cls, 'width:100%;max-width:600px;height:auto;display:block;margin:2rem auto;filter:drop-shadow(0 8px 20px rgba(139,105,20,0.35))');
 }
-
 export function mangalaLamp(cls = '') {
   return buildOrnament('mangalaLamp', cls, 'width:100%;max-width:140px;height:auto;display:block;filter:drop-shadow(0 0 25px rgba(255,215,0,0.6)) drop-shadow(0 12px 28px rgba(139,105,20,0.4))');
 }
-
 export function sandakadaPahana(cls = '') {
   return buildOrnament('sandakadaPahana', cls, 'width:100%;max-width:400px;height:auto;display:block;margin:2rem auto;filter:drop-shadow(0 10px 30px rgba(62,34,21,0.4))');
 }
-
 export function lotusFlower(cls = '') {
   return buildOrnament('lotusFlower', cls, 'width:100%;max-width:100px;height:auto;display:block;filter:drop-shadow(0 8px 20px rgba(139,105,20,0.4))');
 }
-
 export function templeBorder(cls = '') {
   return buildOrnament('templeBorder', cls, 'width:100%;max-width:600px;height:auto;display:block;margin:1.5rem auto;filter:drop-shadow(0 6px 18px rgba(139,105,20,0.35))');
 }
-
 export function cornerOrnament(cls = '') {
   return buildOrnament('cornerOrnament', cls, 'width:100%;max-width:80px;height:auto;display:block;filter:drop-shadow(0 6px 18px rgba(139,105,20,0.4))');
 }
-
-export function vesCrown(cls = '') {
-  return punkalasa(cls);
-}
-
+export function vesCrown(cls = '') { return punkalasa(cls); }
 export function templePattern(cls = '') {
   return `<div class="${cls}" style="width:100%;height:100%;background:radial-gradient(ellipse at center,rgba(212,168,68,0.1) 0%,transparent 70%),repeating-linear-gradient(45deg,transparent,transparent 35px,rgba(139,105,20,0.05) 35px,rgba(139,105,20,0.05) 70px);pointer-events:none;"></div>`;
 }
