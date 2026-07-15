@@ -3,7 +3,7 @@
  * Firebase Integration + All Features
  */
 
-import { makaraThorana, sesath, punkalasa, liyawala, mangalaLamp } from './ornaments.js';
+import { makaraThorana, sandakadaPahana, liyawala, pineappleBorder, sesath, punkalasa, mangalaLamp } from './ornaments.js';
 
 // Firebase Config
 const FB_VER = "12.14.0";
@@ -278,8 +278,7 @@ function render() {
   $('#invDate').textContent = dateStr;
   $('#invTime').textContent = s.ceremonyTimeLabel || '';
   $('#invVenue').textContent = s.venueName || '';
-  $('#invThorana').innerHTML = liyawala('liyawala');
-  $('#invKalasa').innerHTML = punkalasa('punkalasa');
+  $('#invThorana').innerHTML = sandakadaPahana('sandakada-pahana');
   
   if (s.brideParentsSi || s.groomParentsSi) {
     $('#invParents').textContent = `${s.brideParentsSi} & ${s.groomParentsSi}`;
