@@ -1,318 +1,278 @@
 <!doctype html>
 <html lang="si">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#7B1818" />
-  <title>කෞශානි & ගෞරව · මංගල ආරාධනය</title>
-  <meta name="description" content="කෞශානි හා ගෞරව මංගල්‍යය — හෙළ සිරිත" />
-  <link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0c">
+<title>කෞශානි & ගෞරව · මංගල ආරාධනය</title>
+<meta name="description" content="කෞශානි සහ ගෞරවගේ මංගල උත්සවයට ඔබට සාදරයෙන් ආරාධනා කරමු. · You are warmly invited to the wedding of Kaushani & Gaurawa.">
+<meta property="og:title" content="කෞශානි & ගෞරව · Wedding">
+<meta property="og:description" content="අපගේ විවාහ මංගල්‍යය සැමරීමට ඔබට ආරාධනා කරමු ✦">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <canvas id="particles3d" aria-hidden="true"></canvas>
-  <div id="petals" aria-hidden="true"></div>
 
-  <!-- GATEWAY -->
-  <section id="gateway">
-    <div class="gateway-frame">
-      <div class="gateway-arch" id="gatewayThorana"></div>
-      
-      <div class="gateway-content">
-        <div id="gwLamp" class="gw-lamp-container"></div>
-        
-        <div class="gw-ayu">ආයුබෝවන්</div>
-        
-        <div class="gw-couple">
-          <span>කෞශානි</span>
-          <span class="amp">&amp;</span>
-          <span>ගෞරව</span>
-        </div>
-        
-        <div class="gw-prompt">පහන් දැල්ල ස්පර්ශ කර ආරාධනය විවෘත කරන්න</div>
-        
-        <button class="gw-enter" id="gwEnter">ආරාධනා පත්‍රය විවෘත කරන්න</button>
+<!-- ░░ Preloader ░░ -->
+<div id="preloader" class="preloader" aria-hidden="true">
+  <div class="pre-inner">
+    <div class="pre-ring"></div>
+    <div class="pre-mono foil">K<span class="amp">&amp;</span>G</div>
+    <div class="pre-text">හෙළ සිරිත</div>
+  </div>
+</div>
+
+<!-- ░░ Scroll progress ░░ -->
+<div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
+
+<!-- ░░ Navigation ░░ -->
+<header id="nav" class="nav">
+  <div class="nav-inner wrap">
+    <a href="#hero" class="brand"><span class="brand-mark" aria-hidden="true"></span><span id="brandName">හෙළ සිරිත</span></a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#invitation" id="nav-invitation">ආරාධනය</a>
+      <a href="#agenda" id="nav-agenda">වැඩසටහන</a>
+      <a href="#gallery" id="nav-gallery">මතකයන්</a>
+      <a href="#blessings" id="nav-blessings">සුබ පැතුම්</a>
+      <a href="#rsvp" id="nav-rsvp">පැමිණීම</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch to English">EN</button>
+      <button id="navBurger" class="nav-burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ░░ Mobile drawer ░░ -->
+<nav id="navDrawer" class="nav-drawer" aria-label="Menu">
+  <a class="js-drawer-link" data-k="invitation" href="#invitation">ආරාධනය</a>
+  <a class="js-drawer-link" data-k="agenda" href="#agenda">වැඩසටහන</a>
+  <a class="js-drawer-link" data-k="gallery" href="#gallery">මතකයන්</a>
+  <a class="js-drawer-link" data-k="blessings" href="#blessings">සුබ පැතුම්</a>
+  <a class="js-drawer-link" data-k="rsvp" href="#rsvp">පැමිණීම</a>
+</nav>
+
+<main>
+
+  <!-- ░░ HERO ░░ -->
+  <section id="hero" class="hero">
+    <canvas id="fxCanvas" class="fx-canvas" aria-hidden="true"></canvas>
+    <div class="hero-aurora" aria-hidden="true"></div>
+    <div class="hero-vignette" aria-hidden="true"></div>
+    <div class="hero-inner wrap">
+      <p id="heroEyebrow" class="eyebrow"></p>
+      <div id="heroPortrait" class="hero-portrait"></div>
+      <h1 id="heroNames" class="hero-names foil"></h1>
+      <p id="heroTag" class="hero-tag"></p>
+      <div class="hero-meta">
+        <span id="heroDate" class="hero-date"></span>
+        <span class="hero-sep" aria-hidden="true"></span>
+        <span id="heroVenue" class="hero-venue"></span>
+      </div>
+      <div class="hero-cta">
+        <button id="heroRsvpBtn" class="btn" type="button"></button>
       </div>
     </div>
-    
-    <div class="dust" style="left:15%;animation-delay:0s"></div>
-    <div class="dust" style="left:30%;animation-delay:1.2s"></div>
-    <div class="dust" style="left:50%;animation-delay:.6s"></div>
-    <div class="dust" style="left:70%;animation-delay:1.8s"></div>
-    <div class="dust" style="left:85%;animation-delay:2.4s"></div>
+    <a id="scrollCue" class="scroll-cue" href="#invitation" aria-label="Scroll">
+      <span class="cue-dot" aria-hidden="true"></span>
+      <span class="cue-lbl"></span>
+    </a>
   </section>
 
-  <!-- TOP BAR -->
-  <nav class="topbar" id="topbar">
-    <div class="brand"><span class="dot"></span> හෙළ සිරිත</div>
-    <div class="navlinks">
-      <a href="#invitation">ආරාධනාව</a>
-      <a href="#countdown">කාල ගණනය</a>
-      <a href="#rsvp">RSVP</a>
-      <a href="#agenda">වැඩසටහන</a>
-      <a href="#gallery">ඡායාරූප</a>
-    </div>
-  </nav>
-
-  <!-- TRANSLATE BUTTON -->
-  <button class="translate-btn" id="translateBtn" aria-label="Translate to English">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1"/><path d="M22 22l-5-10-5 10M14 18h6"/></svg>
-    <span>English</span>
-  </button>
-
-  <!-- MAIN CONTENT -->
-  <main>
-    <!-- HERO -->
-    <section id="hero">
-      <div id="heroThorana"></div>
-      <div class="hero-grid">
-        <div class="hero-sesath left" id="sesathL"></div>
-        <div class="hero-core reveal">
-          <div class="couple-frame">
-            <div class="empty" id="heroEmpty"></div>
-            <img id="heroImg" alt="කෞශානි & ගෞරව" loading="eager" decoding="async" style="display:none" />
-          </div>
-          <div class="hero-names" id="heroNames">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
-          <div class="hero-names-si" id="heroNamesSi">කෞශානි & ගෞරව</div>
-          <div class="hero-tag">අප විවාහ දිවියට එළඹෙමු</div>
-          <div class="hero-meta">
-            <div class="hero-date" id="heroDate">2028.01.12</div>
-            <div class="hero-venue" id="heroVenue">The Epitome Hotel, කුරුණෑගල</div>
-          </div>
-          <div class="scroll-cue"><span></span><small>පහළට ගෙන යන්න</small></div>
-        </div>
-        <div class="hero-sesath right" id="sesathR"></div>
-      </div>
-    </section>
-
-    <!-- INVITATION -->
-    <section id="invitation">
-      <div class="wrap center">
-        <div class="reveal">
-          <div id="invThorana"></div>
-          <div class="shubha">ශ්‍රී සුබ මංගලම්</div>
-        </div>
-        <div class="panel invite-card reveal">
-          <div class="inv-block">
-            <div class="inv-pre" id="invPreBride">මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය</div>
-            <div class="inv-name" id="invBrideName">කෞශානි</div>
-          </div>
-          <div class="inv-amp">&amp;</div>
-          <div class="inv-block">
-            <div class="inv-pre" id="invPreGroom">මහත්මා සහ එම මැතිනියගේ දරණීය පුත්</div>
-            <div class="inv-name" id="invGroomName">ගෞරව</div>
-          </div>
-          <div class="inv-line" id="invLine">ඔබගේ අගනා සහභාගීත්වය අපේක්ෂා කරමු</div>
-          <div class="inv-when">
-            <div class="blk"><div class="lbl">දිනය</div><div class="val" id="invDate">—</div></div>
-            <div class="sep"></div>
-            <div class="blk"><div class="lbl">වේලාව</div><div class="val" id="invTime">—</div></div>
-            <div class="sep"></div>
-            <div class="blk"><div class="lbl">ස්ථානය</div><div class="val" id="invVenue">—</div></div>
-          </div>
-          <div class="inv-close" id="invFrom">උභය පාර්ශවයේ ඥාති මිත්‍රාදීන් සමඟ</div>
-          <div class="inv-from" id="invParents"></div>
-          <div class="kalasa-inline" id="invKalasa"></div>
-          <a class="maplink" id="mapLink" href="#" target="_blank" rel="noopener">📍 ස්ථානය සිතියමින් බලන්න</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- COUNTDOWN -->
-    <section id="countdown">
-      <div class="wrap center">
-        <div class="reveal">
-          <div class="sec-title">මංගල දිනයට තවත්</div>
-          <div class="sec-sub">අපගේ විශේෂ දිනය ආසන්නයි</div>
-        </div>
-        <div class="cd-grid reveal" id="cdGrid">
-          <div class="cd-cell"><div class="cd-num" id="cdDays">000</div><div class="cd-lbl">දින</div></div>
-          <div class="cd-cell"><div class="cd-num" id="cdHours">00</div><div class="cd-lbl">පැය</div></div>
-          <div class="cd-cell"><div class="cd-num" id="cdMins">00</div><div class="cd-lbl">මිනිත්තු</div></div>
-          <div class="cd-cell"><div class="cd-num" id="cdSecs">00</div><div class="cd-lbl">තත්පර</div></div>
-        </div>
-        <div class="cd-done" id="cdDone" style="display:none">අද එම සුභ මංගල දිනයයි!</div>
-        <div class="lamp-wrap reveal">
-          <div id="mangalaLamp"></div>
-          <div class="lamp-count" id="lampCount">0</div>
-          <div class="lamp-cap">තහවුරු වූ ආරාධිතයන්</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- RSVP -->
-    <section id="rsvp">
-      <div class="wrap">
-        <div class="center reveal">
-          <div class="sec-title">ඔබගේ කාරුණික පැමිණීම දන්වන්න</div>
-          <div class="sec-sub">ඔබ සැමගේ පැමිණීම අප හට මහත් සතුටකි</div>
-        </div>
-        <div class="rsvp-grid">
-          <div class="rsvp-sesath" id="rsvpSesathL"></div>
-          <div class="panel rsvp-card reveal">
-            <div class="rsvp-stage active" id="rsvpSearch">
-              <h3 style="text-align:center;margin-bottom:1rem">ආරාධිත නාම ලේඛනය සොයන්න</h3>
-              <div class="search-row">
-                <input class="inp" id="rsvpInput" type="text" placeholder="ඔබගේ නම හෝ පවුලේ නාමය ඇතුළත් කරන්න" />
-                <button class="btn" id="rsvpSearchBtn">සොයන්න</button>
-              </div>
-              <div class="guest-results" id="rsvpResults"></div>
-              <p class="note">ඔබගේ නම හෝ පවුලේ නාමය යොදා සොයන්න.</p>
-            </div>
-            <div class="rsvp-stage" id="rsvpChoose">
-              <div style="text-align:center">
-                <div style="font-weight:700;font-size:1.2rem;margin-bottom:.4rem" id="rsvpGuestName"></div>
-                <div class="muted" id="rsvpGuestFamily"></div>
-              </div>
-              <div style="text-align:center;margin:1.3rem 0;font-size:1.1rem">ඔබ සහභාගී වෙනවා ද?</div>
-              <div class="choice-row">
-                <button class="choice yes" id="rsvpYes">ඔව්, සතුටින් පැමිණෙමි</button>
-                <button class="choice no" id="rsvpNo">කනගාටුයි, පැමිණිය නොහැක</button>
-              </div>
-            </div>
-            <div class="rsvp-stage" id="rsvpDetails">
-              <div class="field">
-                <label>පැමිණෙන සංඛ්‍යාව</label>
-                <div class="party-row">
-                  <button class="party-btn" id="partyMinus">−</button>
-                  <span class="party-val" id="partyVal">1</span>
-                  <button class="party-btn" id="partyPlus">+</button>
-                </div>
-              </div>
-              <div class="field" id="liquorField" style="display:none">
-                <label>මත්පැන් අවශ්‍ය ද?</label>
-                <div class="choice-row" style="justify-content:flex-start">
-                  <button class="choice" id="liquorYes" style="flex:0 1 120px;min-width:80px">ඔව්</button>
-                  <button class="choice" id="liquorNo" style="flex:0 1 120px;min-width:80px">නැහැ</button>
-                </div>
-              </div>
-              <div class="field" id="dietaryField" style="display:none">
-                <label>ආහාර අවශ්‍යතා (ඇත්නම්)</label>
-                <textarea class="inp" id="dietaryInput" rows="2"></textarea>
-              </div>
-              <button class="btn" id="rsvpSubmit" style="width:100%;margin-top:1rem">කාරුණික පිළිතුර එවන්න</button>
-              <button class="btn ghost" id="rsvpBack" style="width:100%;margin-top:.6rem">ආපසු</button>
-            </div>
-            <div class="rsvp-stage" id="rsvpThanks">
-              <div class="rsvp-thanks">
-                <div class="big" id="thanksTitle">ඔබගේ පිළිතුරට බෙහෙවින් ස්තූතියි!</div>
-                <p id="thanksMsg" style="margin-top:.8rem;color:var(--ink-soft)"></p>
-                <button class="btn ghost" id="rsvpChange" style="margin-top:1.2rem">පිළිතුර වෙනස් කරන්න</button>
-              </div>
-            </div>
-          </div>
-          <div class="rsvp-sesath right" id="rsvpSesathR"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- AGENDA -->
-    <section id="agenda">
-      <div class="wrap center">
-        <div class="reveal">
-          <div class="sec-title">මංගල සභාවේ සැලැස්ම</div>
-          <div class="sec-sub">අපගේ දිනයේ සුවිශේෂ මොහොත්</div>
-        </div>
-        <div class="agenda-list" id="agendaList"></div>
-        <div class="gallery-empty" id="agendaEmpty" style="display:none">වැඩසටහන ඉක්මනින් එක් කරනු ලැබේ.</div>
-      </div>
-    </section>
-
-    <!-- GALLERY -->
-    <section id="gallery">
-      <div class="wrap center">
-        <div class="reveal">
-          <div class="sec-title">සෙනෙහසේ මංසලකුණු</div>
-          <div class="sec-sub">සිනා, නිහඬ මොහොත් හා කුඩා සිහින එක් වී, අප මෙතැනට ගෙන ආ සෑම පියවරක්ම…</div>
-        </div>
-        <div class="masonry reveal" id="galleryGrid"></div>
-        <div class="gallery-empty" id="galleryEmpty" style="display:none">ඡායාරප ඉක්මනින් එක් කරනු ලැබේ.</div>
-      </div>
-    </section>
-
-    <!-- LOVE NOTE -->
-    <section id="lovenote">
-      <div class="wrap center">
-        <div class="reveal">
-          <div class="sec-title">විශේෂ සටහන</div>
-          <div class="sec-sub">අපගේ ආදරණීය අමුත්තනට</div>
-        </div>
-        <div class="panel reveal" style="max-width:780px;margin:1.6rem auto 0">
-          <div class="love-text" id="loveText"></div>
-          <div class="love-sign">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BLESSINGS -->
-    <section id="blessings">
-      <div class="wrap center">
-        <div class="reveal">
-          <div class="sec-title">සුබ පැතුම් පොත</div>
-          <div class="sec-sub">අප වෙනුවෙන් සුබ පැතුමක් සටහන් කරන්න.</div>
-        </div>
-        <div class="bless-grid reveal" id="blessGrid"></div>
-        <div class="bless-empty" id="blessEmpty" style="display:none">පළමු සුබ පැතුම ඔබගෙන් වේවා…</div>
-        <form class="bless-form reveal" id="blessForm">
-          <div class="field">
-            <label>ඔබගේ නම</label>
-            <input class="inp" id="blessName" type="text" required maxlength="60" placeholder="නම ඇතුළත් කරන්න" />
-          </div>
-          <div class="field">
-            <label>ඔබගේ සුබ පැතුම</label>
-            <textarea class="inp" id="blessMsg" rows="3" required maxlength="400" placeholder="සුබ පැතුම ලියන්න…"></textarea>
-          </div>
-          <button class="btn" type="submit" id="blessSubmit">සුබ පැතුම තැබීම</button>
-          <p class="note" id="blessThanks" style="display:none">ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.</p>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
+  <!-- ░░ INVITATION ░░ -->
+  <section id="invitation" class="section">
     <div class="wrap center">
-      <div class="foot-kalasa" id="footKalasa"></div>
-      <div class="foot-names">කෞශානි <span class="amp">&amp;</span> ගෞරව</div>
-      <div class="foot-date" id="footDate">12 · 01 · 2028</div>
-      <div class="foot-actions">
-        <button class="btn ghost" id="calBtn">📅 දින දර්ශනයට එක් කරන්න</button>
-        <a class="btn ghost" id="waShare" href="#" target="_blank" rel="noopener">💬 WhatsApp හරහා බෙදාගන්න</a>
+      <p id="invEyebrow" class="eyebrow reveal"></p>
+      <h2 id="invTitle" class="sec-title foil reveal"></h2>
+      <div class="orn-floral" aria-hidden="true"></div>
+      <div id="inviteBody" class="inv-card glass reveal"></div>
+      <div class="orn-crest-seal" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ░░ COUNTDOWN ░░ -->
+  <section id="countdown" class="section">
+    <div class="wrap center">
+      <p id="cdEyebrow" class="eyebrow reveal"></p>
+      <h2 id="cdTitle" class="sec-title foil reveal"></h2>
+      <div id="cdGrid" class="cd-grid reveal">
+        <div id="cdD" class="cd-cell"><span class="cd-num">00</span><span class="cd-lbl"></span></div>
+        <div id="cdH" class="cd-cell"><span class="cd-num">00</span><span class="cd-lbl"></span></div>
+        <div id="cdM" class="cd-cell"><span class="cd-num">00</span><span class="cd-lbl"></span></div>
+        <div id="cdS" class="cd-cell"><span class="cd-num">00</span><span class="cd-lbl"></span></div>
       </div>
-      <div class="foot-credit">සෙනෙහසින් නිර්මාණය කරන ලදී <span class="heart">♥</span> හෙළ සිරිත</div>
+      <p id="cdDone" class="cd-done foil" style="display:none"></p>
     </div>
-  </footer>
+  </section>
 
-  <!-- FLOATING BUTTONS -->
-  <button id="toTop" class="fab" style="right:max(1rem,3vw);bottom:calc(max(1rem,env(safe-area-inset-bottom)) + 66px);opacity:0;pointer-events:none" aria-label="ඉහළට යන්න">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 15l6-6 6 6"/></svg>
-  </button>
-  <button id="musicBtn" class="fab" style="right:max(1rem,3vw);bottom:max(1rem,env(safe-area-inset-bottom))" aria-label="සංගීතය">
-    <svg class="mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.08"/></svg>
-    <svg class="wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="8" width="3" height="8" rx="1"/><rect x="10" y="5" width="3" height="14" rx="1"/><rect x="16" y="10" width="3" height="6" rx="1"/></svg>
-  </button>
+  <!-- ░░ RSVP ░░ -->
+  <section id="rsvp" class="section">
+    <div class="wrap center">
+      <p id="rsvpEyebrow" class="eyebrow reveal"></p>
+      <h2 id="rsvpTitle" class="sec-title foil reveal"></h2>
+      <p id="rsvpSub" class="sec-sub reveal"></p>
+      <div class="rsvp-card glass reveal">
+        <p id="rsvpClosed" class="rsvp-closed" style="display:none"></p>
+        <div id="rsvpStages">
 
-  <!-- LIGHTBOX -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
-    <button class="lb-close" id="lbClose" aria-label="වසන්න"></button>
-    <button class="lb-btn lb-prev" id="lbPrev" aria-label="පෙර">‹</button>
-    <img id="lbImg" alt="" />
-    <button class="lb-btn lb-next" id="lbNext" aria-label="ඊළඟ">›</button>
-    <div class="lb-cap" id="lbCap"></div>
+          <div id="stSearch" class="rsvp-stage active">
+            <p id="rsvpHelp" class="note"></p>
+            <div class="search-row">
+              <input id="rsvpSearchInput" class="inp" type="text" autocomplete="off" inputmode="text">
+              <button id="rsvpSearchBtn" class="btn" type="button"></button>
+            </div>
+            <div id="rsvpResults" class="guest-results"></div>
+          </div>
+
+          <div id="stConfirm" class="rsvp-stage">
+            <div id="confName" class="conf-name"></div>
+            <p id="willAttendQ" class="rsvp-q"></p>
+            <div class="choice-row">
+              <button id="choiceYes" class="choice yes" type="button"></button>
+              <button id="choiceNo" class="choice no" type="button"></button>
+            </div>
+            <div id="attendExtras" class="attend-extras" style="display:none">
+              <p id="liquorQ" class="rsvp-q"></p>
+              <div class="choice-row sm">
+                <button id="liqYes" class="choice yes" type="button"></button>
+                <button id="liqNo" class="choice no" type="button"></button>
+              </div>
+              <p id="countQ" class="rsvp-q"></p>
+              <div class="party-row">
+                <button id="pMinus" class="party-btn" type="button" aria-label="−">−</button>
+                <span id="pVal" class="party-val">1</span>
+                <button id="pPlus" class="party-btn" type="button" aria-label="+">+</button>
+              </div>
+              <div class="field">
+                <label id="dietLbl" for="rsvpDiet"></label>
+                <input id="rsvpDiet" class="inp" type="text">
+              </div>
+            </div>
+            <div class="rsvp-actions">
+              <button id="rsvpBack" class="btn ghost" type="button"></button>
+              <button id="rsvpSubmit" class="btn" type="button"></button>
+            </div>
+          </div>
+
+          <div id="stThanks" class="rsvp-stage">
+            <div class="rsvp-thanks">
+              <div id="rsvpThanksBig" class="big foil"></div>
+              <p id="rsvpThanksMsg"></p>
+              <button id="rsvpAgain" class="btn ghost" type="button"></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ AGENDA ░░ -->
+  <section id="agenda" class="section">
+    <div class="wrap center">
+      <p id="agEyebrow" class="eyebrow reveal"></p>
+      <h2 id="agendaTitle" class="sec-title foil reveal"></h2>
+      <p id="agendaSub" class="sec-sub reveal"></p>
+      <div id="agendaList" class="agenda-list"></div>
+    </div>
+  </section>
+
+  <!-- ░░ GALLERY ░░ -->
+  <section id="gallery" class="section">
+    <div class="wrap center">
+      <p id="galEyebrow" class="eyebrow reveal"></p>
+      <h2 id="galleryTitle" class="sec-title foil reveal"></h2>
+      <p id="gallerySub" class="sec-sub reveal"></p>
+      <div id="masonry" class="masonry"></div>
+    </div>
+  </section>
+
+  <!-- ░░ CELEBRATION COUNTER ░░ -->
+  <section id="lamp" class="section">
+    <div class="wrap center">
+      <p id="lampEyebrow" class="eyebrow reveal"></p>
+      <h2 id="lampTitle" class="sec-title foil reveal"></h2>
+      <p id="lampSub" class="sec-sub reveal"></p>
+      <div class="counter reveal">
+        <span id="lampCount" class="counter-num foil">0</span>
+        <span id="lampCap" class="counter-cap"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ LOVE NOTE ░░ -->
+  <section id="lovenote" class="section">
+    <div class="wrap center">
+      <div class="love-card glass reveal">
+        <p id="loveEyebrow" class="eyebrow"></p>
+        <h2 id="loveTitle" class="sec-title foil"></h2>
+        <p id="loveSub" class="sec-sub"></p>
+        <p id="loveText" class="love-text"></p>
+        <div id="loveSign" class="love-sign"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ WISHES / BLESSINGS ░░ -->
+  <section id="blessings" class="section">
+    <div class="wrap center">
+      <p id="blEyebrow" class="eyebrow reveal"></p>
+      <h2 id="blessingsTitle" class="sec-title foil reveal"></h2>
+      <p id="blessingsSub" class="sec-sub reveal"></p>
+      <div id="blessGrid" class="bless-grid"></div>
+      <div class="bless-form glass reveal">
+        <div class="field">
+          <label id="blNameLbl" for="blName"></label>
+          <input id="blName" class="inp" type="text" autocomplete="name">
+        </div>
+        <div class="field">
+          <label id="blMsgLbl" for="blMsg"></label>
+          <textarea id="blMsg" class="inp" rows="4"></textarea>
+        </div>
+        <button id="blSuggest" class="btn ghost suggest" type="button"></button>
+        <button id="blSend" class="btn block" type="button"></button>
+        <p id="blStatus" class="note" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ░░ FOOTER ░░ -->
+<footer class="footer">
+  <div class="wrap center">
+    <div class="foot-mark orn-emblem" aria-hidden="true"></div>
+    <div id="footNames" class="foot-names foil"></div>
+    <div id="footDate" class="foot-date"></div>
+    <div id="footActions" class="foot-actions"></div>
+    <div class="foot-credit">හෙළ සිරිත · made with <span class="heart">♥</span></div>
   </div>
+</footer>
 
-  <noscript>
-    <div style="padding:40px;text-align:center;font-family:serif">
-      මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රිය කරන්න.
-    </div>
-  </noscript>
+<!-- ░░ Lightbox ░░ -->
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <button id="lbClose" class="lb-close" type="button" aria-label="Close">✕</button>
+  <button id="lbPrev" class="lb-btn lb-prev" type="button" aria-label="Previous">‹</button>
+  <img id="lbImg" alt="">
+  <button id="lbNext" class="lb-btn lb-next" type="button" aria-label="Next">›</button>
+  <div id="lbCap" class="lb-cap"></div>
+</div>
 
-  <!-- APP -->
-  <script type="module" src="assets/js/app.js"></script>
+<!-- ░░ Floating controls ░░ -->
+<button id="musicBtn" class="fab music" type="button" aria-pressed="false" aria-label="Music" style="display:none">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+</button>
+<button id="toTop" class="fab to-top" type="button" aria-label="Top">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script type="module" src="assets/app.js"></script>
 </body>
 </html>
