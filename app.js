@@ -107,7 +107,27 @@ const TEXT = {
       "සුබ මංගලම් වේවා! සදා සතුටින් සිටීමට ඔබ දෙපළට ආශීර්වාද!",
       "හැම උදෑසනක් ම සිනා මුසු ව, හැම සැඳෑවක් ම සෙනෙහසින් ගෙවේවා!",
       "දෙවියන්ගේ ආශීර්වාදය ලද සුන්දර ගමනක් ඔබ දෙදෙනාට වේවා!",
-      "ආදරය, විශ්වාසය හා කරුණාව මත ගොඩනැඟුණු ජීවිතයක් ඔබට ලැබේවා!"
+      "ආදරය, විශ්වාසය හා කරුණාව මත ගොඩනැඟුණු ජීවිතයක් ඔබට ලැබේවා!",
+      "අද ඔබ බැඳි මේ පවිත්‍ර බැඳීම දිවි හිමියෙන් රැකගනිත්වා!",
+      "ඔබ දෙදෙනා අතර ආදරය දිනෙන් දින වැඩි වේවා, කිසිදා අඩු නොවේවා!",
+      "සතුටේ දිනවල එය බෙදාගනිමින්, දුකේ දිනවල එකිනෙකාට රැකවරණය වෙමින් ජීවත් වෙත්වා!",
+      "නව ජීවිතයේ සෑම පියවරක් ම ආශීර්වාදයෙන් සැරසේවා!",
+      "ඔබ දෙදෙනාගේ නිවහන සිනහවෙන්, සෙනෙහසින් හා සමෘද්ධියෙන් පිරේවා!",
+      "හදවත් දෙකක් එකතු වූ මේ මොහොත සදාකාලික සතුටකට මුල පුරාවා!",
+      "ආදරයෙන් ඇරඹි මේ ගමන, අවසානය තෙක් ම සුන්දර වේවා!",
+      "ඔබ දෙපළට දරු සම්පත්තිය ද, පවුලේ සෙනෙහස ද පිරී පවතීවා!",
+      "සැම විටම එකිනෙකාගේ අත අල්ලාගෙන, ජීවිතය සුන්දර ලෙස ගෙවත්වා!",
+      "ඔබ දෙදෙනාගේ ආදරය සොබාදහම තරම් ම සදාතනික වේවා!",
+      "සුබ දවසක්! ඔබ දෙදෙනාට සතුටින් පිරි නව ජීවිතයක් උදා වේවා!",
+      "හැම දිනක් ම එකට, හැම සතුටක් ම බෙදාගනිමින්, සදා එක්ව සිටිත්වා!",
+      "ඔබ දෙදෙනාගේ බැඳීමට තෙරුවන් සරණයි!",
+      "ආදරයේ මිහිර, පවුලේ උණුසුම හා ජීවිතයේ සාර්ථකත්වය ඔබට ලැබේවා!",
+      "ඔබ දෙදෙනා අතර තිබෙන විශ්වාසය සදාකල් ම ශක්තිමත් ව පවතීවා!",
+      "නව දිවියේ සෑම පිටුවක් ම සතුටේ මතකයන්ගෙන් පුරවා ගනිත්වා!",
+      "සෙනෙහසින් බැඳුණු ඔබ දෙදෙනාට සාමය හා සමෘද්ධිය සදා ලැබේවා!",
+      "ඔබගේ ආදර කතාව ලොව සුන්දරම කතාව වේවා!",
+      "දුක සැප දෙකේදී ම එකිනෙකා අත් නොහැර, සතුටින් වයසට යත්වා!",
+      "අලුත් ජීවිතයට ආදරණීය සුබ පැතුම්! සදා සුවෙන්, සැනසිල්ලෙන් වේවා!"
     ]
   },
   en: {
@@ -196,7 +216,25 @@ const TEXT = {
       "Congratulations! May you always find joy in one another!",
       "May every morning bring smiles and every evening bring love!",
       "Wishing you a blessed union and a wonderful life ahead!",
-      "May your love story be the most beautiful one ever told!"
+      "May your love story be the most beautiful one ever told!",
+      "Here's to a lifetime of shared dreams and quiet, happy moments!",
+      "May your home always be full of laughter, warmth and love!",
+      "Through every high and low, may you always hold each other close!",
+      "Wishing you endless date nights and countless reasons to smile!",
+      "May the love you share today only deepen with time!",
+      "So happy for you both — may your best days still lie ahead!",
+      "May your marriage be a beautiful adventure you never stop enjoying!",
+      "May your life together be as wonderful as the love that brought you here!",
+      "May your two hearts beat as one for many, many years!",
+      "Cheers to love, laughter and a happily ever after!",
+      "May kindness, patience and joy fill every day of your life together!",
+      "Wishing you a home filled with little joys and big dreams!",
+      "May you grow old together, still laughing at the same old jokes!",
+      "Sending you all our love as you begin this beautiful chapter!",
+      "May every day together feel like a blessing, because it is!",
+      "Wishing you a marriage full of trust, tenderness and endless love!",
+      "May your journey together be blessed, joyful and truly unforgettable!",
+      "Congratulations on finding your forever — cherish every moment!"
     ]
   }
 };
@@ -267,7 +305,7 @@ function renderAll() {
   const lt = $("#langToggle"); if (lt) { lt.textContent = T.langLabel; lt.title = T.langTitle; lt.setAttribute("aria-label", T.langTitle); }
 
   renderHero(); renderInvitation(); renderCountdown(); renderRsvpShell();
-  renderAgenda(); renderGallery(); renderCounter(); renderLove(); renderBlessings(); renderFooter();
+  renderAgenda(); renderGallery(); renderLove(); renderBlessings(); renderFooter();
   applyVisibility(); observeReveals();
 }
 
@@ -285,7 +323,7 @@ function renderHero() {
     port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(n.b + " " + T.and + " " + n.g) + '" loading="eager" decoding="async">';
     port.classList.remove("is-mono");
   } else {
-    port.innerHTML = monogram(n.b, n.g);
+    port.innerHTML = '<div class="hero-emblem" aria-hidden="true"></div>';
     port.classList.add("is-mono");
   }
 }
@@ -441,9 +479,7 @@ function renderFooter() {
   const acts = $("#footActions"); acts.innerHTML = "";
   if (S.phone) acts.insertAdjacentHTML("beforeend", '<a class="btn ghost sm" href="tel:' + esc(S.phone) + '">☎ ' + esc(T.callUs) + '</a>');
   acts.insertAdjacentHTML("beforeend", '<button class="btn ghost sm" id="calBtn">⌖ ' + esc(T.addCal) + '</button>');
-  acts.insertAdjacentHTML("beforeend", '<button class="btn ghost sm" id="waBtn">✦ ' + esc(T.shareWa) + '</button>');
   $("#calBtn").onclick = downloadIcs;
-  $("#waBtn").onclick = shareWa;
 }
 
 function applyVisibility() {
@@ -680,10 +716,16 @@ async function submitRsvp() {
 /* Blessings */
 function setupBlessings() {
   const sg = $("#blSuggest");
+  let lastPick = "";
   if (sg) sg.onclick = () => {
     const arr = L().suggest, ta = $("#blMsg");
-    let pick; do { pick = arr[Math.floor(Math.random() * arr.length)]; } while (arr.length > 1 && pick === ta.value);
-    ta.value = pick; ta.focus();
+    const norm = s => (s || "").replace(/\s+/g, " ").trim().toLowerCase();
+    const used = new Set((BLESSINGS || []).map(b => norm(b.message)));
+    let pool = arr.filter(w => !used.has(norm(w)) && w !== ta.value && w !== lastPick);
+    if (!pool.length) pool = arr.filter(w => w !== lastPick);
+    if (!pool.length) pool = arr.slice();
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    lastPick = pick; ta.value = pick; ta.focus();
     sg.classList.add("pop"); setTimeout(() => sg.classList.remove("pop"), 320);
   };
   $("#blSend").onclick = async () => {
@@ -773,7 +815,6 @@ async function connect() {
 
     fs.onSnapshot(fs.doc(db, "site", "stats"), (snap) => {
       confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
-      counterDone = false; renderCounter(); setupCounter();
     }, (err) => console.warn("stats listener", err));
 
   } catch (err) {
@@ -787,7 +828,7 @@ function init() {
   document.body.classList.add("loaded");
   renderAll();
   setupNav(); setupLang(); setupRsvp(); setupBlessings(); setupLightbox();
-  setupParallax(); setupParticles(); setupCounter();
+  setupParallax(); setupParticles();
   $("#heroRsvpBtn").addEventListener("click", () => { const r = $("#rsvp"); if (r) r.scrollIntoView({ behavior: "smooth" }); });
   const mb = $("#musicBtn"); if (mb) mb.onclick = toggleMusic; syncMusicBtn();
   // preloader: dismiss after first paint / fonts
