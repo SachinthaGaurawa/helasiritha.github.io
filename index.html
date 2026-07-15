@@ -19,6 +19,30 @@
 </head>
 <body>
 
+<!-- ░░ Cinematic Entry Gateway (පහන → enter) ░░ -->
+<div id="entry" class="entry" role="dialog" aria-label="ආරාධනය">
+  <div class="entry-bg" aria-hidden="true"></div>
+  <div class="entry-veil" aria-hidden="true"></div>
+  <div class="entry-arch" aria-hidden="true"></div>
+  <span class="entry-corner tl" aria-hidden="true"></span>
+  <span class="entry-corner tr" aria-hidden="true"></span>
+  <span class="entry-corner bl" aria-hidden="true"></span>
+  <span class="entry-corner br" aria-hidden="true"></span>
+  <div class="entry-inner">
+    <div class="entry-crest" aria-hidden="true"></div>
+    <p class="entry-eyebrow">ශුභ මංගලම්</p>
+    <h1 class="entry-names foil">කෞශානි <span class="amp">&amp;</span> ගෞරව</h1>
+    <p class="entry-sub">අපගේ විවාහ මංගල්‍යයට ඔබ සාදරයෙන් ආරාධනා කරමු</p>
+    <button id="entryEnter" class="entry-lamp" type="button" aria-label="පහන දැල්වීම — ඇතුළු වන්න">
+      <span class="lamp-img" aria-hidden="true"></span>
+      <span class="lamp-flame" aria-hidden="true"></span>
+      <span class="lamp-glow" aria-hidden="true"></span>
+    </button>
+    <span class="entry-cta">පහන දැල්වීමට ස්පර්ශ කරන්න · Tap to enter</span>
+  </div>
+  <div class="entry-flash" aria-hidden="true"></div>
+</div>
+
 <!-- ░░ Preloader ░░ -->
 <div id="preloader" class="preloader" aria-hidden="true">
   <div class="pre-inner">
@@ -274,5 +298,25 @@
 </button>
 
 <script type="module" src="app.js"></script>
+<script>
+/* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
+(function(){
+  var e=document.getElementById('entry'); if(!e){return;}
+  var done=false;
+  function enter(){
+    if(done){return;} done=true;
+    e.classList.add('go');
+    document.documentElement.classList.add('entered');
+    var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
+    setTimeout(function(){ if(e&&e.parentNode){ e.parentNode.removeChild(e); } }, 1600);
+  }
+  var b=document.getElementById('entryEnter');
+  if(b){ b.addEventListener('click', enter); }
+  e.addEventListener('click', function(ev){ if(ev.target===e){ enter(); } });
+  document.addEventListener('keydown', function(ev){
+    if(!done && (ev.key==='Enter' || ev.key===' ' || ev.key==='Escape')){ enter(); }
+  });
+})();
+</script>
 </body>
 </html>

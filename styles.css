@@ -519,3 +519,104 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
   #countdown::after,#lovenote::after,#blessings::after,#lamp::after,
   .orn-floral,.orn-crest-seal,.orn-emblem{display:none!important}
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   NEW ROYAL IMAGERY (9 pieces) + CINEMATIC ENTRY GATEWAY
+   Scenes → darkened atmospheric layers · line-art/motifs → champagne mask.
+   Gateway dismissal is handled by a standalone inline script (never traps).
+   ════════════════════════════════════════════════════════════════════════ */
+:root{
+  --s-entry:url('https://iili.io/CGk1U8B.jpg');       /* img1 scene → gateway backdrop */
+  --s-hero-bg:url('https://iili.io/CGkEPJ2.jpg');      /* img2 scene → hero depth */
+  --s-arch2:url('https://iili.io/CGU3TaR.png');        /* img4 line-art → gateway arch */
+  --s-lamp:url('https://iili.io/CGUCu8G.png');         /* img7 tall gold → lamp */
+  --s-corner:url('https://iili.io/CGU2ZpS.png');       /* img5 filigree → corners */
+  --s-flourish:url('https://iili.io/CGU2UhX.png');     /* img6 filigree → invitation */
+  --s-seal-agenda:url('https://iili.io/CGU9tsf.png');  /* img3 medallion */
+  --s-seal-rsvp:url('https://iili.io/CGUCBZN.png');    /* img8 medallion */
+  --s-seal-gallery:url('https://iili.io/CGUCIFn.png'); /* img9 medallion */
+}
+
+/* ── Entry gateway ── */
+.entry{position:fixed;inset:0;z-index:300;display:grid;place-items:center;overflow:hidden;background:#08080a;text-align:center;
+  transition:opacity 1.1s var(--ease),transform 1.4s var(--ease),filter 1.1s var(--ease)}
+.entry.go{opacity:0;transform:scale(1.12);filter:blur(6px);pointer-events:none}
+.entry-bg{position:absolute;inset:0;background:var(--s-entry) center/cover no-repeat;transform:scale(1.06);opacity:.5;animation:kenburns 20s ease-in-out infinite alternate}
+.entry-veil{position:absolute;inset:0;background:
+  radial-gradient(120% 90% at 50% 42%, rgba(8,8,10,.32), rgba(8,8,10,.88) 78%),
+  linear-gradient(180deg, rgba(8,8,10,.72), rgba(8,8,10,.52) 42%, rgba(8,8,10,.92))}
+.entry-arch{position:absolute;left:50%;top:2%;transform:translateX(-50%);width:min(900px,96vw);aspect-ratio:2.81/1;z-index:1;opacity:.22;
+  background:var(--foil);-webkit-mask:var(--s-arch2) center/contain no-repeat;mask:var(--s-arch2) center/contain no-repeat;
+  filter:drop-shadow(0 4px 16px rgba(0,0,0,.5));animation:entry-float 9s ease-in-out infinite;pointer-events:none}
+.entry-corner{position:absolute;width:clamp(78px,16vw,158px);aspect-ratio:1;z-index:1;opacity:.5;background:var(--foil);
+  -webkit-mask:var(--s-corner) center/contain no-repeat;mask:var(--s-corner) center/contain no-repeat;filter:var(--orn-emboss);pointer-events:none}
+.entry-corner.tl{top:16px;left:16px}
+.entry-corner.tr{top:16px;right:16px;transform:scaleX(-1)}
+.entry-corner.bl{bottom:16px;left:16px;transform:scaleY(-1)}
+.entry-corner.br{bottom:16px;right:16px;transform:scale(-1)}
+.entry-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1.4rem;animation:entry-rise 1.3s var(--ease) both}
+.entry-crest{width:clamp(64px,14vw,104px);aspect-ratio:.88;background:var(--foil);
+  -webkit-mask:var(--o-crest) center/contain no-repeat;mask:var(--o-crest) center/contain no-repeat;filter:var(--orn-emboss);margin-bottom:.3rem}
+.entry-eyebrow{font-family:var(--f-si);letter-spacing:.34em;text-transform:uppercase;color:var(--gold-2);font-size:.8rem}
+.entry-names{font-family:var(--f-disp);font-weight:800;font-size:clamp(2.6rem,10vw,5.4rem);line-height:1.05;margin:.15rem 0}
+.entry-names .amp{font-size:.5em;vertical-align:.14em}
+.entry-sub{font-family:var(--f-body);font-style:italic;color:var(--mut);font-size:clamp(1rem,2.8vw,1.32rem);max-width:28ch}
+.entry-lamp{position:relative;width:clamp(118px,30vw,188px);height:clamp(150px,36vw,240px);margin-top:1.1rem;background:none;cursor:pointer;transition:transform .4s var(--ease)}
+.entry-lamp:hover{transform:translateY(-3px)}
+.lamp-img{position:absolute;inset:0;background:var(--s-lamp) center/contain no-repeat;filter:drop-shadow(0 12px 26px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(232,201,135,.4))}
+.lamp-flame{position:absolute;left:50%;top:1%;width:17px;height:32px;transform:translateX(-50%);border-radius:50%/60% 60% 40% 40%;transform-origin:50% 90%;opacity:.95;filter:blur(.6px);
+  background:radial-gradient(circle at 50% 72%, #fff6d8, #ffcf6a 42%, #ff9b3d 72%, rgba(255,120,40,0) 100%);animation:flame 1.6s ease-in-out infinite}
+.lamp-glow{position:absolute;left:50%;top:-8%;width:64%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,206,120,.5),rgba(255,206,120,0) 70%);animation:glow 2.6s ease-in-out infinite}
+.entry-cta{margin-top:1.1rem;font-family:var(--f-si);letter-spacing:.12em;color:var(--gold-bright);font-size:.86rem;animation:ctaPulse 2.2s ease-in-out infinite}
+.entry-flash{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 60%, rgba(255,214,140,.92), rgba(255,214,140,0) 60%)}
+.entry.go .entry-flash{animation:flash 1.2s ease-out}
+.entry-names.foil{animation:sheen 8s ease-in-out infinite}
+
+@keyframes kenburns{from{transform:scale(1.06) translate(0,0)}to{transform:scale(1.16) translate(-1.6%,-1.6%)}}
+@keyframes entry-float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+@keyframes entry-rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes flame{0%,100%{transform:translateX(-50%) scale(1) rotate(-2deg)}50%{transform:translateX(-50%) scale(1.14,1.2) rotate(2deg)}}
+@keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
+@keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes flash{0%{opacity:0}28%{opacity:.9}100%{opacity:0}}
+@keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
+html.entered body{animation:pageIn 1.3s var(--ease) .25s both}
+
+/* ── Hero atmospheric depth (img2, heavily darkened for legibility) ── */
+.hero{background:linear-gradient(rgba(10,10,12,.85),rgba(10,10,12,.93)),var(--s-hero-bg) center/cover no-repeat}
+
+/* ── New section seals (champagne mask, faint, breathing) ── */
+#invitation::after,#rsvp::after,#agenda::after,#gallery::after{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(520px,84vw);aspect-ratio:1;z-index:0;opacity:.05;pointer-events:none;background:var(--foil);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;
+  animation:orn-breathe 11s ease-in-out infinite}
+#invitation::after{-webkit-mask-image:var(--s-flourish);mask-image:var(--s-flourish);opacity:.045}
+#rsvp::after{-webkit-mask-image:var(--s-seal-rsvp);mask-image:var(--s-seal-rsvp)}
+#agenda::after{-webkit-mask-image:var(--s-seal-agenda);mask-image:var(--s-seal-agenda)}
+#gallery::after{-webkit-mask-image:var(--s-seal-gallery);mask-image:var(--s-seal-gallery)}
+
+/* ── Card hover polish (subtle champagne aura) ── */
+.inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
+
+/* ── Motion off: lite / reduced-motion ── */
+body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after{animation:none}
+@media (prefers-reduced-motion:reduce){
+  .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
+  html.entered body,.entry.go .entry-flash{animation:none}
+  #invitation::after,#rsvp::after,#agenda::after,#gallery::after{animation:none}
+}
+
+/* ── Responsive gateway ── */
+@media (max-width:600px){
+  .entry-arch{opacity:.16}
+  .entry-corner{width:clamp(58px,18vw,100px);opacity:.42}
+}
+@media (max-width:380px){ .entry-corner.bl,.entry-corner.br{display:none} }
+
+/* ── No-JS fallback: never trap the visitor ── */
+@media (scripting: none){ #entry{display:none!important} }
+
+/* ── Print ── */
+@media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after{display:none!important} }
