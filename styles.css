@@ -627,43 +627,89 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 :root{
   --s-sannasa:url('https://iili.io/CGiC8Dg.png');   /* proclamation scroll */
   --s-emblem:url('https://iili.io/CGQlYaS.png');     /* royal couple emblem */
+  --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");  /* parchment grain */
 }
 
-/* ── Sannasa: unfurling proclamation scroll ── */
-.sannasa{position:relative;max-width:min(560px,94vw);margin:1.6rem auto 0;
-  filter:drop-shadow(0 34px 66px rgba(0,0,0,.55));
-  clip-path:inset(0 0 100% 0);transition:clip-path 1.7s var(--ease)}
-.sannasa.in{clip-path:inset(0 0 0 0)}
-.sannasa-cap{width:100%;background:var(--s-sannasa) no-repeat;background-size:100% auto;position:relative;z-index:2;pointer-events:none}
-.sannasa-cap.top{aspect-ratio:2772/560;background-position:top center;margin-bottom:-1px}
-.sannasa-cap.bot{aspect-ratio:2772/520;background-position:bottom center;margin-top:-1px}
-.sannasa-sheet{position:relative;z-index:1;overflow:hidden;padding:.2rem clamp(1.3rem,7%,3rem) .9rem;
-  background:linear-gradient(90deg,rgba(120,78,38,.30),rgba(120,78,38,0) 8%,rgba(120,78,38,0) 92%,rgba(120,78,38,.30)),
-             linear-gradient(180deg,#ebc194,#e6bd8c 55%,#dfb582)}
-.sannasa-shine{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
-.sannasa-shine::before{content:"";position:absolute;top:-20%;left:-40%;width:40%;height:140%;transform:rotate(8deg);
-  background:linear-gradient(100deg,transparent,rgba(255,250,235,.5),transparent);animation:sannasaShine 7s ease-in-out 1.4s infinite}
-@keyframes sannasaShine{0%{left:-40%}20%,100%{left:130%}}
-/* content fades in as the scroll opens */
-.sannasa .inv-card{opacity:0;transition:opacity .9s ease .55s}
-.sannasa.in .inv-card{opacity:1}
+/* ── Sannasa — realistic unfurling royal scroll (procedural, GPU-cheap) ── */
+.sannasa-track{position:relative;max-width:min(600px,92vw);margin:1.8rem auto 0}
+.sannasa-master{position:relative;display:flex;flex-direction:column;align-items:center;--paper-h:640px;
+  filter:drop-shadow(0 44px 66px rgba(0,0,0,.82))}
 
-/* ── Dark ink on parchment (overrides the champagne foil for readability) ── */
-.sannasa-sheet .inv-card{color:#5a3a22}
-.sannasa-sheet .inv-pre{color:#6d4c30;line-height:1.95}
-.sannasa-sheet .inv-name,.sannasa-sheet .inv-name.foil{background:none;-webkit-background-clip:border-box;background-clip:border-box;
-  -webkit-text-fill-color:#5c2b22;color:#5c2b22;filter:none;text-shadow:0 1px 0 rgba(255,250,235,.45)}
-.sannasa-sheet .inv-amp{color:#9a6a34;-webkit-text-fill-color:#9a6a34}
-.sannasa-sheet .inv-line{color:#6d4c30}
-.sannasa-sheet .inv-when .lbl,.sannasa-sheet .inv-when .lbl2{color:#8a6942}
-.sannasa-sheet .inv-when .val{color:#5a3a22}
-.sannasa-sheet .inv-when .num,.sannasa-sheet .inv-when .num.foil{background:none;-webkit-text-fill-color:#7a3b2a;color:#7a3b2a;filter:none}
-.sannasa-sheet .inv-when .sep{background:linear-gradient(180deg,transparent,rgba(120,80,40,.45),transparent)}
-.sannasa-sheet .inv-close{color:#6d4c30}
-.sannasa-sheet .inv-from{color:#5c2b22;font-weight:700}
-.sannasa-sheet .maplink.btn.ghost{color:#5c2b22;box-shadow:inset 0 0 0 1.5px rgba(120,80,40,.55)}
-.sannasa-sheet .maplink.btn.ghost::before{display:none}
-.sannasa-sheet .maplink.btn.ghost:hover{color:#3f1e18;background:rgba(120,80,40,.1);box-shadow:inset 0 0 0 1.6px rgba(120,80,40,.85)}
+/* rolls (cylindrical shading via gradient + shadows — no per-frame filters) */
+.sannasa-roll{position:relative;width:108%;height:clamp(48px,9vw,74px);z-index:10;border-radius:999px;
+  box-shadow:0 16px 30px -6px rgba(0,0,0,.8),0 6px 12px -3px rgba(0,0,0,.92),inset 0 2px 3px rgba(255,236,200,.28),inset 0 -9px 15px rgba(0,0,0,.6)}
+.sannasa-roll.top{margin-bottom:-14px;background:linear-gradient(180deg,#2a1301 0%,#6b451f 14%,#f6d9a9 34%,#8e5d32 62%,#2a1301 88%,#140700 100%)}
+.sannasa-roll.bottom{margin-top:-14px;background:linear-gradient(180deg,#140700 0%,#2a1301 12%,#8e5d32 30%,#f6d9a9 52%,#6b451f 76%,#180a01 100%)}
+.roll-cap{position:absolute;top:50%;width:clamp(26px,5vw,38px);height:clamp(56px,11vw,84px);z-index:11}
+.roll-cap svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}
+.roll-cap.left{left:-2px;transform:translate(-46%,-50%)}
+.roll-cap.right{right:-2px;transform:translate(46%,-50%) scaleX(-1)}
+
+/* body reveal — height-driven so the bottom roll travels down as it unrolls */
+.sannasa-body{position:relative;width:100%;height:0;overflow:hidden;z-index:5;
+  transition:height 1.9s var(--ease)}
+.unrolled .sannasa-body{height:var(--paper-h)}
+
+/* parchment — torn edges via clip-path, aged via layered gradients + data-URI grain */
+.sannasa-paper{position:relative;width:100%;color:#4f3016;
+  padding:clamp(2.7rem,7vw,3.6rem) clamp(1.5rem,7%,3rem) clamp(2.2rem,6vw,3rem);
+  background-color:#d9ac78;
+  background-image:
+    var(--s-noise),
+    radial-gradient(circle at 18% 26%, rgba(70,32,6,.20) 0%, transparent 24%),
+    radial-gradient(circle at 84% 66%, rgba(70,32,6,.22) 0%, transparent 28%),
+    linear-gradient(90deg, rgba(74,32,8,.82) 0%, rgba(120,74,34,.14) 14%, transparent 26%, transparent 74%, rgba(120,74,34,.14) 86%, rgba(74,32,8,.82) 100%),
+    radial-gradient(125% 105% at 50% 42%, transparent 32%, rgba(88,50,18,.55) 100%);
+  background-blend-mode:multiply,normal,normal,normal,normal;
+  box-shadow:inset 0 0 90px rgba(48,22,4,.85);
+  clip-path:polygon(0% 0%,100% 0%,100% 8%,94% 11%,98% 13%,100% 16%,100% 28%,90% 32%,97% 37%,92% 41%,100% 45%,100% 55%,88% 60%,95% 65%,89% 69%,100% 74%,100% 83%,93% 87%,100% 92%,100% 100%,0% 100%,0% 90%,5% 86%,0% 82%,0% 70%,12% 65%,4% 60%,10% 54%,0% 49%,0% 40%,8% 35%,2% 31%,0% 20%,6% 16%,0% 13%)}
+.sannasa-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(130% 120% at 50% 40%, transparent 46%, rgba(60,30,8,.32) 100%)}
+.sannasa-frame{position:absolute;inset:clamp(18px,4.5vw,34px);z-index:1;pointer-events:none;
+  border:1.5px solid rgba(92,48,16,.42);box-shadow:0 0 14px rgba(92,48,16,.2),inset 0 0 22px rgba(92,48,16,.12)}
+.sannasa-seal{position:absolute;top:50%;left:50%;width:min(260px,58%);aspect-ratio:1;transform:translate(-50%,-50%);z-index:1;
+  opacity:.12;mix-blend-mode:multiply;filter:drop-shadow(0 1px 0 rgba(255,242,216,.5))}
+.sannasa-seal svg{width:100%;height:100%;display:block}
+.sannasa-seal svg path,.sannasa-seal svg circle,.sannasa-seal svg ellipse{fill:#3a1c06;stroke:#3a1c06}
+
+/* caps spin as the scroll opens */
+.unrolled .roll-cap.left svg{animation:capRotL 1.9s var(--ease) both}
+.unrolled .roll-cap.right svg{animation:capRotR 1.9s var(--ease) both}
+@keyframes capRotL{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes capRotR{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+
+/* content fades in as the parchment is revealed */
+.sannasa-paper .inv-card{position:relative;z-index:2;opacity:0;transition:opacity 1s ease 1.2s}
+.unrolled .sannasa-paper .inv-card{opacity:1}
+.sannasa-paper .inv-card{padding:0;margin:0;max-width:none}
+.sannasa-paper .inv-card:hover{box-shadow:none}
+
+/* ── Dark royal ink on parchment (overrides the champagne foil for readability) ── */
+.sannasa-paper .inv-card{color:#563318}
+.sannasa-paper .inv-pre{color:#6d4c30;line-height:1.95}
+.sannasa-paper .inv-name,.sannasa-paper .inv-name.foil{background:none;-webkit-background-clip:border-box;background-clip:border-box;
+  -webkit-text-fill-color:#5c2b22;color:#5c2b22;filter:none;text-shadow:0 1px 0 rgba(255,244,222,.5)}
+.sannasa-paper .inv-amp{color:#9a6a34;-webkit-text-fill-color:#9a6a34}
+.sannasa-paper .inv-line{color:#6d4c30}
+.sannasa-paper .inv-when .lbl,.sannasa-paper .inv-when .lbl2{color:#8a6942}
+.sannasa-paper .inv-when .val{color:#563318}
+.sannasa-paper .inv-when .num,.sannasa-paper .inv-when .num.foil{background:none;-webkit-text-fill-color:#7a3b2a;color:#7a3b2a;filter:none}
+.sannasa-paper .inv-when .sep{background:linear-gradient(180deg,transparent,rgba(120,80,40,.45),transparent)}
+.sannasa-paper .inv-close{color:#6d4c30}
+.sannasa-paper .inv-from{color:#5c2b22;font-weight:700}
+.sannasa-paper .maplink.btn.ghost{color:#5c2b22;box-shadow:inset 0 0 0 1.5px rgba(120,80,40,.55)}
+.sannasa-paper .maplink.btn.ghost::before{display:none}
+.sannasa-paper .maplink.btn.ghost:hover{color:#3f1e18;background:rgba(120,80,40,.1);box-shadow:inset 0 0 0 1.6px rgba(120,80,40,.85)}
+
+/* motion / no-JS gates for the scroll */
+body.lite .unrolled .roll-cap svg{animation:none}
+@media (prefers-reduced-motion:reduce){
+  .sannasa-body{height:auto;transition:none}
+  .sannasa-paper .inv-card{opacity:1;transition:none}
+  .unrolled .roll-cap svg{animation:none}
+}
+@media (scripting:none){ .sannasa-body{height:auto} .sannasa-paper .inv-card{opacity:1} }
+@media print{ .sannasa-body{height:auto} .sannasa-paper .inv-card{opacity:1} .unrolled .roll-cap svg{animation:none} }
 
 /* ── Hero emblem (royal couple) — replaces the K&G monogram ── */
 .hero-portrait.is-mono{background:radial-gradient(120% 120% at 50% 22%,rgba(42,34,26,.55),rgba(12,12,14,.5))}
@@ -686,11 +732,11 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 .eyebrow{line-height:1.7}
 
 /* ── Device-by-device polish (320 → 4K) ── */
-@media (min-width:1800px){ .wrap{max-width:1340px} .sannasa{max-width:600px} }
-@media (max-width:820px){ .sannasa{max-width:min(520px,92vw)} }
-@media (max-width:560px){ .sannasa{max-width:96vw} .sannasa-sheet{padding:.2rem clamp(1rem,6%,2rem) .8rem} }
-@media (max-width:400px){ .sannasa-sheet{padding:.15rem 1rem .7rem} .entry-names{font-size:clamp(2.2rem,13vw,3rem)} }
-@media (max-width:340px){ .sannasa-cap.top{aspect-ratio:2772/620} .sannasa-sheet .inv-name{font-size:clamp(1.6rem,11vw,2rem)} }
+@media (min-width:1800px){ .wrap{max-width:1340px} .sannasa-track{max-width:600px} }
+@media (max-width:820px){ .sannasa-track{max-width:min(520px,92vw)} }
+@media (max-width:560px){ .sannasa-track{max-width:96vw} .sannasa-paper{padding:.2rem clamp(1rem,6%,2rem) .8rem} }
+@media (max-width:400px){ .sannasa-paper{padding:.15rem 1rem .7rem} .entry-names{font-size:clamp(2.2rem,13vw,3rem)} }
+@media (max-width:340px){ .sannasa-cap.top{aspect-ratio:2772/620} .sannasa-paper .inv-name{font-size:clamp(1.6rem,11vw,2rem)} }
 
 /* ── Motion gates for the new pieces ── */
 body.lite .sannasa-shine::before,body.lite .hero-emblem{animation:none}
