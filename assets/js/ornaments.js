@@ -1,50 +1,58 @@
 /**
  * හෙළ සිරිත · Authentic Kandyan Royal Ornaments
- * Uses YOUR Cloudinary images with proper transformations
+ * Using YOUR Cloudinary images with proper CSS transformations
  */
 
 const CDN = "https://res.cloudinary.com/dzrfpc9be/image/upload";
 
-// ─── MAKARA THORANA (cloud4.png - white line art on black) ───
-export function makaraThorana(className = '') {
-  // Invert colors: white→gold, black→transparent
-  return `<img class="${className}" src="${CDN}/c_scale,w_900/v1784079459/IMG_9974_fk1bfu.png" 
-    alt="Makara Thorana"
-    style="width:100%;max-width:900px;height:auto;display:block;
-    filter:invert(1) brightness(1.1) sepia(0.3) hue-rotate(340deg) saturate(1.5);
-    mix-blend-mode:screen;
-    opacity:0.85;"/>`;
+// ─── GATEWAY ARCH (Sandakada Pahana rotated 180°) ───
+export function gatewayArch(className = '') {
+  return `<div class="${className}">
+    <img src="${CDN}/v1784079458/Photoroom_20260715_020528_kfm0vq.png" 
+      alt="Gateway Arch"
+      style="width:100%;max-width:700px;height:auto;display:block;
+      transform:rotate(180deg);
+      filter:invert(1) brightness(1.3) sepia(0.4) hue-rotate(340deg) saturate(2);
+      mix-blend-mode:screen;
+      opacity:0.3;"/>
+  </div>`;
 }
 
-// ─── SANDAKADA PAHANA (cloud3.png - white line art on black) ───
-export function sandakadaPahana(className = '') {
-  return `<img class="${className}" src="${CDN}/c_scale,w_700/v1784079458/Photoroom_20260715_020528_kfm0vq.png" 
-    alt="Sandakada Pahana"
-    style="width:100%;max-width:700px;height:auto;display:block;
-    filter:invert(1) brightness(1.2) sepia(0.2) hue-rotate(340deg) saturate(1.3);
-    mix-blend-mode:screen;
-    opacity:0.9;"/>`;
+// ─── SECTION DIVIDER (Makara Thorana) ───
+export function sectionDivider(className = '') {
+  return `<div class="${className}">
+    <img src="${CDN}/v1784079459/IMG_9974_fk1bfu.png" 
+      alt="Makara Thorana Divider"
+      style="width:100%;max-width:900px;height:auto;display:block;margin:2rem auto;
+      filter:invert(1) brightness(1.2) sepia(0.3) hue-rotate(340deg) saturate(1.8);
+      mix-blend-mode:multiply;
+      opacity:0.85;"/>
+  </div>`;
 }
 
-// ─── LIYAWALA / FLORAL BORDER (cloud1.jpg - red & gold) ───
-export function liyawala(className = '') {
-  return `<img class="${className}" src="${CDN}/c_scale,w_1200/v1784079451/IMG_9964_crpqqm.jpg" 
-    alt="Kandyan Floral Border"
-    style="width:100%;max-width:100%;height:auto;display:block;margin:2rem auto;
-    filter:contrast(1.1) saturate(1.2);
-    opacity:0.95;"/>`;
+// ─── FLORAL BORDER (cloud1.jpg) ───
+export function floralBorder(className = '') {
+  return `<div class="${className}">
+    <img src="${CDN}/v1784079451/IMG_9964_crpqqm.jpg" 
+      alt="Kandyan Floral Border"
+      style="width:100%;max-width:100%;height:auto;display:block;margin:1.5rem auto;
+      filter:contrast(1.15) saturate(1.3);
+      opacity:0.9;"/>
+  </div>`;
 }
 
 // ─── PINEAPPLE BORDER (cloud2.png) ───
 export function pineappleBorder(className = '') {
-  return `<img class="${className}" src="${CDN}/c_scale,w_1400/v1784079452/IMG_9965_swzusp.png" 
-    alt="Kandyan Pineapple Border"
-    style="width:100%;max-width:1400px;height:auto;display:block;
-    filter:contrast(1.15) saturate(1.3);
-    opacity:0.95;"/>`;
+  return `<div class="${className}">
+    <img src="${CDN}/v1784079452/IMG_9965_swzusp.png" 
+      alt="Kandyan Pineapple Border"
+      style="width:100%;max-width:1400px;height:auto;display:block;margin:2rem auto;
+      filter:contrast(1.2) saturate(1.4);
+      opacity:0.95;"/>
+  </div>`;
 }
 
-// ─── SESATH (Royal Umbrella) ───
+// ─── SESATH (SVG - Royal Umbrella) ───
 export function sesath(className = '') {
   const tiers = Array.from({length: 7}, (_, i) => {
     const y = 60 + i * 45;
@@ -77,7 +85,7 @@ export function sesath(className = '') {
   </svg>`;
 }
 
-// ─── PUNKALASA (Prosperity Pot) ───
+// ─── PUNKALASA (SVG - Prosperity Pot) ───
 export function punkalasa(className = '') {
   return `
   <svg class="${className}" viewBox="0 0 180 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
@@ -107,7 +115,7 @@ export function punkalasa(className = '') {
   </svg>`;
 }
 
-// ─── MANGALA LAMP ───
+// ─── MANGALA LAMP (SVG) ───
 export function mangalaLamp(className = '') {
   return `
   <svg class="${className}" viewBox="0 0 80 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">

@@ -3,7 +3,7 @@
  * Firebase Integration + All Features
  */
 
-import { makaraThorana, sandakadaPahana, liyawala, pineappleBorder, sesath, punkalasa, mangalaLamp } from './ornaments.js';
+import { gatewayArch, sectionDivider, floralBorder, pineappleBorder, sesath, punkalasa, mangalaLamp } from './ornaments.js';
 
 // Firebase Config
 const FB_VER = "12.14.0";
@@ -243,7 +243,7 @@ function render() {
   show('lovenote', v.loveNote);
 
   // Gateway ornaments
-  $('#gatewayThorana').innerHTML = makaraThorana('makara-thorana');
+  $('#gatewayThorana').innerHTML = gatewayArch('gateway-arch');
   $('#gwLamp').innerHTML = mangalaLamp('mangala-lamp');
 
   // Hero
@@ -263,7 +263,7 @@ function render() {
   $('#heroDate').textContent = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
   $('#heroVenue').textContent = `${s.venueName}, ${s.venueAddress}`;
 
-  $('#heroThorana').innerHTML = makaraThorana('makara-thorana');
+  $('#heroThorana').innerHTML = sectionDivider('hero-thorana');
   $('#sesathL').innerHTML = sesath('sesath');
   $('#sesathR').innerHTML = sesath('sesath');
 
@@ -278,7 +278,7 @@ function render() {
   $('#invDate').textContent = dateStr;
   $('#invTime').textContent = s.ceremonyTimeLabel || '';
   $('#invVenue').textContent = s.venueName || '';
-  $('#invThorana').innerHTML = sandakadaPahana('sandakada-pahana');
+  $('#invThorana').innerHTML = sectionDivider('inv-divider');
   
   if (s.brideParentsSi || s.groomParentsSi) {
     $('#invParents').textContent = `${s.brideParentsSi} & ${s.groomParentsSi}`;
