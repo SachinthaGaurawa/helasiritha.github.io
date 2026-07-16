@@ -19,31 +19,6 @@
 </head>
 <body>
 
-<!-- ░░ Sannasa SVG filters (your exact emboss + edge-fray) ░░ -->
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
-  <defs>
-    <filter id="hs-edge-light" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
-      <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="3" seed="14" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-    <filter id="hs-emboss" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/>
-      <feSpecularLighting in="blur" surfaceScale="6" specularConstant="1" specularExponent="16" lighting-color="#ffffff" result="spec"><feDistantLight azimuth="45" elevation="45"/></feSpecularLighting>
-      <feDiffuseLighting in="blur" surfaceScale="6" diffuseConstant="1" lighting-color="#d1a56f" result="diff"><feDistantLight azimuth="45" elevation="45"/></feDiffuseLighting>
-      <feBlend in="diff" in2="spec" mode="screen" result="lit"/>
-      <feComposite in="lit" in2="SourceGraphic" operator="in"/>
-    </filter>
-    <filter id="hs-paper-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="6" result="noise"/>
-      <feDiffuseLighting in="noise" lighting-color="#ffe7cc" surfaceScale="3.8" result="light"><feDistantLight azimuth="45" elevation="55"/></feDiffuseLighting>
-      <feComposite operator="arithmetic" k1="1" k2="0" k3="0" k4="0" in="SourceGraphic" in2="light"/>
-    </filter>
-    <filter id="hs-edge-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-      <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="5" seed="28" result="tn"/>
-      <feDisplacementMap in="SourceGraphic" in2="tn" scale="18" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
-</svg>
 
 <!-- ░░ Cinematic Entry Gateway (පහන → enter) ░░ -->
 <div id="entry" class="entry" role="dialog" aria-label="ආරාධනය">
@@ -140,23 +115,13 @@
     <div class="wrap center">
       <p id="invEyebrow" class="eyebrow reveal"></p>
       <h2 id="invTitle" class="sec-title foil reveal"></h2>
-      <div id="sannasaTrack" class="sannasa-track">
-        <div class="sannasa-master" id="sannasaMaster">
-          <div class="sannasa-roll top" aria-hidden="true"><span class="roll-cap left"><svg viewBox="0 0 50 100"><ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03"/><path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000"/></svg></span><span class="roll-cap right"><svg viewBox="0 0 50 100"><ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03"/><path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000"/></svg></span></div>
-          <div class="sannasa-body">
-            <div class="sannasa-paper" id="sannasaPaper">
-              <div class="sannasa-fray" aria-hidden="true"><div class="sannasa-parch"></div></div>
-              <div class="sannasa-vignette" aria-hidden="true"></div>
-              <div class="sannasa-frame" aria-hidden="true"></div>
-              <div class="sannasa-seal" aria-hidden="true"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="85" fill="none" stroke="#000" stroke-width="4" stroke-dasharray="10 6"/><circle cx="100" cy="100" r="75" fill="none" stroke="#000" stroke-width="2"/><path d="M100,55 C90,55 85,65 85,75 C85,85 92,90 95,95 L95,120 C95,125 105,125 105,120 L105,95 C108,90 115,85 115,75 C115,65 110,55 100,55 Z M100,65 C103,65 105,68 105,71 C105,74 103,77 100,77 C97,77 95,74 95,71 C95,68 97,65 100,65 Z" fill="#000"/><path d="M78,80 L78,135 L84,135 L84,80 Z" fill="#000"/><path d="M72,135 L90,135 L90,140 L72,140 Z" fill="#000"/><circle cx="81" cy="145" r="4" fill="#000"/><path d="M50,95 C45,95 40,100 40,105 C40,110 45,115 50,115 Z" fill="#000"/><path d="M148,95 C146,98 146,102 148,105 C150,108 154,110 158,110 C155,113 150,113 146,110 C142,107 142,100 148,95 Z" fill="#000"/></svg></div>
-              <div id="inviteBody" class="inv-card"></div>
-            </div>
-          </div>
-          <div class="sannasa-roll bottom" aria-hidden="true"><span class="roll-cap left"><svg viewBox="0 0 50 100"><ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03"/><path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000"/></svg></span><span class="roll-cap right"><svg viewBox="0 0 50 100"><ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03"/><path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000"/></svg></span></div>
-        </div>
-      </div>
-      <div class="orn-crest-seal" aria-hidden="true"></div>
     </div>
+    <!-- ░░ Sannasa — your exact standalone file, embedded verbatim (isolated) ░░ -->
+    <div class="sannasa-embed reveal">
+      <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" loading="lazy"></iframe>
+    </div>
+    <!-- hidden stub so app.js (#inviteBody) keeps working without error -->
+    <div class="sannasa-hidden" aria-hidden="true"><div id="inviteBody"></div></div>
   </section>
 
   <!-- ░░ COUNTDOWN ░░ -->
@@ -345,61 +310,6 @@
   });
 })();
 </script>
-<script>
-/* Sannasa scroll — your --unroll-progress engine, triggered on reveal (independent of app.js) */
-(function(){
-  try{
-    var master=document.getElementById('sannasaMaster');
-    var paper=document.getElementById('sannasaPaper');
-    var sec=document.getElementById('invitation');
-    if(!master||!paper||!sec){return;}
 
-    var CAPS=[
-      {q:'.sannasa-roll.top .roll-cap.left svg',    s:-1, m:false},
-      {q:'.sannasa-roll.top .roll-cap.right svg',   s: 1, m:true },
-      {q:'.sannasa-roll.bottom .roll-cap.left svg', s: 1, m:false},
-      {q:'.sannasa-roll.bottom .roll-cap.right svg',s:-1, m:true }
-    ].map(function(c){ c.el=sec.querySelector(c.q); return c; });
-
-    function measure(){ master.style.setProperty('--paper-h', paper.scrollHeight+'px'); }
-    measure();
-    if('ResizeObserver' in window){ new ResizeObserver(measure).observe(paper); }
-    window.addEventListener('load', measure);
-    window.addEventListener('resize', measure);
-
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function setProgress(p){
-      master.style.setProperty('--unroll-progress', p);
-      var r = p * 720; // two full rotations, exactly as your engine
-      for(var i=0;i<CAPS.length;i++){
-        var c=CAPS[i];
-        if(c.el) c.el.style.transform = (c.m?'scaleX(-1) ':'') + 'rotate(' + (c.s*r) + 'deg)';
-      }
-    }
-
-    var started=false;
-    function run(){
-      if(started) return; started=true; measure();
-      if(reduce){ setProgress(1); return; }
-      var dur=2200, t0=null;
-      function ease(x){ return x<0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; } // easeInOutCubic
-      function frame(ts){
-        if(t0===null) t0=ts;
-        var k=Math.min(1,(ts-t0)/dur);
-        setProgress(ease(k));
-        if(k<1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    }
-
-    if('IntersectionObserver' in window){
-      var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(); io.disconnect(); } }); }, { threshold:0.2, rootMargin:'0px 0px -8% 0px' });
-      io.observe(sec);
-    } else { run(); }
-    setTimeout(function(){ if(!started) run(); }, 2600);
-  }catch(e){ try{ document.getElementById('sannasaMaster').style.setProperty('--unroll-progress',1); }catch(_){ } }
-})();
-</script>
 </body>
 </html>

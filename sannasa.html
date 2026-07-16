@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>සන්නස · කෞශානි & ගෞරව</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════════════
+   SANNASA · hyper-realistic royal decree scroll
+   ══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --wood-hi:#b57f47; --wood:#7a4a22; --wood-lo:#3c2110; --wood-core:#5b3316;
+  --parch:#d9b481; --ink:#3a1c07; --ink-soft:#5a3316; --gold:#b8892f;
+  --seal:#b11616; --seal-hi:#e04b3a; --seal-lo:#6b0d0a;
+  --si:'Abhaya Libre','Gemunu Libre','Noto Serif Sinhala',serif;
+  --si2:'Gemunu Libre','Abhaya Libre',serif;
+  --en:'Playfair Display','IM Fell English',serif;
+  --decree:'IM Fell English','Playfair Display',serif;
+  --script:'Pinyon Script','Playfair Display',cursive;
+  --ease:cubic-bezier(.22,.8,.2,1);
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--si); color:#efe3cf; overflow-x:hidden;
+  background:
+    radial-gradient(120% 80% at 50% 8%, rgba(120,72,20,.16) 0%, transparent 46%),
+    radial-gradient(140% 120% at 50% 120%, rgba(40,20,8,.5) 0%, transparent 60%),
+    linear-gradient(180deg, #171008 0%, #0d0805 45%, #060403 100%);
+}
+
+/* faint candle-warm ambience */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 42% at 50% 34%, rgba(255,196,120,.10) 0%, transparent 70%)}
+
+/* ── scroll stage: provides the scroll distance ── */
+.stage{position:relative; z-index:1; height:340vh}
+.pinned{position:sticky; top:0; height:100vh; display:flex; justify-content:center;
+  align-items:flex-start; padding-top:6.5vh; overflow:hidden}
+
+.rig{
+  --p:0; --paperH:1180px; --fit:1;
+  position:relative; width:min(660px,93vw);
+  display:flex; flex-direction:column; align-items:center;
+  perspective:1600px; transform:scale(var(--fit)); transform-origin:top center;
+  filter:drop-shadow(0 46px 64px rgba(0,0,0,.92));
+}
+
+/* ══ WOODEN ROLLS ══ */
+.rod{position:relative; width:112%; height:clamp(52px,9.5vw,78px); z-index:10; border-radius:999px;
+  background:
+    repeating-linear-gradient(91deg, rgba(0,0,0,.05) 0 2px, rgba(255,220,170,.03) 2px 3px, transparent 3px 7px),
+    linear-gradient(to bottom,
+      #3f2410 0%, #5b3316 12%, #8a5327 30%, #b07c40 46%, #7c4a22 60%, #4a2b13 82%, #2c1809 100%);
+  box-shadow:
+    0 18px 30px -6px rgba(0,0,0,.8), 0 6px 12px -3px rgba(0,0,0,.9),
+    inset 0 3px 4px rgba(255,214,160,.35), inset 0 -6px 12px rgba(0,0,0,.5);
+}
+.rod.top{margin-bottom:-16px}
+.rod.bottom{margin-top:-16px; box-shadow:0 30px 46px -10px rgba(0,0,0,.92),0 12px 22px -6px rgba(0,0,0,.95),
+  inset 0 3px 4px rgba(255,214,160,.3), inset 0 -6px 12px rgba(0,0,0,.55)}
+
+/* turned-wood finials at each rod end */
+.cap{position:absolute; top:50%; width:clamp(30px,5.4vw,42px); height:clamp(62px,11vw,92px);
+  margin-top:calc(clamp(62px,11vw,92px) * -.5); z-index:12}
+.cap.left{left:-15px}
+.cap.right{right:-15px; transform:scaleX(-1)}
+.cap svg{width:100%;height:100%;display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+
+/* ══ PARCHMENT REVEAL ══ */
+.reveal{position:relative; width:100%; overflow:hidden; z-index:5;
+  height:calc(var(--p) * var(--paperH))}
+
+.paper{position:relative; width:100%; color:var(--ink);
+  padding:clamp(2.6rem,6.5vw,3.6rem) clamp(1.7rem,8%,3.1rem) clamp(2.4rem,6vw,3.2rem)}
+
+/* torn + textured backdrop (feTurbulence frays the clipPath silhouette) */
+.paper-fray{position:absolute; inset:-2px 0; z-index:0; pointer-events:none; filter:url(#tornEdge)}
+.paper-bg{position:absolute; inset:0;
+  -webkit-clip-path:url(#paperClip); clip-path:url(#paperClip);
+  background-color:var(--parch);
+  background-image:
+    /* micro-grain (inline feTurbulence — no external image) */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.32 0 0 0 0 0.18 0 0 0 0 0.05 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    /* burns + stains */
+    radial-gradient(ellipse 34% 20% at 16% 22%, rgba(60,26,4,.4) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 24% at 86% 60%, rgba(60,26,4,.42) 0%, transparent 62%),
+    radial-gradient(circle at 72% 30%, rgba(96,52,16,.3) 0%, transparent 18%),
+    radial-gradient(circle at 28% 78%, rgba(96,52,16,.28) 0%, transparent 16%),
+    /* left/right edge-burn */
+    linear-gradient(to right, rgba(48,20,3,.92) 0%, rgba(96,56,22,.2) 12%, transparent 24%, transparent 76%, rgba(96,56,22,.2) 88%, rgba(48,20,3,.92) 100%),
+    /* top/bottom scorch */
+    linear-gradient(to bottom, rgba(48,20,3,.8) 0%, transparent 10%, transparent 90%, rgba(48,20,3,.85) 100%),
+    /* body vignette */
+    radial-gradient(circle at center, transparent 26%, rgba(74,40,12,.82) 100%);
+  background-size:220px 220px, auto, auto, auto, auto, auto, auto, auto;
+  background-blend-mode:multiply,multiply,multiply,multiply,multiply,normal,normal,normal;
+  box-shadow:inset 0 0 90px rgba(40,18,4,.9), inset 0 0 22px rgba(40,18,4,.6);
+}
+/* warm reading-glow so aged ink stays legible */
+.paper-glow{position:absolute; inset:0; z-index:1; pointer-events:none; mix-blend-mode:screen;
+  background:radial-gradient(122% 96% at 50% 42%, rgba(247,224,180,.34) 0%, rgba(247,224,180,.09) 33%, transparent 60%)}
+/* faint inner deckle line */
+.paper-frame{position:absolute; inset:clamp(18px,4.4vw,34px); z-index:1; pointer-events:none;
+  border:1.4px solid rgba(94,50,18,.4); box-shadow:inset 0 0 20px rgba(94,50,18,.14)}
+/* bottom curl-shadow that eases in as it unfurls */
+.paper-curl{position:absolute; left:0; right:0; bottom:0; height:70px; z-index:1; pointer-events:none;
+  opacity:calc(1 - var(--p));
+  background:linear-gradient(to bottom, transparent, rgba(38,18,4,.5))}
+
+/* ══ TEXT ══ */
+.deed{position:relative; z-index:3; text-align:center;
+  opacity:clamp(0, calc((var(--p) - .42) * 2.1), 1)}
+.sri{font-family:var(--si); font-weight:800; font-size:clamp(1.5rem,5vw,2.1rem); color:var(--ink);
+  letter-spacing:.02em; text-shadow:0 1px 0 rgba(255,240,214,.4),0 0 2px rgba(45,22,8,.4)}
+.rule{display:flex; align-items:center; justify-content:center; gap:.7rem; margin:.5rem auto 1.1rem; color:var(--gold)}
+.rule::before,.rule::after{content:""; height:1px; width:clamp(40px,16%,110px);
+  background:linear-gradient(90deg,transparent,rgba(150,110,40,.8),transparent)}
+.rule span{font-size:1.1rem; filter:drop-shadow(0 1px 1px rgba(60,30,10,.4))}
+.eyebrow{font-family:var(--si2); font-size:clamp(1rem,3vw,1.28rem); color:var(--ink-soft); letter-spacing:.24em;
+  text-transform:none; margin-bottom:1rem}
+.eyebrow-en{font-family:var(--decree); font-style:italic; font-size:clamp(.86rem,2.4vw,1.02rem);
+  color:#6f421f; letter-spacing:.06em; margin:-.5rem 0 1.4rem}
+
+.name{font-family:var(--si); font-weight:800; font-size:clamp(2.5rem,10vw,4.3rem); line-height:1.12;
+  color:var(--ink); margin:.2rem 0;
+  text-shadow:0 1px 0 rgba(255,240,214,.5), 0 -1px 1px rgba(40,18,4,.35), 0 2px 5px rgba(40,18,4,.28), 0 0 3px rgba(50,24,8,.3)}
+.name-en{font-family:var(--script); font-size:clamp(1.8rem,7vw,3rem); line-height:1; color:#7a1c12;
+  margin:.05rem 0 .1rem; text-shadow:0 1px 1px rgba(40,18,4,.3)}
+.amp{display:block; font-family:var(--script); font-size:clamp(1.7rem,6vw,2.6rem); color:var(--gold);
+  margin:.15rem 0; text-shadow:0 1px 2px rgba(60,30,10,.4)}
+.amp-si{font-family:var(--si2); font-weight:500; font-size:clamp(1.1rem,3.4vw,1.4rem); color:var(--ink-soft)}
+
+.body-si{font-family:var(--si); font-size:clamp(1.05rem,3vw,1.32rem); line-height:2; color:var(--ink-soft);
+  max-width:34ch; margin:1.3rem auto 0; text-shadow:0 1px 0 rgba(255,240,214,.3)}
+.body-en{font-family:var(--decree); font-style:italic; font-size:clamp(.92rem,2.5vw,1.08rem); line-height:1.75;
+  color:#6f421f; max-width:40ch; margin:.8rem auto 0}
+
+.meta{display:flex; flex-wrap:wrap; justify-content:center; gap:.4rem clamp(1.4rem,5vw,2.8rem); margin:1.6rem auto .4rem}
+.meta .blk{min-width:120px}
+.meta .lbl{font-family:var(--si2); font-size:.82rem; letter-spacing:.14em; color:#7c5326}
+.meta .val{font-family:var(--si); font-weight:700; font-size:clamp(1.05rem,3.1vw,1.32rem); color:var(--ink);
+  text-shadow:0 1px 0 rgba(255,240,214,.35)}
+.meta .val-en{font-family:var(--en); font-size:.86rem; color:#6f421f; font-style:italic}
+.meta .sep{width:1px; align-self:stretch; background:linear-gradient(180deg,transparent,rgba(120,80,30,.6),transparent)}
+
+/* ══ 3D RED WAX SEAL + SILK RIBBONS ══ */
+.seal-wrap{position:relative; z-index:3; width:clamp(128px,30vw,168px); height:clamp(190px,42vw,240px);
+  margin:1.7rem auto 0}
+.ribbon{position:absolute; top:34%; width:clamp(22px,5vw,30px); height:66%; z-index:1;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.34) 0%, transparent 22%, rgba(255,255,255,.32) 50%, transparent 78%, rgba(0,0,0,.34) 100%),
+    linear-gradient(180deg, #8e1414, #c02a20 45%, #a01c16 100%);
+  box-shadow:0 8px 14px rgba(0,0,0,.4);
+  clip-path:polygon(0 0,100% 0,100% 88%,50% 100%,0 88%);
+  transform-origin:50% 0;
+}
+.ribbon.l{left:50%; margin-left:calc(-1 * clamp(30px,7vw,42px)); rotate:-11deg}
+.ribbon.r{left:50%; margin-left:clamp(8px,2vw,12px); rotate:11deg}
+.ribbon::after{content:""; position:absolute; inset:0; opacity:.5;
+  background:repeating-linear-gradient(180deg, rgba(0,0,0,.06) 0 7px, rgba(255,255,255,.05) 7px 14px)}
+
+.wax{position:absolute; top:0; left:50%; transform:translateX(-50%); z-index:2;
+  width:clamp(112px,26vw,150px); aspect-ratio:1;
+  border-radius:44% 56% 52% 48% / 50% 46% 54% 50%;
+  background:
+    radial-gradient(circle at 38% 32%, var(--seal-hi) 0%, var(--seal) 34%, #8c1210 68%, var(--seal-lo) 100%);
+  box-shadow:
+    0 16px 26px rgba(60,4,4,.6), 0 6px 10px rgba(0,0,0,.45),
+    inset 0 4px 8px rgba(255,150,140,.55), inset 0 -12px 22px rgba(70,4,4,.75),
+    inset 8px 0 16px rgba(70,4,4,.4), inset -8px 0 16px rgba(70,4,4,.4);
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.3));
+}
+/* molten specular fleck */
+.wax::before{content:""; position:absolute; top:16%; left:24%; width:26%; height:20%;
+  border-radius:50%; background:radial-gradient(circle at 40% 40%, rgba(255,220,210,.85), transparent 70%);
+  filter:blur(2px)}
+/* uneven pressed rim */
+.wax::after{content:""; position:absolute; inset:9%; border-radius:inherit;
+  border:2px solid rgba(60,4,4,.4); box-shadow:inset 0 0 12px rgba(255,150,140,.3)}
+.wax svg{position:absolute; inset:20%; width:60%; height:60%; filter:url(#waxEmboss)}
+
+/* ══ scroll hint ══ */
+.hint{position:fixed; left:0; right:0; bottom:max(18px,env(safe-area-inset-bottom)); z-index:20;
+  text-align:center; font-family:var(--si2); letter-spacing:.18em; font-size:.82rem; color:rgba(240,220,180,.62);
+  opacity:calc(1 - var(--p) * 3); transition:opacity .3s; pointer-events:none}
+.hint b{display:block; font-family:var(--decree); font-style:italic; letter-spacing:.05em; font-size:.78rem;
+  color:rgba(210,170,110,.55); margin-top:.15rem; text-transform:none}
+.hint .chev{display:inline-block; margin-top:.4rem; animation:bob 1.8s var(--ease) infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(5px);opacity:1}}
+
+/* ══ responsive ══ */
+@media (max-width:560px){
+  .stage{height:300vh}
+  .paper{padding:clamp(2rem,7vw,2.6rem) clamp(1.3rem,7%,2rem) clamp(1.9rem,6vw,2.4rem)}
+  .body-si{max-width:30ch}
+}
+@media (max-width:380px){ .name{font-size:clamp(2rem,12vw,2.7rem)} }
+@media (min-width:1500px){ .rig{width:700px} .stage{height:360vh} }
+
+/* de-weight the heaviest filter on small screens (torn edge stays) */
+@media (max-width:560px){ .wax svg{filter:none; opacity:.9} }
+
+/* accessibility / no-JS / print → show fully unfurled, no pinning */
+@media (prefers-reduced-motion:reduce){
+  .stage{height:auto} .pinned{position:static;height:auto;padding:5vh 0}
+  .rig{--p:1} .hint{display:none} .cap{transition:none}
+}
+@media (scripting:none){
+  .stage{height:auto} .pinned{position:static;height:auto;padding:5vh 0}
+  .rig{--p:1} .hint{display:none}
+}
+@media print{
+  .stage{height:auto} .pinned{position:static;height:auto} .rig{--p:1;filter:none}
+  .paper-fray{filter:none} .wax svg{filter:none} .hint{display:none} body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- ░░ SVG defs: torn-edge clip + fray + wax emboss ░░ -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <defs>
+    <clipPath id="paperClip" clipPathUnits="objectBoundingBox">
+      <path d="M0,0 L1,0
+        L0.985,0.055 L1,0.105 L0.972,0.165 L1,0.225 L0.983,0.285 L1,0.35 L0.97,0.42 L1,0.485 L0.984,0.55 L1,0.61 L0.973,0.68 L1,0.74 L0.982,0.8 L1,0.87 L0.974,0.93 L1,1
+        L0,1
+        L0.024,0.94 L0,0.878 L0.03,0.812 L0,0.742 L0.02,0.672 L0,0.602 L0.03,0.532 L0,0.468 L0.025,0.402 L0,0.338 L0.03,0.27 L0,0.202 L0.02,0.132 L0,0.062 Z"/>
+    </clipPath>
+    <filter id="tornEdge" x="-6%" y="-4%" width="112%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="turbulence" baseFrequency="0.012 0.11" numOctaves="4" seed="11" result="tn"/>
+      <feDisplacementMap in="SourceGraphic" in2="tn" scale="17" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="waxEmboss" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.6" result="b"/>
+      <feSpecularLighting in="b" surfaceScale="5" specularConstant="1.1" specularExponent="18" lighting-color="#ffd9cf" result="s"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting>
+      <feDiffuseLighting in="b" surfaceScale="5" diffuseConstant="1" lighting-color="#7c0f0c" result="d"><feDistantLight azimuth="235" elevation="52"/></feDiffuseLighting>
+      <feBlend in="d" in2="s" mode="screen" result="lit"/>
+      <feComposite in="lit" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <linearGradient id="wgFINIAL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a5733d"/><stop offset=".5" stop-color="#6e401d"/><stop offset="1" stop-color="#331c0d"/>
+    </linearGradient>
+    <radialGradient id="brass" cx=".4" cy=".35" r=".75">
+      <stop offset="0" stop-color="#ffe9a8"/><stop offset=".5" stop-color="#c99a3e"/><stop offset="1" stop-color="#79521a"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div class="stage" id="stage">
+  <div class="pinned">
+    <div class="rig" id="rig">
+
+      <!-- fixed top wooden roll -->
+      <div class="rod top">
+        <span class="cap left">   <svg viewBox="0 0 46 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="23" cy="50" rx="22" ry="49" fill="#2c1809"/><ellipse cx="23" cy="50" rx="20" ry="46" fill="url(#wgFINIAL)"/><ellipse cx="23" cy="50" rx="15.5" ry="38" fill="none" stroke="#43280f" stroke-width="1.4" opacity=".72"/><ellipse cx="23" cy="50" rx="11.5" ry="29" fill="none" stroke="#8a5a2c" stroke-width="1.2" opacity=".6"/><ellipse cx="23" cy="50" rx="7.5" ry="19" fill="none" stroke="#43280f" stroke-width="1.2" opacity=".72"/><ellipse cx="23" cy="50" rx="5" ry="12" fill="url(#brass)"/><ellipse cx="23" cy="50" rx="2" ry="5" fill="#5a3a12"/><path d="M11 25 Q4 50 11 75" fill="none" stroke="rgba(255,226,172,.5)" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+        <span class="cap right">  <svg viewBox="0 0 46 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="23" cy="50" rx="22" ry="49" fill="#2c1809"/><ellipse cx="23" cy="50" rx="20" ry="46" fill="url(#wgFINIAL)"/><ellipse cx="23" cy="50" rx="15.5" ry="38" fill="none" stroke="#43280f" stroke-width="1.4" opacity=".72"/><ellipse cx="23" cy="50" rx="11.5" ry="29" fill="none" stroke="#8a5a2c" stroke-width="1.2" opacity=".6"/><ellipse cx="23" cy="50" rx="7.5" ry="19" fill="none" stroke="#43280f" stroke-width="1.2" opacity=".72"/><ellipse cx="23" cy="50" rx="5" ry="12" fill="url(#brass)"/><ellipse cx="23" cy="50" rx="2" ry="5" fill="#5a3a12"/><path d="M11 25 Q4 50 11 75" fill="none" stroke="rgba(255,226,172,.5)" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+      </div>
+
+      <!-- unfurling parchment -->
+      <div class="reveal">
+        <div class="paper">
+          <div class="paper-fray"><div class="paper-bg"></div></div>
+          <div class="paper-glow"></div>
+          <div class="paper-frame"></div>
+          <div class="paper-curl"></div>
+
+          <div class="deed">
+            <div class="sri">ශ්‍රී</div>
+            <div class="rule"><span>✦</span></div>
+            <div class="eyebrow">සුබ විවාහ මංගල්‍යය</div>
+            <div class="eyebrow-en">The Honour of Your Presence is Requested</div>
+
+            <div class="name">කෞශානි</div>
+            <div class="name-en">Kaushani</div>
+            <div class="amp">&amp; <span class="amp-si">සහ</span></div>
+            <div class="name">ගෞරව</div>
+            <div class="name-en">Gaurawa</div>
+
+            <div class="body-si">මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ඉතා ගෞරවයෙන් අපේක්ෂා කරමු.</div>
+            <div class="body-en">On this most auspicious day, we humbly request the honour of your presence to share in our joy.</div>
+
+            <div class="meta">
+              <div class="blk">
+                <div class="lbl">දිනය</div>
+                <div class="val">2028 ජනවාරි 12</div>
+                <div class="val-en">Wednesday, 12ᵗʰ January</div>
+              </div>
+              <div class="sep"></div>
+              <div class="blk">
+                <div class="lbl">වේලාව</div>
+                <div class="val">පෙ.ව. 9.00</div>
+                <div class="val-en">Forenoon</div>
+              </div>
+              <div class="sep"></div>
+              <div class="blk">
+                <div class="lbl">ස්ථානය</div>
+                <div class="val">The Epitome Hotel</div>
+                <div class="val-en">Kurunegala</div>
+              </div>
+            </div>
+
+            <!-- 3D wax seal + silk ribbons -->
+            <div class="seal-wrap">
+              <div class="ribbon l"></div>
+              <div class="ribbon r"></div>
+              <div class="wax">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#000" stroke-width="2.5" stroke-dasharray="7 5"/>
+                  <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="1.6"/>
+                  <!-- lotus / sun crest -->
+                  <g fill="#000">
+                    <path d="M50 22 L54 42 L50 46 L46 42 Z"/>
+                    <path d="M50 78 L54 58 L50 54 L46 58 Z"/>
+                    <path d="M22 50 L42 46 L46 50 L42 54 Z"/>
+                    <path d="M78 50 L58 46 L54 50 L58 54 Z"/>
+                    <path d="M31 31 L46 44 L44 46 L31 31 Z" opacity=".85"/>
+                    <path d="M69 31 L54 44 L56 46 L69 31 Z" opacity=".85"/>
+                    <path d="M31 69 L46 56 L44 54 L31 69 Z" opacity=".85"/>
+                    <path d="M69 69 L54 56 L56 54 L69 69 Z" opacity=".85"/>
+                    <circle cx="50" cy="50" r="8"/>
+                    <circle cx="50" cy="50" r="3.4" fill="#7c0f0c"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- unfurling bottom wooden roll -->
+      <div class="rod bottom" id="rodBottom">
+        <span class="cap left">   <svg viewBox="0 0 46 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="23" cy="50" rx="22" ry="49" fill="#2c1809"/><ellipse cx="23" cy="50" rx="20" ry="46" fill="url(#wgFINIAL)"/><ellipse cx="23" cy="50" rx="15.5" ry="38" fill="none" stroke="#43280f" stroke-width="1.4" opacity=".72"/><ellipse cx="23" cy="50" rx="11.5" ry="29" fill="none" stroke="#8a5a2c" stroke-width="1.2" opacity=".6"/><ellipse cx="23" cy="50" rx="7.5" ry="19" fill="none" stroke="#43280f" stroke-width="1.2" opacity=".72"/><ellipse cx="23" cy="50" rx="5" ry="12" fill="url(#brass)"/><ellipse cx="23" cy="50" rx="2" ry="5" fill="#5a3a12"/><path d="M11 25 Q4 50 11 75" fill="none" stroke="rgba(255,226,172,.5)" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+        <span class="cap right">  <svg viewBox="0 0 46 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="23" cy="50" rx="22" ry="49" fill="#2c1809"/><ellipse cx="23" cy="50" rx="20" ry="46" fill="url(#wgFINIAL)"/><ellipse cx="23" cy="50" rx="15.5" ry="38" fill="none" stroke="#43280f" stroke-width="1.4" opacity=".72"/><ellipse cx="23" cy="50" rx="11.5" ry="29" fill="none" stroke="#8a5a2c" stroke-width="1.2" opacity=".6"/><ellipse cx="23" cy="50" rx="7.5" ry="19" fill="none" stroke="#43280f" stroke-width="1.2" opacity=".72"/><ellipse cx="23" cy="50" rx="5" ry="12" fill="url(#brass)"/><ellipse cx="23" cy="50" rx="2" ry="5" fill="#5a3a12"/><path d="M11 25 Q4 50 11 75" fill="none" stroke="rgba(255,226,172,.5)" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="hint" id="hint">
+  පහළට ගෙන යන්න · සන්නස විවෘත වේ
+  <b>Scroll gently to unfurl the decree</b>
+  <span class="chev">⌄</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var rig = document.getElementById('rig');
+  var paper = document.querySelector('.paper');
+  var stage = document.getElementById('stage');
+  var rodBottom = document.getElementById('rodBottom');
+  if(!rig || !paper || !stage) return;
+
+  var botCaps = rodBottom ? Array.prototype.slice.call(rodBottom.querySelectorAll('.cap')) : [];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // measure the parchment's natural height so the reveal can open exactly to fit
+  var rodTop = document.querySelector('.rod.top');
+  function measure(){
+    var h = paper.scrollHeight;
+    if(h > 40) rig.style.setProperty('--paperH', h + 'px');
+    // fit the FULLY-unfurled scroll (both rods + parchment) inside the viewport height
+    var rodH = rodTop ? rodTop.offsetHeight : 70;
+    var full = rodH * 1.8 + h;                       // rods overlap the paper by ~16px each
+    var avail = window.innerHeight - (window.innerHeight * 0.065) - 30;
+    var fit = Math.max(0.5, Math.min(1, avail / full));
+    rig.style.setProperty('--fit', fit.toFixed(3));
+  }
+  measure();
+  if('ResizeObserver' in window){ new ResizeObserver(measure).observe(paper); }
+  window.addEventListener('load', measure);
+  window.addEventListener('resize', measure);
+
+  if(reduce){ rig.style.setProperty('--p', 1); return; }
+
+  // ── LERP inertial scroll engine ──
+  var target = 0, current = 0;
+  var LERP = 0.085;               // buttery inertia
+
+  function readTarget(){
+    var max = stage.offsetHeight - window.innerHeight;
+    target = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  }
+  readTarget();
+  window.addEventListener('scroll', readTarget, { passive:true });
+  window.addEventListener('resize', readTarget);
+
+  function apply(p){
+    rig.style.setProperty('--p', p);
+    // only the BOTTOM roll rotates (unrolling); top stays fixed
+    var rot = p * 540;            // 1.5 turns as it feeds out
+    for(var i=0;i<botCaps.length;i++){
+      var c = botCaps[i], mirror = c.classList.contains('right');
+      c.style.transform = (mirror ? 'scaleX(-1) ' : '') + 'rotate(' + (mirror ? -rot : rot) + 'deg)';
+    }
+    // bottom roll also translates a touch further than layout for weight
+    if(rodBottom) rodBottom.style.marginTop = (-16 + p * 6) + 'px';
+  }
+
+  function tick(){
+    current += (target - current) * LERP;
+    if(Math.abs(target - current) < 0.00018) current = target;
+    apply(Math.max(0, Math.min(1, current)));
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
