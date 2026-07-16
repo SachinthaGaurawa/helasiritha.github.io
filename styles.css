@@ -662,19 +662,22 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 
 /* parchment — your exact clip-path + aged gradient stack */
 .sannasa-paper{position:relative;width:100%;color:#4f3016;
-  padding:clamp(2.7rem,7vw,3.6rem) clamp(1.6rem,7.5%,3rem) clamp(2.3rem,6vw,3rem);
+  padding:clamp(2.7rem,7vw,3.6rem) clamp(1.6rem,7.5%,3rem) clamp(2.3rem,6vw,3rem)}
+
+/* parchment backdrop — YOUR clip-path + YOUR aged gradients, frayed by YOUR edge-fray-heavy */
+.sannasa-fray{position:absolute;inset:0;z-index:0;pointer-events:none;filter:url(#hs-edge-heavy)}
+.sannasa-parch{position:absolute;inset:0;
   background-color:#d6a874;
   background-image:
-    var(--s-noise),
     radial-gradient(circle at 18% 28%, rgba(54,23,2,.25) 0%, transparent 22%),
     radial-gradient(circle at 82% 62%, rgba(54,23,2,.28) 0%, transparent 28%),
     linear-gradient(to right, rgba(58,23,4,.88) 0%, rgba(92,55,22,.15) 15%, transparent 25%, transparent 75%, rgba(92,55,22,.15) 85%, rgba(58,23,4,.88) 100%),
     radial-gradient(circle at center, transparent 20%, rgba(77,43,14,.8) 100%);
-  background-blend-mode:multiply,normal,normal,normal,normal;
-  box-shadow:inset 0 0 100px rgba(43,19,4,.58);
+  background-blend-mode:multiply;
+  box-shadow:inset 0 0 100px rgba(43,19,4,.9);
   clip-path:polygon(0% 0%,100% 0%,100% 8%,94% 11%,98% 13%,100% 16%,100% 28%,90% 32%,97% 37%,92% 41%,100% 45%,100% 55%,88% 60%,95% 65%,89% 69%,100% 74%,100% 83%,93% 87%,100% 92%,100% 100%,0% 100%,0% 90%,5% 86%,0% 82%,0% 70%,12% 65%,4% 60%,10% 54%,0% 49%,0% 40%,8% 35%,2% 31%,0% 20%,6% 16%,0% 13%)}
 .sannasa-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;
-  background:radial-gradient(120% 100% at 50% 40%, rgba(245,222,179,.42) 0%, rgba(245,222,179,.12) 30%, transparent 56%)}
+  background:radial-gradient(120% 95% at 50% 40%, rgba(245,222,179,.30) 0%, rgba(245,222,179,.08) 32%, transparent 58%)}
 .sannasa-frame{position:absolute;inset:clamp(20px,5vw,38px);z-index:1;pointer-events:none;
   border:1.5px solid rgba(92,48,16,.42);box-shadow:0 0 14px rgba(92,48,16,.2),inset 0 0 22px rgba(92,48,16,.12)}
 
@@ -706,14 +709,18 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 .sannasa-paper .maplink.btn.ghost:hover{color:#3a1808;background:rgba(90,50,20,.1);box-shadow:inset 0 0 0 1.6px rgba(90,50,20,.85)}
 
 /* rich filters only where the device can afford them */
-@media (min-width:760px) and (prefers-reduced-motion:no-preference){ .sannasa-roll{filter:url(#hs-edge-light)} }
+@media (min-width:760px) and (prefers-reduced-motion:no-preference){
+  .sannasa-roll,.roll-cap svg{filter:url(#hs-edge-light)}
+  .sannasa-parch{filter:url(#hs-paper-grain)}
+}
+body.lite .sannasa-fray,body.lite .sannasa-parch{filter:none}
 body.lite .sannasa-seal svg{filter:none}
 body.lite .sannasa-seal{opacity:.14;mix-blend-mode:multiply}
 
 /* reduced-motion / no-JS / print — show the scroll fully open */
 @media (prefers-reduced-motion:reduce){ .sannasa-master{--unroll-progress:1} }
 @media (scripting:none){ .sannasa-master{--unroll-progress:1} }
-@media print{ .sannasa-master{--unroll-progress:1} .sannasa-roll{filter:none} .sannasa-seal svg{filter:none} }
+@media print{ .sannasa-master{--unroll-progress:1} .sannasa-roll{filter:none} .sannasa-seal svg{filter:none} .sannasa-fray{filter:none} }
 
 /* ── Hero emblem (royal couple) — replaces the K&G monogram ── */
 .hero-portrait.is-mono{background:radial-gradient(120% 120% at 50% 22%,rgba(42,34,26,.55),rgba(12,12,14,.5))}
