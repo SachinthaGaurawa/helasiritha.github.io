@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
        1. CORE RESET & ENVIRONMENT MAPPING
@@ -229,6 +232,85 @@
         0%, 100% { opacity: 0.3; }
         50% { opacity: 0.7; }
     }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       ADDED (non-destructive): responsive fit + crisp wedding-content overlay
+       — your scroll, filters, cylinders, caps and JS are untouched below/above
+       ═══════════════════════════════════════════════════════════════════ */
+
+    /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
+       — the whole assembly is simply scaled to the viewport width. */
+    .scroll-master-container {
+        --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
+        transform: scale(min(1, calc((100vw - 20px) / 650)));
+        transform-origin: top center;
+    }
+
+    /* Invitation text lives in its OWN layer — revealed in perfect sync with the
+       parchment (shares --unroll-progress) but OUTSIDE the edge-fray-heavy filter,
+       so the writing stays crisp while the paper edges still tear organically. */
+    .decree-overlay {
+        position: absolute;
+        top: 62px;              /* aligns with the parchment (top cylinder 84px − 22px overlap) */
+        left: 0;
+        right: 0;
+        z-index: 5;             /* above the parchment, below the wooden rolls (z-index:10) */
+        height: calc(var(--unroll-progress) * 650px);
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .decree-inner {
+        width: 100%;
+        height: 650px;
+        padding: 58px 66px 42px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        color: #3d1f0b;
+        font-family: 'Abhaya Libre', serif;
+        /* a soft warm glow lifts the writing area so aged ink stays legible */
+        background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
+    }
+    .dc-sri {
+        font-weight: 800; font-size: 28px; letter-spacing: 0.02em; margin-bottom: 3px;
+        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4);
+    }
+    .dc-rule {
+        display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 11px; font-size: 13px;
+    }
+    .dc-rule::before, .dc-rule::after {
+        content: ""; height: 1px; width: 54px;
+        background: linear-gradient(90deg, transparent, #a9812f, transparent);
+    }
+    .dc-eyebrow {
+        font-family: 'Gemunu Libre', serif; font-size: 15.5px; letter-spacing: 0.2em; color: #5e3a1f;
+    }
+    .dc-eyebrow-en {
+        font-family: 'IM Fell English', serif; font-style: italic; font-size: 12px;
+        letter-spacing: 0.05em; color: #6f421f; margin-bottom: 14px;
+    }
+    .dc-name {
+        font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 43px; line-height: 1.06; color: #3d1f0b;
+        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3);
+    }
+    .dc-name-en {
+        font-family: 'Pinyon Script', cursive; font-size: 29px; line-height: 1; color: #7a1c12; margin: 1px 0 2px;
+    }
+    .dc-amp {
+        font-family: 'Pinyon Script', cursive; font-size: 28px; color: #a9812f; margin: 4px 0;
+    }
+    .dc-body {
+        font-family: 'Abhaya Libre', serif; font-size: 16px; line-height: 1.65; color: #5e3a1f;
+        max-width: 30ch; margin: 12px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3);
+    }
+    .dc-meta {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 24px; margin: 15px auto 0;
+    }
+    .dc-meta .b { min-width: 92px; }
+    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10.5px; letter-spacing: 0.12em; color: #7c5326; }
+    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15.5px; color: #3d1f0b; }
+    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10.5px; color: #6f421f; }
 </style>
 </head>
 <body>
@@ -269,7 +351,7 @@
 
     <div class="scroll-viewport">
         
-        <div class="scroll-instruction">👇 Scroll Down Smoothly 👇</div>
+        <div class="scroll-instruction">සෙමින් පහළට · Scroll to unfurl</div>
 
         <div class="scroll-sticky-scene">
             <div class="scroll-master-container">
@@ -308,6 +390,26 @@
                     </div>
                 </div>
                 
+                <div class="decree-overlay" aria-hidden="false">
+                    <div class="decree-inner">
+                        <div class="dc-sri">ශ්‍රී</div>
+                        <div class="dc-rule"></div>
+                        <div class="dc-eyebrow">සුබ විවාහ මංගල්‍යය</div>
+                        <div class="dc-eyebrow-en">The Honour of Your Presence is Requested</div>
+                        <div class="dc-name">කෞශානි</div>
+                        <div class="dc-name-en">Kaushani</div>
+                        <div class="dc-amp">&amp;</div>
+                        <div class="dc-name">ගෞරව</div>
+                        <div class="dc-name-en">Gaurawa</div>
+                        <div class="dc-body">මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ගෞරවයෙන් අපේක්ෂා කරමු.</div>
+                        <div class="dc-meta">
+                            <div class="b"><div class="l">දිනය</div><div class="v">2028 ජනවාරි 12</div><div class="e">Wed, 12th January</div></div>
+                            <div class="b"><div class="l">වේලාව</div><div class="v">පෙ.ව. 9.00</div><div class="e">Forenoon</div></div>
+                            <div class="b"><div class="l">ස්ථානය</div><div class="v">The Epitome Hotel</div><div class="e">Kurunegala</div></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="scroll-cylinder bottom">
                     <svg class="cylinder-cap left" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
