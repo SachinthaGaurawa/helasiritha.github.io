@@ -23,6 +23,7 @@ const SDK = "https://www.gstatic.com/firebasejs/12.14.0";
 const TEXT = {
   si: {
     brand: "හෙළ සිරිත",
+    footCredit: 'හෙළ සිරිත · ආදරයෙන් <span class="heart">♥</span>',
     nav: { invitation: "ආරාධනය", agenda: "වැඩසටහන", gallery: "මතකයන්", blessings: "සුබ පැතුම්", rsvp: "පැමිණීම" },
     langLabel: "EN", langTitle: "Switch to English",
     loading: "සූදානම් වෙමින්…",
@@ -96,42 +97,61 @@ const TEXT = {
     months: ["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජූනි","ජූලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"],
     weekdays: ["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"],
     suggest: [
-      "ඔබ දෙදෙනාගේ විවාහ දිවිය සෙනෙහසින් හා සමඟියෙන් පිරී, සතුටින් බැබළේවා!",
-      "සඳ හිරු පවතින තුරු ඔබ දෙදෙනාගේ ආදරය සදා නොමැකී බැබළේවා!",
-      "නිරෝගී සුවය, දිගු ආයුෂ හා අසීමිත සතුට ඔබ දෙපළට ම ලැබේවා!",
-      "ඔබගේ නව ජීවිතය ආශීර්වාදයෙන් හා සමෘද්ධියෙන් පිරේවා!",
-      "එකිනෙකා අත්වැල් බැඳගෙන, සෑම අභියෝගයක් ම එක්ව ජය ගනිත්වා!",
-      "ඔබ දෙදෙනාට සතුට, සාමය හා සැපවත් අනාගතයක් ම ප්‍රාර්ථනා කරමි!",
-      "මෙම ආදරණීය බැඳීම කල්ගත වන තරමට ම තවත් ශක්තිමත් වේවා!",
-      "ඔබ දෙදෙනාගේ සිහින සැබෑ වී, ජීවිතය ආදරයෙන් පිරේවා!",
-      "සුබ මංගලම් වේවා! සදා සතුටින් සිටීමට ඔබ දෙපළට ආශීර්වාද!",
-      "හැම උදෑසනක් ම සිනා මුසු ව, හැම සැඳෑවක් ම සෙනෙහසින් ගෙවේවා!",
-      "දෙවියන්ගේ ආශීර්වාදය ලද සුන්දර ගමනක් ඔබ දෙදෙනාට වේවා!",
-      "ආදරය, විශ්වාසය හා කරුණාව මත ගොඩනැඟුණු ජීවිතයක් ඔබට ලැබේවා!",
-      "අද ඔබ බැඳි මේ පවිත්‍ර බැඳීම දිවි හිමියෙන් රැකගනිත්වා!",
-      "ඔබ දෙදෙනා අතර ආදරය දිනෙන් දින වැඩි වේවා, කිසිදා අඩු නොවේවා!",
-      "සතුටේ දිනවල එය බෙදාගනිමින්, දුකේ දිනවල එකිනෙකාට රැකවරණය වෙමින් ජීවත් වෙත්වා!",
-      "නව ජීවිතයේ සෑම පියවරක් ම ආශීර්වාදයෙන් සැරසේවා!",
-      "ඔබ දෙදෙනාගේ නිවහන සිනහවෙන්, සෙනෙහසින් හා සමෘද්ධියෙන් පිරේවා!",
-      "හදවත් දෙකක් එකතු වූ මේ මොහොත සදාකාලික සතුටකට මුල පුරාවා!",
-      "ආදරයෙන් ඇරඹි මේ ගමන, අවසානය තෙක් ම සුන්දර වේවා!",
-      "ඔබ දෙපළට දරු සම්පත්තිය ද, පවුලේ සෙනෙහස ද පිරී පවතීවා!",
-      "සැම විටම එකිනෙකාගේ අත අල්ලාගෙන, ජීවිතය සුන්දර ලෙස ගෙවත්වා!",
-      "ඔබ දෙදෙනාගේ ආදරය සොබාදහම තරම් ම සදාතනික වේවා!",
-      "සුබ දවසක්! ඔබ දෙදෙනාට සතුටින් පිරි නව ජීවිතයක් උදා වේවා!",
-      "හැම දිනක් ම එකට, හැම සතුටක් ම බෙදාගනිමින්, සදා එක්ව සිටිත්වා!",
-      "ඔබ දෙදෙනාගේ බැඳීමට තෙරුවන් සරණයි!",
-      "ආදරයේ මිහිර, පවුලේ උණුසුම හා ජීවිතයේ සාර්ථකත්වය ඔබට ලැබේවා!",
-      "ඔබ දෙදෙනා අතර තිබෙන විශ්වාසය සදාකල් ම ශක්තිමත් ව පවතීවා!",
-      "නව දිවියේ සෑම පිටුවක් ම සතුටේ මතකයන්ගෙන් පුරවා ගනිත්වා!",
-      "සෙනෙහසින් බැඳුණු ඔබ දෙදෙනාට සාමය හා සමෘද්ධිය සදා ලැබේවා!",
-      "ඔබගේ ආදර කතාව ලොව සුන්දරම කතාව වේවා!",
-      "දුක සැප දෙකේදී ම එකිනෙකා අත් නොහැර, සතුටින් වයසට යත්වා!",
-      "අලුත් ජීවිතයට ආදරණීය සුබ පැතුම්! සදා සුවෙන්, සැනසිල්ලෙන් වේවා!"
+      "ඔයාලා දෙන්නාගේ අලුත් ජීවිතේ ආදරෙන් පිරිලා, හැමදාම හිනාවෙන් ම ගෙවෙන්න සුබ පතනවා!",
+      "එකිනෙකාගේ අත් කවදාවත් ලිහෙන්නේ නැති වගේ, ආදරෙන් තදින් බැඳිලා ඉන්න.",
+      "නීරෝගී සුවය, දිගු ආයුෂය හා නොනිමෙන සතුටක් ම ඔයාලා දෙපළට ලැබේවා!",
+      "හිතින් හදාගත්ත මේ බැඳීම, කාලයත් එක්ක තව තවත් ශක්තිමත් වේවා.",
+      "සුළං හැමුවත්, වැස්ස ආවත්, දෙන්නා අත්වැල් බැඳගෙන ඉන්න පුළුවන් වේවා.",
+      "ඔයාලගේ ගෙදර හැමදාම හිනාවෙන්, සෙනෙහසින් හා සාමයෙන් පිරිලා තියේවා.",
+      "පුංචි පුංචි දේවල් වලට ම සතුටු වෙන්න පුළුවන් ආදරයක් ඔයාලට ලැබේවා.",
+      "ආදරේ කියන්නේ එකිනෙකා දිහා බලාගෙන ඉන්න එක නෙවෙයි, එකම දිශාවකට එකට යන එක — ඒ ගමන සුබ වේවා!",
+      "සඳ හිරු පවතින තුරු ම ඔයාලගේ ආදරේ නොමැකී බැබළේවා.",
+      "දුකේදී හයිය වෙන්න, සතුටේදී බෙදාගන්න යාළුවෙක් වගේ, ජීවිත කාලෙටම එකට ඉන්න.",
+      "අලුත් පවුලකට, අලුත් හීන ගොඩකට — ආදරණීය සුබ පැතුම්!",
+      "ඔයාලගේ ආදර කතාව ලෝකෙම ලස්සනම කතාව වේවා.",
+      "හැම උදෑසනක් ම එකිනෙකාගේ මූණ දැකලා පටන්ගන්න භාග්‍යය ඔයාලට ලැබේවා.",
+      "ආදරෙන්, විශ්වාසෙන් හා ඉවසීමෙන් පිරුණු අපූරු දිවියක් ගෙවන්න පුළුවන් වේවා.",
+      "කවදාවත් හිත් රිදෙන්නේ නැති, හැමදාම එකිනෙකාගේ හිත හදන දෙදෙනෙක් වෙන්න.",
+      "සමෘද්ධිය, සෞඛ්‍ය සම්පත්තිය හා දිගු සතුටක් ම ඔයාලා දෙපළට පතනවා.",
+      "පොඩි රණ්ඩුවකින් පස්සේ, ආදරේ තව ටිකක් තදින් දැනෙන්න.",
+      "අත්වැල් බැඳගෙන, හැම අභියෝගයක්ම එකට ජය අරගෙන ඉදිරියට යන්න.",
+      "ඔයාලගේ නිවහන දරුවන්ගේ හිනා හඬින් සතුටින් ම පිරිලා ඉතිරේවා.",
+      "හැම දවසක් ම නැවත නැවතත් එකිනෙකාව තෝරගන්න පුළුවන් ආදරයක් ඔයාලට තියේවා.",
+      "ආදරේ, විශ්වාසය හා ගෞරවය — මේ තුනම ඔයාලගේ ජීවිතේ මුල් බැහැගෙන තියේවා.",
+      "සුබ මුහුර්තෙන් පටන්ගත්ත මේ ගමන, සුබ අවසානයක් ම දක්වා දිගැරේවා.",
+      "හිත් දෙකක් එකතු වුණ මේ ලස්සන දවසේ, ආදරණීය සුබ පැතුම් රැසක්!",
+      "වයසට ගියාට පස්සෙත්, තරුණ කාලේ වගේම එකිනෙකාට ආදරෙන් ඉන්න.",
+      "ඔයාලගේ හීන ඔක්කොම ඇත්ත වෙන්න, එකට හදන ලෝකේ හිතුවටත් වඩා ලස්සන වෙන්න.",
+      "සතුට බෙදාගත්තම දෙගුණ වෙනවා, දුක බෙදාගත්තම බාගයක් අඩු වෙනවා — ඒ බෙදාගැනීම ඔයාලට ලැබේවා.",
+      "ආදරෙන් තෙත් වුණ, සමඟියෙන් බැඳුණු අපූරු පවුලක් වෙන්න.",
+      "හැම වසන්තයක් ම ඔයාලගේ ආදරේට අලුත් මල් පිපේවා.",
+      "එකිනෙකා නැතුව බැරි තරමට, ඒත් එකිනෙකාට බරක් නොවෙන තරමට ආදරෙන් ඉන්න.",
+      "ඔයාලගේ ජීවිතේ හැම පිටුවක් ම සතුටෙන් හා සෙනෙහසින් ලියවේවා.",
+      "දෙවියන්ගේ ආශිර්වාදය හැමදාම ඔයාලගේ ගෙදරට ම ලැබේවා.",
+      "පුංචි අත් දෙකක් ඔයාලගේ ඇඟිලි අල්ලන දවසක් ඉක්මනින්ම එළඹේවා.",
+      "හැම දුකකදීම 'මම ඉන්නවා' කියලා කියන්න පුළුවන් කෙනෙක් එකිනෙකාට වෙන්න.",
+      "ආදරෙන් පටන්ගත්ත මේ බැඳීම, ජීවිත කාලෙටම නොකැඩෙන එකක් වේවා.",
+      "ඔයාලගේ හිනාව, ඔයාලගේ ගෙදර හා ඔයාලගේ ආදරේ — හැමදාම බබළාවා.",
+      "හැම රැයක් ම සමාදානෙන් නිදාගෙන, හැම උදේම හිනාවෙන් අවදි වෙන්න.",
+      "එකිනෙකාගේ ලොකුම රසිකයා, ලොකුම යාළුවා හා ලොකුම ආදරවන්තයා වෙන්න.",
+      "සැපදුක් දෙකේම එකට ඉඳලා, එකට වයසට යන අපූරු භාග්‍යය ලැබේවා.",
+      "ඔයාලගේ පවුල ආදරෙන්, සිනාවෙන් හා සමෘද්ධියෙන් සදා පිරිලා තියේවා.",
+      "හිත් දෙකක් එකක් වුණ මේ දවස, ජීවිතේ ලස්සනම මතකය වේවා.",
+      "ආදරේට කවදාවත් වයසක් නෑ කියලා, ඔයාලා ලෝකෙට පෙන්නලා දෙන්න.",
+      "ඔයාලගේ අලුත් ගමනට සතුට, සෞඛ්‍යය හා සාමය හැම විටම හෙවණැල්ලක් වේවා.",
+      "එකිනෙකාට දුන්නු පොරොන්දු, ජීවිත කාලෙටම ආදරෙන් රකින්න පුළුවන් වේවා.",
+      "ඔයාලගේ ගෙදරින් හැමදාම හිනා හඬයි, ආදර වචනයි ම ඇහෙන්න.",
+      "සෙනෙහසින් බැඳුණු ඔයාලා දෙන්නට, සදා සුවෙන් සැනසිල්ලෙන් ඉන්න පතනවා.",
+      "හැම ගැටලුවක්ම එකට කතාකරලා විසඳන, විශ්වාසෙන් පිරුණු ජීවිතයක් වෙන්න.",
+      "ඔයාලගේ ආදරේ, කාලය යනකොට වයින් වගේ තව තවත් රසවත් වේවා.",
+      "අලුත් ජීවිතේට, අලුත් සිහින වලට — ආදරණීය සුබ පැතුම්! සදා සතුටින් වේවා!",
+      "එකිනෙකාගේ අත අල්ලගෙන, ලෝකෙම දිනාගන්න පුළුවන් ශක්තියක් ඔයාලට ලැබේවා.",
+      "ඔයාලා දෙන්නාට ආදරෙන් පිරුණු, සිනාවෙන් බැබළෙන, සදාකාලික සුබ දවසක්!"
     ]
   },
   en: {
     brand: "Helasiritha",
+    footCredit: 'Helasiritha · with love <span class="heart">♥</span>',
     nav: { invitation: "Invitation", agenda: "Schedule", gallery: "Moments", blessings: "Wishes", rsvp: "RSVP" },
     langLabel: "සිං", langTitle: "සිංහලට මාරු වන්න",
     loading: "Preparing…",
@@ -205,36 +225,56 @@ const TEXT = {
     months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
     weekdays: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
     suggest: [
-      "May your married life be filled with love, harmony and endless joy!",
-      "Wishing you a lifetime of happiness, laughter and togetherness!",
-      "May you both be blessed with health, long life and boundless joy!",
-      "May your new journey overflow with blessings and prosperity!",
-      "Hand in hand, may you conquer every challenge together!",
-      "Wishing you peace, love and a beautiful future together!",
-      "May your bond grow stronger with every passing year!",
-      "May all your dreams come true and your life be full of love!",
-      "Congratulations! May you always find joy in one another!",
-      "May every morning bring smiles and every evening bring love!",
-      "Wishing you a blessed union and a wonderful life ahead!",
-      "May your love story be the most beautiful one ever told!",
-      "Here's to a lifetime of shared dreams and quiet, happy moments!",
-      "May your home always be full of laughter, warmth and love!",
-      "Through every high and low, may you always hold each other close!",
-      "Wishing you endless date nights and countless reasons to smile!",
-      "May the love you share today only deepen with time!",
-      "So happy for you both — may your best days still lie ahead!",
-      "May your marriage be a beautiful adventure you never stop enjoying!",
-      "May your life together be as wonderful as the love that brought you here!",
-      "May your two hearts beat as one for many, many years!",
-      "Cheers to love, laughter and a happily ever after!",
-      "May kindness, patience and joy fill every day of your life together!",
-      "Wishing you a home filled with little joys and big dreams!",
-      "May you grow old together, still laughing at the same old jokes!",
-      "Sending you all our love as you begin this beautiful chapter!",
-      "May every day together feel like a blessing, because it is!",
-      "Wishing you a marriage full of trust, tenderness and endless love!",
-      "May your journey together be blessed, joyful and truly unforgettable!",
-      "Congratulations on finding your forever — cherish every moment!"
+      "Wishing you a lifetime of love, laughter, and the little moments that mean everything.",
+      "May you keep choosing each other, every single day, for the rest of your lives.",
+      "Here's to a love that grows softer and stronger with every passing year.",
+      "May your home always be full of warmth, laughter, and something good on the stove.",
+      "Hold each other's hand through the storms and the sunshine — that's what it's all about.",
+      "Wishing you health, happiness, and a love that never runs out.",
+      "May you always be each other's favourite person and safest place.",
+      "Love isn't looking at each other, but looking the same way together — enjoy the journey.",
+      "May your love shine on, unfaded, as long as the sun and moon remain.",
+      "Be each other's shoulder in sorrow and your loudest cheer in joy.",
+      "To a new home, new dreams, and a beautiful life together — congratulations!",
+      "May your love story be the most beautiful one ever told.",
+      "May you wake up to each other's smile every single morning.",
+      "Wishing you a life full of trust, tenderness, and endless patience with each other.",
+      "May you always be quick to forgive and slow to let go.",
+      "Wishing you prosperity, good health, and a happiness that lasts a lifetime.",
+      "After every little argument, may your love feel even deeper than before.",
+      "Hand in hand, may you face every challenge and win every one together.",
+      "May your home one day be filled with the laughter of little feet.",
+      "May you never stop falling for each other, over and over again.",
+      "Love, trust, and respect — may all three take deep root in your life together.",
+      "A beautiful beginning deserves a beautiful forever — here's to yours.",
+      "On the day two hearts became one, all our love and warmest wishes to you both.",
+      "May you love each other in your grey-haired years just as you do today.",
+      "May all your dreams come true, and the world you build together be lovelier than you imagined.",
+      "Joy shared is doubled and sorrow shared is halved — may you always share both.",
+      "May you grow into a family bound by love and endless togetherness.",
+      "May every season bring fresh blooms to your love.",
+      "Close enough to never let go, gentle enough to never weigh each other down — that's real love.",
+      "May every page of your life together be written in joy and tenderness.",
+      "May blessings rain gently on your home for all the years to come.",
+      "May two tiny hands soon wrap around your fingers.",
+      "May you always be the one who says 'I'm right here' when it matters most.",
+      "A love that begins so beautifully deserves to last a whole lifetime.",
+      "May your smiles, your home, and your love shine on forever.",
+      "May you sleep in peace every night and wake up smiling every morning.",
+      "Be each other's best friend, biggest fan, and greatest love.",
+      "May you share the sweet and the hard, and grow old side by side.",
+      "May your family forever overflow with love, laughter, and good fortune.",
+      "May this day two hearts became one be the loveliest memory of your lives.",
+      "Show the world that love truly never grows old.",
+      "May happiness, health, and peace follow you wherever your new life leads.",
+      "May you keep, with love, every promise you made to each other today.",
+      "May your home always echo with laughter and gentle, loving words.",
+      "To the two of you, bound by love — may you live long, well, and happy.",
+      "May you talk through every problem and build a life full of trust.",
+      "Like fine wine, may your love only grow richer with time.",
+      "To your new life and new dreams — congratulations, and may you always be happy!",
+      "Hand in hand, may you find the strength to take on the whole world.",
+      "Wishing you both a love-filled, laughter-bright, forever-kind of happy."
     ]
   }
 };
@@ -296,6 +336,7 @@ function renderAll() {
   document.documentElement.lang = LANG;
   document.body.dir = "ltr";
   $("#brandName").textContent = T.brand;
+  { const fc = $("#footCredit"); if (fc) fc.innerHTML = T.footCredit; }
   $("#nav-invitation").textContent = T.nav.invitation;
   $("#nav-agenda").textContent = T.nav.agenda;
   $("#nav-gallery").textContent = T.nav.gallery;
@@ -407,6 +448,7 @@ function renderGallery() {
 
 let counterDone = false;
 function renderCounter() {
+  const lc = $("#lampCount"); if (!lc) return;   // lamp/counter section not present — no-op
   const T = L();
   $("#lampEyebrow").textContent = T.lampEyebrow;
   $("#lampTitle").textContent = T.lampTitle;
@@ -544,7 +586,24 @@ function setupNav() {
   };
   document.addEventListener("scroll", () => requestAnimationFrame(onScroll), { passive: true });
   onScroll();
-  if (toTop) toTop.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  if (toTop) toTop.onclick = () => {
+    // Controlled, comfortable glide to the top (native smooth is too fast on a long page).
+    const html = document.documentElement, prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";                 // bypass CSS smooth so our easing owns the motion
+    const start = window.scrollY || window.pageYOffset || 0;
+    if (start < 4) { html.style.scrollBehavior = prev; return; }
+    const dur = Math.min(1500, Math.max(700, start * 0.62));
+    const ease = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    let t0 = null;
+    const step = ts => {
+      if (t0 === null) t0 = ts;
+      const k = Math.min(1, (ts - t0) / dur);
+      window.scrollTo(0, Math.round(start * (1 - ease(k))));
+      if (k < 1) requestAnimationFrame(step);
+      else html.style.scrollBehavior = prev;
+    };
+    requestAnimationFrame(step);
+  };
   // scroll-spy
   if ("IntersectionObserver" in window) {
     const spy = new IntersectionObserver((es) => {
@@ -597,6 +656,7 @@ function setupParticles() {
   }
   resize(); window.addEventListener("resize", resize, { passive: true });
   function frame() {
+    if (document.documentElement.classList.contains("vv-zoom")) { particleRAF = requestAnimationFrame(frame); return; }
     ctx.clearRect(0, 0, w, h);
     for (const d of dots) {
       d.x += d.vx; d.y += d.vy;
@@ -612,6 +672,15 @@ function setupParticles() {
     if (document.hidden) { if (particleRAF) cancelAnimationFrame(particleRAF), particleRAF = null; }
     else if (!particleRAF) frame();
   });
+}
+
+/* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
+function setupZoomGuard() {
+  const vv = window.visualViewport; if (!vv) return;
+  const apply = () => document.documentElement.classList.toggle("vv-zoom", (vv.scale || 1) > 1.25);
+  vv.addEventListener("resize", apply, { passive: true });
+  vv.addEventListener("scroll", apply, { passive: true });
+  apply();
 }
 
 /* Preloader → reveal */
@@ -828,12 +897,12 @@ function init() {
   document.body.classList.add("loaded");
   renderAll();
   setupNav(); setupLang(); setupRsvp(); setupBlessings(); setupLightbox();
-  setupParallax(); setupParticles();
+  setupParallax(); setupParticles(); setupZoomGuard();
   $("#heroRsvpBtn").addEventListener("click", () => { const r = $("#rsvp"); if (r) r.scrollIntoView({ behavior: "smooth" }); });
   const mb = $("#musicBtn"); if (mb) mb.onclick = toggleMusic; syncMusicBtn();
   // preloader: dismiss after first paint / fonts
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(dismissPreloader, 350));
-  setTimeout(dismissPreloader, 2200); // safety
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(dismissPreloader, 250));
+  setTimeout(dismissPreloader, 1500); // safety — never leave the visitor waiting
   connect();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

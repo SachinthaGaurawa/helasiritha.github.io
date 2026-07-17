@@ -14,6 +14,10 @@
 <link rel="apple-touch-icon" href="https://res.cloudinary.com/dzrfpc9be/image/upload/v1781120583/favicon_jb60x8.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://iili.io">
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -39,7 +43,7 @@
       <span class="lamp-flame" aria-hidden="true"></span>
       <span class="lamp-glow" aria-hidden="true"></span>
     </button>
-    <span class="entry-cta">පහන දැල්වීමට ස්පර්ශ කරන්න · Tap to enter</span>
+    <span class="entry-cta">පහන දැල්වීමට ස්පර්ශ කරන්න</span>
   </div>
   <div class="entry-flash" aria-hidden="true"></div>
 </div>
@@ -100,6 +104,7 @@
         <span class="hero-sep" aria-hidden="true"></span>
         <span id="heroVenue" class="hero-venue"></span>
       </div>
+      <div class="hansa-divider reveal" aria-hidden="true"><span class="hansa-mark"></span></div>
       <div class="hero-cta">
         <button id="heroRsvpBtn" class="btn" type="button"></button>
       </div>
@@ -115,6 +120,7 @@
     <div class="wrap center">
       <p id="invEyebrow" class="eyebrow reveal"></p>
       <h2 id="invTitle" class="sec-title foil reveal"></h2>
+      <div class="hansa-divider reveal" aria-hidden="true"><span class="hansa-mark"></span></div>
     </div>
     <!-- ░░ Sannasa — your exact standalone file, embedded verbatim (isolated) ░░ -->
     <div class="sannasa-embed reveal">
@@ -267,7 +273,7 @@
     <div id="footNames" class="foot-names foil"></div>
     <div id="footDate" class="foot-date"></div>
     <div id="footActions" class="foot-actions"></div>
-    <div class="foot-credit">හෙළ සිරිත · made with <span class="heart">♥</span></div>
+    <div id="footCredit" class="foot-credit"></div>
   </div>
 </footer>
 
@@ -293,12 +299,35 @@
 <script>
 /* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
 (function(){
-  var e=document.getElementById('entry'); if(!e){return;}
+  /* Always start at the very top / entry on every load & refresh — no scroll restoration */
+  if('scrollRestoration' in history){ try{ history.scrollRestoration='manual'; }catch(_){} }
+  window.scrollTo(0,0);
+  document.documentElement.classList.add('entry-lock');   /* lock page scroll behind the gateway */
+  var e=document.getElementById('entry');
+  if(!e){ document.documentElement.classList.remove('entry-lock'); return; }
+
+  /* Entry text in the visitor's stored language only (Sinhala default) — language purity */
+  var lang='si'; try{ lang = localStorage.getItem('hs_lang') || 'si'; }catch(_){}
+  var TX = {
+    si:{ eyebrow:'ශුභ මංගලම්', names:'කෞශානි <span class="amp">&amp;</span> ගෞරව', sub:'අපගේ විවාහ මංගල්‍යයට ඔබ සාදරයෙන් ආරාධනා කරමු', cta:'පහන දැල්වීමට ස්පර්ශ කරන්න' },
+    en:{ eyebrow:'The Wedding Of', names:'Kaushani <span class="amp">&amp;</span> Gaurawa', sub:'We joyfully invite you to celebrate our wedding day', cta:'Tap the lamp to enter' }
+  };
+  var tx = TX[lang] || TX.si;
+  if(lang==='en'){ try{ document.documentElement.lang='en'; }catch(_){} }
+  (function(){
+    var eb=e.querySelector('.entry-eyebrow'); if(eb) eb.textContent=tx.eyebrow;
+    var nm=e.querySelector('.entry-names'); if(nm) nm.innerHTML=tx.names;
+    var sb=e.querySelector('.entry-sub'); if(sb) sb.textContent=tx.sub;
+    var ct=e.querySelector('.entry-cta'); if(ct) ct.textContent=tx.cta;
+  })();
+
   var done=false;
   function enter(){
     if(done){return;} done=true;
+    window.scrollTo(0,0);                                  /* the site opens at its very top */
     e.classList.add('go');
-    document.documentElement.classList.add('entered');
+    document.documentElement.classList.remove('entry-lock');
+    document.documentElement.classList.add('entered');    /* unlocks page scroll (CSS) */
     var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
     setTimeout(function(){ if(e&&e.parentNode){ e.parentNode.removeChild(e); } }, 1600);
   }
@@ -308,6 +337,8 @@
   document.addEventListener('keydown', function(ev){
     if(!done && (ev.key==='Enter' || ev.key===' ' || ev.key==='Escape')){ enter(); }
   });
+  /* refresh / back-forward cache restore → force top while the gateway is still up */
+  window.addEventListener('pageshow', function(){ if(!done){ window.scrollTo(0,0); } });
 })();
 </script>
 

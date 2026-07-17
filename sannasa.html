@@ -272,45 +272,27 @@
         /* a soft warm glow lifts the writing area so aged ink stays legible */
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
     }
-    .dc-sri {
-        font-weight: 800; font-size: 28px; letter-spacing: 0.02em; margin-bottom: 3px;
-        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4);
-    }
-    .dc-rule {
-        display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 11px; font-size: 13px;
-    }
-    .dc-rule::before, .dc-rule::after {
-        content: ""; height: 1px; width: 54px;
-        background: linear-gradient(90deg, transparent, #a9812f, transparent);
-    }
-    .dc-eyebrow {
-        font-family: 'Gemunu Libre', serif; font-size: 15.5px; letter-spacing: 0.2em; color: #5e3a1f;
-    }
-    .dc-eyebrow-en {
-        font-family: 'IM Fell English', serif; font-style: italic; font-size: 12px;
-        letter-spacing: 0.05em; color: #6f421f; margin-bottom: 14px;
-    }
-    .dc-name {
-        font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 43px; line-height: 1.06; color: #3d1f0b;
-        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3);
-    }
-    .dc-name-en {
-        font-family: 'Pinyon Script', cursive; font-size: 29px; line-height: 1; color: #7a1c12; margin: 1px 0 2px;
-    }
-    .dc-amp {
-        font-family: 'Pinyon Script', cursive; font-size: 28px; color: #a9812f; margin: 4px 0;
-    }
-    .dc-body {
-        font-family: 'Abhaya Libre', serif; font-size: 16px; line-height: 1.65; color: #5e3a1f;
-        max-width: 30ch; margin: 12px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3);
-    }
-    .dc-meta {
-        display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 24px; margin: 15px auto 0;
-    }
-    .dc-meta .b { min-width: 92px; }
-    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10.5px; letter-spacing: 0.12em; color: #7c5326; }
-    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15.5px; color: #3d1f0b; }
-    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10.5px; color: #6f421f; }
+    .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px;
+        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
+    .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
+    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px;
+        background: linear-gradient(90deg, transparent, #a9812f, transparent); }
+    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
+    .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
+    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px;
+        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
+    .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
+    .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
+    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f;
+        max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 22px; margin: 13px auto 0; }
+    .dc-meta .b { min-width: 90px; }
+    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
+    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
+    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
+    .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
+    /* zoom-crash guard — disable heavy SVG filters only while pinch/zoomed in */
+    html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
 </style>
 </head>
 <body>
@@ -351,7 +333,7 @@
 
     <div class="scroll-viewport">
         
-        <div class="scroll-instruction">සෙමින් පහළට · Scroll to unfurl</div>
+        <div class="scroll-instruction"></div>
 
         <div class="scroll-sticky-scene">
             <div class="scroll-master-container">
@@ -392,21 +374,22 @@
                 
                 <div class="decree-overlay" aria-hidden="false">
                     <div class="decree-inner">
-                        <div class="dc-sri">ශ්‍රී</div>
+                        <div class="dc-sri" data-dc="sri">ශ්‍රී</div>
                         <div class="dc-rule"></div>
-                        <div class="dc-eyebrow">සුබ විවාහ මංගල්‍යය</div>
-                        <div class="dc-eyebrow-en">The Honour of Your Presence is Requested</div>
-                        <div class="dc-name">කෞශානි</div>
-                        <div class="dc-name-en">Kaushani</div>
-                        <div class="dc-amp">&amp;</div>
-                        <div class="dc-name">ගෞරව</div>
-                        <div class="dc-name-en">Gaurawa</div>
-                        <div class="dc-body">මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ගෞරවයෙන් අපේක්ෂා කරමු.</div>
+                        <div class="dc-eyebrow" data-dc="eyebrow"></div>
+                        <div class="dc-lineage" data-dc="brideParents"></div>
+                        <div class="dc-name" data-dc="brideName"></div>
+                        <div class="dc-conj" data-dc="conj">&amp;</div>
+                        <div class="dc-lineage" data-dc="groomParents"></div>
+                        <div class="dc-name" data-dc="groomName"></div>
+                        <div class="dc-join" data-dc="join"></div>
+                        <div class="dc-body" data-dc="body"></div>
                         <div class="dc-meta">
-                            <div class="b"><div class="l">දිනය</div><div class="v">2028 ජනවාරි 12</div><div class="e">Wed, 12th January</div></div>
-                            <div class="b"><div class="l">වේලාව</div><div class="v">පෙ.ව. 9.00</div><div class="e">Forenoon</div></div>
-                            <div class="b"><div class="l">ස්ථානය</div><div class="v">The Epitome Hotel</div><div class="e">Kurunegala</div></div>
+                            <div class="b"><div class="l" data-dc="lDate"></div><div class="v" data-dc="vDate"></div></div>
+                            <div class="b"><div class="l" data-dc="lTime"></div><div class="v" data-dc="vTime"></div></div>
+                            <div class="b"><div class="l" data-dc="lVenue"></div><div class="v" data-dc="vVenue"></div><div class="e" data-dc="vCity"></div></div>
                         </div>
+                        <div class="dc-poruwa" data-dc="poruwa"></div>
                     </div>
                 </div>
 
@@ -427,6 +410,100 @@
         </div>
 
     </div>
+
+    <script>
+    /* Sannasa — language purity + live Firestore sync + zoom-crash guard.
+       Additive only: the LERP scroll engine below is left byte-for-byte untouched.
+       Same-origin iframe → shares localStorage('hs_lang') with the main page. */
+    (function(){
+      var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
+      var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
+
+      /* Traditional-format default content (bride first). Firestore overrides these live. */
+      var C = {
+        si: {
+          sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය",
+          brideParents:"ආදරණීය දෙමාපියන්ගේ ආදරණීය දියණිය,",
+          brideName:"කෞශානි",
+          groomParents:"ආදරණීය දෙමාපියන්ගේ ආදරණීය පුත්,",
+          groomName:"ගෞරව",
+          join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
+          body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.",
+          lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය",
+          date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"The Epitome Hotel", city:"කුරුණෑගල",
+          poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට",
+          cue:"සෙමින් පහළට"
+        },
+        en: {
+          sri:"✦", eyebrow:"The Honour of Your Presence is Requested",
+          brideParents:"the cherished daughter of loving parents,",
+          brideName:"Kaushani",
+          groomParents:"the cherished son of loving parents,",
+          groomName:"Gaurawa",
+          join:"on the joyous occasion of their marriage,",
+          body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.",
+          lDate:"Date", lTime:"Time", lVenue:"Venue",
+          date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala",
+          poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
+          cue:"Scroll to unfurl"
+        }
+      };
+
+      var live = {};
+      function lang(){ try{ return localStorage.getItem('hs_lang')==='en' ? 'en' : 'si'; }catch(_){ return 'si'; } }
+      function set(k, v){ var el=document.querySelector('[data-dc="'+k+'"]'); if(el) el.textContent = v; }
+      function ov(key){ var l=lang(), v=live[key+(l==='si'?'Si':'En')]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+      function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+
+      function render(){
+        var l = lang(), t = C[l];
+        try{ document.documentElement.lang = l; }catch(_){}
+        set('sri', t.sri); set('eyebrow', t.eyebrow); set('conj', '✦');
+        set('brideParents', ov('brideParents') || t.brideParents);
+        set('brideName',    ov('brideName') || plain('brideName') || t.brideName);
+        set('groomParents', ov('groomParents') || t.groomParents);
+        set('groomName',    ov('groomName') || plain('groomName') || t.groomName);
+        set('join', ov('join') || t.join);
+        set('body', ov('sannasaBody') || ov('invite') || t.body);
+        set('lDate', t.lDate); set('lTime', t.lTime); set('lVenue', t.lVenue);
+        set('vDate', ov('date') || t.date);
+        set('vTime', ov('time') || t.time);
+        set('vVenue', ov('venue') || plain('venue') || t.venue);
+        set('vCity', ov('city') || plain('venueCity') || t.city);
+        set('poruwa', ov('poruwa') || t.poruwa);
+        var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;
+      }
+      render();
+      /* re-render instantly when the main page toggles language */
+      window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
+
+      /* live Firestore sync — decree already shows full defaults, so this only enriches */
+      Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
+        var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
+        m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
+          var d = snap.exists() ? (snap.data()||{}) : {};
+          live = d || {};
+          if (live.dateISO && !live.dateSi && !live.dateEn){
+            try{
+              var dt = new Date(live.dateISO);
+              if(!isNaN(dt)){
+                live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+                live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+              }
+            }catch(_){}
+          }
+          render();
+        }, function(){ /* offline → keep elegant defaults */ });
+      }).catch(function(){ /* SDK blocked → keep elegant defaults */ });
+
+      /* zoom-crash guard — soften heavy SVG filters only while pinch/zoomed in */
+      if (window.visualViewport){
+        var vv = window.visualViewport;
+        var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
+        vv.addEventListener('resize', z, {passive:true}); vv.addEventListener('scroll', z, {passive:true}); z();
+      }
+    })();
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

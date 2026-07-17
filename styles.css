@@ -573,6 +573,16 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 .entry.go .entry-flash{animation:flash 1.2s ease-out}
 .entry-names.foil{animation:sheen 8s ease-in-out infinite}
 
+/* ── Gateway scroll-lock: no page scroll (and no bleed) until the visitor enters ── */
+html.entry-lock, html.entry-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
+html.entry-lock .entry{ touch-action:auto }
+@media (scripting: none){ html, html body{ overflow:auto !important; height:auto } }
+
+/* ── Zoom-crash guard: soften GPU-heavy effects only while the user is pinch/zoomed in ── */
+html.vv-zoom .nav, html.vv-zoom .lightbox, html.vv-zoom .drawer, html.vv-zoom .nav-drawer{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important }
+html.vv-zoom .aurora, html.vv-zoom #fxCanvas, html.vv-zoom body::before, html.vv-zoom body::after{ opacity:0 !important }
+html.vv-zoom .hero-emblem{ animation:none !important }
+
 @keyframes kenburns{from{transform:scale(1.06) translate(0,0)}to{transform:scale(1.16) translate(-1.6%,-1.6%)}}
 @keyframes entry-float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
 @keyframes entry-rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
@@ -627,6 +637,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 :root{
   --s-sannasa:url('https://iili.io/CGiC8Dg.png');   /* proclamation scroll */
   --s-emblem:url('https://iili.io/CGQlYaS.png');     /* royal couple emblem */
+  --s-hansa:url('https://iili.io/ChWDDcx.png');      /* Hansa Puttuwa — auspicious swan-knot (transparent → gold mask) */
   --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");  /* parchment grain */
 }
 
@@ -643,9 +654,35 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 
 /* ── Hero emblem (royal couple) — replaces the K&G monogram ── */
 .hero-portrait.is-mono{background:radial-gradient(120% 120% at 50% 22%,rgba(42,34,26,.55),rgba(12,12,14,.5))}
-.hero-emblem{width:100%;height:100%;background:var(--s-emblem) center/contain no-repeat;
-  filter:drop-shadow(0 6px 16px rgba(0,0,0,.5));animation:emblemFloat 6s ease-in-out infinite}
-@keyframes emblemFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.015)}}
+.hero-emblem{width:100%;height:100%;background:var(--s-emblem) center 42%/116% no-repeat;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));animation:emblemFloat 7s ease-in-out infinite;
+  -webkit-mask:linear-gradient(to bottom,#000 76%,rgba(0,0,0,0) 99%);
+          mask:linear-gradient(to bottom,#000 76%,rgba(0,0,0,0) 99%)}
+@keyframes emblemFloat{0%,100%{transform:translateY(0) scale(1) rotate(0deg)}50%{transform:translateY(-7px) scale(1.02) rotate(.4deg)}}
+/* slow gold rim-light sweeping the medallion edge — premium touch */
+.hero-portrait.is-mono{position:relative}
+.hero-portrait.is-mono::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
+  background:conic-gradient(from 210deg,rgba(232,201,135,0) 0 16%,rgba(245,224,166,.55) 30%,rgba(232,201,135,0) 48%,rgba(232,201,135,0) 70%,rgba(245,224,166,.34) 84%,rgba(232,201,135,0) 100%);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent calc(50% - 3px),#000 calc(50% - 2.4px));
+          mask:radial-gradient(circle at 50% 50%,transparent calc(50% - 3px),#000 calc(50% - 2.4px));
+  animation:rimSpin 16s linear infinite;opacity:.72}
+@keyframes rimSpin{to{transform:rotate(360deg)}}
+body.lite .hero-portrait.is-mono::after,html.vv-zoom .hero-portrait.is-mono::after{animation:none}
+@media (prefers-reduced-motion:reduce){ .hero-portrait.is-mono::after{animation:none} }
+
+/* ── Hansa Puttuwa — auspicious swan-knot divider (rendered as pure gold via mask) ── */
+.hansa-divider{display:flex;align-items:center;justify-content:center;gap:clamp(.7rem,2.4vw,1.3rem);
+  width:min(360px,82%);margin:clamp(1.3rem,3.4vw,2.2rem) auto}
+.hansa-divider::before,.hansa-divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-2) 55%,var(--gold))}
+.hansa-divider::after{background:linear-gradient(270deg,transparent,var(--gold-2) 55%,var(--gold))}
+.hansa-mark{flex:0 0 auto;width:clamp(36px,8.5vw,56px);height:clamp(36px,8.5vw,56px);
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 46%,var(--gold-deep));
+  -webkit-mask:var(--s-hansa) center/contain no-repeat;mask:var(--s-hansa) center/contain no-repeat;
+  filter:var(--orn-emboss);animation:hansaGlow 4.6s ease-in-out infinite}
+@keyframes hansaGlow{0%,100%{opacity:.9;transform:translateY(0) scale(1)}50%{opacity:1;transform:translateY(-2px) scale(1.05)}}
+body.lite .hansa-mark,html.vv-zoom .hansa-mark{animation:none}
+body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
+@media (prefers-reduced-motion:reduce){ .hansa-mark{animation:none} }
 
 /* ── Sinhala combining-mark clipping fix (roomier line-box + padded paint box) ── */
 .hero-names{line-height:1.16;padding-block:.06em}
