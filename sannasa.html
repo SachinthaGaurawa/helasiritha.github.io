@@ -149,7 +149,7 @@
         position: relative;
         width: 100%;
         /* Driven completely via GPU-calculated custom CSS variables to avoid layout reflows */
-        height: calc(var(--unroll-progress) * 650px);
+        height: calc(var(--unroll-progress) * 740px);
         overflow: hidden; /* Clamps inner paper container during reveal */
         filter: url('#edge-fray-heavy'); 
         will-change: height;
@@ -161,7 +161,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 650px; /* Locked target height */
+        height: 740px; /* Locked target height */
         background-color: #d6a874; /* Base organic parchment hue */
         
         /* Edge destruction coordinates mimicking natural fiber erosion */
@@ -242,7 +242,7 @@
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
         --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        transform: scale(min(1, calc((100vw - 20px) / 650)));
+        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 900)));
         transform-origin: top center;
     }
 
@@ -255,13 +255,13 @@
         left: 0;
         right: 0;
         z-index: 5;             /* above the parchment, below the wooden rolls (z-index:10) */
-        height: calc(var(--unroll-progress) * 650px);
+        height: calc(var(--unroll-progress) * 740px);
         overflow: hidden;
         pointer-events: none;
     }
     .decree-inner {
         width: 100%;
-        height: 650px;
+        height: 740px;
         padding: 58px 66px 42px;
         display: flex;
         flex-direction: column;
@@ -291,6 +291,12 @@
     .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
     .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
+    /* Auspicious closing seal — Swasti Siddham — a small framed cartouche (double gold border) */
+    .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em;
+        color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px;
+        background: rgba(247,226,182,0.32);
+        box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15);
+        text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     /* zoom-crash guard — disable heavy SVG filters only while pinch/zoomed in */
     html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
 </style>
@@ -390,6 +396,7 @@
                             <div class="b"><div class="l" data-dc="lVenue"></div><div class="v" data-dc="vVenue"></div><div class="e" data-dc="vCity"></div></div>
                         </div>
                         <div class="dc-poruwa" data-dc="poruwa"></div>
+                        <div class="dc-swasti" data-dc="swasti"></div>
                     </div>
                 </div>
 
@@ -432,6 +439,7 @@
           lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය",
           date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"The Epitome Hotel", city:"කුරුණෑගල",
           poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට",
+          swasti:"ස්වස්ති සිද්ධම්",
           cue:"සෙමින් පහළට"
         },
         en: {
@@ -445,6 +453,7 @@
           lDate:"Date", lTime:"Time", lVenue:"Venue",
           date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala",
           poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
+          swasti:"Swasti Siddham",
           cue:"Scroll to unfurl"
         }
       };
@@ -471,6 +480,7 @@
         set('vVenue', ov('venue') || plain('venue') || t.venue);
         set('vCity', ov('city') || plain('venueCity') || t.city);
         set('poruwa', ov('poruwa') || t.poruwa);
+        set('swasti', t.swasti);
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;
       }
       render();
