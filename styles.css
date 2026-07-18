@@ -319,7 +319,19 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .fig-ring{position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .5s}
 .masonry figure:hover .fig-ring{box-shadow:inset 0 0 0 1.5px var(--gold)}
 .masonry figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem .9rem;color:#fff;font-family:var(--f-si);font-size:.9rem;background:linear-gradient(0deg,rgba(5,5,7,.85),transparent)}
-.gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem}
+.gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;column-span:all;-webkit-column-span:all;text-align:center;letter-spacing:normal;width:100%}
+
+/* ── Sinhala glyph-shaping fix ──────────────────────────────────────────────
+   CSS letter-spacing inserts space between a consonant and its vowel sign
+   (ා ැ ෑ ි ී …), visually detaching Sinhala clusters ("ඡ ා ය ා ..."). We
+   neutralise all tracking while the page is Sinhala, and restore the elegant
+   wide tracking only when the page switches to English (Latin). app.js keeps
+   <html lang> in sync, so this flips automatically on the Translate toggle. */
+html:not([lang="en"]) :is(
+  .eyebrow, .pre-text, .pre-mono, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
+  .inv-when .lbl, .cd-lbl, .counter-cap, .ag-time, .hero-date, .hero-names, .sec-title,
+  .inv-name, .foot-date, .foot-credit, .lang-toggle, .nav-link, .btn, .hero-venue
+){ letter-spacing: normal !important; }
 @media (max-width:540px){.masonry{columns:2 140px}}
 
 /* Lightbox */
@@ -642,10 +654,12 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 }
 
 /* ── Sannasa — embedded standalone scroll (isolated iframe, verbatim) ── */
+/* Iframe sits in normal flow; app.js (setupSannasaScroll) drives the scroll-unroll from
+   the iframe's position in the viewport, so the invitation reveals on every device & deploy. */
 .sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem;
   background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%)}
 .sannasa-frame{display:block; width:100%; height:100vh; height:100svh; min-height:600px;
-  border:0; background:transparent}
+  border:0; background:transparent; pointer-events:none}
 @supports (height:100dvh){ .sannasa-frame{height:100dvh} }
 @media (max-width:560px){ .sannasa-frame{min-height:540px} }
 /* keep app.js's #inviteBody target alive but invisible (no layout, no a11y noise) */

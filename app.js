@@ -674,6 +674,36 @@ function setupParticles() {
   });
 }
 
+/* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe).
+   The iframe keeps its own LERP engine untouched — we move its internal scroll position
+   based on where the frame sits in the viewport, so the invitation unrolls & reveals
+   reliably on every device & deploy without needing to scroll inside the frame. */
+function setupSannasaScroll() {
+  const frame = $(".sannasa-frame");
+  if (!frame) return;
+  let innerMax = 0;
+  const measure = () => {
+    try {
+      const w = frame.contentWindow, d = w && w.document && w.document.documentElement;
+      innerMax = d ? Math.max(0, d.scrollHeight - w.innerHeight) : 0;
+    } catch (_) { innerMax = 0; }
+  };
+  const drive = () => {
+    let w;
+    try { w = frame.contentWindow; } catch (_) { return; }
+    if (!w || !w.document || !w.document.documentElement) return;
+    if (!innerMax) measure();
+    const vh = window.innerHeight, rect = frame.getBoundingClientRect();
+    // 0 as the frame enters from the bottom → 1 by the time it rises to fill the viewport
+    const p = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+    try { w.scrollTo(0, p * innerMax); } catch (_) {}
+  };
+  frame.addEventListener("load", () => { measure(); drive(); setTimeout(() => { measure(); drive(); }, 400); });
+  window.addEventListener("scroll", drive, { passive: true });
+  window.addEventListener("resize", () => { measure(); drive(); }, { passive: true });
+  measure(); drive();
+}
+
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
 function setupZoomGuard() {
   const vv = window.visualViewport; if (!vv) return;
@@ -897,7 +927,7 @@ function init() {
   document.body.classList.add("loaded");
   renderAll();
   setupNav(); setupLang(); setupRsvp(); setupBlessings(); setupLightbox();
-  setupParallax(); setupParticles(); setupZoomGuard();
+  setupParallax(); setupParticles(); setupZoomGuard(); setupSannasaScroll();
   $("#heroRsvpBtn").addEventListener("click", () => { const r = $("#rsvp"); if (r) r.scrollIntoView({ behavior: "smooth" }); });
   const mb = $("#musicBtn"); if (mb) mb.onclick = toggleMusic; syncMusicBtn();
   // preloader: dismiss after first paint / fonts
