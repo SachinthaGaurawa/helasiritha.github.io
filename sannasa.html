@@ -44,7 +44,7 @@
         display: flex;
         justify-content: center;
         align-items: flex-start; /* FIXED TOP ALIGNMENT */
-        padding-top: 8vh; /* Fixed vertical position for stationary top cylinder */
+        padding-top: 6vh; /* Fixed vertical position — trimmed from 8vh to give the fully-unrolled scroll extra bottom headroom so the lower wooden roll is never clipped */
         overflow: hidden;
         pointer-events: none; /* Passes scrolling through to the viewport */
     }
@@ -242,7 +242,7 @@
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
         --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 900)));
+        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
         transform-origin: top center;
     }
 

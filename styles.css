@@ -444,11 +444,11 @@ body.lite .music .eq i{animation:none;height:9px}
    app.js is NOT touched. All motifs load from the user's Cloudinary CDN.
    ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --o-crest:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,w_520/v1784079463/Copy_of_WealthFlow_Logo_q49zoz.png');
-  --o-arch:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,w_820/v1784079458/Photoroom_20260715_020528_kfm0vq.png');
-  --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,w_720/v1784079459/IMG_9974_fk1bfu.png');
-  --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,w_720/v1784079462/Untitled_design_sbha7k.png');
-  --o-seal:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,w_620/v1784079465/IMG_9976_ojsagn.png');
+  --o-crest:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_520/v1784079463/Copy_of_WealthFlow_Logo_q49zoz.png');
+  --o-arch:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_820/v1784079458/Photoroom_20260715_020528_kfm0vq.png');
+  --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_720/v1784079459/IMG_9974_fk1bfu.png');
+  --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_720/v1784079462/Untitled_design_sbha7k.png');
+  --o-seal:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_620/v1784079465/IMG_9976_ojsagn.png');
   --o-pineapple:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784079452/IMG_9965_swzusp.png');
   --o-floral:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1000/v1784079451/IMG_9964_crpqqm.jpg');
   --goldify:grayscale(1) sepia(1) saturate(2.5) brightness(1.06) hue-rotate(2deg);
@@ -673,7 +673,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 /* ── Sannasa — embedded standalone scroll (isolated iframe, verbatim) ── */
 /* Iframe sits in normal flow; app.js (setupSannasaScroll) drives the scroll-unroll from
    the iframe's position in the viewport, so the invitation reveals on every device & deploy. */
-.sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem;
+.sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem; margin-bottom:clamp(1.8rem,5vw,3rem);
   background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%)}
 .sannasa-frame{display:block; width:100%; height:100vh; height:100svh; min-height:600px;
   border:0; background:transparent; pointer-events:none}

@@ -361,7 +361,7 @@ function renderHero() {
   $("#scrollCue").querySelector(".cue-lbl").textContent = T.scrollCue;
   const port = $("#heroPortrait");
   if (S.heroImageUrl) {
-    port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(n.b + " " + T.and + " " + n.g) + '" loading="eager" decoding="async">';
+    port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(n.b + " " + T.and + " " + n.g) + '" loading="eager" decoding="async" fetchpriority="high">';
     port.classList.remove("is-mono");
   } else {
     port.innerHTML = '<div class="hero-emblem" aria-hidden="true"></div>';
@@ -441,9 +441,10 @@ function renderGallery() {
   const box = $("#masonry");
   if (!GALLERY.length) { box.innerHTML = '<p class="gallery-empty">' + esc(T.galleryEmpty) + '</p>'; return; }
   box.innerHTML = GALLERY.map((g, i) =>
-    '<figure class="reveal" data-i="' + i + '"><img src="' + esc(g.url) + '" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async">' +
+    '<figure class="reveal" data-i="' + i + '"><img src="' + esc(g.url) + '" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.opacity=1">' +
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
+  box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
 }
 
 let counterDone = false;
