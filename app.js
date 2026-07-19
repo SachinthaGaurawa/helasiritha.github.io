@@ -153,7 +153,7 @@ const TEXT = {
     brand: "Helasiritha",
     footCredit: 'Helasiritha · with love <span class="heart">♥</span>',
     nav: { invitation: "Invitation", agenda: "Schedule", gallery: "Moments", blessings: "Wishes", rsvp: "RSVP" },
-    langLabel: "සිං", langTitle: "සිංහලට මාරු වන්න",
+    langLabel: "தமிழ்", langTitle: "தமிழுக்கு மாறவும்",
     loading: "Preparing…",
     heroEyebrow: "Welcome",
     heroTag: "We warmly invite you to celebrate our wedding",
@@ -276,6 +276,134 @@ const TEXT = {
       "Hand in hand, may you find the strength to take on the whole world.",
       "Wishing you both a love-filled, laughter-bright, forever-kind of happy."
     ]
+  },
+  ta: {
+    brand: "ஹெல சிரித",
+    footCredit: 'ஹெல சிரித · அன்புடன் <span class="heart">♥</span>',
+    nav: { invitation: "அழைப்பிதழ்", agenda: "நிகழ்ச்சி நிரல்", gallery: "நினைவுகள்", blessings: "வாழ்த்துகள்", rsvp: "வருகை" },
+    langLabel: "සිං", langTitle: "සිංහලට මාරු වන්න",
+    loading: "தயாராகிறது…",
+    heroEyebrow: "வரவேற்பு",
+    heroTag: "எங்கள் திருமண விழாவைக் கொண்டாட உங்களை அன்புடன் அழைக்கிறோம்",
+    and: "மற்றும்",
+    heroRsvp: "வருகையை உறுதிப்படுத்தவும்",
+    scrollCue: "கீழே",
+    invEyebrow: "அன்புடன்",
+    invTitle: "திருமண அழைப்பிதழ்",
+    invSentence: (a) => "இந்த சிறப்பு நாளை எங்களுடன் கொண்டாட உங்கள் அனைவரையும் அன்புடன் அழைக்கிறோம் — " +
+      a.y + " " + a.mo + " " + a.dd + ", " + a.wd + " அன்று, " + a.venue + ", " + a.city + " இல்.",
+    date: "தேதி", venueLbl: "இடம்", timeLbl: "நேரம்",
+    closing: "உங்கள் வருகை எங்கள் மகிழ்ச்சியை மேலும் நிறைவு செய்யும்.",
+    from: "அன்புடன், இருபக்கப் பெற்றோர்களும் குடும்பத்தினரும்.",
+    viewLocation: "வரைபடத்தில் இடத்தைக் காண்க",
+    cdEyebrow: "இன்னும் சில நாட்கள்",
+    cdTitle: "மணநாளுக்கு இன்னும்",
+    days: "நாட்கள்", hours: "மணி", minutes: "நிமிடம்", seconds: "விநாடி",
+    theDay: "இன்று எங்கள் மங்கள மணநாள் ✦",
+    rsvpEyebrow: "வருகை",
+    rsvpTitle: "உங்கள் வருகையை உறுதிப்படுத்தவும்",
+    rsvpSub: "உங்களை இங்கே காண்பது எங்களுக்கு மிகுந்த மகிழ்ச்சி.",
+    rsvpHelp: "உங்கள் பெயரை அல்லது குடும்பப் பெயரைத் தட்டச்சு செய்து தேடவும்.",
+    searchPlaceholder: "உங்கள் பெயரை உள்ளிடவும்",
+    searchBtn: "தேடு",
+    searching: "தேடுகிறது…",
+    noGuest: "மன்னிக்கவும், அந்தப் பெயரில் அழைப்பாளர் யாரும் இல்லை.",
+    proceedTyped: "இந்தப் பெயரில் தொடரவும்",
+    selectName: "உங்கள் பெயரைத் தேர்ந்தெடுக்கவும்",
+    willAttend: "நீங்கள் வருகிறீர்களா?",
+    yesAttend: "ஆம், மகிழ்ச்சியுடன் வருகிறேன்", noAttend: "மன்னிக்கவும், வர இயலாது",
+    liquor: "மதுபானம் தேவையா?", yes: "ஆம்", no: "இல்லை",
+    guestCount: "வருகை தரும் எண்ணிக்கை",
+    dietary: "உணவுத் தேவைகள் (ஏதேனும் இருந்தால்)",
+    dietaryPh: "சைவம், ஒவ்வாமை போன்றவை…",
+    confirmRsvp: "பதிலை அனுப்பு",
+    rsvpThanks: "மிக்க நன்றி!",
+    rsvpYesMsg: "உங்களைச் சந்திக்க நாங்கள் ஆவலுடன் காத்திருக்கிறோம் ✦",
+    rsvpNoMsg: "உங்களை நாங்கள் மிஸ் செய்வோம் — உங்கள் அன்பிற்கு நன்றி.",
+    changeResponse: "பதிலை மாற்று",
+    back: "பின்செல்",
+    rsvpClosed: "வருகை அறிவிக்கும் காலம் தற்போது முடிந்துவிட்டது. நன்றி.",
+    agEyebrow: "எங்கள் நாள்",
+    agendaTitle: "நாளின் நிகழ்ச்சி நிரல்",
+    agendaSub: "தருணம் தருணமாக எங்கள் கொண்டாட்டம்",
+    galEyebrow: "புகைப்படங்கள்",
+    galleryTitle: "அன்பின் நினைவுகள்",
+    gallerySub: "நாங்கள் ஒன்றாகக் கழித்த அழகிய தருணங்கள் சில…",
+    galleryEmpty: "புகைப்படங்கள் விரைவில் இங்கே தோன்றும்…",
+    lampEyebrow: "அன்புடன்",
+    lampTitle: "மகிழ்ச்சியுடன் இணையும் அன்பர்கள்",
+    lampSub: "எங்களுடன் கொண்டாட வரும் அன்பர்களின் எண்ணிக்கை",
+    confirmedCap: "அழைப்பாளர்கள் உறுதி செய்யப்பட்டுள்ளனர்",
+    loveEyebrow: "இதயத்திலிருந்து",
+    loveTitle: "ஒரு சிறப்புக் குறிப்பு",
+    loveSub: "எங்கள் அன்பு விருந்தினர்களுக்கு",
+    loveNoteDefault: "அன்பும் நன்றியும் நிறைந்த இதயங்களுடன், எங்கள் வாழ்க்கையின் இந்த அழகிய அத்தியாயத்தை உங்களுடன் கொண்டாடுவதில் நாங்கள் மிகவும் மகிழ்ச்சியடைகிறோம். உங்கள் வருகையும் அன்பும் ஆசீர்வாதங்களும் வார்த்தைகளால் சொல்ல முடியாத அளவுக்கு எங்களுக்கு விலைமதிப்பற்றவை. உங்கள் அனைவருடனும் சிரிப்பையும் மகிழ்ச்சியையும் மறக்க முடியாத நினைவுகளையும் பகிர்ந்து கொள்ள நாங்கள் ஆவலுடன் காத்திருக்கிறோம்.",
+    blEyebrow: "வாழ்த்துகள்",
+    blessingsTitle: "வாழ்த்துப் புத்தகம்",
+    blessingsSub: "எங்களுக்காக உங்கள் வாழ்த்தைப் பதிவு செய்யவும்.",
+    yourName: "உங்கள் பெயர்",
+    yourBlessing: "உங்கள் வாழ்த்து",
+    sendBlessing: "வாழ்த்தைப் பதிவு செய்",
+    suggestBtn: "ஒரு வாழ்த்தைப் பரிந்துரைக்கவும்",
+    sending: "அனுப்புகிறது…",
+    blessingThanks: "உங்கள் வாழ்த்திற்கு நன்றி! அனுமதிக்குப் பிறகு அது இங்கே தோன்றும்.",
+    blessingsEmpty: "முதல் வாழ்த்து உங்களிடமிருந்து வரட்டும்…",
+    callUs: "அழைக்கவும்", addCal: "நாட்காட்டியில்", shareWa: "WhatsApp",
+    setup: "அமைப்பு தயாராகிறது. சிறிது நேரம் கழித்து மீண்டும் வரவும்.",
+    months: ["ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்","ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்"],
+    weekdays: ["ஞாயிறு","திங்கள்","செவ்வாய்","புதன்","வியாழன்","வெள்ளி","சனி"],
+    suggest: [
+      "உங்கள் புதிய வாழ்க்கை அன்பினால் நிறைந்து, ஒவ்வொரு நாளும் சிரிப்புடன் கழிய வாழ்த்துகிறோம்!",
+      "ஒருவரின் கையை மற்றொருவர் என்றும் விடாமல், அன்பினால் இறுகப் பிணைந்திருங்கள்.",
+      "நல்ல ஆரோக்கியம், நீண்ட ஆயுள், முடிவில்லா மகிழ்ச்சி உங்கள் இருவருக்கும் கிடைக்கட்டும்!",
+      "மனதால் கட்டிய இந்தப் பந்தம், காலத்துடன் மேலும் மேலும் வலிமையடையட்டும்.",
+      "புயல் வீசினாலும், மழை பெய்தாலும், கைகோர்த்து ஒன்றாக நிற்க முடியட்டும்.",
+      "உங்கள் இல்லம் எப்போதும் சிரிப்பாலும் அன்பாலும் அமைதியாலும் நிறைந்திருக்கட்டும்.",
+      "சிறு சிறு விஷயங்களிலும் மகிழ்ச்சி காணும் அன்பு உங்களுக்குக் கிடைக்கட்டும்.",
+      "அன்பு என்பது ஒருவரை ஒருவர் பார்த்திருப்பதல்ல, ஒரே திசையில் ஒன்றாகச் செல்வது — அந்தப் பயணம் இனிதாகட்டும்!",
+      "சந்திரனும் சூரியனும் இருக்கும் வரை உங்கள் அன்பு மங்காமல் ஒளிரட்டும்.",
+      "துன்பத்தில் தோள் கொடுக்கும், மகிழ்ச்சியில் பகிர்ந்து கொள்ளும் நண்பராக வாழ்நாள் முழுவதும் ஒன்றாக இருங்கள்.",
+      "புதிய குடும்பத்திற்கு, புதிய கனவுகளுக்கு — அன்பான வாழ்த்துகள்!",
+      "உங்கள் காதல் கதை உலகின் அழகிய கதையாக மலரட்டும்.",
+      "ஒவ்வொரு காலையிலும் ஒருவரின் முகத்தை மற்றொருவர் பார்த்து விழிக்கும் பேறு கிடைக்கட்டும்.",
+      "அன்பாலும் நம்பிக்கையாலும் பொறுமையாலும் நிறைந்த அற்புத வாழ்க்கை வாழுங்கள்.",
+      "மனம் நோகாமல், எப்போதும் ஒருவர் மனதை மற்றொருவர் மகிழ்விக்கும் இருவராக இருங்கள்.",
+      "செழிப்பும் ஆரோக்கியமும் நீண்ட மகிழ்ச்சியும் உங்கள் இருவருக்கும் அமையட்டும்.",
+      "சிறு தகராறுக்குப் பிறகு, அன்பு இன்னும் கொஞ்சம் ஆழமாக உணரட்டும்.",
+      "கைகோர்த்து, ஒவ்வொரு சவாலையும் ஒன்றாக வென்று முன்னேறுங்கள்.",
+      "உங்கள் இல்லம் குழந்தைகளின் சிரிப்பொலியால் மகிழ்ச்சியாக நிறையட்டும்.",
+      "ஒவ்வொரு நாளும் மீண்டும் மீண்டும் ஒருவரை ஒருவர் தேர்ந்தெடுக்கும் அன்பு உங்களுக்கு இருக்கட்டும்.",
+      "அன்பு, நம்பிக்கை, மரியாதை — இம்மூன்றும் உங்கள் வாழ்வில் வேரூன்றட்டும்.",
+      "நல்ல முகூர்த்தத்தில் தொடங்கிய இந்தப் பயணம், இனிய முடிவு வரை நீளட்டும்.",
+      "இரு இதயங்கள் இணைந்த இந்த அழகிய நாளில், அன்பான வாழ்த்துகள் பல!",
+      "வயதானாலும், இளமைக் காலம் போலவே ஒருவரை ஒருவர் அன்புடன் நேசியுங்கள்.",
+      "உங்கள் கனவுகள் அனைத்தும் நனவாகட்டும், ஒன்றாகக் கட்டும் உலகம் நினைத்ததை விட அழகாகட்டும்.",
+      "மகிழ்ச்சி பகிர்ந்தால் இரட்டிப்பாகும், துன்பம் பகிர்ந்தால் பாதியாகும் — அந்தப் பகிர்வு உங்களுக்குக் கிடைக்கட்டும்.",
+      "அன்பில் நனைந்த, ஒற்றுமையால் பிணைந்த அற்புதக் குடும்பமாக இருங்கள்.",
+      "ஒவ்வொரு வசந்தத்திலும் உங்கள் அன்பிற்குப் புதிய மலர்கள் பூக்கட்டும்.",
+      "ஒருவரை இன்றி மற்றொருவர் இல்லை என்னும் அளவுக்கு, ஆனால் ஒருவருக்கு மற்றொருவர் சுமையாகாத அளவுக்கு அன்புடன் இருங்கள்.",
+      "உங்கள் வாழ்வின் ஒவ்வொரு பக்கமும் மகிழ்ச்சியாலும் அன்பாலும் எழுதப்படட்டும்.",
+      "இறைவனின் ஆசீர்வாதம் எப்போதும் உங்கள் இல்லத்தில் நிலைத்திருக்கட்டும்.",
+      "சிறிய கைகள் இரண்டு உங்கள் விரல்களைப் பற்றும் நாள் விரைவில் வரட்டும்.",
+      "ஒவ்வொரு துன்பத்திலும் 'நான் இருக்கிறேன்' என்று சொல்லும் துணையாக ஒருவருக்கு ஒருவர் இருங்கள்.",
+      "அன்பில் தொடங்கிய இந்தப் பந்தம், வாழ்நாள் முழுவதும் அறுபடாததாக இருக்கட்டும்.",
+      "உங்கள் சிரிப்பும் உங்கள் இல்லமும் உங்கள் அன்பும் எப்போதும் ஒளிரட்டும்.",
+      "ஒவ்வொரு இரவும் அமைதியுடன் உறங்கி, ஒவ்வொரு காலையும் சிரிப்புடன் விழியுங்கள்.",
+      "ஒருவருக்கு ஒருவர் மிகப்பெரிய ரசிகராக, சிறந்த நண்பராக, ஆழ்ந்த காதலராக இருங்கள்.",
+      "இன்பம் துன்பம் இரண்டிலும் ஒன்றாக இருந்து, ஒன்றாக வயதாகும் அற்புதப் பேறு கிடைக்கட்டும்.",
+      "உங்கள் குடும்பம் அன்பாலும் சிரிப்பாலும் செழிப்பாலும் என்றும் நிறைந்திருக்கட்டும்.",
+      "இரு இதயம் ஒன்றான இந்த நாள், வாழ்வின் அழகிய நினைவாக மாறட்டும்.",
+      "அன்பிற்கு வயதே இல்லை என்பதை உலகிற்கு நீங்கள் காட்டுங்கள்.",
+      "உங்கள் புதிய பயணத்திற்கு மகிழ்ச்சியும் ஆரோக்கியமும் அமைதியும் என்றும் நிழலாக இருக்கட்டும்.",
+      "ஒருவருக்கு ஒருவர் அளித்த வாக்குறுதிகளை, வாழ்நாள் முழுவதும் அன்புடன் காக்க முடியட்டும்.",
+      "உங்கள் இல்லத்திலிருந்து எப்போதும் சிரிப்பொலியும் அன்பான வார்த்தைகளும் கேட்கட்டும்.",
+      "அன்பால் பிணைந்த உங்கள் இருவருக்கும், என்றும் நலமும் அமைதியும் நிலைக்கட்டும்.",
+      "ஒவ்வொரு பிரச்சினையையும் ஒன்றாகப் பேசித் தீர்க்கும், நம்பிக்கை நிறைந்த வாழ்க்கை வாழுங்கள்.",
+      "உங்கள் அன்பு, காலம் செல்லச் செல்ல மேலும் இனிமையாகட்டும்.",
+      "புதிய வாழ்க்கைக்கு, புதிய கனவுகளுக்கு — அன்பான வாழ்த்துகள்! என்றும் மகிழ்ச்சியாக இருங்கள்!",
+      "ஒருவரின் கையைப் பற்றி, உலகையே வெல்லும் வலிமை உங்களுக்குக் கிடைக்கட்டும்.",
+      "உங்கள் இருவருக்கும் அன்பு நிறைந்த, சிரிப்பில் ஒளிரும், நித்திய மகிழ்ச்சியான நாள்!"
+    ]
   }
 };
 
@@ -283,12 +411,13 @@ const TEXT = {
 const DEFAULTS = {
   brideName: "කෞශානි", groomName: "ගෞරව",
   brideNameEn: "Kaushani", groomNameEn: "Gaurawa",
+  brideNameTa: "கௌஷானி", groomNameTa: "கௌரவ",
   bridePreLine: "ශ්‍රීමත් හා ශ්‍රීමතී කුලසූරියගේ දම්පතියන්ගේ ආදරණීය දියණිය,",
   groomPreLine: "ශ්‍රීමත් හා ශ්‍රීමතී කප්පෙටිපොල වීරකෝන් මුදියන්සේලාගේ දම්පතියන්ගේ ආදරණීය පුත්‍රයා,",
   dateISO: "2028-01-12T09:15:00+05:30",
-  venue: "The Epitome Hotel", venueCity: "කුරුණෑගල",
+  venue: "The Epitome Hotel", venueCity: "කුරුණෑගල", venueCityEn: "Kurunegala", venueCityTa: "குருநாகல்",
   venueMapUrl: "https://www.google.com/maps/search/?api=1&query=The+Epitome+Hotel+Kurunegala",
-  ceremonyTime: "පෙ.ව. 9.15 සිට",
+  ceremonyTime: "පෙ.ව. 9.15 සිට", ceremonyTimeEn: "9.15 a.m. onwards", ceremonyTimeTa: "மு.ப. 9.15 மணி முதல்",
   poruwaTime: "පෙ.ව. 9.15",
   heroImageUrl: "",
   loveNote: "", loveSign: "කෞශානි & ගෞරව",
@@ -298,10 +427,10 @@ const DEFAULTS = {
 };
 /* Default schedule — bilingual; admin items (titleSi/descSi) override and fall back gracefully */
 const AGENDA_DEFAULT = [
-  { icon: "welcome", timeLabel: "9.15 AM", titleSi: "ආගන්තුක පිළිගැනීම", descSi: "සිනා මුසු මුවින් ආරාධිතයන් සාදරයෙන් පිළිගැනීම.", titleEn: "Welcome", descEn: "Warmly receiving our guests." },
-  { icon: "rings", timeLabel: "9.15 AM", titleSi: "මංගල උත්සවය", descSi: "අපගේ ජීවිත එක්වන සුවිශේෂී මොහොත.", titleEn: "The Ceremony", descEn: "The moment our lives become one." },
-  { icon: "dine", timeLabel: "12.00 PM", titleSi: "දිවා භෝජනය", descSi: "රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.", titleEn: "Lunch", descEn: "A delicious feast for our guests." },
-  { icon: "celebrate", timeLabel: "3.30 PM", titleSi: "සැමරුම් හා පිටත්වීම", descSi: "සතුට බෙදාගනිමින් දිනය නිමා කිරීම.", titleEn: "Celebration & Send-off", descEn: "Closing the day in shared joy." }
+  { icon: "welcome", timeLabel: "9.15 AM", titleSi: "ආගන්තුක පිළිගැනීම", descSi: "සිනා මුසු මුවින් ආරාධිතයන් සාදරයෙන් පිළිගැනීම.", titleEn: "Welcome", descEn: "Warmly receiving our guests.", titleTa: "வரவேற்பு", descTa: "விருந்தினர்களை அன்புடன் வரவேற்றல்." },
+  { icon: "rings", timeLabel: "9.15 AM", titleSi: "මංගල උත්සවය", descSi: "අපගේ ජීවිත එක්වන සුවිශේෂී මොහොත.", titleEn: "The Ceremony", descEn: "The moment our lives become one.", titleTa: "திருமண வைபவம்", descTa: "எங்கள் வாழ்க்கை ஒன்றாகும் சிறப்பு தருணம்." },
+  { icon: "dine", timeLabel: "12.00 PM", titleSi: "දිවා භෝජනය", descSi: "රසවත් භෝජන සංග්‍රහයකින් ආරාධිතයන් සංග්‍රහ කිරීම.", titleEn: "Lunch", descEn: "A delicious feast for our guests.", titleTa: "மதிய விருந்து", descTa: "விருந்தினர்களுக்கு சுவையான விருந்து." },
+  { icon: "celebrate", timeLabel: "3.30 PM", titleSi: "සැමරුම් හා පිටත්වීම", descSi: "සතුට බෙදාගනිමින් දිනය නිමා කිරීම.", titleEn: "Celebration & Send-off", descEn: "Closing the day in shared joy.", titleTa: "கொண்டாட்டமும் வழியனுப்புதலும்", descTa: "பகிர்ந்த மகிழ்ச்சியுடன் நாளை நிறைவு செய்தல்." }
 ];
 
 /* ── State + helpers ─────────────────────────────────────────────────────── */
@@ -309,14 +438,22 @@ let S = Object.assign({}, DEFAULTS);
 let AGENDA = AGENDA_DEFAULT.slice();
 let GALLERY = [], GUESTS = [], BLESSINGS = [], confirmedGuests = 0;
 let fb = null;
-let LANG = (function () { try { return localStorage.getItem("hs_lang") === "en" ? "en" : "si"; } catch (e) { return "si"; } })();
+let LANG = (function () { try { var x = localStorage.getItem("hs_lang"); return (x === "en" || x === "ta") ? x : "si"; } catch (e) { return "si"; } })();
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (x) => String(x == null ? "" : x).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const L = () => TEXT[LANG];
 const amp = (s) => String(s).replace(/&amp;|&/g, '<span class="amp">&amp;</span>');
-function names() { return LANG === "en" ? { b: S.brideNameEn || S.brideName, g: S.groomNameEn || S.groomName } : { b: S.brideName, g: S.groomName }; }
+function names() {
+  if (LANG === "en") return { b: S.brideNameEn || S.brideName, g: S.groomNameEn || S.groomName };
+  if (LANG === "ta") return { b: S.brideNameTa || S.brideName, g: S.groomNameTa || S.groomName };
+  return { b: S.brideName, g: S.groomName };
+}
+function byLang(base) {
+  var v = LANG === "en" ? S[base + "En"] : LANG === "ta" ? S[base + "Ta"] : S[base];
+  return (v != null && String(v).trim() !== "") ? v : S[base];
+}
 
 function liteMode() {
   const m = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -356,7 +493,7 @@ function renderHero() {
   $("#heroNames").innerHTML = esc(n.b) + ' <span class="amp">' + esc(T.and) + '</span> ' + esc(n.g);
   $("#heroTag").textContent = T.heroTag;
   $("#heroDate").textContent = (LANG === "en" ? (f.wd + ", " + f.mo + " " + f.dd + ", " + f.y) : (f.dd + " " + f.mo + " " + f.y));
-  $("#heroVenue").textContent = S.venue + " · " + S.venueCity;
+  $("#heroVenue").textContent = S.venue + " · " + byLang("venueCity");
   $("#heroRsvpBtn").textContent = T.heroRsvp;
   $("#scrollCue").querySelector(".cue-lbl").textContent = T.scrollCue;
   const port = $("#heroPortrait");
@@ -377,9 +514,9 @@ function renderInvitation() {
   const T = L(), n = names(), f = fmtDate(S.dateISO);
   $("#invEyebrow").textContent = T.invEyebrow;
   $("#invTitle").textContent = T.invTitle;
-  const preB = LANG === "en" ? "The beloved daughter," : S.bridePreLine;
-  const preG = LANG === "en" ? "The beloved son," : S.groomPreLine;
-  const sentence = T.invSentence({ y: f.y, mo: f.mo, dd: f.dd, wd: f.wd, venue: S.venue, city: S.venueCity });
+  const preB = LANG === "en" ? "The beloved daughter," : LANG === "ta" ? "அன்பு மகள்," : S.bridePreLine;
+  const preG = LANG === "en" ? "The beloved son," : LANG === "ta" ? "அன்பு மகன்," : S.groomPreLine;
+  const sentence = T.invSentence({ y: f.y, mo: f.mo, dd: f.dd, wd: f.wd, venue: S.venue, city: byLang("venueCity") });
   const html =
     '<div class="inv-block"><p class="inv-pre">' + esc(preB) + '</p><h3 class="inv-name foil">' + esc(n.b) + '</h3></div>' +
     '<div class="inv-amp">' + esc(T.and) + '</div>' +
@@ -388,9 +525,9 @@ function renderInvitation() {
     '<div class="inv-when">' +
       '<div class="blk"><div class="lbl">' + esc(T.date) + '</div><div class="num foil">' + f.dd + '</div><div class="val">' + esc(f.mo) + ' ' + f.y + '</div></div>' +
       '<div class="sep"></div>' +
-      '<div class="blk"><div class="lbl">' + esc(T.venueLbl) + '</div><div class="val">' + esc(S.venue) + '</div><div class="lbl2">' + esc(S.venueCity) + '</div></div>' +
+      '<div class="blk"><div class="lbl">' + esc(T.venueLbl) + '</div><div class="val">' + esc(S.venue) + '</div><div class="lbl2">' + esc(byLang("venueCity")) + '</div></div>' +
       '<div class="sep"></div>' +
-      '<div class="blk"><div class="lbl">' + esc(T.timeLbl) + '</div><div class="val">' + esc(S.ceremonyTime) + '</div></div>' +
+      '<div class="blk"><div class="lbl">' + esc(T.timeLbl) + '</div><div class="val">' + esc(byLang("ceremonyTime")) + '</div></div>' +
     '</div>' +
     '<p class="inv-close">' + esc(T.closing) + '</p>' +
     '<p class="inv-from">' + esc(T.from) + '</p>' +
@@ -424,8 +561,8 @@ function renderAgenda() {
   $("#agendaTitle").textContent = T.agendaTitle;
   $("#agendaSub").textContent = T.agendaSub;
   $("#agendaList").innerHTML = AGENDA.map((it, i) => {
-    const title = LANG === "en" ? (it.titleEn || it.titleSi) : (it.titleSi || it.titleEn);
-    const desc = LANG === "en" ? (it.descEn || it.descSi) : (it.descSi || it.descEn);
+    const title = LANG === "en" ? (it.titleEn || it.titleSi) : LANG === "ta" ? (it.titleTa || it.titleSi) : (it.titleSi || it.titleEn);
+    const desc = LANG === "en" ? (it.descEn || it.descSi) : LANG === "ta" ? (it.descTa || it.descSi) : (it.descSi || it.descEn);
     return '<div class="ag-item reveal"><div class="ag-dot"><div class="ag-ic">' + AG_ICON(it.icon) + '</div></div>' +
       '<div class="ag-body">' + (it.timeLabel ? '<div class="ag-time">' + esc(it.timeLabel) + '</div>' : "") +
       '<div class="ag-title">' + esc(title) + '</div>' +
@@ -465,7 +602,7 @@ function renderLove() {
   $("#loveSub").textContent = T.loveSub;
   const note = (LANG === "si" && S.loveNote) ? S.loveNote : T.loveNoteDefault;
   $("#loveText").textContent = note;
-  const sign = LANG === "en" ? (n.b + " & " + n.g) : (S.loveSign || (n.b + " & " + n.g));
+  const sign = LANG === "si" ? (S.loveSign || (n.b + " & " + n.g)) : (n.b + " & " + n.g);
   $("#loveSign").innerHTML = amp(sign);
 }
 
@@ -832,12 +969,12 @@ function setupBlessings() {
     const T = L();
     const name = $("#blName").value.trim(), msg = $("#blMsg").value.trim();
     const st = $("#blStatus");
-    if (!name || !msg) { st.textContent = LANG === "en" ? "Please fill both fields." : "කරුණාකර දෙකම පුරවන්න."; return; }
+    if (!name || !msg) { st.textContent = LANG === "en" ? "Please fill both fields." : LANG === "ta" ? "இரண்டு புலங்களையும் நிரப்பவும்." : "කරුණාකර දෙකම පුරවන්න."; return; }
     const btn = $("#blSend"); btn.disabled = true; btn.textContent = T.sending;
     try {
       if (fb) await fb.addDoc(fb.collection(fb.db, "blessings"), { name: name, message: msg, approved: false, ts: fb.serverTimestamp() });
       $("#blName").value = ""; $("#blMsg").value = ""; st.textContent = T.blessingThanks;
-    } catch (e) { st.textContent = LANG === "en" ? "Something went wrong." : "දෝෂයක් සිදුවිය."; }
+    } catch (e) { st.textContent = LANG === "en" ? "Something went wrong." : LANG === "ta" ? "ஏதோ தவறு நேர்ந்தது." : "දෝෂයක් සිදුවිය."; }
     btn.disabled = false; btn.textContent = T.sendBlessing;
   };
 }
@@ -865,7 +1002,7 @@ function setupLightbox() {
 function setupLang() {
   const t = $("#langToggle"); if (!t) return;
   t.onclick = () => {
-    LANG = LANG === "si" ? "en" : "si";
+    LANG = LANG === "si" ? "en" : LANG === "en" ? "ta" : "si";
     try { localStorage.setItem("hs_lang", LANG); } catch (e) {}
     document.body.classList.add("lang-swap");
     renderAll();

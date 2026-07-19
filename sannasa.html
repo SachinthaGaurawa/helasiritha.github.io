@@ -6,7 +6,7 @@
 <title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
        1. CORE RESET & ENVIRONMENT MAPPING
@@ -149,7 +149,7 @@
         position: relative;
         width: 100%;
         /* Driven completely via GPU-calculated custom CSS variables to avoid layout reflows */
-        height: calc(var(--unroll-progress) * 740px);
+        height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden; /* Clamps inner paper container during reveal */
         filter: url('#edge-fray-heavy'); 
         will-change: height;
@@ -161,7 +161,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 740px; /* Locked target height */
+        height: var(--paper-h); /* content-driven target */
         background-color: #d6a874; /* Base organic parchment hue */
         
         /* Edge destruction coordinates mimicking natural fiber erosion */
@@ -184,9 +184,9 @@
             radial-gradient(circle at 18% 28%, rgba(54, 23, 2, 0.25) 0%, transparent 22%), 
             radial-gradient(circle at 82% 62%, rgba(54, 23, 2, 0.28) 0%, transparent 28%),  
             linear-gradient(to right, rgba(58, 23, 4, 0.88) 0%, rgba(92, 55, 22, 0.15) 15%, transparent 25%, transparent 75%, rgba(92, 55, 22, 0.15) 85%, rgba(58, 23, 4, 0.88) 100%),
-            radial-gradient(circle at center, transparent 20%, rgba(77, 43, 14, 0.8) 100%);
+            radial-gradient(circle at center, transparent 20%, rgba(77, 43, 14, 0.6) 100%);
         background-blend-mode: multiply;
-        box-shadow: inset 0 0 100px rgba(43, 19, 4, 0.98);
+        box-shadow: inset 0 0 46px rgba(43, 19, 4, 0.9);
     }
 
     /* =======================================================================
@@ -242,7 +242,14 @@
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
         --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
+        --paper-h: 600px;       /* content-driven; fitSannasa() measures & overwrites this */
+        --assembly-h: 724;      /* set by fitSannasa(); kept for debugging */
+        --fit-scale: 1;         /* viewport-fit scale, computed by fitSannasa() in JS */
+        /* CSS calc cannot turn viewport height into a unitless scale ratio, so the
+           whole-scroll fit is computed in JS (fitSannasa) and applied via --fit-scale.
+           This guarantees the ENTIRE assembly — top roll + parchment + bottom roll —
+           stays on-screen no matter how much content the decree holds. */
+        transform: scale(var(--fit-scale));
         transform-origin: top center;
     }
 
@@ -255,20 +262,20 @@
         left: 0;
         right: 0;
         z-index: 5;             /* above the parchment, below the wooden rolls (z-index:10) */
-        height: calc(var(--unroll-progress) * 740px);
+        height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden;
         pointer-events: none;
     }
     .decree-inner {
         width: 100%;
-        height: 740px;
+        height: var(--paper-h);
         padding: 58px 66px 42px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         color: #3d1f0b;
-        font-family: 'Abhaya Libre', serif;
+        font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif;
         /* a soft warm glow lifts the writing area so aged ink stays legible */
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
     }
@@ -277,22 +284,22 @@
     .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
     .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px;
         background: linear-gradient(90deg, transparent, #a9812f, transparent); }
-    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
-    .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
-    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px;
+    .dc-eyebrow { font-family: 'Gemunu Libre', 'Noto Serif Tamil', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
+    .dc-lineage { font-family: 'Gemunu Libre', 'Noto Serif Tamil', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
+    .dc-name { font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px;
         text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
     .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
-    .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
-    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f;
+    .dc-join { font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
+    .dc-body { font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f;
         max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
     .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 22px; margin: 13px auto 0; }
     .dc-meta .b { min-width: 90px; }
-    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
-    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
-    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
-    .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
+    .dc-meta .l { font-family: 'Gemunu Libre', 'Noto Serif Tamil', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
+    .dc-meta .v { font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
+    .dc-meta .e { font-family: 'Playfair Display', 'Noto Serif Tamil', serif; font-style: italic; font-size: 10px; color: #6f421f; }
+    .dc-poruwa { font-family: 'Gemunu Libre', 'Noto Serif Tamil', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
     /* Auspicious closing seal — Swasti Siddham — a small framed cartouche (double gold border) */
-    .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em;
+    .dc-swasti { font-family: 'Abhaya Libre', 'Noto Serif Tamil', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em;
         color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px;
         background: rgba(247,226,182,0.32);
         box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15);
@@ -455,13 +462,27 @@
           poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
           swasti:"Swasti Siddham",
           cue:"Scroll to unfurl"
+        },
+        ta: {
+          sri:"ஸ்ரீ", eyebrow:"திருமண நல்வாழ்த்து",
+          brideParents:"அன்பான பெற்றோரின் அன்பு மகள்,",
+          brideName:"கௌஷானி",
+          groomParents:"அன்பான பெற்றோரின் அன்பு மகன்,",
+          groomName:"கௌரவ",
+          join:"கரம் பிடிக்கும் மகிழ்ச்சியான தருணத்தை முன்னிட்டு,",
+          body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட உங்கள் மதிப்புமிக்க வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
+          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
+          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 முதல்", venue:"The Epitome Hotel", city:"குருநாகல்",
+          poruwa:"பொருவ சடங்கிற்கான நல்ல முகூர்த்தம் — மு.ப. 09.27",
+          swasti:"ஸ்வஸ்தி சித்தம்",
+          cue:"மெதுவாகக் கீழே"
         }
       };
 
       var live = {};
-      function lang(){ try{ return localStorage.getItem('hs_lang')==='en' ? 'en' : 'si'; }catch(_){ return 'si'; } }
+      function lang(){ try{ var x=localStorage.getItem('hs_lang'); return (x==='en'||x==='ta') ? x : 'si'; }catch(_){ return 'si'; } }
       function set(k, v){ var el=document.querySelector('[data-dc="'+k+'"]'); if(el) el.textContent = v; }
-      function ov(key){ var l=lang(), v=live[key+(l==='si'?'Si':'En')]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+      function ov(key){ var l=lang(), v=live[key+(l==='si'?'Si':l==='ta'?'Ta':'En')]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       function render(){
@@ -482,8 +503,36 @@
         set('poruwa', ov('poruwa') || t.poruwa);
         set('swasti', t.swasti);
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;
+        fitSannasa();
+      }
+      /* Measure the decree's natural content height and size the parchment + whole
+         assembly to fit it — so the ENTIRE sannasa (both rolls + every line) is always
+         visible no matter how much content is inside. Does NOT touch the scroll engine. */
+      function fitSannasa(){
+        try{
+          var mc=document.querySelector('.scroll-master-container');
+          var inner=document.querySelector('.decree-inner');
+          if(!mc||!inner) return;
+          var h=inner.scrollHeight;              /* natural content height incl. padding */
+          if(!h||h<220) return;                  /* guard against pre-font / empty render */
+          var paper=Math.ceil(h+16);             /* small breathing room below the seal */
+          var assembly=paper+124;                /* + top & bottom rolls (84-22)*2 */
+          mc.style.setProperty('--paper-h', paper+'px');
+          mc.style.setProperty('--assembly-h', String(assembly));
+          /* Fit the whole assembly into the viewport. The scene is top-aligned with a
+             6vh top pad, so the vertical budget is (100vh - 6vh - 30px bottom margin).
+             Scale down only when the assembly is taller than that budget. */
+          var vh=window.innerHeight;
+          var budget=vh - vh*0.06 - 30;
+          var fit=budget/assembly;
+          if(!(fit>0)) fit=1;
+          if(fit>1) fit=1;
+          mc.style.setProperty('--fit-scale', fit.toFixed(4));
+        }catch(_){}
       }
       render();
+      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa); }
+      window.addEventListener('resize', fitSannasa, { passive:true });
       /* re-render instantly when the main page toggles language */
       window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
 
@@ -493,12 +542,21 @@
         m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
           var d = snap.exists() ? (snap.data()||{}) : {};
           live = d || {};
-          if (live.dateISO && !live.dateSi && !live.dateEn){
+          if (live.dateISO && !live.dateSi && !live.dateEn && !live.dateTa){
             try{
               var dt = new Date(live.dateISO);
               if(!isNaN(dt)){
-                live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-                live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+                var _opt={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+                // Only keep a localised date if the locale actually rendered in the
+                // target script — otherwise (older device without si-LK / ta-IN) it
+                // silently falls back to English, which would break language purity.
+                // In that case we leave it unset so the pure per-language dict value wins.
+                var _loc=function(lc,re){ try{ var v=dt.toLocaleDateString(lc,_opt); return re.test(v)?v:''; }catch(_){ return ''; } };
+                var _si=_loc('si-LK', /[\u0D80-\u0DFF]/);
+                var _ta=_loc('ta-IN', /[\u0B80-\u0BFF]/);
+                if(_si) live.dateSi=_si;
+                live.dateEn = dt.toLocaleDateString('en-GB',_opt);   // English locale is universally safe
+                if(_ta) live.dateTa=_ta;
               }
             }catch(_){}
           }

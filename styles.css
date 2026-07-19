@@ -22,10 +22,10 @@
   --foil-metal:linear-gradient(180deg,#F4E3B6,#D8B673 48%,#A9823F);
 
   /* Fonts (loaded in index.html) — Latin first, Sinhala fallback per glyph */
-  --f-disp:'Playfair Display','Noto Serif Sinhala',serif;
-  --f-body:'Cormorant Garamond','Noto Sans Sinhala',serif;
-  --f-si:'Noto Sans Sinhala',sans-serif;
-  --f-en:'Cormorant Garamond',serif;
+  --f-disp:'Playfair Display','Noto Serif Sinhala','Noto Serif Tamil',serif;
+  --f-body:'Cormorant Garamond','Noto Sans Sinhala','Noto Sans Tamil',serif;
+  --f-si:'Noto Sans Sinhala','Noto Sans Tamil',sans-serif;
+  --f-en:'Cormorant Garamond','Noto Sans Tamil',serif;
 
   --maxw:1200px;
   --ease:cubic-bezier(.22,.8,.2,1); --ease-soft:cubic-bezier(.16,.7,.27,1);
