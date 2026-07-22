@@ -28,7 +28,7 @@
   .scroll-viewport {
         position: relative;
         width: 100%;
-                /* STATIC content-flow: height is content-derived — fitSannasa() sets the exact px on
+        /* STATIC content-flow: height is content-derived — fitSannasa() sets the exact px on
            every edit/resize. No fixed runway. The scroll is fully unrolled and lives in normal flow. */
         height: auto;
         overflow: hidden;            /* clips ONLY the empty scaled-reserve gap — never a wooden roll */
@@ -242,8 +242,10 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
+        --unroll-progress: 1;   /* PERMANENTLY fully unrolled — both wooden rolls always 100% visible */
+        --paper-h: 740px;       /* content-driven default; fitSannasa() measures & overwrites it */
+        flex-shrink: 0;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
+        transform: scale(min(1, calc((100vw - 20px) / 650px)));  /* WIDTH-ONLY fit (÷650px = valid unitless ratio) — fits width, never shrinks for height; content extends downward */
         transform-origin: top center;
     }
 
@@ -465,6 +467,46 @@
       function ov(key){ var l=lang(), v=live[key+(l==='si'?'Si':'En')]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
+      /* ── CONTENT-ADAPTIVE HEIGHT ──────────────────────────────────────────
+         Measures the decree's natural content height, grows/shrinks the parchment
+         (--paper-h) to fit it, then reports the FULL unrolled height (rolls+paper,
+         scaled) to the parent so the iframe hugs the scroll exactly — NO black void
+         below the lower roll, and it re-hugs the instant admin edits the content. */
+      function fitSannasa(){
+        try{
+          var mc = document.querySelector('.scroll-master-container');
+          var inner = document.querySelector('.decree-inner');
+          if(!mc || !inner) return;
+          /* 1 · natural content height (independent of the fixed box) */
+          var prevH = inner.style.height;
+          inner.style.height = 'auto';
+          var C = inner.scrollHeight;                 /* incl. 58/42 padding */
+          inner.style.height = prevH;
+          /* 2 · parchment = content + torn-edge breathing; floored/capped for safety */
+          var paper = Math.max(560, Math.min(1480, Math.round(C + 70)));
+          mc.style.setProperty('--paper-h', paper + 'px');
+          /* 3 · full-unroll assembly height (both rolls + paper), width-only-scaled,
+                 measured without disturbing the live animation (sync set/read/restore) */
+          var prevP = mc.style.getPropertyValue('--unroll-progress');
+          mc.style.setProperty('--unroll-progress','1');
+          var R = mc.getBoundingClientRect().height;
+          if(prevP==='') mc.style.removeProperty('--unroll-progress');
+          else mc.style.setProperty('--unroll-progress', prevP);
+          /* 4 · content-derived height: lock the scroll's OWN viewport to the fully-unrolled
+                 assembly (28 top + R + 30 bottom) and hand the parent the same value, so the
+                 iframe hugs the invitation exactly — no void below the lower roll, and the
+                 Countdown section below is pushed straight down in normal flow. Recomputed on
+                 every admin edit / resize / font-swap → the parchment grows & shrinks with content. */
+          var needed = Math.round(28 + R + 30);
+          var vp = document.querySelector('.scroll-viewport');
+          if(vp) vp.style.height = needed + 'px';
+          if(window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
+          }
+        }catch(_){}
+      }
+      window.__fitSannasa = fitSannasa;
+
       function render(){
         var l = lang(), t = C[l];
         try{ document.documentElement.lang = l; }catch(_){}
@@ -483,10 +525,14 @@
         set('poruwa', ov('poruwa') || t.poruwa);
         set('swasti', t.swasti);
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;
-        
+        try{ fitSannasa(); }catch(_){}
       }
       render();
-    
+      /* keep the scroll hugged to its content — on load, font swap, resize, and (via render) on every admin edit */
+      window.addEventListener('load', fitSannasa, { passive:true });
+      window.addEventListener('resize', fitSannasa, { passive:true });
+      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
+      setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
       /* re-render instantly when the main page toggles language */
       window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
 
@@ -518,62 +564,10 @@
     })();
     </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const masterContainer = document.querySelector('.scroll-master-container');
-            const topCylinder = document.querySelector('.scroll-cylinder.top');
-            const bottomCylinder = document.querySelector('.scroll-cylinder.bottom');
-
-            // LERP Engine Variables
-            let currentScrollProgress = 0;
-            let targetScrollProgress = 0;
-            
-            // Tuning μ to exactly 0.18 eliminates the "late" feeling completely (instant response)
-            // while filtering out jerky, uneven mouse wheel steps for 60fps/120fps fluid scrolling.
-            const lerpSpeed = 0.18; 
-
-            // High-frequency async listener runs with passive flags to bypass DOM render-blocking
-            window.addEventListener('scroll', () => {
-                const scrollTop = window.scrollY;
-                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-                targetScrollProgress = scrollHeight > 0? scrollTop / scrollHeight : 0;
-            }, { passive: true });
-
-            // Synchronized requestAnimationFrame update loop
-            function updateRenderLoop() {
-                const diff = targetScrollProgress - currentScrollProgress;
-                currentScrollProgress += diff * lerpSpeed;
-
-                // Stop calculating when difference becomes microscopically imperceptible
-                if (Math.abs(diff) < 0.0001) {
-                    currentScrollProgress = targetScrollProgress;
-                }
-
-                const progress = Math.max(0, Math.min(1, currentScrollProgress));
-
-                // 1. Instantly update --unroll-progress CSS variable on master container.
-                // This allows the GPU to compute clip heights and gradient positions immediately in the compositing thread.
-                masterContainer.style.setProperty('--unroll-progress', progress);
-
-                // 2. Rotate the concentric spiral end-caps to perfectly match rotational velocity
-                const capRotation = progress * 720; // 2 complete physical rotations
-                
-                const topCapsLeft = topCylinder.querySelector('.cylinder-cap.left');
-                const topCapsRight = topCylinder.querySelector('.cylinder-cap.right');
-                const bottomCapsLeft = bottomCylinder.querySelector('.cylinder-cap.left');
-                const bottomCapsRight = bottomCylinder.querySelector('.cylinder-cap.right');
-
-                if (topCapsLeft) topCapsLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
-                if (topCapsRight) topCapsRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsLeft) bottomCapsLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsRight) bottomCapsRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
-
-                // Loop synchronized with the monitor's refresh rate (60Hz, 120Hz, 144Hz)
-                requestAnimationFrame(updateRenderLoop);
-            }
-
-            requestAnimationFrame(updateRenderLoop);
-        });
-    </script>
+    <!-- LERP scroll-unroll engine removed by design: the Sannasa is now STATIC and
+         permanently fully unrolled (--unroll-progress:1), so both wooden rolls are 100%
+         visible at all times and the parchment simply grows to fit its content. Height is
+         handed to the parent (fitSannasa) so the iframe hugs it and the Countdown below is
+         pushed down in normal document flow. -->
 </body>
 </html>
