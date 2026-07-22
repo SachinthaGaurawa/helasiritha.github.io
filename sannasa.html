@@ -488,11 +488,6 @@
         try{ fitSannasa(); }catch(_){}
       }
       render();
-    /* keep the scroll hugged to its content — on load, font swap, resize, and (via render) on every admin edit */
-      window.addEventListener('load', fitSannasa, { passive:true });
-      window.addEventListener('resize', fitSannasa, { passive:true });
-      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
-      setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
     
       /* re-render instantly when the main page toggles language */
       window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
