@@ -242,12 +242,14 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        --paper-h: 740px;       /* content-driven default; fitSannasa() measures & overwrites it */
-        flex-shrink: 0;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
-        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
+        --unroll-progress: 1;   /* සන්නස සම්පූර්ණයෙන්ම දිග හැරී පවතී */
+        --paper-h: 740px;       
+        flex-shrink: 0;         
+        /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
+        transform: scale(min(1, calc((100vw - 20px) / 650)));
         transform-origin: top center;
     }
+
 
     /* Invitation text lives in its OWN layer — revealed in perfect sync with the
        parchment (shares --unroll-progress) but OUTSIDE the edge-fray-heavy filter,
