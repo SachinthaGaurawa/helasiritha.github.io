@@ -817,44 +817,16 @@ function setupParticles() {
    lower wooden roll is always 100% visible and the Countdown below is pushed straight down
    (no overlap, no void). Re-hugs the instant the admin edits the decree. */
 function setupSannasaScroll() {
-/* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe). */
-function setupSannasaScroll() {
-  const frame = $(".sannasa-frame");
-  if (!frame) return;
-
-  // 1. සන්නසේ සම්පූර්ණ උස මැනගෙන Iframe එකේ උස හැදීම (Layout එක කැපීම වළක්වයි)
   window.addEventListener("message", (e) => {
     const d = e && e.data;
     if (!d || d.__sannasa !== "height" || typeof d.h !== "number") return;
-    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20));
+    const frame = $(".sannasa-frame");
+    if (!frame) return;
+    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20)); // +20 buffer, clamped
     frame.style.height = px + "px";
     frame.style.minHeight = "0px";
   }, { passive: true });
-
-  // 2. Main page එකේ scroll එකට අනුව සන්නස ත්‍රිමාණව දිග හැරීම
-  const drive = () => {
-    try {
-      if (!frame.contentWindow) return;
-      const rect = frame.getBoundingClientRect();
-      const vh = window.innerHeight;
-      
-      // Screen එකේ පල්ලෙහාට එද්දී දිග ඇරෙන්න පටන් ගෙන, මැදට එද්දී සම්පූර්ණයෙන්ම දිග ඇරේ
-      const startReveal = vh * 0.9; 
-      const endReveal = vh * 0.2;
-      
-      let p = (startReveal - rect.top) / (startReveal - endReveal);
-      p = Math.max(0, Math.min(1, p));
-      
-      // Scroll percentage එක සන්නසට යැවීම
-      frame.contentWindow.postMessage({ __sannasa: 'scroll', progress: p }, '*');
-    } catch (err) {}
-  };
-
-  window.addEventListener("scroll", drive, { passive: true });
-  window.addEventListener("resize", drive, { passive: true });
-  setTimeout(drive, 300);
 }
-
 
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
 function setupZoomGuard() {
