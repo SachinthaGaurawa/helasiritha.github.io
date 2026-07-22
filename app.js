@@ -817,15 +817,22 @@ function setupParticles() {
    based on where the frame sits in the viewport, so the invitation unrolls & reveals
    reliably on every device & deploy without needing to scroll inside the frame. */
 function setupSannasaScroll() {
-  const frame = $(".sannasa-frame");
-  if (!frame) return;
-  let innerMax = 0;
-  const measure = () => {
-    try {
-      const w = frame.contentWindow, d = w && w.document && w.document.documentElement;
-      innerMax = d ? Math.max(0, d.scrollHeight - w.innerHeight) : 0;
-    } catch (_) { innerMax = 0; }
-  };
+  /* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe). */
+function setupSannasaScroll() {
+  // සන්නස දැන් සම්පූර්ණයෙන්ම දිග හැරී ඇත. එය ඇතුළත scroll කිරීම අවශ්‍ය නොවේ.
+  // ඒ වෙනුවට සන්නසේ අන්තර්ගතයට අනුව වෙනස් වන උස (height) ලබාගෙන iframe එක ඊට ගැළපෙන සේ දිගු කරයි.
+  // මෙය මඟින් යට රෝල කිසිදා නොකැපෙන අතර පහළ ඇති කොටස් නිවැරදිව පහළට තල්ලු වේ.
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.__sannasa === 'height' && e.data.h) {
+      const frame = $(".sannasa-frame");
+      if (frame) {
+        // උඩ සහ යට රෝල සම්පූර්ණයෙන්ම පෙන්වීමට සුළු ඉඩක් (buffer) එකතු කර ඇත
+        frame.style.height = (e.data.h + 20) + "px";
+      }
+    }
+  });
+}
+
   const drive = () => {
     let w;
     try { w = frame.contentWindow; } catch (_) { return; }
