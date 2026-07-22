@@ -242,7 +242,7 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
+        --unroll-progress: 1;   /* initial value only; your JS drives it every frame */
         transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
         transform-origin: top center;
     }
