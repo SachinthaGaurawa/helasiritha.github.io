@@ -242,13 +242,13 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 1;   /* සන්නස සම්පූර්ණයෙන්ම දිග හැරී පවතී */
+        --unroll-progress: 0;   /* මෙය 1 වෙනුවට 0 ලෙස වෙනස් කරන්න */
         --paper-h: 740px;       
         flex-shrink: 0;         
-        /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
         transform: scale(min(1, calc((100vw - 20px) / 650)));
         transform-origin: top center;
     }
+
 
 
     /* Invitation text lives in its OWN layer — revealed in perfect sync with the
@@ -428,6 +428,51 @@
     </div>
 
     <script>
+    
+        // --- 3D LERP Animation Engine (Main Page එකේ Scroll එකට ප්‍රතිචාර දක්වයි) ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const masterContainer = document.querySelector('.scroll-master-container');
+            const topCylinder = document.querySelector('.scroll-cylinder.top');
+            const bottomCylinder = document.querySelector('.scroll-cylinder.bottom');
+
+            let currentProgress = 0;
+            let targetProgress = 0;
+            const lerpSpeed = 0.12; // සෙමින් සහ සුමටව දිග හැරීමට
+
+            // Main page එකෙන් එන scroll progress එක ලබා ගැනීම
+            window.addEventListener('message', (e) => {
+                if (e.data && e.data.__sannasa === 'scroll') {
+                    targetProgress = e.data.progress;
+                }
+            });
+
+            function updateRenderLoop() {
+                const diff = targetProgress - currentProgress;
+                currentProgress += diff * lerpSpeed;
+
+                if (Math.abs(diff) < 0.001) currentProgress = targetProgress;
+
+                const p = Math.max(0, Math.min(1, currentProgress));
+                if (masterContainer) masterContainer.style.setProperty('--unroll-progress', p);
+
+                // රෝල කැරකෙන ත්‍රිමාණ effect එක
+                const capRotation = p * 720;
+                const topCapsLeft = topCylinder?.querySelector('.cylinder-cap.left');
+                const topCapsRight = topCylinder?.querySelector('.cylinder-cap.right');
+                const bottomCapsLeft = bottomCylinder?.querySelector('.cylinder-cap.left');
+                const bottomCapsRight = bottomCylinder?.querySelector('.cylinder-cap.right');
+
+                if (topCapsLeft) topCapsLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
+                if (topCapsRight) topCapsRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
+                if (bottomCapsLeft) bottomCapsLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
+                if (bottomCapsRight) bottomCapsRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
+
+                requestAnimationFrame(updateRenderLoop);
+            }
+            requestAnimationFrame(updateRenderLoop);
+        });
+        // --- LERP Engine අවසන් ---
+
     
         /* (static scroll — no scroll-unroll engine; --unroll-progress stays 1) */
     
