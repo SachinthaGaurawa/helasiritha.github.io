@@ -28,7 +28,11 @@
   .scroll-viewport {
         position: relative;
         width: 100%;
-        height: 250vh; /* Cushioned vertical space for smooth LERP unrolling */
+                /* STATIC content-flow: height is content-derived — fitSannasa() sets the exact px on
+           every edit/resize. No fixed runway. The scroll is fully unrolled and lives in normal flow. */
+        height: auto;
+        overflow: hidden;            /* clips ONLY the empty scaled-reserve gap — never a wooden roll */
+        padding: 28px 0 30px;        /* breathing above the top roll and below the bottom roll */
         background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
     }
 
@@ -36,17 +40,14 @@
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
   .scroll-sticky-scene {
-        position: fixed;
-        top: 0;
-        left: 0;
+        position: static;            /* NORMAL DOCUMENT FLOW — no viewport pinning */
         width: 100%;
-        height: 100vh;
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* FIXED TOP ALIGNMENT */
-        padding-top: 6vh; /* Fixed vertical position — trimmed from 8vh to give the fully-unrolled scroll extra bottom headroom so the lower wooden roll is never clipped */
-        overflow: hidden;
-        pointer-events: none; /* Passes scrolling through to the viewport */
+        align-items: flex-start;     /* top roll pinned to the top of the assembly */
+        padding: 0 10px;             /* side breathing only; vertical handled by .scroll-viewport */
+        overflow: visible;           /* NEVER clip the wooden rolls */
+        pointer-events: none;
     }
 
   .scroll-master-container {
@@ -149,7 +150,7 @@
         position: relative;
         width: 100%;
         /* Driven completely via GPU-calculated custom CSS variables to avoid layout reflows */
-        height: calc(var(--unroll-progress) * 740px);
+        height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden; /* Clamps inner paper container during reveal */
         filter: url('#edge-fray-heavy'); 
         will-change: height;
@@ -161,7 +162,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 740px; /* Locked target height */
+        height: var(--paper-h); /* content-driven target (fitSannasa) */
         background-color: #d6a874; /* Base organic parchment hue */
         
         /* Edge destruction coordinates mimicking natural fiber erosion */
@@ -241,8 +242,10 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 0;   /* initial value only; your JS drives it every frame */
-        transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
+        --unroll-progress: 1;   /* PERMANENTLY fully unrolled — both wooden rolls always 100% visible */
+        --paper-h: 740px;       /* content-driven default; fitSannasa() measures & overwrites it */
+        flex-shrink: 0;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
+        transform: scale(min(1, calc((100vw - 20px) / 650px)));  /* WIDTH-ONLY fit (÷650px = valid unitless ratio) — fits width, never shrinks for height; content extends downward */
         transform-origin: top center;
     }
 
@@ -255,13 +258,13 @@
         left: 0;
         right: 0;
         z-index: 5;             /* above the parchment, below the wooden rolls (z-index:10) */
-        height: calc(var(--unroll-progress) * 740px);
+        height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden;
         pointer-events: none;
     }
     .decree-inner {
         width: 100%;
-        height: 740px;
+        height: var(--paper-h);
         padding: 58px 66px 42px;
         display: flex;
         flex-direction: column;
