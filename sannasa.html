@@ -536,34 +536,33 @@
           var mc = document.querySelector('.scroll-master-container');
           var inner = document.querySelector('.decree-inner');
           if(!mc || !inner) return;
-          /* 1 · natural content height (independent of the fixed box) */
+          
           var prevH = inner.style.height;
           inner.style.height = 'auto';
-          var C = inner.scrollHeight;                 /* incl. 58/42 padding */
+          var C = inner.scrollHeight;                 
           inner.style.height = prevH;
-          /* 2 · parchment = content + torn-edge breathing; floored/capped for safety */
-          var paper = Math.max(560, Math.min(1480, Math.round(C + 70)));
+          
+          /* 1480px උපරිම සීමාව ඉවත් කර ඇත. දැන් content කොතරම් වැඩි වුවත් සන්නස ඊට අනුව දිගු වේ */
+          var paper = Math.max(560, Math.round(C + 120));
           mc.style.setProperty('--paper-h', paper + 'px');
-          /* 3 · full-unroll assembly height (both rolls + paper), width-only-scaled,
-                 measured without disturbing the live animation (sync set/read/restore) */
+          
           var prevP = mc.style.getPropertyValue('--unroll-progress');
           mc.style.setProperty('--unroll-progress','1');
           var R = mc.getBoundingClientRect().height;
           if(prevP==='') mc.style.removeProperty('--unroll-progress');
           else mc.style.setProperty('--unroll-progress', prevP);
-          /* 4 · content-derived height: lock the scroll's OWN viewport to the fully-unrolled
-                 assembly (28 top + R + 30 bottom) and hand the parent the same value, so the
-                 iframe hugs the invitation exactly — no void below the lower roll, and the
-                 Countdown section below is pushed straight down in normal flow. Recomputed on
-                 every admin edit / resize / font-swap → the parchment grows & shrinks with content. */
+          
           var needed = Math.round(28 + R + 30);
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
+          
+          /* අලුත් උස parent (main page) එකට යවයි */
           if(window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
           }
         }catch(_){}
       }
+
       window.__fitSannasa = fitSannasa;
 
       function render(){
