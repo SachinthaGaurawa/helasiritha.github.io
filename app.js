@@ -812,41 +812,20 @@ function setupParticles() {
   });
 }
 
-/* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe).
-   The iframe keeps its own LERP engine untouched — we move its internal scroll position
-   based on where the frame sits in the viewport, so the invitation unrolls & reveals
-   reliably on every device & deploy without needing to scroll inside the frame. */
+/* STATIC invitation scroll (same-origin iframe): it is fully unrolled and lives in normal
+   document flow. It posts its content-fit height; we HUG the iframe to that height so the
+   lower wooden roll is always 100% visible and the Countdown below is pushed straight down
+   (no overlap, no void). Re-hugs the instant the admin edits the decree. */
 function setupSannasaScroll() {
-  /* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe). */
-function setupSannasaScroll() {
-  // සන්නස දැන් සම්පූර්ණයෙන්ම දිග හැරී ඇත. එය ඇතුළත scroll කිරීම අවශ්‍ය නොවේ.
-  // ඒ වෙනුවට සන්නසේ අන්තර්ගතයට අනුව වෙනස් වන උස (height) ලබාගෙන iframe එක ඊට ගැළපෙන සේ දිගු කරයි.
-  // මෙය මඟින් යට රෝල කිසිදා නොකැපෙන අතර පහළ ඇති කොටස් නිවැරදිව පහළට තල්ලු වේ.
   window.addEventListener("message", (e) => {
-    if (e.data && e.data.__sannasa === 'height' && e.data.h) {
-      const frame = $(".sannasa-frame");
-      if (frame) {
-        // උඩ සහ යට රෝල සම්පූර්ණයෙන්ම පෙන්වීමට සුළු ඉඩක් (buffer) එකතු කර ඇත
-        frame.style.height = (e.data.h + 20) + "px";
-      }
-    }
-  });
-}
-
-  const drive = () => {
-    let w;
-    try { w = frame.contentWindow; } catch (_) { return; }
-    if (!w || !w.document || !w.document.documentElement) return;
-    if (!innerMax) measure();
-    const vh = window.innerHeight, rect = frame.getBoundingClientRect();
-    // 0 as the frame enters from the bottom → 1 by the time it rises to fill the viewport
-    const p = Math.min(1, Math.max(0, (vh - rect.top) / vh));
-    try { w.scrollTo(0, p * innerMax); } catch (_) {}
-  };
-  frame.addEventListener("load", () => { measure(); drive(); setTimeout(() => { measure(); drive(); }, 400); });
-  window.addEventListener("scroll", drive, { passive: true });
-  window.addEventListener("resize", () => { measure(); drive(); }, { passive: true });
-  measure(); drive();
+    const d = e && e.data;
+    if (!d || d.__sannasa !== "height" || typeof d.h !== "number") return;
+    const frame = $(".sannasa-frame");
+    if (!frame) return;
+    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20)); // +20 buffer, clamped
+    frame.style.height = px + "px";
+    frame.style.minHeight = "0px";
+  }, { passive: true });
 }
 
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */

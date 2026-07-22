@@ -6,7 +6,7 @@
 <title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
        1. CORE RESET & ENVIRONMENT MAPPING
@@ -304,6 +304,10 @@
         text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     /* zoom-crash guard — disable heavy SVG filters only while pinch/zoomed in */
     html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
+    /* Tamil rendering — only when the invitation is in Tamil (lang="ta"). Keeps Sinhala/English
+       fonts untouched; Tamil glyphs render in Noto Serif Tamil at the same sizes & weights. */
+    html[lang="ta"] .decree-inner,
+    html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
 </style>
 </head>
 <body>
@@ -425,64 +429,10 @@
 
     <script>
     
-    document.addEventListener("DOMContentLoaded", () => {
-            const masterContainer = document.querySelector('.scroll-master-container');
-            const topCylinder = document.querySelector('.scroll-cylinder.top');
-            const bottomCylinder = document.querySelector('.scroll-cylinder.bottom');
-
-            // LERP Engine Variables
-            let currentScrollProgress = 0;
-            let targetScrollProgress = 0;
-            
-            // Tuning μ to exactly 0.18 eliminates the "late" feeling completely (instant response)
-            // while filtering out jerky, uneven mouse wheel steps for 60fps/120fps fluid scrolling.
-            const lerpSpeed = 0.18; 
-
-            // High-frequency async listener runs with passive flags to bypass DOM render-blocking
-            window.addEventListener('scroll', () => {
-                const scrollTop = window.scrollY;
-                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-                targetScrollProgress = scrollHeight > 0? scrollTop / scrollHeight : 0;
-            }, { passive: true });
-
-            // Synchronized requestAnimationFrame update loop
-            function updateRenderLoop() {
-                const diff = targetScrollProgress - currentScrollProgress;
-                currentScrollProgress += diff * lerpSpeed;
-
-                // Stop calculating when difference becomes microscopically imperceptible
-                if (Math.abs(diff) < 0.0001) {
-                    currentScrollProgress = targetScrollProgress;
-                }
-
-                const progress = Math.max(0, Math.min(1, currentScrollProgress));
-
-                // 1. Instantly update --unroll-progress CSS variable on master container.
-                // This allows the GPU to compute clip heights and gradient positions immediately in the compositing thread.
-                masterContainer.style.setProperty('--unroll-progress', progress);
-
-                // 2. Rotate the concentric spiral end-caps to perfectly match rotational velocity
-                const capRotation = progress * 720; // 2 complete physical rotations
-                
-                const topCapsLeft = topCylinder.querySelector('.cylinder-cap.left');
-                const topCapsRight = topCylinder.querySelector('.cylinder-cap.right');
-                const bottomCapsLeft = bottomCylinder.querySelector('.cylinder-cap.left');
-                const bottomCapsRight = bottomCylinder.querySelector('.cylinder-cap.right');
-
-                if (topCapsLeft) topCapsLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
-                if (topCapsRight) topCapsRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsLeft) bottomCapsLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsRight) bottomCapsRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
-
-                // Loop synchronized with the monitor's refresh rate (60Hz, 120Hz, 144Hz)
-                requestAnimationFrame(updateRenderLoop);
-            }
-
-            requestAnimationFrame(updateRenderLoop);
-        });
+        /* (static scroll — no scroll-unroll engine; --unroll-progress stays 1) */
     
     /* Sannasa — language purity + live Firestore sync + zoom-crash guard.
-       Additive only: the LERP scroll engine below is left byte-for-byte untouched.
+       Additive only. The scroll is STATIC (fully unrolled) — no scroll-unroll engine.
        Same-origin iframe → shares localStorage('hs_lang') with the main page. */
     (function(){
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
@@ -517,13 +467,27 @@
           poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
           swasti:"Swasti Siddham",
           cue:"Scroll to unfurl"
+        },
+        ta: {
+          sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா",
+          brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,",
+          brideName:"கௌஷானி",
+          groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,",
+          groomName:"கௌரவ",
+          join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,",
+          body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
+          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
+          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"The Epitome Hotel", city:"குருநாகல்",
+          poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு",
+          swasti:"ஸ்வஸ்தி சித்தம்",
+          cue:"மெதுவாக கீழே"
         }
       };
 
       var live = {};
-      function lang(){ try{ return localStorage.getItem('hs_lang')==='en' ? 'en' : 'si'; }catch(_){ return 'si'; } }
+      function lang(){ try{ var x=localStorage.getItem('hs_lang'); return (x==='en'||x==='ta') ? x : 'si'; }catch(_){ return 'si'; } }
       function set(k, v){ var el=document.querySelector('[data-dc="'+k+'"]'); if(el) el.textContent = v; }
-      function ov(key){ var l=lang(), v=live[key+(l==='si'?'Si':'En')]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+      function ov(key){ var l=lang(), sfx=(l==='si'?'Si':l==='ta'?'Ta':'En'), v=live[key+sfx]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       /* ── CONTENT-ADAPTIVE HEIGHT ──────────────────────────────────────────

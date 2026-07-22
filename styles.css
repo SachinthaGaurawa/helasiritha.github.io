@@ -676,19 +676,16 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 .sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem; margin-bottom:clamp(1.8rem,5vw,3rem);
   background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%)}
 .sannasa-frame {
-  display: block; 
-  width: 100%; 
-  height: 100vh; /* මෙය default අගයයි, app.js මඟින් නිවැරදි උස මෙයට ලබා දෙනු ඇත */
-  min-height: 600px;
-  border: 0; 
-  background: transparent; 
+  display: block;
+  width: 100%;
+  height: auto;              /* app.js (height message) sets the exact content-fit height */
+  min-height: 420px;         /* pre-measurement fallback only, before the first height message */
+  border: 0;
+  background: transparent;
   pointer-events: none;
-  transition: height 0.4s cubic-bezier(0.22, 0.8, 0.2, 1); /* උස වෙනස් වෙද්දී ලස්සනට දිග ඇරෙන්න */
+  transition: height 0.4s cubic-bezier(0.22, 0.8, 0.2, 1); /* smooth grow when the height updates */
 }
-
-  border:0; background:transparent; pointer-events:none}
-@supports (height:100dvh){ .sannasa-frame{height:100dvh} }
-@media (max-width:560px){ .sannasa-frame{min-height:540px} }
+@media (max-width:560px){ .sannasa-frame{ min-height: 360px } }
 /* keep app.js's #inviteBody target alive but invisible (no layout, no a11y noise) */
 .sannasa-hidden{position:absolute!important; width:1px; height:1px; overflow:hidden;
   clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none}
