@@ -243,6 +243,7 @@
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
         --unroll-progress: 1;   /* initial value only; your JS drives it every frame */
+        flex-shrink: 0;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
         transform: scale(min(1, calc((100vw - 20px) / 650), calc((100vh - 44px) / 940)));
         transform-origin: top center;
     }
