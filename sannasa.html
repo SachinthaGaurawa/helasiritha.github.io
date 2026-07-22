@@ -244,7 +244,7 @@
     .scroll-master-container {
                 --unroll-progress: 1;   /* PERMANENTLY fully unrolled — both wooden rolls always 100% visible */
         --paper-h: 740px;       /* content-driven default; fitSannasa() measures & overwrites it */
-        flex-shrink: 0;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
+        flex-shrink: 1;         /* hold the true 650px width so the scale fits it — never let flex squeeze it narrow */
         transform: scale(min(1, calc((100vw - 20px) / 650px)));  /* WIDTH-ONLY fit (÷650px = valid unitless ratio) — fits width, never shrinks for height; content extends downward */
         transform-origin: top center;
     }
