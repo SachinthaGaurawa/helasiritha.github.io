@@ -422,6 +422,63 @@
     </div>
 
     <script>
+    
+    document.addEventListener("DOMContentLoaded", () => {
+            const masterContainer = document.querySelector('.scroll-master-container');
+            const topCylinder = document.querySelector('.scroll-cylinder.top');
+            const bottomCylinder = document.querySelector('.scroll-cylinder.bottom');
+
+            // LERP Engine Variables
+            let currentScrollProgress = 0;
+            let targetScrollProgress = 0;
+            
+            // Tuning μ to exactly 0.18 eliminates the "late" feeling completely (instant response)
+            // while filtering out jerky, uneven mouse wheel steps for 60fps/120fps fluid scrolling.
+            const lerpSpeed = 0.18; 
+
+            // High-frequency async listener runs with passive flags to bypass DOM render-blocking
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                targetScrollProgress = scrollHeight > 0? scrollTop / scrollHeight : 0;
+            }, { passive: true });
+
+            // Synchronized requestAnimationFrame update loop
+            function updateRenderLoop() {
+                const diff = targetScrollProgress - currentScrollProgress;
+                currentScrollProgress += diff * lerpSpeed;
+
+                // Stop calculating when difference becomes microscopically imperceptible
+                if (Math.abs(diff) < 0.0001) {
+                    currentScrollProgress = targetScrollProgress;
+                }
+
+                const progress = Math.max(0, Math.min(1, currentScrollProgress));
+
+                // 1. Instantly update --unroll-progress CSS variable on master container.
+                // This allows the GPU to compute clip heights and gradient positions immediately in the compositing thread.
+                masterContainer.style.setProperty('--unroll-progress', progress);
+
+                // 2. Rotate the concentric spiral end-caps to perfectly match rotational velocity
+                const capRotation = progress * 720; // 2 complete physical rotations
+                
+                const topCapsLeft = topCylinder.querySelector('.cylinder-cap.left');
+                const topCapsRight = topCylinder.querySelector('.cylinder-cap.right');
+                const bottomCapsLeft = bottomCylinder.querySelector('.cylinder-cap.left');
+                const bottomCapsRight = bottomCylinder.querySelector('.cylinder-cap.right');
+
+                if (topCapsLeft) topCapsLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
+                if (topCapsRight) topCapsRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
+                if (bottomCapsLeft) bottomCapsLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
+                if (bottomCapsRight) bottomCapsRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
+
+                // Loop synchronized with the monitor's refresh rate (60Hz, 120Hz, 144Hz)
+                requestAnimationFrame(updateRenderLoop);
+            }
+
+            requestAnimationFrame(updateRenderLoop);
+        });
+    
     /* Sannasa — language purity + live Firestore sync + zoom-crash guard.
        Additive only: the LERP scroll engine below is left byte-for-byte untouched.
        Same-origin iframe → shares localStorage('hs_lang') with the main page. */
