@@ -412,13 +412,17 @@ const DEFAULTS = {
   brideName: "කෞශානි", groomName: "ගෞරව",
   brideNameEn: "Kaushani", groomNameEn: "Gaurawa",
   brideNameTa: "கௌஷானி", groomNameTa: "கௌரவ",
-  bridePreLine: "ශ්‍රීමත් හා ශ්‍රීමතී කුලසූරියගේ දම්පතියන්ගේ ආදරණීය දියණිය,",
-  groomPreLine: "ශ්‍රීමත් හා ශ්‍රීමතී කප්පෙටිපොල වීරකෝන් මුදියන්සේලාගේ දම්පතියන්ගේ ආදරණීය පුත්‍රයා,",
-  dateISO: "2028-01-12T09:15:00+05:30",
+  brideFather: "", brideFatherEn: "", brideFatherTa: "",
+  groomFather: "", groomFatherEn: "", groomFatherTa: "",
+  bridePreLine: "මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,",
+  bridePreLineEn: "the beloved daughter of Mr. & Mrs.", bridePreLineTa: "அவர்களின் அன்பு மகள்,",
+  groomPreLine: "මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
+  groomPreLineEn: "the beloved son of Mr. & Mrs.", groomPreLineTa: "அவர்களின் அன்பு மகன்,",
+  dateISO: "2028-01-12T09:28:00+05:30",
   venue: "The Epitome Hotel", venueCity: "කුරුණෑගල", venueCityEn: "Kurunegala", venueCityTa: "குருநாகல்",
   venueMapUrl: "https://www.google.com/maps/search/?api=1&query=The+Epitome+Hotel+Kurunegala",
-  ceremonyTime: "පෙ.ව. 9.15 සිට", ceremonyTimeEn: "9.15 a.m. onwards", ceremonyTimeTa: "மு.ப. 9.15 மணி முதல்",
-  poruwaTime: "පෙ.ව. 9.15",
+  ceremonyTime: "පෙ.ව. 09.00 සිට සවස 04.00 දක්වා", ceremonyTimeEn: "9.15 a.m. onwards", ceremonyTimeTa: "மு.ப. 9.15 மணி முதல்",
+  poruwaTime: "පෙ.ව. 09.28",
   heroImageUrl: "",
   loveNote: "", loveSign: "කෞශානි & ගෞරව",
   phone: "", whatsapp: "", ambientAudioUrl: "",
@@ -514,8 +518,16 @@ function renderInvitation() {
   const T = L(), n = names(), f = fmtDate(S.dateISO);
   $("#invEyebrow").textContent = T.invEyebrow;
   $("#invTitle").textContent = T.invTitle;
-  const preB = LANG === "en" ? "The beloved daughter," : LANG === "ta" ? "அன்பு மகள்," : S.bridePreLine;
-  const preG = LANG === "en" ? "The beloved son," : LANG === "ta" ? "அன்பு மகன்," : S.groomPreLine;
+  /* "<father's initials + surname>" + "<phrase>" — both admin-editable, per language */
+  const pickL = (k) => String((LANG === "en" ? S[k + "En"] : LANG === "ta" ? S[k + "Ta"] : S[k]) || "").trim();
+  const parentLine = (fatherKey, phraseKey, fallback) => {
+    const f = pickL(fatherKey), ph = pickL(phraseKey) || fallback;
+    return f ? (f + " " + ph) : ph;
+  };
+  const preB = parentLine("brideFather", "bridePreLine",
+    LANG === "en" ? "The beloved daughter," : LANG === "ta" ? "அன்பு மகள்," : "ආදරණීය දියණිය වූ,");
+  const preG = parentLine("groomFather", "groomPreLine",
+    LANG === "en" ? "The beloved son," : LANG === "ta" ? "அன்பு மகன்," : "ආදරණීය පුත් වූ,");
   const sentence = T.invSentence({ y: f.y, mo: f.mo, dd: f.dd, wd: f.wd, venue: S.venue, city: byLang("venueCity") });
   const html =
     '<div class="inv-block"><p class="inv-pre">' + esc(preB) + '</p><h3 class="inv-name foil">' + esc(n.b) + '</h3></div>' +
@@ -578,7 +590,7 @@ function renderGallery() {
   const box = $("#masonry");
   if (!GALLERY.length) { box.innerHTML = '<p class="gallery-empty">' + esc(T.galleryEmpty) + '</p>'; return; }
   box.innerHTML = GALLERY.map((g, i) =>
-    '<figure class="reveal" data-i="' + i + '"><img src="' + esc(g.url) + '" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.opacity=1">' +
+    '<figure class="reveal" data-i="' + i + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.opacity=1">' +
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
@@ -816,45 +828,17 @@ function setupParticles() {
    document flow. It posts its content-fit height; we HUG the iframe to that height so the
    lower wooden roll is always 100% visible and the Countdown below is pushed straight down
    (no overlap, no void). Re-hugs the instant the admin edits the decree. */
-
-/* Drive the sannasa scroll-unroll from the MAIN-page scroll (same-origin iframe). */
 function setupSannasaScroll() {
-  const frame = $(".sannasa-frame");
-  if (!frame) return;
-
-  // 1. සන්නසේ සම්පූර්ණ උස මැනගෙන Iframe එකේ උස හැදීම (Layout එක කැපීම වළක්වයි)
   window.addEventListener("message", (e) => {
     const d = e && e.data;
     if (!d || d.__sannasa !== "height" || typeof d.h !== "number") return;
-    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20));
+    const frame = $(".sannasa-frame");
+    if (!frame) return;
+    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20)); // +20 buffer, clamped
     frame.style.height = px + "px";
     frame.style.minHeight = "0px";
   }, { passive: true });
-
-  // 2. Main page එකේ scroll එකට අනුව සන්නස ත්‍රිමාණව දිග හැරීම
-  const drive = () => {
-    try {
-      if (!frame.contentWindow) return;
-      const rect = frame.getBoundingClientRect();
-      const vh = window.innerHeight;
-      
-      // Screen එකේ පල්ලෙහාට එද්දී දිග ඇරෙන්න පටන් ගෙන, මැදට එද්දී සම්පූර්ණයෙන්ම දිග ඇරේ
-      const startReveal = vh * 0.9; 
-      const endReveal = vh * 0.2;
-      
-      let p = (startReveal - rect.top) / (startReveal - endReveal);
-      p = Math.max(0, Math.min(1, p));
-      
-      // Scroll percentage එක සන්නසට යැවීම
-      frame.contentWindow.postMessage({ __sannasa: 'scroll', progress: p }, '*');
-    } catch (err) {}
-  };
-
-  window.addEventListener("scroll", drive, { passive: true });
-  window.addEventListener("resize", drive, { passive: true });
-  setTimeout(drive, 300);
 }
-
 
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
 function setupZoomGuard() {
@@ -993,11 +977,58 @@ function setupBlessings() {
   };
 }
 
+/* ── adaptive imagery ─────────────────────────────────────────────────────────
+   Photos are delivered at the size this device can actually use: sharp on a
+   retina desktop, still openable on a 2G phone with 2 GB of RAM.
+     f_auto      → AVIF/WebP where supported
+     q_auto      → perceptual quality, much smaller than the original
+     c_limit,w_  → never larger than needed
+     fl_progressive → paints top-to-bottom instead of all-or-nothing
+   Save-Data and effectiveType shrink the budget further on poor links.        */
+function netBudget() {
+  try {
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!c) return 1;
+    if (c.saveData) return 0.55;
+    const t = String(c.effectiveType || "");
+    if (t.indexOf("slow-2g") > -1) return 0.4;
+    if (t.indexOf("2g") > -1) return 0.5;
+    if (t === "3g") return 0.78;
+  } catch (_) {}
+  return 1;
+}
+function cld(url, w, extra) {
+  const u = String(url || "");
+  if (!u || u.indexOf("/upload/") === -1) return u;
+  const t = ["f_auto", "q_auto:good", "c_limit", "w_" + Math.max(16, Math.round(w)), "fl_progressive"];
+  if (extra) t.push(extra);
+  return u.replace("/upload/", "/upload/" + t.join(",") + "/");
+}
+function gridSrcset(url) {
+  const b = netBudget();
+  const ws = b >= 0.7 ? [320, 480, 640, 900, 1200] : [320, 480, 640];
+  return ws.map((w) => cld(url, w) + " " + w + "w").join(", ");
+}
+function viewerWidth() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const side = Math.max(window.innerWidth || 360, window.innerHeight || 640);
+  return Math.max(480, Math.min(1800, Math.round(side * dpr * netBudget())));
+}
+
 /* Gallery lightbox */
 let lbIndex = 0;
 function openLightbox(i) {
   lbIndex = i; const lb = $("#lightbox"), g = GALLERY[i]; if (!g) return;
-  $("#lbImg").src = g.url; $("#lbImg").alt = g.caption || "memory"; $("#lbCap").textContent = g.caption || "";
+  const im = $("#lbImg");
+  im.decoding = "async";
+  im.src = cld(g.url, viewerWidth());          /* sized for THIS screen + network */
+  im.alt = g.caption || "memory";
+  $("#lbCap").textContent = g.caption || "";
+  /* keep only the neighbours warm — protects 2 GB phones from decoding 9 originals */
+  [i + 1, i - 1].forEach((k) => {
+    const n = GALLERY[(k + GALLERY.length) % GALLERY.length];
+    if (n && n.url) { const p = new Image(); p.decoding = "async"; p.src = cld(n.url, viewerWidth()); }
+  });
   lb.classList.add("open"); document.body.classList.add("noscroll");
 }
 function closeLightbox() { $("#lightbox").classList.remove("open"); document.body.classList.remove("noscroll"); }
@@ -1035,6 +1066,8 @@ async function connect() {
     const db = fs.getFirestore(app);
     fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp };
 
+    trackVisit(fs, db);
+
     fs.onSnapshot(fs.doc(db, "site", "content"), (snap) => {
       const data = snap.exists() ? snap.data() : {};
       S = Object.assign({}, DEFAULTS, data);
@@ -1050,11 +1083,16 @@ async function connect() {
 
     fs.onSnapshot(fs.collection(db, "gallery"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data())));
-      arr.sort((a, b) => ((a.ts && a.ts.seconds) || 0) - ((b.ts && b.ts.seconds) || 0));
+      /* admin drag-and-drop order wins; upload time is the fallback */
+      arr.sort((a, b) => ((a.order == null ? 1e9 : Number(a.order)) - (b.order == null ? 1e9 : Number(b.order)))
+        || (((a.ts && a.ts.seconds) || 0) - ((b.ts && b.ts.seconds) || 0)));
       GALLERY = arr; renderGallery(); observeReveals();
     }, (err) => console.warn("gallery listener", err));
 
-    fs.onSnapshot(fs.collection(db, "blessings"), (snap) => {
+    /* Blessings MUST be queried with approved == true: the security rules gate
+       reads per document, and Firestore rejects an unfiltered collection listen
+       whose rule depends on resource.data. */
+    fs.onSnapshot(fs.query(fs.collection(db, "blessings"), fs.where("approved", "==", true)), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data())));
       arr.sort((a, b) => ((b.ts && b.ts.seconds) || 0) - ((a.ts && a.ts.seconds) || 0));
       BLESSINGS = arr; renderBlessings(); observeReveals();
@@ -1068,12 +1106,74 @@ async function connect() {
       confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
     }, (err) => console.warn("stats listener", err));
 
+    /* Live theme — the admin colour palette repaints the site instantly. */
+    fs.onSnapshot(fs.doc(db, "site", "theme"), (snap) => {
+      applyTheme(snap.exists() ? snap.data() : null);
+    }, (err) => console.warn("theme listener", err));
+
   } catch (err) {
     console.warn("Firestore offline — running on built-in content.", err);
   }
 }
 
+/* Anonymous arrival telemetry for the admin dashboard.
+   Records ONE row per browser session — never an IP, cookie or identifier.
+     • ?src=qr  (printed invitation QR)  → "qr"
+     • arrived from another site/app     → "web"
+     • typed the address / bookmark      → "direct"
+   Any failure is silent: telemetry must never affect a guest's experience. */
+function trackVisit(fs, db) {
+  try {
+    if (sessionStorage.getItem("hs_visited") === "1") return;
+    sessionStorage.setItem("hs_visited", "1");
+
+    const q = new URLSearchParams(location.search);
+    const src = String(q.get("src") || "").trim().toLowerCase();
+    let kind = "direct";
+    if (src === "qr") kind = "qr";
+    else if (src === "web") kind = "web";
+    else if (document.referrer) {
+      let host = "";
+      try { host = new URL(document.referrer).hostname; } catch (_) {}
+      if (host && host !== location.hostname) kind = "web";
+    }
+
+    const p = (n) => String(n).padStart(2, "0");
+    const d = new Date();
+    const day = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+
+    fs.addDoc(fs.collection(db, "visits"), {
+      kind, day,
+      ref: String(document.referrer || "").slice(0, 200),
+      lang: String(LANG || "si").slice(0, 4),
+      ua: String(navigator.userAgent || "").slice(0, 200),
+      ts: fs.serverTimestamp()
+    }).catch(() => {});
+  } catch (_) { /* telemetry is strictly best-effort */ }
+}
+
 /* ════════════════════════════════ INIT ═══════════════════════════════════ */
+/* Admin colour palette → live CSS variables. Invalid/missing values are ignored,
+   so the built-in Noir & Champagne identity always remains the safe fallback. */
+function applyTheme(t) {
+  const root = document.documentElement;
+  const MAP = {
+    primary:   ["--gold"],
+    secondary: ["--gold-bright"],
+    accent:    ["--gold-2", "--gold-deep"],
+    surface:   ["--bg"],
+    text:      ["--ink"]
+  };
+  Object.keys(MAP).forEach((k) => {
+    const v = t && t[k];
+    if (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v.trim())) {
+      MAP[k].forEach((cssVar) => root.style.setProperty(cssVar, v.trim()));
+    } else {
+      MAP[k].forEach((cssVar) => root.style.removeProperty(cssVar));
+    }
+  });
+}
+
 function init() {
   if (liteMode()) document.body.classList.add("lite");
   document.body.classList.add("loaded");

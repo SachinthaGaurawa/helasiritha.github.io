@@ -242,13 +242,13 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 0;   /* මෙය 1 වෙනුවට 0 ලෙස වෙනස් කරන්න */
+        --unroll-progress: 1;   /* සන්නස සම්පූර්ණයෙන්ම දිග හැරී පවතී */
         --paper-h: 740px;       
         flex-shrink: 0;         
+        /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
         transform: scale(min(1, calc((100vw - 20px) / 650)));
         transform-origin: top center;
     }
-
 
 
     /* Invitation text lives in its OWN layer — revealed in perfect sync with the
@@ -429,51 +429,6 @@
 
     <script>
     
-        // --- 3D LERP Animation Engine (Main Page එකේ Scroll එකට ප්‍රතිචාර දක්වයි) ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const masterContainer = document.querySelector('.scroll-master-container');
-            const topCylinder = document.querySelector('.scroll-cylinder.top');
-            const bottomCylinder = document.querySelector('.scroll-cylinder.bottom');
-
-            let currentProgress = 0;
-            let targetProgress = 0;
-            const lerpSpeed = 0.12; // සෙමින් සහ සුමටව දිග හැරීමට
-
-            // Main page එකෙන් එන scroll progress එක ලබා ගැනීම
-            window.addEventListener('message', (e) => {
-                if (e.data && e.data.__sannasa === 'scroll') {
-                    targetProgress = e.data.progress;
-                }
-            });
-
-            function updateRenderLoop() {
-                const diff = targetProgress - currentProgress;
-                currentProgress += diff * lerpSpeed;
-
-                if (Math.abs(diff) < 0.001) currentProgress = targetProgress;
-
-                const p = Math.max(0, Math.min(1, currentProgress));
-                if (masterContainer) masterContainer.style.setProperty('--unroll-progress', p);
-
-                // රෝල කැරකෙන ත්‍රිමාණ effect එක
-                const capRotation = p * 720;
-                const topCapsLeft = topCylinder?.querySelector('.cylinder-cap.left');
-                const topCapsRight = topCylinder?.querySelector('.cylinder-cap.right');
-                const bottomCapsLeft = bottomCylinder?.querySelector('.cylinder-cap.left');
-                const bottomCapsRight = bottomCylinder?.querySelector('.cylinder-cap.right');
-
-                if (topCapsLeft) topCapsLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
-                if (topCapsRight) topCapsRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsLeft) bottomCapsLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
-                if (bottomCapsRight) bottomCapsRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
-
-                requestAnimationFrame(updateRenderLoop);
-            }
-            requestAnimationFrame(updateRenderLoop);
-        });
-        // --- LERP Engine අවසන් ---
-
-    
         /* (static scroll — no scroll-unroll engine; --unroll-progress stays 1) */
     
     /* Sannasa — language purity + live Firestore sync + zoom-crash guard.
@@ -487,9 +442,9 @@
       var C = {
         si: {
           sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය",
-          brideParents:"ආදරණීය දෙමාපියන්ගේ ආදරණීය දියණිය,",
+          brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,",
           brideName:"කෞශානි",
-          groomParents:"ආදරණීය දෙමාපියන්ගේ ආදරණීය පුත්,",
+          groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
           groomName:"ගෞරව",
           join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
           body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.",
@@ -501,9 +456,9 @@
         },
         en: {
           sri:"✦", eyebrow:"The Honour of Your Presence is Requested",
-          brideParents:"the cherished daughter of loving parents,",
+          brideParents:"the beloved daughter of Mr. & Mrs.",
           brideName:"Kaushani",
-          groomParents:"the cherished son of loving parents,",
+          groomParents:"the beloved son of Mr. & Mrs.",
           groomName:"Gaurawa",
           join:"on the joyous occasion of their marriage,",
           body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.",
@@ -578,9 +533,15 @@
         var l = lang(), t = C[l];
         try{ document.documentElement.lang = l; }catch(_){}
         set('sri', t.sri); set('eyebrow', t.eyebrow); set('conj', '✦');
-        set('brideParents', ov('brideParents') || t.brideParents);
+        /* "<father's initials + surname>" + "<phrase>", both admin-editable per language */
+        function joinFather(fk, pk, fallback){
+          var f = String(ov(fk) || plain(fk) || '').trim();
+          var ph = String(ov(pk) || fallback || '').trim();
+          return f ? (f + ' ' + ph) : ph;
+        }
+        set('brideParents', joinFather('brideFather','brideParents', t.brideParents));
         set('brideName',    ov('brideName') || plain('brideName') || t.brideName);
-        set('groomParents', ov('groomParents') || t.groomParents);
+        set('groomParents', joinFather('groomFather','groomParents', t.groomParents));
         set('groomName',    ov('groomName') || plain('groomName') || t.groomName);
         set('join', ov('join') || t.join);
         set('body', ov('sannasaBody') || ov('invite') || t.body);
