@@ -1158,9 +1158,9 @@ function trackVisit(fs, db) {
 function applyTheme(t) {
   const root = document.documentElement;
   const MAP = {
-    primary:   ["--gold"],
-    secondary: ["--gold-bright"],
-    accent:    ["--gold-2", "--gold-deep"],
+    primary:   ["--gold", "--o-crest", "--o-medallion"],
+    secondary: ["--gold-bright", "--warm"],
+    accent:    ["--gold-2", "--gold-deep", "--gold-dim"],
     surface:   ["--bg"],
     text:      ["--ink"]
   };
@@ -1172,6 +1172,35 @@ function applyTheme(t) {
       MAP[k].forEach((cssVar) => root.style.removeProperty(cssVar));
     }
   });
+
+  /* Derived tones. Without these only the headings changed colour and the page
+     still read as the built-in gold — the palette appeared "not to work". */
+  const hx = (k) => {
+    const v = t && t[k];
+    return (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v.trim())) ? v.trim() : null;
+  };
+  const rgbOf = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const rgbaOf = (h, a) => { const c = rgbOf(h); return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; };
+  const scale = (h, f) => {
+    const c = rgbOf(h).map((n) => Math.max(0, Math.min(255, Math.round(n * f))));
+    return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+  };
+  const P = hx("primary"), S2 = hx("secondary"), A = hx("accent"), B = hx("surface"), X = hx("text");
+  const put = (k, v) => { if (v) root.style.setProperty(k, v); else root.style.removeProperty(k); };
+
+  put("--line",      P ? rgbaOf(P, 0.16) : null);
+  put("--line-soft", P ? rgbaOf(P, 0.08) : null);
+  put("--glow",      P ? "0 0 30px " + rgbaOf(P, 0.28) : null);
+  put("--bg-2",      B ? scale(B, 1.4) : null);
+  put("--bg-3",      B ? scale(B, 1.85) : null);
+  put("--mut",       X ? rgbaOf(X, 0.72) : null);
+  put("--faint",     X ? rgbaOf(X, 0.5) : null);
+  put("--foil", (P && S2 && A)
+    ? "linear-gradient(105deg," + S2 + " 0%," + P + " 26%," + A + " 48%," + S2 + " 62%," + scale(A, 0.8) + " 80%," + P + " 100%)"
+    : null);
+  put("--foil-metal", (P && S2 && A)
+    ? "linear-gradient(120deg," + scale(A, 0.75) + " 0%," + P + " 30%," + S2 + " 50%," + P + " 70%," + scale(A, 0.7) + " 100%)"
+    : null);
 }
 
 function init() {
