@@ -290,8 +290,14 @@
     .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
     .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f;
         max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
-    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 22px; margin: 13px auto 0; }
-    .dc-meta .b { min-width: 90px; }
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0;
+               width: 100%; max-width: 100%; box-sizing: border-box; }
+    /* flex items must be allowed to shrink AND wrap, otherwise a long date such as
+       "Wednesday, 12 January 2028" pushes the row past both edges of the scroll. */
+    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box;
+                  overflow-wrap: anywhere; word-break: break-word; }
+    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
+    @media (max-width: 430px) { .dc-meta { gap: 8px 14px; } .dc-meta .b { flex: 1 1 100%; } }
     .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
     .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
@@ -549,7 +555,10 @@
         set('vDate', ov('date') || t.date);
         set('vTime', ov('time') || t.time);
         set('vVenue', ov('venue') || plain('venue') || t.venue);
-        set('vCity', ov('city') || plain('venueCity') || t.city);
+        /* Language-correct fallback. Previously this fell back to plain('venueCity'),
+           which is the Sinhala value — so English and Tamil both showed "කුරුණෑගල". */
+        var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
+        set('vCity', ov('city') || plain(cityKey) || t.city);
         set('poruwa', ov('poruwa') || t.poruwa);
         set('swasti', t.swasti);
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;

@@ -167,7 +167,7 @@ body.lite .pre-ring{animation-duration:1.6s}
 body.lite .btn::before{display:none}
 
 /* ════════ HERO ════════ */
-.hero{position:relative;min-height:100svh;display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:center;padding:6rem 1.2rem 1.5rem;overflow:hidden;text-align:center}
+.hero{position:relative;min-height:100vh;min-height:100svh;display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:center;padding:clamp(3.1rem,9.5vh,6rem) 1.2rem clamp(.6rem,2vh,1.5rem);overflow:hidden;text-align:center}
 .fx-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .hero-aurora{position:absolute;inset:-20% -10% 0;z-index:0;pointer-events:none;filter:blur(60px);opacity:.6;
   background:
@@ -341,7 +341,7 @@ html:not([lang="en"]) :is(
 @media (max-width:540px){.masonry{columns:2 140px}}
 
 /* Lightbox */
-.lightbox{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:1.2rem;background:rgba(5,5,7,.95);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.lightbox{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:1.2rem;background:rgba(4,4,6,.985)}
 .lightbox.open{display:grid}
 .lightbox img{max-width:94vw;max-height:84vh;border-radius:var(--r-md);box-shadow:0 30px 80px rgba(0,0,0,.8),0 0 0 1px var(--line)}
 .lb-cap{position:absolute;left:0;right:0;bottom:max(1rem,env(safe-area-inset-bottom));text-align:center;color:var(--mut);font-family:var(--f-si)}
@@ -744,3 +744,23 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
 body.lite .hero-emblem{animation:none}
 @media (prefers-reduced-motion:reduce){ .hero-emblem{animation:none} }
 @media print{ .hero-emblem{animation:none} }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PERFORMANCE — added after measuring a 390×844 phone
+   The decorative section backgrounds are large PNGs on a host that cannot resize
+   them, so the browser must not decode all of them up front. `content-visibility`
+   lets it skip layout+paint for off-screen sections entirely, and the reserved
+   intrinsic size keeps the scrollbar honest so nothing jumps.
+   ════════════════════════════════════════════════════════════════════════════ */
+@supports (content-visibility: auto) {
+  #agenda, #gallery, #blessings, #rsvp, #lovenote, #countdown {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+}
+/* Decode images off the main thread wherever the browser supports it. */
+img { content-visibility: auto; }
+/* Never let a long unbroken string push a section sideways on a narrow screen. */
+body { overflow-x: hidden; }
+h1, h2, h3, p, .val, .lbl, .lbl2 { overflow-wrap: break-word; }

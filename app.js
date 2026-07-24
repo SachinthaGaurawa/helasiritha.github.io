@@ -455,8 +455,15 @@ function names() {
   return { b: S.brideName, g: S.groomName };
 }
 function byLang(base) {
-  var v = LANG === "en" ? S[base + "En"] : LANG === "ta" ? S[base + "Ta"] : S[base];
-  return (v != null && String(v).trim() !== "") ? v : S[base];
+  var key = LANG === "en" ? base + "En" : LANG === "ta" ? base + "Ta" : base;
+  var live = S[key];
+  if (live != null && String(live).trim() !== "") return live;
+  /* Fall back to the built-in value FOR THIS LANGUAGE. Falling straight back to
+     S[base] meant an unsaved English/Tamil field showed the Sinhala text — which
+     is why the city read "කුරුණෑගල" on the English and Tamil pages. */
+  var def = DEFAULTS[key];
+  if (def != null && String(def).trim() !== "") return def;
+  return S[base];
 }
 
 function liteMode() {
@@ -498,6 +505,7 @@ function renderHero() {
   $("#heroTag").textContent = T.heroTag;
   $("#heroDate").textContent = (LANG === "en" ? (f.wd + ", " + f.mo + " " + f.dd + ", " + f.y) : (f.dd + " " + f.mo + " " + f.y));
   $("#heroVenue").textContent = S.venue + " · " + byLang("venueCity");
+  scheduleHeroFit();
   $("#heroRsvpBtn").textContent = T.heroRsvp;
   $("#scrollCue").querySelector(".cue-lbl").textContent = T.scrollCue;
   const port = $("#heroPortrait");
@@ -977,6 +985,54 @@ function setupBlessings() {
   };
 }
 
+/* ── HERO FIT ────────────────────────────────────────────────────────────────
+   The first screen must be complete on every device: names, date, lamp and the
+   scroll cue all visible without scrolling. Measurement showed the hero content
+   is intrinsically taller than a laptop viewport (up to +240px), so CSS padding
+   alone could never fix it. We measure the real content and scale it down only
+   as much as the device needs — nothing is ever cut off.                      */
+function fitHero() {
+  const hero = document.querySelector(".hero");
+  const inner = document.querySelector(".hero-inner");
+  if (!hero || !inner) return;
+  const cue = document.querySelector(".scroll-cue");
+
+  inner.style.zoom = "";
+  inner.style.transform = "";
+  inner.style.height = "";
+
+  const cs = getComputedStyle(hero);
+  const padT = parseFloat(cs.paddingTop) || 0;
+  const padB = parseFloat(cs.paddingBottom) || 0;
+  let cueH = 0;
+  if (cue) {
+    const ccs = getComputedStyle(cue);
+    if (ccs.display !== "none") {
+      /* margins are outside getBoundingClientRect — omitting them left the hero
+         exactly 5px over on several devices */
+      cueH = cue.getBoundingClientRect().height +
+        (parseFloat(ccs.marginTop) || 0) + (parseFloat(ccs.marginBottom) || 0);
+    }
+  }
+  const avail = (window.innerHeight || 0) - padT - padB - cueH - 4;
+  const natural = inner.scrollHeight;
+  if (!avail || !natural || natural <= avail) return;
+
+  const k = Math.max(0.55, avail / natural);
+  if (window.CSS && CSS.supports && CSS.supports("zoom", "0.8")) {
+    inner.style.zoom = String(k);                 /* affects layout — the grid row shrinks too */
+  } else {
+    inner.style.transformOrigin = "top center";
+    inner.style.transform = "scale(" + k + ")";
+    inner.style.height = Math.round(natural * k) + "px";
+  }
+}
+let heroFitT;
+function scheduleHeroFit() { clearTimeout(heroFitT); heroFitT = setTimeout(fitHero, 90); }
+window.addEventListener("resize", scheduleHeroFit, { passive: true });
+window.addEventListener("orientationchange", scheduleHeroFit, { passive: true });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleHeroFit);
+
 /* ── adaptive imagery ─────────────────────────────────────────────────────────
    Photos are delivered at the size this device can actually use: sharp on a
    retina desktop, still openable on a 2G phone with 2 GB of RAM.
@@ -1148,7 +1204,12 @@ function trackVisit(fs, db) {
       lang: String(LANG || "si").slice(0, 4),
       ua: String(navigator.userAgent || "").slice(0, 200),
       ts: fs.serverTimestamp()
-    }).catch(() => {});
+    }).catch(function (e) {
+      /* Almost always a Firestore rules problem — say so loudly in the console so
+         it can never fail invisibly again. */
+      console.warn("[Helasiritha] visit not recorded:", (e && e.code) || e,
+        "— check that the `visits` rule is deployed.");
+    });
   } catch (_) { /* telemetry is strictly best-effort */ }
 }
 
@@ -1214,6 +1275,7 @@ function init() {
   // preloader: dismiss after first paint / fonts
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(dismissPreloader, 250));
   setTimeout(dismissPreloader, 1500); // safety — never leave the visitor waiting
+  setTimeout(fitHero, 260); setTimeout(fitHero, 1200);
   connect();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
