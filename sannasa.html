@@ -293,7 +293,12 @@
     .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 22px; margin: 13px auto 0; }
     .dc-meta .b { min-width: 90px; }
     .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
-    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
+    
+    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box;
+                  overflow-wrap: anywhere; word-break: break-word; }
+    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
+    @media (max-width: 430px) { .dc-meta { gap: 8px 14px; } .dc-meta .b { flex: 1 1 100%; } }
+    
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
     .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
     /* Auspicious closing seal — Swasti Siddham — a small framed cartouche (double gold border) */
