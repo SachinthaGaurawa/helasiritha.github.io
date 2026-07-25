@@ -323,6 +323,11 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .masonry img{width:100%;height:auto;display:block;transition:transform .8s var(--ease)}
 .masonry figure:hover img{transform:scale(1.07)}
 .fig-ring{position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .5s}
+/* Reserve space BEFORE the photo arrives. Without this a slow or failed image
+   collapses its figure to ~0px: the picture is invisible and, worse, there is
+   nothing left to tap — which is exactly how 'images do not open' presented. */
+.masonry figure img{aspect-ratio:4/5;width:100%;height:auto;object-fit:cover;background:#14141a;min-height:120px}
+@media (min-width:700px){.masonry figure img{min-height:150px}}
 .masonry figure:hover .fig-ring{box-shadow:inset 0 0 0 1.5px var(--gold)}
 .masonry figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem .9rem;color:#fff;font-family:var(--f-si);font-size:.9rem;background:linear-gradient(0deg,rgba(5,5,7,.85),transparent)}
 .gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;column-span:all;-webkit-column-span:all;text-align:center;letter-spacing:normal;width:100%}
@@ -444,13 +449,13 @@ body.lite .music .eq i{animation:none;height:9px}
    app.js is NOT touched. All motifs load from the user's Cloudinary CDN.
    ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --o-crest:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_520/v1784079463/Copy_of_WealthFlow_Logo_q49zoz.png');
-  --o-arch:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_820/v1784079458/Photoroom_20260715_020528_kfm0vq.png');
-  --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_720/v1784079459/IMG_9974_fk1bfu.png');
-  --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_720/v1784079462/Untitled_design_sbha7k.png');
-  --o-seal:url('https://res.cloudinary.com/dzrfpc9be/image/upload/q_auto,f_auto,w_620/v1784079465/IMG_9976_ojsagn.png');
+  --o-crest:none  /* asset deleted from Cloudinary (HTTP 404) — was Copy_of_WealthFlow_Logo_q49zoz.png */;
+  --o-arch:none  /* asset deleted from Cloudinary (HTTP 404) — was Photoroom_20260715_020528_kfm0vq.png */;
+  --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967318/IMG_9974_lwhjah.png');
+  --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967324/Untitled_design_c2xoaw.png');
+  --o-seal:none  /* asset deleted from Cloudinary (HTTP 404) — was IMG_9976_ojsagn.png */;
   --o-pineapple:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784079452/IMG_9965_swzusp.png');
-  --o-floral:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1000/v1784079451/IMG_9964_crpqqm.jpg');
+  --o-floral:none  /* asset deleted from Cloudinary (HTTP 404) — was IMG_9964_crpqqm.jpg */;
   --goldify:grayscale(1) sepia(1) saturate(2.5) brightness(1.06) hue-rotate(2deg);
   --orn-emboss:drop-shadow(0 1px 0 rgba(255,250,232,.35)) drop-shadow(0 2px 6px rgba(0,0,0,.55));
 }
@@ -544,15 +549,15 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
    Gateway dismissal is handled by a standalone inline script (never traps).
    ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --s-entry:url('https://iili.io/CGk1U8B.jpg');       /* img1 scene → gateway backdrop */
-  --s-hero-bg:url('https://iili.io/CGkEPJ2.jpg');      /* img2 scene → hero depth */
+  --s-entry:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg');       /* img1 scene → gateway backdrop */
+  --s-hero-bg:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103105/IMG_0010_d9wjfl.jpg');      /* img2 scene → hero depth */
   --s-arch2:url('https://iili.io/CGU3TaR.png');        /* img4 line-art → gateway arch */
-  --s-lamp:url('https://iili.io/CGUCu8G.png');         /* img7 tall gold → lamp */
+  --s-lamp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png');         /* img7 tall gold → lamp */
   --s-corner:url('https://iili.io/CGU2ZpS.png');       /* img5 filigree → corners */
   --s-flourish:url('https://iili.io/CGU2UhX.png');     /* img6 filigree → invitation */
   --s-seal-agenda:url('https://iili.io/CGU9tsf.png');  /* img3 medallion */
-  --s-seal-rsvp:url('https://iili.io/CGUCBZN.png');    /* img8 medallion */
-  --s-seal-gallery:url('https://iili.io/CGUCIFn.png'); /* img9 medallion */
+  --s-seal-rsvp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784968049/Pahana_xhigym.png');    /* img8 medallion */
+  --s-seal-gallery:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784826543/tonjuuwankoeimeub6e6.jpg'); /* img9 medallion */
 }
 
 /* ── Entry gateway ── */
@@ -665,8 +670,8 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
    ════════════════════════════════════════════════════════════════════════ */
 :root{
   --s-sannasa:url('https://iili.io/CGiC8Dg.png');   /* proclamation scroll */
-  --s-emblem:url('https://iili.io/CGQlYaS.png');     /* royal couple emblem */
-  --s-hansa:url('https://iili.io/ChWDDcx.png');      /* Hansa Puttuwa — auspicious swan-knot (transparent → gold mask) */
+  --s-emblem:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967399/Untitled_design_czoesd.png');     /* royal couple emblem */
+  --s-hansa:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784967754/Untitled_design_xfsalx.png');      /* Hansa Puttuwa — auspicious swan-knot (transparent → gold mask) */
   --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");  /* parchment grain */
 }
 
@@ -747,20 +752,16 @@ body.lite .hero-emblem{animation:none}
 
 
 /* ════════════════════════════════════════════════════════════════════════════
-   PERFORMANCE — added after measuring a 390×844 phone
-   The decorative section backgrounds are large PNGs on a host that cannot resize
-   them, so the browser must not decode all of them up front. `content-visibility`
-   lets it skip layout+paint for off-screen sections entirely, and the reserved
-   intrinsic size keeps the scrollbar honest so nothing jumps.
+   PERFORMANCE / SAFETY notes
+   • `content-visibility:auto` was tried here and REMOVED. On a section it applies
+     size containment until the section nears the viewport, so gallery figures
+     reported 0px height — the photos were invisible AND unclickable. Native
+     `loading="lazy"` plus correctly-sized srcset gives the same benefit safely.
+   • `content-visibility` must never be set on <img> for the same reason.
    ════════════════════════════════════════════════════════════════════════════ */
-@supports (content-visibility: auto) {
-  #agenda, #gallery, #blessings, #rsvp, #lovenote, #countdown {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 900px;
-  }
-}
-/* Decode images off the main thread wherever the browser supports it. */
-img { content-visibility: auto; }
-/* Never let a long unbroken string push a section sideways on a narrow screen. */
 body { overflow-x: hidden; }
 h1, h2, h3, p, .val, .lbl, .lbl2 { overflow-wrap: break-word; }
+
+/* While the gateway fades out it still covers the page for 1.6s. Make it
+   click-through immediately so nothing is swallowed during the transition. */
+#entry.go{ pointer-events:none !important; }

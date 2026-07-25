@@ -1219,7 +1219,9 @@ function trackVisit(fs, db) {
 function applyTheme(t) {
   const root = document.documentElement;
   const MAP = {
-    primary:   ["--gold", "--o-crest", "--o-medallion"],
+    /* NB: --o-crest / --o-medallion are url() image variables, NOT colours.
+       Writing a hex value into them destroys the ornament. Colours only here. */
+    primary:   ["--gold"],
     secondary: ["--gold-bright", "--warm"],
     accent:    ["--gold-2", "--gold-deep", "--gold-dim"],
     surface:   ["--bg"],
