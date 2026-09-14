@@ -580,7 +580,9 @@
       function render(){
         var l = lang(), t = C[l];
         try{ document.documentElement.lang = l; }catch(_){}
-        set('sri', t.sri); set('eyebrow', t.eyebrow); set('conj', '✦');
+        /* Every line on the decree is admin-editable except the Swasti Siddham
+           closing (t.swasti below) — that stays the fixed traditional phrase. */
+        set('sri', ov('sri') || t.sri); set('eyebrow', ov('eyebrow') || t.eyebrow); set('conj', '✦');
         /* "<father's initials + surname>" + "<phrase>", both admin-editable per language */
         function joinFather(fk, pk, fallback){
           var f = String(ov(fk) || plain(fk) || '').trim();
@@ -593,7 +595,7 @@
         set('groomName',    ov('groomName') || plain('groomName') || t.groomName);
         set('join', ov('join') || t.join);
         set('body', ov('sannasaBody') || ov('invite') || t.body);
-        set('lDate', t.lDate); set('lTime', t.lTime); set('lVenue', t.lVenue);
+        set('lDate', ov('lDate') || t.lDate); set('lTime', ov('lTime') || t.lTime); set('lVenue', ov('lVenue') || t.lVenue);
         set('vDate', ov('date') || t.date);
         set('vTime', ov('time') || t.time);
         set('vVenue', ov('venue') || plain('venue') || t.venue);
@@ -602,8 +604,8 @@
         var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
         set('vCity', ov('city') || plain(cityKey) || t.city);
         set('poruwa', ov('poruwa') || t.poruwa);
-        set('swasti', t.swasti);
-        var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = t.cue;
+        set('swasti', t.swasti);   /* the one deliberate exception — always the fixed traditional phrase */
+        var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
         try{ fitSannasa(); }catch(_){}
       }
       render();
