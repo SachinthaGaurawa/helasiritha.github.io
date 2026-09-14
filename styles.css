@@ -158,6 +158,22 @@ body.lite .pre-ring{animation-duration:1.6s}
 .nav-drawer.open{transform:none}
 .nav-drawer a{font-family:var(--f-disp);font-size:1.35rem;color:var(--ink);padding:.7rem .2rem;border-bottom:1px solid var(--line-soft);transition:color .3s,padding-left .3s}
 .nav-drawer a:hover{color:var(--gold-bright);padding-left:.5rem}
+/* Closing crown flourish — pinned to the very bottom of the drawer (flex's
+   margin-top:auto) and bled edge-to-edge to exactly the drawer's own width
+   (negative margins cancel the drawer's side/bottom padding) on every
+   device, since the drawer's width itself is already responsive
+   (min(80vw,320px)). A real <img>, not a CSS mask, so it lays out at its
+   own true aspect ratio instead of guessing one. */
+.nav-drawer-arch{
+  /* The drawer's own border-left:1px eats 1px of its content box (box-sizing:
+     border-box) that plain padding-cancelling margins don't reach — the left
+     margin/width account for that extra pixel so this touches the drawer's
+     true left edge exactly, not one pixel short of it. */
+  margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
+  width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
+  display:block;pointer-events:none;user-select:none;
+  filter:drop-shadow(0 -10px 26px rgba(0,0,0,.6));
+}
 
 /* ════════ Buttons ════════ */
 .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
@@ -471,15 +487,16 @@ body.lite .music .eq i{animation:none;height:9px}
    app.js is NOT touched. All motifs load from the user's Cloudinary CDN.
    ════════════════════════════════════════════════════════════════════════ */
 :root{
-  /* --o-crest / --o-arch / --o-seal: the Cloudinary source PNGs are gone
-     (404) and there is no local replacement to mask with — `mask:none`
-     does NOT hide an element, it disables clipping, so every consumer
-     below was painting a solid gold-foil rectangle instead of an ornament.
-     Each consumer is explicitly hidden further down (search "ornament
-     fallback") until real replacement art is uploaded and these three
-     variables point at a working URL again. */
+  /* --o-crest / --o-seal: the Cloudinary source PNGs are gone (404) and
+     there is no local replacement to mask with — `mask:none` does NOT hide
+     an element, it disables clipping, so every consumer below was painting
+     a solid gold-foil rectangle instead of an ornament. Each consumer is
+     explicitly hidden further down (search "ornament fallback") until real
+     replacement art is uploaded and these variables point at a working URL
+     again. --o-arch got its replacement upload — same design, re-exported
+     under a new Cloudinary asset id. */
   --o-crest:none  /* asset deleted from Cloudinary (HTTP 404) — was Copy_of_WealthFlow_Logo_q49zoz.png */;
-  --o-arch:none  /* asset deleted from Cloudinary (HTTP 404) — was Photoroom_20260715_020528_kfm0vq.png */;
+  --o-arch:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967325/Photoroom_20260715_020528_ati7wa.png');
   --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967318/IMG_9974_lwhjah.png');
   --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967324/Untitled_design_c2xoaw.png');
   --o-seal:none  /* asset deleted from Cloudinary (HTTP 404) — was IMG_9976_ojsagn.png */;
@@ -514,8 +531,6 @@ body.lite .music .eq i{animation:none;height:9px}
   background:var(--foil);
   -webkit-mask:var(--o-arch) center/contain no-repeat;mask:var(--o-arch) center/contain no-repeat;
   filter:drop-shadow(0 3px 12px rgba(0,0,0,.5));animation:orn-arch 10s ease-in-out infinite;
-  display:none  /* ornament fallback — see --o-arch note above; would otherwise paint
-                   an unmasked gold rectangle floating over the hero portrait */;
 }
 .hero::after{
   content:"";position:absolute;top:60px;left:0;right:0;height:32px;z-index:2;opacity:.42;pointer-events:none;
