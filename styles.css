@@ -191,8 +191,19 @@ body.lite .pre-ring{animation-duration:1.6s}
      invert(.68) lifts that black to a dark ash-grey. Detail this fine reads
      as a loud sticker at high opacity, so opacity(.5) keeps it at the
      "barely there, elegant" level asked for while the fine linework still
-     stays legible up close. */
-  filter:brightness(0) invert(.68) opacity(.5) drop-shadow(0 -8px 20px rgba(0,0,0,.55));
+     stays legible up close.
+
+     Two finishing touches, without touching the source file itself (no
+     image-editing tool reaches it from here): a hair of blur smooths any
+     rough background-removal edges at this size without softening the
+     linework enough to matter, and a wide, warm gold drop-shadow — which,
+     unlike a plain box-shadow, follows the medallion's own silhouette
+     rather than its rectangular bounding box — gives it a soft ambient
+     glow for more presence, while the medallion itself stays exactly as
+     understated as asked. */
+  filter:brightness(0) invert(.68) opacity(.5) blur(.4px)
+    drop-shadow(0 0 22px rgba(232,201,135,.4))
+    drop-shadow(0 -8px 20px rgba(0,0,0,.55));
 }
 .nav-drawer-arch.broken{display:none}
 /* Graceful degrade if the Cloudinary asset ever fails to load (network
