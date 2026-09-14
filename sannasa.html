@@ -242,9 +242,9 @@
     /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
        — the whole assembly is simply scaled to the viewport width. */
     .scroll-master-container {
-        --unroll-progress: 1;   /* සන්නස සම්පූර්ණයෙන්ම දිග හැරී පවතී */
-        --paper-h: 740px;       
-        flex-shrink: 0;         
+        --unroll-progress: 0;   /* JS animates this via requestAnimationFrame, once, on scroll-into-view */
+        --paper-h: 740px;
+        flex-shrink: 0;
         /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
         /* dividing by 650 (a bare number) instead of 650px left this calc() producing a
            <length>, not the <number> scale() requires — CSS.supports() confirms the whole
@@ -256,6 +256,27 @@
            unit, which resolves to a valid unitless ratio. */
         transform: scale(min(1, calc((100vw - 20px) / 650px)));
         transform-origin: top center;
+    }
+
+    /* Spiral end-caps physically counter-rotate as the scroll unrolls — two full
+       turns, matching the direction each roll spins as paper feeds off it. Driven
+       by the SAME --unroll-progress the JS reveal loop writes every frame, so
+       they stay perfectly in sync with the paper without any separate wiring. */
+    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)); }
+    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)); }
+    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)); }
+    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)); }
+
+    /* The "scroll to unfurl" cue fades away once the reveal starts playing */
+    .scroll-instruction { transition: opacity .6s ease; }
+    .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
+
+    /* Safety net: whatever the JS reveal loop is doing, Reduce Motion always wins
+       and forces the fully-unrolled resting state — the !important here beats
+       even an inline style the animation loop may be mid-way through writing. */
+    @media (prefers-reduced-motion: reduce) {
+        .scroll-master-container { --unroll-progress: 1 !important; }
+        .scroll-instruction { display: none; }
     }
 
 
@@ -647,10 +668,69 @@
     })();
     </script>
 
-    <!-- LERP scroll-unroll engine removed by design: the Sannasa is now STATIC and
-         permanently fully unrolled (--unroll-progress:1), so both wooden rolls are 100%
-         visible at all times and the parchment simply grows to fit its content. Height is
-         handed to the parent (fitSannasa) so the iframe hugs it and the Countdown below is
-         pushed down in normal document flow. -->
+    <script>
+    /* ── One-time scroll-triggered unroll ──────────────────────────────────
+       The reported iframe height is ALWAYS the fully-unrolled content height
+       (fitSannasa measures with --unroll-progress forced to 1 via a synchronous
+       inline-style override, unaffected by this — a CSS *transition* on the
+       property would have delayed that override instead of applying it
+       instantly, which is exactly why this reveal is driven by our own
+       requestAnimationFrame loop instead: only the VISUAL reveal inside the
+       already-correctly-sized space animates, never the iframe's reported
+       height. That split is what keeps this immune to the old "stretches as
+       you scroll" bug.
+
+       This document never scrolls internally (fitSannasa sizes it to hug its
+       content exactly), so the scrolling that reveals it is the PARENT page
+       scrolling the iframe element into its own viewport. IntersectionObserver's
+       implicit root falls back to the top-level browsing context's viewport
+       for exactly this case, so root:null here tracks the outer page — no
+       postMessage plumbing needed. */
+    (function(){
+      var vp = document.querySelector('.scroll-viewport');
+      var mc = document.querySelector('.scroll-master-container');
+      if(!vp || !mc) return;
+      var played = false;
+
+      function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
+
+      function playInstant(){
+        if(played) return; played = true;
+        vp.classList.add('unrolled');
+        setProgress(1);
+      }
+
+      function playAnimated(){
+        if(played) return; played = true;
+        vp.classList.add('unrolled');
+        var DURATION = 2050, start = null;
+        function ease(t){ return 1 - Math.pow(1 - t, 3); }   /* cubic ease-out — fast start, gentle settle */
+        function tick(ts){
+          if(start === null) start = ts;
+          var t = Math.min(1, (ts - start) / DURATION);
+          setProgress(ease(t));
+          if(t < 1){ requestAnimationFrame(tick); } else { setProgress(1); }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      var reduceMotion = false;
+      try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
+      var play = reduceMotion ? playInstant : playAnimated;
+
+      if(!('IntersectionObserver' in window)){ play(); }
+      else{
+        try{
+          var io = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){
+              if(entries[i].isIntersecting){ play(); io.disconnect(); break; }
+            }
+          }, { threshold: 0.18 });
+          io.observe(vp);
+        }catch(_){ play(); }
+      }
+      setTimeout(play, 6000);   /* safety net — never leave the invitation rolled up */
+    })();
+    </script>
 </body>
 </html>
