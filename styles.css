@@ -177,33 +177,21 @@ body.lite .pre-ring{animation-duration:1.6s}
    (min(80vw,320px)). A real <img>, not a CSS mask, so it lays out at its
    own true aspect ratio instead of guessing one. */
 .nav-drawer-arch{
-  /* The drawer's own border-left:1px eats 1px of its content box (box-sizing:
-     border-box) that plain padding-cancelling margins don't reach — the left
-     margin/width account for that extra pixel so this touches the drawer's
-     true left edge exactly, not one pixel short of it. */
-  margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
-  width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
-  display:block;pointer-events:none;user-select:none;
-  /* The source art (an ornate embossed medallion — animals and scrollwork
-     in fine line detail) is dark line-work, invisible against the drawer's
-     own near-black background (rgba(12,12,16,.96)) — brightness(0)
-     flattens every opaque pixel to pure black (alpha untouched), then
-     invert(.68) lifts that black to a dark ash-grey. Detail this fine reads
-     as a loud sticker at high opacity, so opacity(.5) keeps it at the
-     "barely there, elegant" level asked for while the fine linework still
-     stays legible up close.
-
-     Two finishing touches, without touching the source file itself (no
-     image-editing tool reaches it from here): a hair of blur smooths any
-     rough background-removal edges at this size without softening the
-     linework enough to matter, and a wide, warm gold drop-shadow — which,
-     unlike a plain box-shadow, follows the medallion's own silhouette
-     rather than its rectangular bounding box — gives it a soft ambient
-     glow for more presence, while the medallion itself stays exactly as
-     understated as asked. */
-  filter:brightness(0) invert(.68) opacity(.5) blur(.4px)
-    drop-shadow(0 0 22px rgba(232,201,135,.4))
-    drop-shadow(0 -8px 20px rgba(0,0,0,.55));
+  /* Sized by HEIGHT, not width: the source asset's aspect ratio has already
+     changed twice (a wide arch, then a near-square/round medallion), and
+     width:100%+height:auto stretches a round image into a huge dominating
+     circle. Capping the height and centering keeps this a small, fixed-size
+     accent no matter what shape the linked asset is. */
+  display:block;margin:.9rem auto 0;height:64px;width:auto;
+  max-width:calc(100% - 2rem);object-fit:contain;
+  pointer-events:none;user-select:none;
+  /* brightness(0) flattens every opaque pixel to pure black (alpha
+     untouched) regardless of the source's own colors, then invert(.68)
+     lifts that black to a dark ash-grey. opacity(.3) keeps it at the
+     "barely there" level asked for — visible up close, not a loud sticker. */
+  filter:brightness(0) invert(.68) opacity(.3) blur(.4px)
+    drop-shadow(0 0 14px rgba(232,201,135,.32))
+    drop-shadow(0 -4px 10px rgba(0,0,0,.5));
 }
 .nav-drawer-arch.broken{display:none}
 /* Graceful degrade if the Cloudinary asset ever fails to load (network
@@ -211,9 +199,8 @@ body.lite .pre-ring{animation-duration:1.6s}
    external resource, so the drawer is never left with silently nothing
    where the flourish should be. */
 .nav-drawer-arch-fallback{
-  display:none;margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
-  width:calc(100% + 3.2rem + 1px);height:130px;pointer-events:none;
-  background:radial-gradient(120% 100% at 50% 0%, rgba(232,201,135,.28), rgba(232,201,135,0) 70%);
+  display:none;margin:.9rem auto 0;width:120px;height:64px;pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(232,201,135,.22), rgba(232,201,135,0) 70%);
 }
 .nav-drawer-arch.broken + .nav-drawer-arch-fallback{display:block}
 
