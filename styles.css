@@ -154,7 +154,19 @@ body.lite .pre-ring{animation-duration:1.6s}
 /* Mobile drawer */
 .nav-drawer{position:fixed;inset:0 0 0 auto;width:min(80vw,320px);z-index:49;display:flex;flex-direction:column;gap:.3rem;
   padding:5.5rem 1.6rem 2rem;background:rgba(12,12,16,.96);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
-  border-left:1px solid var(--line);transform:translateX(105%);transition:transform .5s var(--ease);box-shadow:-20px 0 60px rgba(0,0,0,.6)}
+  border-left:1px solid var(--line);transform:translateX(105%);transition:transform .5s var(--ease);box-shadow:-20px 0 60px rgba(0,0,0,.6);
+  /* The drawer is pinned to the FULL viewport height (inset:0 0 0 auto) with
+     no scroll of its own — on shorter screens, or once the bottom flourish's
+     real (now-known) height is added on top of the nav links, the flex
+     column's content can run taller than that fixed box. Without its own
+     scroll, that overflow doesn't get clipped OR reveal itself: a
+     position:fixed element's overflow lands below the viewport's own bottom
+     edge, which no amount of scrolling the PAGE behind it can ever reach
+     (the drawer doesn't move with page scroll — that's the whole point of
+     fixed). overflow-y:auto makes the drawer scroll internally instead, so
+     every item — flourish included — stays reachable on any device height,
+     without hand-tuning a breakpoint per screen size. */
+  overflow-y:auto;overscroll-behavior:contain}
 .nav-drawer.open{transform:none}
 .nav-drawer a{font-family:var(--f-disp);font-size:1.35rem;color:var(--ink);padding:.7rem .2rem;border-bottom:1px solid var(--line-soft);transition:color .3s,padding-left .3s}
 .nav-drawer a:hover{color:var(--gold-bright);padding-left:.5rem}
@@ -172,14 +184,15 @@ body.lite .pre-ring{animation-duration:1.6s}
   margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
   width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
   display:block;pointer-events:none;user-select:none;
-  /* The source art is dark/near-black line-work, invisible against the
-     drawer's own near-black background (rgba(12,12,16,.96)) — brightness(0)
+  /* The source art (an ornate embossed medallion — animals and scrollwork
+     in fine line detail) is dark line-work, invisible against the drawer's
+     own near-black background (rgba(12,12,16,.96)) — brightness(0)
      flattens every opaque pixel to pure black (alpha untouched), then
-     invert(.72) lifts that black to a light ash-grey (not the site's usual
-     bold gold foil, which would read as a loud sticker) with enough real
-     contrast against the drawer to actually read on a phone screen at
-     arm's length, not just in a zoomed-in test render. */
-  filter:brightness(0) invert(.72) opacity(.6) drop-shadow(0 -8px 20px rgba(0,0,0,.55));
+     invert(.68) lifts that black to a dark ash-grey. Detail this fine reads
+     as a loud sticker at high opacity, so opacity(.5) keeps it at the
+     "barely there, elegant" level asked for while the fine linework still
+     stays legible up close. */
+  filter:brightness(0) invert(.68) opacity(.5) drop-shadow(0 -8px 20px rgba(0,0,0,.55));
 }
 .nav-drawer-arch.broken{display:none}
 /* Graceful degrade if the Cloudinary asset ever fails to load (network
