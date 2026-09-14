@@ -246,7 +246,15 @@
         --paper-h: 740px;       
         flex-shrink: 0;         
         /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
-        transform: scale(min(1, calc((100vw - 20px) / 650)));
+        /* dividing by 650 (a bare number) instead of 650px left this calc() producing a
+           <length>, not the <number> scale() requires — CSS.supports() confirms the whole
+           `transform` declaration was silently invalid and dropped at parse time. The scale
+           never applied on ANY screen: on phones the 650px-wide scroll rendered at full,
+           unscaled size — clipped by the iframe's overflow-x:hidden on both edges — and,
+           because the unscaled box is taller too, the section became far longer to scroll
+           through than intended. Dividing by 650px (not 650) keeps the division inside one
+           unit, which resolves to a valid unitless ratio. */
+        transform: scale(min(1, calc((100vw - 20px) / 650px)));
         transform-origin: top center;
     }
 
@@ -510,32 +518,51 @@
          Measures the decree's natural content height, grows/shrinks the parchment
          (--paper-h) to fit it, then reports the FULL unrolled height (rolls+paper,
          scaled) to the parent so the iframe hugs the scroll exactly — NO black void
-         below the lower roll, and it re-hugs the instant admin edits the content. */
+         below the lower roll, and it re-hugs the instant admin edits the content.
+
+         GUARDED against its own feedback loop: the parent resizes THIS iframe
+         element to match what we report, and resizing an iframe element fires a
+         `resize` event on the iframe's OWN window — so an ordinary resize
+         listener here would re-measure, (re-)post, get resized again, forever.
+         Two guards break that cleanly, without losing the legitimate reasons to
+         re-measure (a real viewport-width change, a font finishing its swap,
+         the admin editing content live):
+           1. `resize` only re-measures when the VIEWPORT WIDTH actually moved —
+              a parent-driven height-only resize never changes window.innerWidth,
+              so it's ignored outright.
+           2. Every path is a no-op once `needed` stops changing, so on a real
+              device with slower font/network timing this converges to one
+              clean settle instead of visibly re-growing while the visitor
+              scrolls past it. */
+      var lastNeeded = -1, lastWidth = window.innerWidth;
       function fitSannasa(){
         try{
           var mc = document.querySelector('.scroll-master-container');
           var inner = document.querySelector('.decree-inner');
           if(!mc || !inner) return;
-          
+
           var prevH = inner.style.height;
           inner.style.height = 'auto';
-          var C = inner.scrollHeight;                 
+          var C = inner.scrollHeight;
           inner.style.height = prevH;
-          
+
           /* 1480px උපරිම සීමාව ඉවත් කර ඇත. දැන් content කොතරම් වැඩි වුවත් සන්නස ඊට අනුව දිගු වේ */
           var paper = Math.max(560, Math.round(C + 120));
           mc.style.setProperty('--paper-h', paper + 'px');
-          
+
           var prevP = mc.style.getPropertyValue('--unroll-progress');
           mc.style.setProperty('--unroll-progress','1');
           var R = mc.getBoundingClientRect().height;
           if(prevP==='') mc.style.removeProperty('--unroll-progress');
           else mc.style.setProperty('--unroll-progress', prevP);
-          
+
           var needed = Math.round(28 + R + 30);
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
-          
+
+          if(needed === lastNeeded) return;   /* nothing actually changed — do not re-poke the parent */
+          lastNeeded = needed;
+
           /* අලුත් උස parent (main page) එකට යවයි */
           if(window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
@@ -544,6 +571,11 @@
       }
 
       window.__fitSannasa = fitSannasa;
+      function fitSannasaOnResize(){
+        if(window.innerWidth === lastWidth) return;   /* height-only resize (our own doing) — ignore */
+        lastWidth = window.innerWidth;
+        fitSannasa();
+      }
 
       function render(){
         var l = lang(), t = C[l];
@@ -575,9 +607,11 @@
         try{ fitSannasa(); }catch(_){}
       }
       render();
-      /* keep the scroll hugged to its content — on load, font swap, resize, and (via render) on every admin edit */
+      /* keep the scroll hugged to its content — on load, font swap, a REAL resize, and
+         (via render) on every admin edit. `fitSannasaOnResize` (not fitSannasa directly)
+         on the resize listener — see its guard above. */
       window.addEventListener('load', fitSannasa, { passive:true });
-      window.addEventListener('resize', fitSannasa, { passive:true });
+      window.addEventListener('resize', fitSannasaOnResize, { passive:true });
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
       setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
       /* re-render instantly when the main page toggles language */
