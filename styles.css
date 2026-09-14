@@ -42,6 +42,18 @@
 }
 .amp{font-family:var(--f-en);font-style:italic;color:var(--gold-2);-webkit-text-fill-color:var(--gold-2);margin:0 .12em;font-weight:600}
 
+/* background-clip:text goes fully invisible (0 pixels painted — confirmed by
+   direct render test, not a guess) whenever its ancestor also uses
+   backdrop-filter, on some browser/GPU combinations — a real compositing
+   interaction, not something worth chasing per-browser. .glass cards use
+   backdrop-filter, so any gradient-clip text inside one must fall back to a
+   plain, always-visible solid gold fill. (.cd-num gets the same fallback
+   directly on its own rule below, since it sits in a backdrop-filter cell too.) */
+.glass .foil{
+  background:none;-webkit-background-clip:initial;background-clip:initial;
+  color:var(--gold-bright);-webkit-text-fill-color:var(--gold-bright);
+}
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -254,7 +266,10 @@ body.lite .hero-inner>*{opacity:1!important;animation:none!important}
   border-radius:var(--r-md);background:var(--glass);box-shadow:var(--raise);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .cd-cell::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,250,232,.07),transparent 40%)}
 .cd-num{font-family:var(--f-disp);font-weight:800;font-size:clamp(2rem,8vw,3.4rem);line-height:1;
-  background:var(--foil);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  /* solid fill, not a gradient background-clip — .cd-cell uses backdrop-filter,
+     and clipped gradient text renders fully invisible under that combination
+     on some browsers (see the .glass .foil note near the top of this file) */
+  color:var(--gold-bright);-webkit-text-fill-color:var(--gold-bright)}
 .cd-lbl{font-family:var(--f-si);font-size:clamp(.7rem,2vw,.86rem);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
 .cd-done{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.5rem,5vw,2.4rem);margin-top:1rem}
 @media (max-width:440px){.cd-grid{grid-template-columns:repeat(2,1fr)}}
@@ -328,6 +343,13 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
    nothing left to tap — which is exactly how 'images do not open' presented. */
 .masonry figure img{aspect-ratio:4/5;width:100%;height:auto;object-fit:cover;background:#14141a;min-height:120px}
 @media (min-width:700px){.masonry figure img{min-height:150px}}
+/* A photo whose Cloudinary source 404s: app.js hides the <img> (so the browser
+   never paints its own broken-image glyph + raw alt text) and marks the figure
+   .fig-broken instead — this keeps the tile's shape in the grid and shows one
+   quiet gold mark, matching the site's own ornamental "✦", rather than a bug. */
+.masonry figure.fig-broken{aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;cursor:default;pointer-events:none}
+.masonry figure.fig-broken::after{content:"✦";color:var(--gold-2);opacity:.35;font-size:1.6rem}
+.masonry figure.fig-broken:hover{transform:none;box-shadow:none}
 .masonry figure:hover .fig-ring{box-shadow:inset 0 0 0 1.5px var(--gold)}
 .masonry figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem .9rem;color:#fff;font-family:var(--f-si);font-size:.9rem;background:linear-gradient(0deg,rgba(5,5,7,.85),transparent)}
 .gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;column-span:all;-webkit-column-span:all;text-align:center;letter-spacing:normal;width:100%}
@@ -449,6 +471,13 @@ body.lite .music .eq i{animation:none;height:9px}
    app.js is NOT touched. All motifs load from the user's Cloudinary CDN.
    ════════════════════════════════════════════════════════════════════════ */
 :root{
+  /* --o-crest / --o-arch / --o-seal: the Cloudinary source PNGs are gone
+     (404) and there is no local replacement to mask with — `mask:none`
+     does NOT hide an element, it disables clipping, so every consumer
+     below was painting a solid gold-foil rectangle instead of an ornament.
+     Each consumer is explicitly hidden further down (search "ornament
+     fallback") until real replacement art is uploaded and these three
+     variables point at a working URL again. */
   --o-crest:none  /* asset deleted from Cloudinary (HTTP 404) — was Copy_of_WealthFlow_Logo_q49zoz.png */;
   --o-arch:none  /* asset deleted from Cloudinary (HTTP 404) — was Photoroom_20260715_020528_kfm0vq.png */;
   --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967318/IMG_9974_lwhjah.png');
@@ -485,6 +514,8 @@ body.lite .music .eq i{animation:none;height:9px}
   background:var(--foil);
   -webkit-mask:var(--o-arch) center/contain no-repeat;mask:var(--o-arch) center/contain no-repeat;
   filter:drop-shadow(0 3px 12px rgba(0,0,0,.5));animation:orn-arch 10s ease-in-out infinite;
+  display:none  /* ornament fallback — see --o-arch note above; would otherwise paint
+                   an unmasked gold rectangle floating over the hero portrait */;
 }
 .hero::after{
   content:"";position:absolute;top:60px;left:0;right:0;height:32px;z-index:2;opacity:.42;pointer-events:none;
@@ -504,17 +535,20 @@ body.lite .music .eq i{animation:none;height:9px}
   width:min(380px,72vw);aspect-ratio:1/1;z-index:0;opacity:.09;
   -webkit-mask-image:var(--o-seal);mask-image:var(--o-seal);
   animation:orn-breathe 8s ease-in-out infinite;
+  display:none  /* ornament fallback — see --o-seal note above */;
 }
 
 /* Invitation floral crown (01) + crest seal (06) */
 .orn-floral{height:46px;width:min(430px,82%);margin:.2rem auto .1rem;
   background:var(--o-floral) center/auto 100% no-repeat;filter:var(--goldify);mix-blend-mode:screen;opacity:.82;pointer-events:none}
 .orn-crest-seal{height:118px;width:118px;margin:1.5rem auto 0;opacity:.96;filter:var(--orn-emboss);
-  -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest)}
+  -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest);
+  display:none  /* ornament fallback — see --o-crest note above */}
 
 /* Footer crest emblem (06) */
 .orn-emblem{height:66px;width:66px;margin:0 auto .8rem;filter:var(--orn-emboss);
-  -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest)}
+  -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest);
+  display:none  /* ornament fallback — see --o-crest note above */}
 
 @keyframes orn-arch{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
 @keyframes orn-breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06)}}
@@ -579,7 +613,9 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 .entry-corner.br{bottom:16px;right:16px;transform:scale(-1)}
 .entry-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1.4rem;animation:entry-rise 1.3s var(--ease) both}
 .entry-crest{width:clamp(64px,14vw,104px);aspect-ratio:.88;background:var(--foil);
-  -webkit-mask:var(--o-crest) center/contain no-repeat;mask:var(--o-crest) center/contain no-repeat;filter:var(--orn-emboss);margin-bottom:.3rem}
+  -webkit-mask:var(--o-crest) center/contain no-repeat;mask:var(--o-crest) center/contain no-repeat;filter:var(--orn-emboss);margin-bottom:.3rem;
+  display:none  /* ornament fallback — see --o-crest note above; would otherwise paint
+                   a solid gold square above the entry gateway names */}
 .entry-eyebrow{font-family:var(--f-si);letter-spacing:.34em;text-transform:uppercase;color:var(--gold-2);font-size:.8rem}
 .entry-names{font-family:var(--f-disp);font-weight:800;font-size:clamp(2.6rem,10vw,5.4rem);line-height:1.05;margin:.15rem 0}
 .entry-names .amp{font-size:.5em;vertical-align:.14em}

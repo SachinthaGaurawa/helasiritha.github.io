@@ -597,8 +597,12 @@ function renderGallery() {
   $("#gallerySub").textContent = T.gallerySub;
   const box = $("#masonry");
   if (!GALLERY.length) { box.innerHTML = '<p class="gallery-empty">' + esc(T.galleryEmpty) + '</p>'; return; }
+  /* A gallery photo whose Cloudinary URL 404s must never fall back to the
+     browser's own broken-image glyph + raw alt text — that reads as a bug,
+     not an empty frame. onerror hides the <img> and flags the figure so CSS
+     paints a quiet gold "✦" instead, matching the site's own ornamental mark. */
   box.innerHTML = GALLERY.map((g, i) =>
-    '<figure class="reveal" data-i="' + i + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.opacity=1">' +
+    '<figure class="reveal" data-i="' + i + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.display=&quot;none&quot;;this.closest(&quot;figure&quot;).classList.add(&quot;fig-broken&quot;)">' +
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
@@ -1077,6 +1081,8 @@ function openLightbox(i) {
   lbIndex = i; const lb = $("#lightbox"), g = GALLERY[i]; if (!g) return;
   const im = $("#lbImg");
   im.decoding = "async";
+  im.style.display = "";
+  im.onerror = function () { im.style.display = "none"; };   /* never show the broken-image glyph full-screen */
   im.src = cld(g.url, viewerWidth());          /* sized for THIS screen + network */
   im.alt = g.caption || "memory";
   $("#lbCap").textContent = g.caption || "";
