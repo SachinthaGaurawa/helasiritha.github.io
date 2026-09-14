@@ -340,7 +340,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     document.documentElement.classList.remove('entry-lock');
     document.documentElement.classList.add('entered');    /* unlocks page scroll (CSS) */
     var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
-    setTimeout(function(){ if(e&&e.parentNode){ e.parentNode.removeChild(e); } }, 1600);
+    setTimeout(function(){ if(e&&e.parentNode){ e.parentNode.removeChild(e); } }, 2000); /* matches the staged fade in styles.css (.35s delay + 1.3s) */
   }
   var b=document.getElementById('entryEnter');
   if(b){ b.addEventListener('click', enter); }

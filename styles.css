@@ -596,7 +596,14 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 
 /* ── Entry gateway ── */
 .entry{position:fixed;inset:0;z-index:300;display:grid;place-items:center;overflow:hidden;background:#08080a;text-align:center;
-  transition:opacity 1.1s var(--ease),transform 1.4s var(--ease),filter 1.1s var(--ease)}
+  /* Staged, not simultaneous: the lamp ignites and the screen floods with gold
+     light FIRST (see .entry-flash / .lamp-glow / .lamp-flame below, all fast
+     0–.9s beats) — only THEN does the gate itself visibly dissolve, so tapping
+     the lamp reads as "ignite → flood with light → the light clears to reveal
+     the invitation", not everything crossfading at once in a blink. The scale
+     starts almost immediately (feels instantly responsive to the tap); the
+     fade/blur that actually reveals the page waits for the flash to peak. */
+  transition:opacity 1.3s var(--ease) .35s,transform 1.9s var(--ease) .05s,filter 1.3s var(--ease) .35s}
 .entry.go{opacity:0;transform:scale(1.16);filter:blur(7px);pointer-events:none}
 .entry-bg{position:absolute;inset:0;background:var(--s-entry) center/cover no-repeat;transform:scale(1.06);opacity:.5;animation:kenburns 20s ease-in-out infinite alternate}
 .entry-veil{position:absolute;inset:0;background:
@@ -629,7 +636,7 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
   background:radial-gradient(circle,rgba(255,206,120,.5),rgba(255,206,120,0) 70%);animation:glow 2.6s ease-in-out infinite}
 .entry-cta{margin-top:1.1rem;font-family:var(--f-si);letter-spacing:.12em;color:var(--gold-bright);font-size:.86rem;animation:ctaPulse 2.2s ease-in-out infinite}
 .entry-flash{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 58%, rgba(255,228,168,.98), rgba(255,212,132,.55) 32%, rgba(255,212,132,0) 74%)}
-.entry.go .entry-flash{animation:flash 1.25s ease-out}
+.entry.go .entry-flash{animation:flash 1.5s ease-out}
 .entry.go .lamp-glow{animation:lampBurst .9s cubic-bezier(.2,.7,.2,1) forwards}
 .entry.go .lamp-flame{animation:flameBurst .75s ease-out forwards}
 .entry-names.foil{animation:sheen 8s ease-in-out infinite}
@@ -650,7 +657,7 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes flame{0%,100%{transform:translateX(-50%) scale(1) rotate(-2deg)}50%{transform:translateX(-50%) scale(1.14,1.2) rotate(2deg)}}
 @keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
-@keyframes flash{0%{opacity:0}18%{opacity:1}50%{opacity:.5}100%{opacity:0}}
+@keyframes flash{0%{opacity:0}22%{opacity:1}55%{opacity:.5}100%{opacity:0}}
 @keyframes lampBurst{0%{opacity:.5;transform:translateX(-50%) scale(1)}45%{opacity:1;transform:translateX(-50%) scale(2.7)}100%{opacity:0;transform:translateX(-50%) scale(3.7)}}
 @keyframes flameBurst{0%{opacity:.95;transform:translateX(-50%) scaleY(1)}42%{opacity:1;transform:translateX(-50%) scale(1.5,2.4)}100%{opacity:0;transform:translateX(-50%) scale(1.6,2.7)}}
 @keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
