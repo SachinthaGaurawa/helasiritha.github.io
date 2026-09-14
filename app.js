@@ -836,10 +836,12 @@ function setupParticles() {
   });
 }
 
-/* STATIC invitation scroll (same-origin iframe): it is fully unrolled and lives in normal
-   document flow. It posts its content-fit height; we HUG the iframe to that height so the
-   lower wooden roll is always 100% visible and the Countdown below is pushed straight down
-   (no overlap, no void). Re-hugs the instant the admin edits the decree. */
+/* Sannasa scroll-unroll (same-origin iframe): the invitation unrolls tied to scroll
+   position as the visitor scrolls past it — sannasa.html computes its own runway height
+   (content height plus a bounded extra scroll distance, never a value disconnected from
+   the actual content) and posts it here; we HUG the iframe to that exact height so there
+   is never a black void below the lower roll, nor content clipped above it. Re-hugs the
+   instant the admin edits the decree or its content height otherwise changes. */
 function setupSannasaScroll() {
   window.addEventListener("message", (e) => {
     const d = e && e.data;
