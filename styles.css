@@ -177,21 +177,24 @@ body.lite .pre-ring{animation-duration:1.6s}
    (min(80vw,320px)). A real <img>, not a CSS mask, so it lays out at its
    own true aspect ratio instead of guessing one. */
 .nav-drawer-arch{
-  /* Sized by HEIGHT, not width: the source asset's aspect ratio has already
-     changed twice (a wide arch, then a square medallion), and
-     width:100%+height:auto stretches a round image into a huge dominating
-     circle. Capping the height and centering keeps this a fixed-size accent
-     no matter what shape the linked asset is. */
-  display:block;margin:1rem auto 0;height:132px;width:auto;
-  max-width:calc(100% - 2rem);object-fit:contain;
-  pointer-events:none;user-select:none;
-  /* The current art is a full-color mandala (not dark line-work), so this
-     keeps its actual colors instead of forcing grayscale — brightness(.6)
-     just dims it down to sit quietly behind the nav links, the way a
-     reduced-brightness photo would, while staying recognizably itself. */
+  /* The drawer's own border-left:1px eats 1px of its content box (box-sizing:
+     border-box) that plain padding-cancelling margins don't reach — the left
+     margin/width account for that extra pixel so this touches the drawer's
+     true left edge exactly, not one pixel short of it. Width is tied to the
+     drawer's own responsive width (min(80vw,320px)), so it matches exactly
+     on every device without a breakpoint; height:auto keeps the source
+     asset's own (now square) aspect ratio instead of guessing one. */
+  margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
+  width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
+  display:block;pointer-events:none;user-select:none;
+  /* The art is a full-color mandala (not dark line-work), so this keeps its
+     actual colors instead of forcing grayscale — brightness(.6) just dims
+     it down to sit quietly behind the nav links, the way a reduced-
+     brightness photo would, while staying recognizably itself. The upward
+     drop-shadow grounds it against the drawer floor it's bled flush to. */
   filter:brightness(.6) blur(.3px)
-    drop-shadow(0 8px 20px rgba(0,0,0,.55))
-    drop-shadow(0 0 18px rgba(232,201,135,.22));
+    drop-shadow(0 -8px 20px rgba(0,0,0,.55))
+    drop-shadow(0 0 22px rgba(232,201,135,.24));
 }
 .nav-drawer-arch.broken{display:none}
 /* Graceful degrade if the Cloudinary asset ever fails to load (network
@@ -199,7 +202,8 @@ body.lite .pre-ring{animation-duration:1.6s}
    external resource, so the drawer is never left with silently nothing
    where the flourish should be. */
 .nav-drawer-arch-fallback{
-  display:none;margin:1rem auto 0;width:132px;height:132px;pointer-events:none;
+  display:none;margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
+  width:calc(100% + 3.2rem + 1px);height:130px;pointer-events:none;
   background:radial-gradient(120% 100% at 50% 0%, rgba(232,201,135,.22), rgba(232,201,135,0) 70%);
 }
 .nav-drawer-arch.broken + .nav-drawer-arch-fallback{display:block}
