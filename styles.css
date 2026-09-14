@@ -172,7 +172,13 @@ body.lite .pre-ring{animation-duration:1.6s}
   margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
   width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
   display:block;pointer-events:none;user-select:none;
-  filter:drop-shadow(0 -10px 26px rgba(0,0,0,.6));
+  /* The source art is dark/near-black line-work, invisible against the
+     drawer's own near-black background (rgba(12,12,16,.96)) — brightness(0)
+     flattens every opaque pixel to pure black (alpha untouched), then
+     invert(.62) lifts that black to a soft ash-grey rather than the site's
+     usual bold gold foil: barely-there and elegant, not a loud shape,
+     exactly what reads as understated rather than a graphic sticker. */
+  filter:brightness(0) invert(.62) opacity(.4) drop-shadow(0 -10px 22px rgba(0,0,0,.5));
 }
 
 /* ════════ Buttons ════════ */
