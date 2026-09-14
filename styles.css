@@ -175,11 +175,23 @@ body.lite .pre-ring{animation-duration:1.6s}
   /* The source art is dark/near-black line-work, invisible against the
      drawer's own near-black background (rgba(12,12,16,.96)) — brightness(0)
      flattens every opaque pixel to pure black (alpha untouched), then
-     invert(.62) lifts that black to a soft ash-grey rather than the site's
-     usual bold gold foil: barely-there and elegant, not a loud shape,
-     exactly what reads as understated rather than a graphic sticker. */
-  filter:brightness(0) invert(.62) opacity(.4) drop-shadow(0 -10px 22px rgba(0,0,0,.5));
+     invert(.72) lifts that black to a light ash-grey (not the site's usual
+     bold gold foil, which would read as a loud sticker) with enough real
+     contrast against the drawer to actually read on a phone screen at
+     arm's length, not just in a zoomed-in test render. */
+  filter:brightness(0) invert(.72) opacity(.6) drop-shadow(0 -8px 20px rgba(0,0,0,.55));
 }
+.nav-drawer-arch.broken{display:none}
+/* Graceful degrade if the Cloudinary asset ever fails to load (network
+   hiccup, an edit that breaks the URL) — a pure-CSS glow needing no
+   external resource, so the drawer is never left with silently nothing
+   where the flourish should be. */
+.nav-drawer-arch-fallback{
+  display:none;margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
+  width:calc(100% + 3.2rem + 1px);height:130px;pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(232,201,135,.28), rgba(232,201,135,0) 70%);
+}
+.nav-drawer-arch.broken + .nav-drawer-arch-fallback{display:block}
 
 /* ════════ Buttons ════════ */
 .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
