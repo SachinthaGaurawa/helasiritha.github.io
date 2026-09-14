@@ -1154,9 +1154,12 @@ async function connect() {
       BLESSINGS = arr; renderBlessings(); observeReveals();
     }, (err) => console.warn("blessings listener", err));
 
-    fs.onSnapshot(fs.collection(db, "guests"), (snap) => {
+    /* Only the {name, family, side} mirror — never the full `guests` doc, which
+       also carries status/liquor/dietary/tableNumber. That keeps every other
+       guest's RSVP details private from a visitor using this search box. */
+    fs.onSnapshot(fs.collection(db, "guestsPublic"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
-    }, (err) => console.warn("guests listener", err));
+    }, (err) => console.warn("guestsPublic listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "stats"), (snap) => {
       confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
