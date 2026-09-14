@@ -491,7 +491,7 @@ body.lite .music .eq i{animation:none;height:9px}
 .section>.wrap{position:relative;z-index:1}
 
 /* Champagne-mask base (shared) */
-.orn-crest-seal,.orn-emblem,.section::before,
+.orn-crest-seal,.section::before,
 #countdown::after,#lovenote::after,#blessings::after,#lamp::after{
   background:var(--foil);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
@@ -545,10 +545,13 @@ body.lite .music .eq i{animation:none;height:9px}
   -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest);
   display:none  /* ornament fallback — see --o-crest note above */}
 
-/* Footer crest emblem (06) */
-.orn-emblem{height:66px;width:66px;margin:0 auto .8rem;filter:var(--orn-emboss);
-  -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest);
-  display:none  /* ornament fallback — see --o-crest note above */}
+/* Footer emblem — the couple's own medallion artwork, shown in full (not
+   masked/foil-tinted like the faint background watermarks above that reuse
+   the same image) since this is a real visible mark, not a decoration. */
+.orn-emblem{height:72px;width:72px;margin:0 auto .8rem;border-radius:50%;
+  background:var(--o-medallion) center/cover no-repeat;
+  box-shadow:0 2px 10px rgba(0,0,0,.5),0 0 0 1px rgba(232,201,135,.35);
+  pointer-events:none}
 
 @keyframes orn-arch{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
 @keyframes orn-breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06)}}
