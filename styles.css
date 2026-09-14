@@ -178,20 +178,20 @@ body.lite .pre-ring{animation-duration:1.6s}
    own true aspect ratio instead of guessing one. */
 .nav-drawer-arch{
   /* Sized by HEIGHT, not width: the source asset's aspect ratio has already
-     changed twice (a wide arch, then a near-square/round medallion), and
+     changed twice (a wide arch, then a square medallion), and
      width:100%+height:auto stretches a round image into a huge dominating
-     circle. Capping the height and centering keeps this a small, fixed-size
-     accent no matter what shape the linked asset is. */
-  display:block;margin:.9rem auto 0;height:64px;width:auto;
+     circle. Capping the height and centering keeps this a fixed-size accent
+     no matter what shape the linked asset is. */
+  display:block;margin:1rem auto 0;height:132px;width:auto;
   max-width:calc(100% - 2rem);object-fit:contain;
   pointer-events:none;user-select:none;
-  /* brightness(0) flattens every opaque pixel to pure black (alpha
-     untouched) regardless of the source's own colors, then invert(.68)
-     lifts that black to a dark ash-grey. opacity(.3) keeps it at the
-     "barely there" level asked for — visible up close, not a loud sticker. */
-  filter:brightness(0) invert(.68) opacity(.3) blur(.4px)
-    drop-shadow(0 0 14px rgba(232,201,135,.32))
-    drop-shadow(0 -4px 10px rgba(0,0,0,.5));
+  /* The current art is a full-color mandala (not dark line-work), so this
+     keeps its actual colors instead of forcing grayscale — brightness(.6)
+     just dims it down to sit quietly behind the nav links, the way a
+     reduced-brightness photo would, while staying recognizably itself. */
+  filter:brightness(.6) blur(.3px)
+    drop-shadow(0 8px 20px rgba(0,0,0,.55))
+    drop-shadow(0 0 18px rgba(232,201,135,.22));
 }
 .nav-drawer-arch.broken{display:none}
 /* Graceful degrade if the Cloudinary asset ever fails to load (network
@@ -199,7 +199,7 @@ body.lite .pre-ring{animation-duration:1.6s}
    external resource, so the drawer is never left with silently nothing
    where the flourish should be. */
 .nav-drawer-arch-fallback{
-  display:none;margin:.9rem auto 0;width:120px;height:64px;pointer-events:none;
+  display:none;margin:1rem auto 0;width:132px;height:132px;pointer-events:none;
   background:radial-gradient(120% 100% at 50% 0%, rgba(232,201,135,.22), rgba(232,201,135,0) 70%);
 }
 .nav-drawer-arch.broken + .nav-drawer-arch-fallback{display:block}
