@@ -116,7 +116,7 @@ body.lang-swap main,body.lang-swap .nav-inner{animation:swap .42s var(--ease)}
 body.lite.lang-swap main{animation:none}
 
 /* ════════ PRELOADER ════════ */
-.preloader{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease}
+.preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease}
 .preloader.gone{opacity:0;visibility:hidden}
 .pre-inner{display:grid;place-items:center;gap:1rem;text-align:center}
 .pre-ring{width:74px;height:74px;border-radius:50%;border:1.5px solid var(--line);border-top-color:var(--gold);animation:spin 1s linear infinite}
@@ -670,7 +670,12 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 .entry-corner.tr{top:16px;right:16px;transform:scaleX(-1)}
 .entry-corner.bl{bottom:16px;left:16px;transform:scaleY(-1)}
 .entry-corner.br{bottom:16px;right:16px;transform:scale(-1)}
-.entry-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1.4rem;animation:entry-rise 1.3s var(--ease) both}
+.entry-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1.4rem;opacity:0;transform:translateY(28px)}
+/* The rise-in plays only once the preloader actually lifts (html.gw-ready,
+   toggled in app.js alongside dismissPreloader) — otherwise, now that the
+   preloader genuinely covers the gateway while its images load, this one-
+   shot entrance would finish off-screen during that wait and never be seen. */
+html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
 .entry-crest{width:clamp(64px,14vw,104px);aspect-ratio:.88;background:var(--foil);
   -webkit-mask:var(--o-crest) center/contain no-repeat;mask:var(--o-crest) center/contain no-repeat;filter:var(--orn-emboss);margin-bottom:.3rem;
   display:none  /* ornament fallback — see --o-crest note above; would otherwise paint

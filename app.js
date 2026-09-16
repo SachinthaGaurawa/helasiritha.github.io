@@ -948,9 +948,33 @@ function setupZoomGuard() {
   apply();
 }
 
-/* Preloader → reveal */
+/* Preloader → reveal.
+   The entry gateway's own background photo, lamp, arch and corner filigree
+   each load over the network independently — without explicitly waiting for
+   them, the preloader (which now actually covers the gateway; see the
+   z-index note in styles.css) would lift before they've all arrived, and
+   the visitor watches them pop in one by one behind it. dismissPreloader()
+   is only called once every one of them has genuinely finished loading AND
+   decoding (or, for the images, has definitively failed — a stalled asset
+   must never trap the visitor behind the preloader forever). */
+const GATEWAY_CRITICAL_IMAGES = [
+  "https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg", // entry-bg
+  "https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png",     // lamp
+  "https://iili.io/CGU3TaR.png", // gateway arch
+  "https://iili.io/CGU2ZpS.png", // corner filigree
+];
+function preloadDecodedImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const done = () => resolve();
+    img.onload = () => { if (img.decode) img.decode().then(done, done); else done(); };
+    img.onerror = done; // a failed asset must never block the reveal
+    img.src = src;
+  });
+}
 function dismissPreloader() {
   const p = $("#preloader"); if (!p) return;
+  document.documentElement.classList.add("gw-ready"); // releases the entry-rise animation, timed with the lift
   p.classList.add("gone");
   setTimeout(() => { if (p && p.parentNode) p.remove(); }, 1100);
 }
@@ -1391,9 +1415,12 @@ function init() {
   setupParallax(); setupParticles(); setupZoomGuard(); setupSannasaScroll();
   $("#heroRsvpBtn").addEventListener("click", () => { const r = $("#rsvp"); if (r) r.scrollIntoView({ behavior: "smooth" }); });
   const mb = $("#musicBtn"); if (mb) mb.onclick = toggleMusic; syncMusicBtn();
-  // preloader: dismiss after first paint / fonts
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(dismissPreloader, 250));
-  setTimeout(dismissPreloader, 1500); // safety — never leave the visitor waiting
+  // preloader: dismiss only once every critical gateway image is loaded AND
+  // decoded, and fonts are ready — see dismissPreloader()'s own comment.
+  const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  const gatewayReady = Promise.all(GATEWAY_CRITICAL_IMAGES.map(preloadDecodedImage));
+  Promise.all([fontsReady, gatewayReady]).then(dismissPreloader);
+  setTimeout(dismissPreloader, 2500); // safety — never leave the visitor waiting, even if an asset stalls
   setTimeout(fitHero, 260); setTimeout(fitHero, 1200);
   connect();
 }
