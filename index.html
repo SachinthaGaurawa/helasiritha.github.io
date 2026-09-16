@@ -137,9 +137,16 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
       <h2 id="invTitle" class="sec-title foil reveal"></h2>
       <div class="hansa-divider reveal" aria-hidden="true"><span class="hansa-mark"></span></div>
     </div>
-    <!-- ░░ Sannasa — your exact standalone file, embedded verbatim (isolated) ░░ -->
-    <div class="sannasa-embed reveal">
-      <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" loading="lazy"></iframe>
+    <!-- ░░ Sannasa — Apple-style scroll-pin: a tall runway holds a REAL CSS
+         position:sticky viewport-window; the sannasa (embedded verbatim,
+         isolated) unrolls inside it exactly in step with scroll, then
+         releases once fully unrolled. See app.js (setupSannasaScroll). ░░ -->
+    <div class="sannasa-runway reveal" id="sannasaRunway">
+      <div class="sannasa-sticky">
+        <div class="sannasa-embed">
+          <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" loading="lazy"></iframe>
+        </div>
+      </div>
     </div>
     <!-- hidden stub so app.js (#inviteBody) keeps working without error -->
     <div class="sannasa-hidden" aria-hidden="true"><div id="inviteBody"></div></div>

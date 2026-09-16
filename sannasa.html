@@ -28,29 +28,40 @@
   .scroll-viewport {
         position: relative;
         width: 100%;
-        /* The real scroll runway a visitor scrolls THROUGH while the reveal plays —
-           computed and set by the engine below (content height + a bounded extra
-           scroll distance), never a hardcoded, content-disconnected value. This
-           fallback only covers the instant before JS first runs. */
-        height: 900px;
+        /* Same-origin iframe (mode 1, production): the PARENT owns a real
+           position:sticky pin-window sized to exactly 100svh, and this iframe
+           element is CSS-sized to fill it 1:1 (see .sannasa-frame in the
+           parent's styles.css) — so this viewport simply fills its own
+           iframe document at 100vh. Standalone/top-level (mode 2) and the
+           cross-origin preview (mode 3) still need a real scroll runway of
+           their own; their engine below overrides this height in px. */
+        height: 100vh;
         overflow: hidden;            /* clips ONLY the empty scaled-reserve gap — never a wooden roll */
         padding: 28px 0 30px;        /* breathing above the top roll and below the bottom roll */
         background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
+        box-sizing: border-box;
     }
 
     /* =======================================================================
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
   .scroll-sticky-scene {
-        /* Pinned in place while the runway scrolls past underneath it — the engine
-           below sets `top` every frame (standalone/top-level pages use real
-           position:fixed instead; see the engine's mode 2). */
+        /* Mode 1 (production, same-origin iframe): the PARENT's real CSS
+           position:sticky already holds the whole assembly fixed in the
+           viewport, so this scene needs no positioning tricks of its own —
+           it just centers within the 100vh .scroll-viewport, vertically AND
+           horizontally, so the whole rig (scaled to fit — see
+           .scroll-master-container's --sannasa-scale below) always sits in
+           the middle of the pinned window regardless of content length.
+           Mode 2 (standalone/top-level) still needs real position:fixed —
+           the engine below adds .pin-fixed for that case, which this rule's
+           `position:absolute` default cascades under. */
         position: absolute;
-        left: 0; right: 0; top: 0;
+        left: 0; right: 0; top: 0; bottom: 0;
         display: flex;
         justify-content: center;
-        align-items: flex-start;     /* top roll pinned to the top of the assembly */
-        padding: 0 10px;             /* side breathing only; vertical handled by .scroll-viewport */
+        align-items: center;
+        padding: 0 10px;             /* side breathing only */
         overflow: visible;           /* NEVER clip the wooden rolls */
         pointer-events: none;
     }
@@ -262,9 +273,13 @@
     .scroll-master-container {
         --unroll-progress: 0;   /* the scroll engine below writes this every frame, tied to scroll position */
         --paper-h: 740px;
+        --sannasa-scale: 1;     /* mode 1 only: fitPinnedScale() shrinks this so long content never
+                                    clips against the fixed 100vh pin-window — see measureSceneHeight() */
         width: 100%;
         max-width: 650px;
         flex-shrink: 0;
+        transform: scale(var(--sannasa-scale));
+        transform-origin: center center;
     }
 
     /* Spiral end-caps physically counter-rotate as the scroll unrolls — two full
@@ -593,19 +608,51 @@
       }
       window.__measureSceneHeight = measureSceneHeight;
 
+      /* Mode 1 (production, same-origin iframe) only: the parent owns a real
+         CSS position:sticky pin-window fixed at 100svh (see setupSannasaScroll
+         in app.js) — this iframe is CSS-sized to fill it exactly, so unlike
+         modes 2/3 there is no growing runway to hug here. Instead, since the
+         decree's content length is admin-editable and can exceed a short
+         mobile viewport's 100vh, this shrinks the WHOLE assembly (via
+         --sannasa-scale, applied to .scroll-master-container) just enough
+         that the fully-unrolled scroll always fits inside the fixed pin
+         window — this is exactly what guarantees the top of the sannasa can
+         never clip out of view, whatever the content length or screen size. */
+      var framedOnce = (window !== window.top);
+      var sameOriginOnce = false;
+      if(framedOnce){ try{ sameOriginOnce = !!window.frameElement; }catch(_){ sameOriginOnce = false; } }
+      function fitPinnedScale(){
+        if(!sameOriginOnce) return;
+        try{
+          var scene = document.querySelector('.scroll-master-container');
+          if(!scene) return;
+          var sceneH = measureSceneHeight();
+          var availH = window.innerHeight || 700;
+          var pad = 24; /* breathing room top+bottom inside the pinned window */
+          var scale = Math.min(1, Math.max(0.4, (availH - pad) / Math.max(1, sceneH)));
+          scene.style.setProperty('--sannasa-scale', scale.toFixed(4));
+        }catch(_){}
+      }
+
       function fitSannasa(){
         try{
-          /* The scroll engine (second <script> block) owns .scroll-viewport's
-             height and the parent postMessage once it has loaded — it needs
-             to add its own extra scroll runway on top of the content height,
+          fitPinnedScale();
+
+          /* Modes 2 (standalone/top-level) & 3 (cross-origin preview): the
+             scroll engine (third <script> block) owns .scroll-viewport's
+             height and the parent postMessage for those modes — it needs to
+             add its own extra scroll runway on top of the content height,
              and it is the only one that knows whether that runway applies
-             (mode 1/2) or not (mode 3). Delegating to it here, instead of
-             also setting vp.style.height/posting ourselves, is what keeps
-             this function's own load/resize/font-ready/setTimeout callbacks
-             from racing the engine and clobbering its taller runway back
-             down to the content-only height. It re-measures internally, so
-             this function does not need to measure again first. */
+             (mode 2) or not (mode 3). Delegating to it here, instead of also
+             setting vp.style.height/posting ourselves, is what keeps this
+             function's own load/resize/font-ready/setTimeout callbacks from
+             racing the engine and clobbering its taller runway back down to
+             the content-only height. It re-measures internally, so this
+             function does not need to measure again first. Mode 1 sets no
+             __reflowScrollEngine (there is no runway to grow), so this is a
+             no-op there — fitPinnedScale() above already did mode 1's job. */
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
+          if(sameOriginOnce) return; /* mode 1: nothing else to do */
 
           /* Fallback for the brief instant before the engine script below has
              run (or if it somehow failed to load): content-only sizing. */
@@ -700,47 +747,34 @@
 
     <script>
     /* ── Scroll-tied unroll engine ────────────────────────────────────────
-       Reproduces the reference prototype's continuous, bidirectional,
-       LERP-smoothed scroll-driven unroll — the scroll visibly unfurls as you
-       scroll, exactly in step, caps spinning — while staying immune to the
-       bug that made the very first version of this "stretch": that version
-       bound progress to raw scroll position against a FIXED 250vh runway
-       that had no relationship to the actual content height. Here the runway
-       is always content-height + a bounded extra distance (never a bare
-       constant), computed fresh on every real reflow.
-
        Three embedding modes, detected automatically:
 
        1. SAME-ORIGIN IFRAME (the production case — helasiritha.vercel.app's
-          own index.html embeds this same-origin sannasa.html). This document
-          never scrolls internally: it's sized to exactly match the runway,
-          so the "scroll" that should drive the unroll is the PARENT page
-          scrolling this iframe element through ITS OWN viewport.
-
-          An earlier version of this engine read that position from INSIDE
-          this document, every single animation frame, via
-          window.frameElement.getBoundingClientRect() — same-origin-legal,
-          but it forces the browser to reconcile this iframe's position
-          against the PARENT document's layout from a second, independent
-          browsing context, 60+ times a second. That cross-context layout
-          read is what caused the real-device stutter/freeze (worst while
-          scrolling back up during momentum/inertial scrolling): it competes
-          with the parent page's own scroll-driven work (parallax, particles,
-          the entry gateway) for the main thread, and iframes are not always
-          scheduled in lockstep with the parent's compositor.
-
-          Now the PARENT (app.js's setupSannasaScroll) reads its own
-          getBoundingClientRect() on the iframe element — a same-document,
-          main-thread-native read that the browser already keeps cheap as
-          part of ordinary scroll handling — and postMessages a plain 0..1
-          progress number in. This document only ever LISTENS for that
-          message and LERPs toward it; it never queries cross-context layout
-          itself. See the 'message' listener and computeTargetProgress()
-          below.
+          own index.html embeds this same-origin sannasa.html). The PARENT
+          now holds a REAL CSS position:sticky pin-window (see
+          .sannasa-runway/.sannasa-sticky in styles.css and setupSannasaScroll
+          in app.js) — the browser's own compositor does the pinning, so this
+          document has nothing to compute or simulate for positioning. All it
+          does is LISTEN for an already-computed 0..1 progress number posted
+          once per animation frame (app.js reads its own iframe element's
+          position — a same-document, main-thread-native rect read, never a
+          cross-context one from inside here) and apply it DIRECTLY, with no
+          added LERP lag, so the unroll stays glued to the real scrollbar
+          exactly like an Apple-style scroll-bound reveal. (An earlier
+          version instead read window.frameElement.getBoundingClientRect()
+          from INSIDE this iframe every frame, which forced the browser to
+          reconcile this iframe's position against the PARENT document's
+          layout from a second, independent browsing context 60+ times a
+          second — the real cause of the old stutter/freeze on real devices.
+          A version after that simulated the pin itself via a JS-computed
+          iframe height and an in-iframe `top` offset, which could drift out
+          of sync with the real scrollbar — replaced by the real
+          position:sticky pin above.)
        2. STANDALONE / TOP-LEVEL (this document opened directly, not framed).
           window.frameElement is null and this IS window.top — the reference
-          prototype's own approach (real position:fixed, real window.scrollY)
-          works completely unmodified here, no manual math needed.
+          prototype's own approach (real position:fixed, real window.scrollY,
+          LERP-smoothed since there is no parent driving a per-frame value)
+          works basically unmodified here, no manual math needed.
        3. CROSS-ORIGIN IFRAME (the admin panel's live-preview embed —
           a different origin embedding this page). window.frameElement is
           inaccessible and unreadable by design (browser security), so there
@@ -757,94 +791,6 @@
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
       function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
-
-      var framed = (window !== window.top);
-      var sameOriginFrame = false;
-      if(framed){
-        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
-      }
-
-      /* ── Mode 3: cross-origin preview — simple, safe, one-shot ── */
-      function runFallbackReveal(){
-        var played = false;
-        function play(){
-          if(played) return; played = true;
-          vp.classList.add('unrolled');
-          setProgress(1);
-        }
-        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
-        try{
-          var io = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.18 });
-          io.observe(vp);
-        }catch(_){ play(); }
-        setTimeout(play, 4000);
-      }
-
-      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
-
-      /* ── Modes 1 & 2: the real scroll-tied engine ── */
-      var lerpSpeed = 0.18;               /* identical smoothing to the reference prototype */
-      var current = 0, target = 0;
-      var extraPx = 480, pinPx = 48;      /* recomputed in reflow() below, sane pre-reflow defaults */
-      var running = false, rafId = null;
-      var parentProgress = 0;             /* mode 1 only: last 0..1 value received from the parent — see below */
-
-      if(sameOriginFrame){
-        window.addEventListener('message', function(e){
-          var d = e && e.data;
-          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
-          parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-          /* The scene's pin POSITION tracks the parent's scroll instantly (no
-             LERP lag) so it never visibly detaches from the page scrolling
-             it — only the UNROLL itself (current, via tick() below) is
-             LERP-smoothed for a cinematic ease rather than a raw 1:1 jump. */
-          scene.style.top = (parentProgress * extraPx) + 'px';
-        }, { passive: true });
-      }
-
-      function outerHeight(){
-        try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
-        return window.innerHeight || 700;
-      }
-
-      if(!framed){ scene.classList.add('pin-fixed'); }   /* mode 2: real position:fixed, like the reference */
-
-      function reflow(){
-        try{
-          var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
-          var oh = outerHeight();
-          extraPx = reduceMotion ? 0 : Math.max(420, Math.min(760, Math.round(oh * 0.85)));
-          pinPx   = Math.max(24, Math.round(oh * 0.08));
-          var needed = Math.round(28 + extraPx + sceneH + 30);
-          vp.style.height = needed + 'px';
-          if(!framed){ scene.style.top = pinPx + 'px'; }   /* mode 2: fixed pin position, set once */
-          if(sameOriginFrame && window.parent && window.parent !== window){
-            /* pin/extra ride along on the same message so the parent's own
-               progress math (setupSannasaScroll in app.js) uses the exact
-               same reveal window this document just computed — one source
-               of truth, no separate formula to keep in sync by hand. */
-            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
-          }
-        }catch(_){}
-      }
-      window.__reflowScrollEngine = reflow;
-      reflow();
-
-      function computeTargetProgress(){
-        if(reduceMotion) return 1;
-        if(sameOriginFrame){
-          /* No cross-context layout read here — parentProgress is kept fresh
-             by the 'message' listener above, posted from app.js's own
-             main-thread scroll handling. */
-          return parentProgress;
-        } else {
-          /* mode 2: real top-level document — the reference's own approach */
-          var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-          return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
-        }
-      }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
       function applyCapRotation(progress){
@@ -863,6 +809,78 @@
         }
       }
 
+      var framed = (window !== window.top);
+      var sameOriginFrame = false;
+      if(framed){
+        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
+      }
+
+      /* ── Mode 3: cross-origin preview — simple, safe, one-shot ── */
+      function runFallbackReveal(){
+        var played = false;
+        function play(){
+          if(played) return; played = true;
+          vp.classList.add('unrolled');
+          setProgress(1); applyCapRotation(1);
+        }
+        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
+        try{
+          var io = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
+          }, { threshold: 0.18 });
+          io.observe(vp);
+        }catch(_){ play(); }
+        setTimeout(play, 4000);
+      }
+
+      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
+
+      if(reduceMotion){
+        setProgress(1); applyCapRotation(1); vp.classList.add('unrolled');
+        return;
+      }
+
+      /* ── Mode 1: same-origin iframe — the parent's real position:sticky
+         pin does 100% of the positioning; apply its progress directly. ── */
+      if(sameOriginFrame){
+        window.addEventListener('message', function(e){
+          var d = e && e.data;
+          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
+          var p = clampNum(d.p, 0, 1);
+          setProgress(p);
+          applyCapRotation(p);
+          vp.classList.toggle('unrolled', p > 0.92);
+        }, { passive: true });
+        return;
+      }
+
+      /* ── Mode 2: standalone/top-level — the reference prototype's own
+         real position:fixed + real window.scrollY, LERP-smoothed. ── */
+      scene.classList.add('pin-fixed');
+      var lerpSpeed = 0.18;
+      var current = 0, target = 0;
+      var extraPx = 480, pinPx = 48;
+      var running = false, rafId = null;
+
+      function reflow(){
+        try{
+          var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
+          var oh = window.innerHeight || 700;
+          extraPx = Math.max(420, Math.min(760, Math.round(oh * 0.85)));
+          pinPx   = Math.max(24, Math.round(oh * 0.08));
+          var needed = Math.round(28 + extraPx + sceneH + 30);
+          vp.style.height = needed + 'px';
+          scene.style.top = pinPx + 'px';
+        }catch(_){}
+      }
+      window.__reflowScrollEngine = reflow;
+      reflow();
+
+      function computeTargetProgress(){
+        var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
+      }
+
       function tick(){
         target = computeTargetProgress();
         var diff = target - current;
@@ -877,44 +895,19 @@
 
       function start(){
         if(running) return; running = true;
-        /* Snap immediately to the correct value for the CURRENT scroll position
-           rather than LERP-animating from whatever stale value was frozen when
-           tracking last paused — e.g. a fast fling, scrollbar drag, or End key
-           can jump straight past this section while it wasn't being tracked
-           (a deliberate perf pause outside the rootMargin below). LERP is for
-           smoothing gradual scrolling, not for masking a jump while paused. */
         current = computeTargetProgress();
         var p = clampNum(current, 0, 1);
         setProgress(p); applyCapRotation(p);
         if(!rafId) rafId = requestAnimationFrame(tick);
       }
-      function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
 
-      if(reduceMotion){
-        setProgress(1); applyCapRotation(1); vp.classList.add('unrolled');
-        return;
-      }
-
-      /* Only run the continuous per-frame loop while roughly near the viewport —
-         a generous margin so there's no visible pop-in at the edges. */
-      if(!framed){ start(); }                       /* mode 2: always relevant, it's the whole page */
-      else if('IntersectionObserver' in window){
-        try{
-          var io2 = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
-          }, { rootMargin: '800px 0px 800px 0px' });
-          io2.observe(vp);
-        }catch(_){ start(); }
-      } else { start(); }
+      start(); /* mode 2: always relevant, it's the whole page */
 
       /* NOTE: a real viewport-width resize is already handled by
          fitSannasaOnResize() in the script above, which calls
          window.__reflowScrollEngine() (this reflow) only after checking
-         window.innerWidth actually changed. A second, unguarded resize
-         listener here would re-trigger on the parent-driven height-only
-         resize this engine's own postMessage causes — the exact feedback
-         loop fitSannasaOnResize's guard exists to prevent — so this engine
-         deliberately does not listen for resize itself. */
+         window.innerWidth actually changed — deliberately not duplicated
+         with a second resize listener here. */
     })();
     </script>
 </body>
