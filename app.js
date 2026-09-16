@@ -863,7 +863,18 @@ function setupParticles() {
     w = c.clientWidth; h = c.clientHeight; c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     dots = Array.from({ length: N }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + .4, vx: (Math.random() - .5) * .12, vy: -(Math.random() * .25 + .05), a: Math.random() * .5 + .15 }));
   }
-  resize(); window.addEventListener("resize", resize, { passive: true });
+  resize();
+  /* Same guard as fitHero()/setupParallax(): resize() throws away every
+     particle's position and re-randomizes from scratch, so re-running it on
+     a mobile address-bar hide/show (a vertical-only resize) would make the
+     whole ambient field visibly jump to new random spots mid-scroll. Only a
+     genuine viewport width change re-runs it. */
+  let lastParticleWidth = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === lastParticleWidth) return;
+    lastParticleWidth = window.innerWidth;
+    resize();
+  }, { passive: true });
   function frame() {
     if (document.documentElement.classList.contains("vv-zoom")) { particleRAF = requestAnimationFrame(frame); return; }
     ctx.clearRect(0, 0, w, h);
