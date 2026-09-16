@@ -419,7 +419,8 @@ const DEFAULTS = {
   groomPreLine: "මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
   groomPreLineEn: "the beloved son of Mr. & Mrs.", groomPreLineTa: "அவர்களின் அன்பு மகன்,",
   dateISO: "2028-01-12T09:28:00+05:30",
-  venue: "The Epitome Hotel", venueCity: "කුරුණෑගල", venueCityEn: "Kurunegala", venueCityTa: "குருநாகல்",
+  venue: "එපිටෝම් හෝටලය", venueEn: "The Epitome Hotel", venueTa: "எபிடோம் ஹோட்டல்",
+  venueCity: "කුරුණෑගල", venueCityEn: "Kurunegala", venueCityTa: "குருநாகல்",
   venueMapUrl: "https://www.google.com/maps/search/?api=1&query=The+Epitome+Hotel+Kurunegala",
   ceremonyTime: "පෙ.ව. 09.00 සිට සවස 04.00 දක්වා", ceremonyTimeEn: "9.15 a.m. onwards", ceremonyTimeTa: "மு.ப. 9.15 மணி முதல்",
   poruwaTime: "පෙ.ව. 09.28",
@@ -504,7 +505,7 @@ function renderHero() {
   $("#heroNames").innerHTML = esc(n.b) + ' <span class="amp">' + esc(T.and) + '</span> ' + esc(n.g);
   $("#heroTag").textContent = T.heroTag;
   $("#heroDate").textContent = (LANG === "en" ? (f.wd + ", " + f.mo + " " + f.dd + ", " + f.y) : (f.dd + " " + f.mo + " " + f.y));
-  $("#heroVenue").textContent = S.venue + " · " + byLang("venueCity");
+  $("#heroVenue").textContent = byLang("venue") + " · " + byLang("venueCity");
   scheduleHeroFit();
   $("#heroRsvpBtn").textContent = T.heroRsvp;
   $("#scrollCue").querySelector(".cue-lbl").textContent = T.scrollCue;
@@ -536,7 +537,7 @@ function renderInvitation() {
     LANG === "en" ? "The beloved daughter," : LANG === "ta" ? "அன்பு மகள்," : "ආදරණීය දියණිය වූ,");
   const preG = parentLine("groomFather", "groomPreLine",
     LANG === "en" ? "The beloved son," : LANG === "ta" ? "அன்பு மகன்," : "ආදරණීය පුත් වූ,");
-  const sentence = T.invSentence({ y: f.y, mo: f.mo, dd: f.dd, wd: f.wd, venue: S.venue, city: byLang("venueCity") });
+  const sentence = T.invSentence({ y: f.y, mo: f.mo, dd: f.dd, wd: f.wd, venue: byLang("venue"), city: byLang("venueCity") });
   const html =
     '<div class="inv-block"><p class="inv-pre">' + esc(preB) + '</p><h3 class="inv-name foil">' + esc(n.b) + '</h3></div>' +
     '<div class="inv-amp">' + esc(T.and) + '</div>' +
@@ -545,7 +546,7 @@ function renderInvitation() {
     '<div class="inv-when">' +
       '<div class="blk"><div class="lbl">' + esc(T.date) + '</div><div class="num foil">' + f.dd + '</div><div class="val">' + esc(f.mo) + ' ' + f.y + '</div></div>' +
       '<div class="sep"></div>' +
-      '<div class="blk"><div class="lbl">' + esc(T.venueLbl) + '</div><div class="val">' + esc(S.venue) + '</div><div class="lbl2">' + esc(byLang("venueCity")) + '</div></div>' +
+      '<div class="blk"><div class="lbl">' + esc(T.venueLbl) + '</div><div class="val">' + esc(byLang("venue")) + '</div><div class="lbl2">' + esc(byLang("venueCity")) + '</div></div>' +
       '<div class="sep"></div>' +
       '<div class="blk"><div class="lbl">' + esc(T.timeLbl) + '</div><div class="val">' + esc(byLang("ceremonyTime")) + '</div></div>' +
     '</div>' +
@@ -679,7 +680,7 @@ function applyRsvpOpen() {
 function renderFooter() {
   const T = L(), n = names(), f = fmtDate(S.dateISO);
   $("#footNames").innerHTML = esc(n.b) + ' <span class="amp">' + esc(T.and) + '</span> ' + esc(n.g);
-  $("#footDate").textContent = f.dd + " " + f.mo + " " + f.y + " · " + S.venue + ", " + S.venueCity;
+  $("#footDate").textContent = f.dd + " " + f.mo + " " + f.y + " · " + byLang("venue") + ", " + byLang("venueCity");
   const acts = $("#footActions"); acts.innerHTML = "";
   if (S.phone) acts.insertAdjacentHTML("beforeend", '<a class="btn ghost sm" href="tel:' + esc(S.phone) + '">☎ ' + esc(T.callUs) + '</a>');
   acts.insertAdjacentHTML("beforeend", '<button class="btn ghost sm" id="calBtn">⌖ ' + esc(T.addCal) + '</button>');
@@ -940,7 +941,7 @@ function downloadIcs() {
   const n = names();
   const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Helasiritha//EN", "BEGIN:VEVENT",
     "UID:" + Date.now() + "@helasiritha", "DTSTAMP:" + fmt(new Date()), "DTSTART:" + fmt(d), "DTEND:" + fmt(end),
-    "SUMMARY:" + n.b + " & " + n.g + " — Wedding", "LOCATION:" + (S.venue + ", " + S.venueCity).replace(/,/g, "\\,"),
+    "SUMMARY:" + n.b + " & " + n.g + " — Wedding", "LOCATION:" + (byLang("venue") + ", " + byLang("venueCity")).replace(/,/g, "\\,"),
     "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const blob = new Blob([ics], { type: "text/calendar" }); const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = "wedding.ics"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 800);
