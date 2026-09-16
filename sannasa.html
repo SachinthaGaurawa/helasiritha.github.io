@@ -715,14 +715,28 @@
           own index.html embeds this same-origin sannasa.html). This document
           never scrolls internally: it's sized to exactly match the runway,
           so the "scroll" that should drive the unroll is the PARENT page
-          scrolling this iframe element through ITS OWN viewport. Reading
-          that requires window.frameElement (only readable same-origin) —
-          giving us the iframe's own on-screen position every frame, from
-          which we manually compute where the pinned scene should sit. This
-          replaces position:fixed (which pins to THIS document's own initial
-          containing block — the iframe's box — not the outer page, so it
-          cannot cross the iframe boundary) with the same visual effect,
-          computed by hand.
+          scrolling this iframe element through ITS OWN viewport.
+
+          An earlier version of this engine read that position from INSIDE
+          this document, every single animation frame, via
+          window.frameElement.getBoundingClientRect() — same-origin-legal,
+          but it forces the browser to reconcile this iframe's position
+          against the PARENT document's layout from a second, independent
+          browsing context, 60+ times a second. That cross-context layout
+          read is what caused the real-device stutter/freeze (worst while
+          scrolling back up during momentum/inertial scrolling): it competes
+          with the parent page's own scroll-driven work (parallax, particles,
+          the entry gateway) for the main thread, and iframes are not always
+          scheduled in lockstep with the parent's compositor.
+
+          Now the PARENT (app.js's setupSannasaScroll) reads its own
+          getBoundingClientRect() on the iframe element — a same-document,
+          main-thread-native read that the browser already keeps cheap as
+          part of ordinary scroll handling — and postMessages a plain 0..1
+          progress number in. This document only ever LISTENS for that
+          message and LERPs toward it; it never queries cross-context layout
+          itself. See the 'message' listener and computeTargetProgress()
+          below.
        2. STANDALONE / TOP-LEVEL (this document opened directly, not framed).
           window.frameElement is null and this IS window.top — the reference
           prototype's own approach (real position:fixed, real window.scrollY)
@@ -775,6 +789,20 @@
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      /* recomputed in reflow() below, sane pre-reflow defaults */
       var running = false, rafId = null;
+      var parentProgress = 0;             /* mode 1 only: last 0..1 value received from the parent — see below */
+
+      if(sameOriginFrame){
+        window.addEventListener('message', function(e){
+          var d = e && e.data;
+          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
+          parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
+          /* The scene's pin POSITION tracks the parent's scroll instantly (no
+             LERP lag) so it never visibly detaches from the page scrolling
+             it — only the UNROLL itself (current, via tick() below) is
+             LERP-smoothed for a cinematic ease rather than a raw 1:1 jump. */
+          scene.style.top = (parentProgress * extraPx) + 'px';
+        }, { passive: true });
+      }
 
       function outerHeight(){
         try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
@@ -793,7 +821,11 @@
           vp.style.height = needed + 'px';
           if(!framed){ scene.style.top = pinPx + 'px'; }   /* mode 2: fixed pin position, set once */
           if(sameOriginFrame && window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
+            /* pin/extra ride along on the same message so the parent's own
+               progress math (setupSannasaScroll in app.js) uses the exact
+               same reveal window this document just computed — one source
+               of truth, no separate formula to keep in sync by hand. */
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
         }catch(_){}
       }
@@ -803,11 +835,10 @@
       function computeTargetProgress(){
         if(reduceMotion) return 1;
         if(sameOriginFrame){
-          var rect;
-          try{ rect = window.frameElement.getBoundingClientRect(); }catch(_){ return current; }
-          var localTop = clampNum(pinPx - rect.top, 0, extraPx);
-          scene.style.top = localTop + 'px';
-          return extraPx > 0 ? clampNum(localTop / extraPx, 0, 1) : 1;
+          /* No cross-context layout read here — parentProgress is kept fresh
+             by the 'message' listener above, posted from app.js's own
+             main-thread scroll handling. */
+          return parentProgress;
         } else {
           /* mode 2: real top-level document — the reference's own approach */
           var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
