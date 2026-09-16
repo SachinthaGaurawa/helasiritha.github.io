@@ -791,18 +791,31 @@ function setupNav() {
   }));
 }
 
-/* Hero parallax (rAF-throttled, transform only) */
+/* Hero parallax (rAF-throttled, transform only).
+   window.innerHeight is CACHED, not read live in upd() — on mobile, the
+   address bar hiding/showing while the visitor scrolls fires resize events
+   that change innerHeight mid-scroll with no real layout change of intent.
+   Dividing by a live, shifting value there would jump the portrait's
+   translateY for one frame every time the chrome hides — a small but real
+   contributor to the reported "zoom and jerk". Re-synced only on a genuine
+   viewport WIDTH change (rotation, real resize), never on the address bar. */
 function setupParallax() {
   if (document.body.classList.contains("lite")) return;
   const port = $("#heroPortrait"), hero = $("#hero");
+  let vh = window.innerHeight || 1;
   let ticking = false;
   const upd = () => {
     const r = hero.getBoundingClientRect();
-    const p = Math.max(-1, Math.min(1, r.top / window.innerHeight));
+    const p = Math.max(-1, Math.min(1, r.top / vh));
     if (port) port.style.transform = "translate3d(0," + (p * 26).toFixed(1) + "px,0)";
     ticking = false;
   };
   document.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+  let lastW = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === lastW) return; // vertical-only (mobile address-bar) resize — ignore
+    lastW = window.innerWidth; vh = window.innerHeight || 1;
+  }, { passive: true });
   upd();
 }
 
@@ -1073,7 +1086,19 @@ function fitHero() {
 }
 let heroFitT;
 function scheduleHeroFit() { clearTimeout(heroFitT); heroFitT = setTimeout(fitHero, 90); }
-window.addEventListener("resize", scheduleHeroFit, { passive: true });
+/* fitHero() toggles inner.style.zoom/transform based on window.innerHeight —
+   exactly the property that visibly "zooms" the hero if this re-runs mid-
+   scroll. On mobile, the address bar hiding/showing fires a resize event
+   that changes innerHeight but NOT innerWidth; refitting on that alone was
+   the actual "zoom and jerk" the visitor sees while scrolling past the hero.
+   Only a genuine viewport WIDTH change re-triggers the fit here — a real
+   orientation change still always does, via its own listener below. */
+let lastHeroWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+  if (window.innerWidth === lastHeroWidth) return;
+  lastHeroWidth = window.innerWidth;
+  scheduleHeroFit();
+}, { passive: true });
 window.addEventListener("orientationchange", scheduleHeroFit, { passive: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleHeroFit);
 
