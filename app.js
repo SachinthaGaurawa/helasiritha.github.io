@@ -841,17 +841,55 @@ function setupParticles() {
    (content height plus a bounded extra scroll distance, never a value disconnected from
    the actual content) and posts it here; we HUG the iframe to that exact height so there
    is never a black void below the lower roll, nor content clipped above it. Re-hugs the
-   instant the admin edits the decree or its content height otherwise changes. */
+   instant the admin edits the decree or its content height otherwise changes.
+
+   This also OWNS the scroll-to-progress math for the unroll itself. An earlier version
+   left that to sannasa.html, which read window.frameElement.getBoundingClientRect() from
+   INSIDE the iframe on every animation frame — same-origin-legal, but it forces the
+   browser to reconcile the iframe's position against the PARENT document's layout from a
+   second, independent browsing context, 60+ times a second. That's what caused the real-
+   device stutter/freeze (worst scrolling back up during momentum scrolling): it competes
+   with this page's own scroll-driven work (parallax, particles, the entry gateway) for
+   the main thread, and an iframe's own animation frames aren't always scheduled in
+   lockstep with the parent's compositor. Reading the SAME rect from out here instead is a
+   same-document, main-thread-native call — the browser already keeps this cheap as part
+   of ordinary scroll handling, exactly like setupParallax() above — and we just
+   postMessage the resulting 0..1 number in; sannasa.html only ever LERPs toward it. */
 function setupSannasaScroll() {
+  const frame = $(".sannasa-frame");
+  if (!frame) return;
+  let pin = 48, extra = 480; // sannasa.html's own pre-reflow defaults, until its first height message arrives
+
   window.addEventListener("message", (e) => {
     const d = e && e.data;
     if (!d || d.__sannasa !== "height" || typeof d.h !== "number") return;
-    const frame = $(".sannasa-frame");
-    if (!frame) return;
     const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20)); // +20 buffer, clamped
     frame.style.height = px + "px";
     frame.style.minHeight = "0px";
+    if (typeof d.pin === "number") pin = d.pin;
+    if (typeof d.extra === "number") extra = d.extra;
   }, { passive: true });
+
+  let ticking = false, active = false;
+  const post = () => {
+    ticking = false;
+    if (!active) return;
+    const win = frame.contentWindow; if (!win) return;
+    const top = frame.getBoundingClientRect().top;
+    const p = extra > 0 ? Math.max(0, Math.min(1, (pin - top) / extra)) : 1;
+    win.postMessage({ __sannasa: "progress", p }, "*");
+  };
+  document.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(post); } }, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    try {
+      const io = new IntersectionObserver((es) => {
+        for (const en of es) active = en.isIntersecting;
+        if (active) post();
+      }, { rootMargin: "800px 0px 800px 0px" });
+      io.observe(frame);
+    } catch (_) { active = true; post(); }
+  } else { active = true; post(); }
 }
 
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
