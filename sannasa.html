@@ -626,6 +626,19 @@
         try{
           var scene = document.querySelector('.scroll-master-container');
           if(!scene) return;
+          /* .scroll-master-container itself carries `transform: scale(--sannasa-scale)`,
+             and getBoundingClientRect() (which measureSceneHeight() reads) reports the
+             POST-transform, already-scaled size — so measuring again without resetting
+             first would feed a shrunken number back in as if it were the natural size,
+             under-correcting the scale a little more on every subsequent call (this
+             runs on load, twice more on a timer, on fonts.ready, on every real resize,
+             AND on every live Firestore edit). Across a few calls that drift compounds
+             until the scale is no longer small enough to fit, and the parchment's lower
+             half — including the bottom roll and the closing seal — silently overflows
+             past .sannasa-sticky's overflow:hidden edge. Resetting to the unscaled
+             baseline before every measurement keeps each calculation independent and
+             exact, however many times this runs. */
+          scene.style.setProperty('--sannasa-scale', '1');
           var sceneH = measureSceneHeight();
           var availH = window.innerHeight || 700;
           var pad = 24; /* breathing room top+bottom inside the pinned window */
