@@ -783,7 +783,11 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   border: 0;
   background: transparent;
   pointer-events: none;
-  transition: height 0.4s cubic-bezier(0.22, 0.8, 0.2, 1); /* smooth grow when the height updates */
+  /* No transition here on purpose: the real height arrives within the first
+     load cycle, well before a visitor can have scrolled this far down — an
+     animated grow only risked visibly PUSHING already-scrolled content if a
+     late correction (a font swap, a live admin edit) landed while the
+     visitor was already past the hero, which read as a scroll "jerk". */
 }
 @media (max-width:560px){ .sannasa-frame{ min-height: 360px } }
 /* keep app.js's #inviteBody target alive but invisible (no layout, no a11y noise) */
