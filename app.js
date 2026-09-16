@@ -917,26 +917,39 @@ function setupSannasaScroll() {
     if (typeof d.extra === "number") extra = d.extra;
   }, { passive: true });
 
-  let ticking = false, active = false;
-  const post = () => {
-    ticking = false;
-    if (!active) return;
-    const win = frame.contentWindow; if (!win) return;
-    const top = frame.getBoundingClientRect().top;
-    const p = extra > 0 ? Math.max(0, Math.min(1, (pin - top) / extra)) : 1;
-    win.postMessage({ __sannasa: "progress", p }, "*");
+  /* Driven by a CONTINUOUS rAF loop, not the browser's 'scroll' event.
+     Native momentum/inertial scrolling (mobile Safari especially) visually
+     updates the compositor every frame but does not guarantee a matching
+     'scroll' EVENT for each of those frames — the event can fire less often
+     than the screen actually moves. Gating the read on that event, as the
+     previous version did, meant the sent progress could lag a frame or more
+     behind the true scroll position and then jump to catch up — exactly the
+     "chunky" stutter reported. Reading the rect fresh every animation frame,
+     the same pattern sannasa.html's own engine already uses for its LERP
+     loop, removes that dependency entirely. Posting only on an actual
+     change avoids spamming postMessage while the page is simply idle. */
+  let active = false, running = false, rafId = null, lastP = -1;
+  const tick = () => {
+    const win = frame.contentWindow;
+    if (win) {
+      const top = frame.getBoundingClientRect().top;
+      const p = extra > 0 ? Math.max(0, Math.min(1, (pin - top) / extra)) : 1;
+      if (p !== lastP) { lastP = p; win.postMessage({ __sannasa: "progress", p }, "*"); }
+    }
+    if (running) rafId = requestAnimationFrame(tick);
   };
-  document.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(post); } }, { passive: true });
+  const start = () => { if (running) return; running = true; lastP = -1; rafId = requestAnimationFrame(tick); };
+  const stop = () => { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } };
 
   if ("IntersectionObserver" in window) {
     try {
       const io = new IntersectionObserver((es) => {
         for (const en of es) active = en.isIntersecting;
-        if (active) post();
+        active ? start() : stop();
       }, { rootMargin: "800px 0px 800px 0px" });
       io.observe(frame);
-    } catch (_) { active = true; post(); }
-  } else { active = true; post(); }
+    } catch (_) { start(); }
+  } else { start(); }
 }
 
 /* Zoom-crash guard — soften GPU-heavy compositing while the visitor is pinch/zoomed in */
