@@ -89,6 +89,7 @@ const TEXT = {
     yourBlessing: "ඔබගේ සුබ පැතුම",
     sendBlessing: "සුබ පැතුම තැබීම",
     suggestBtn: "සුබ පැතුමක් යෝජනා කරන්න",
+    writeOwnWish: "කරුණාකර ඔබගේම සුබ පැතුමක් ලියන්න",
     sending: "යවමින්…",
     blessingThanks: "ඔබගේ සුබ පැතුමට ස්තූතියි! අනුමැතියෙන් පසු එය මෙහි දිස් වේ.",
     blessingsEmpty: "පළමු සුබ පැතුම ඔබගෙන් වේවා…",
@@ -217,6 +218,7 @@ const TEXT = {
     yourBlessing: "Your wish",
     sendBlessing: "Send wish",
     suggestBtn: "Suggest a wish",
+    writeOwnWish: "Please write your own wish",
     sending: "Sending…",
     blessingThanks: "Thank you for your wish! It will appear here after approval.",
     blessingsEmpty: "Be the first to leave a wish…",
@@ -345,6 +347,7 @@ const TEXT = {
     yourBlessing: "உங்கள் வாழ்த்து",
     sendBlessing: "வாழ்த்தைப் பதிவு செய்",
     suggestBtn: "ஒரு வாழ்த்தைப் பரிந்துரைக்கவும்",
+    writeOwnWish: "தயவுசெய்து உங்கள் சொந்த வாழ்த்தை எழுதவும்",
     sending: "அனுப்புகிறது…",
     blessingThanks: "உங்கள் வாழ்த்திற்கு நன்றி! அனுமதிக்குப் பிறகு அது இங்கே தோன்றும்.",
     blessingsEmpty: "முதல் வாழ்த்து உங்களிடமிருந்து வரட்டும்…",
@@ -631,6 +634,25 @@ function renderLove() {
   $("#loveSign").innerHTML = amp(sign);
 }
 
+/* Strict global exhaustion for auto-generated wishes: once a suggestion has
+   actually been SENT by anyone (tracked globally via the Firestore-synced
+   BLESSINGS array, not just this visitor's own session), it must never be
+   offered again — no recycling once the language's whole dictionary is
+   spent. Punctuation-insensitive so "!" vs "." vs none doesn't let a
+   near-duplicate slip past. */
+function normWish(s) {
+  return (s || "")
+    .replace(/[.,!?;:'"`“”‘’…]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+function availableWishes(lang) {
+  const arr = (TEXT[lang] || TEXT.si).suggest || [];
+  const used = new Set((BLESSINGS || []).map(b => normWish(b.message)));
+  return arr.filter(w => !used.has(normWish(w)));
+}
+
 function renderBlessings() {
   const T = L();
   $("#blEyebrow").textContent = T.blEyebrow;
@@ -644,8 +666,19 @@ function renderBlessings() {
   $("#blNameLbl").textContent = T.yourName;
   $("#blName").placeholder = T.yourName;
   $("#blMsgLbl").textContent = T.yourBlessing;
-  $("#blMsg").placeholder = T.suggest[Math.floor(Math.random() * T.suggest.length)];
-  $("#blSuggest").textContent = "✦ " + T.suggestBtn;
+  const avail = availableWishes(LANG);
+  const sg = $("#blSuggest");
+  if (avail.length) {
+    $("#blMsg").placeholder = avail[Math.floor(Math.random() * avail.length)];
+    sg.textContent = "✦ " + T.suggestBtn;
+    sg.disabled = false;
+  } else {
+    /* Every auto-generated wish in this language has already been sent by
+       someone, globally — stop offering suggestions rather than repeat one. */
+    $("#blMsg").placeholder = T.writeOwnWish;
+    sg.textContent = "✦ " + T.writeOwnWish;
+    sg.disabled = true;
+  }
   $("#blSend").textContent = T.sendBlessing;
 }
 
@@ -1018,13 +1051,22 @@ async function submitRsvp() {
 function setupBlessings() {
   const sg = $("#blSuggest");
   let lastPick = "";
+  /* Only the SOFT preferences (don't repeat the last pick, don't just re-show
+     what's already typed) relax if they'd otherwise empty the pool — the
+     hard constraint (never a globally already-sent wish) never relaxes.
+     Reaching true exhaustion disables the button instead of recycling. */
   if (sg) sg.onclick = () => {
-    const arr = L().suggest, ta = $("#blMsg");
-    const norm = s => (s || "").replace(/\s+/g, " ").trim().toLowerCase();
-    const used = new Set((BLESSINGS || []).map(b => norm(b.message)));
-    let pool = arr.filter(w => !used.has(norm(w)) && w !== ta.value && w !== lastPick);
-    if (!pool.length) pool = arr.filter(w => w !== lastPick);
-    if (!pool.length) pool = arr.slice();
+    const T = L(), ta = $("#blMsg");
+    const avail = availableWishes(LANG);
+    let pool = avail.filter(w => w !== ta.value && w !== lastPick);
+    if (!pool.length) pool = avail.filter(w => w !== ta.value);
+    if (!pool.length) pool = avail.slice();
+    if (!pool.length) {
+      sg.disabled = true;
+      sg.textContent = "✦ " + T.writeOwnWish;
+      ta.placeholder = T.writeOwnWish;
+      return;
+    }
     const pick = pool[Math.floor(Math.random() * pool.length)];
     lastPick = pick; ta.value = pick; ta.focus();
     sg.classList.add("pop"); setTimeout(() => sg.classList.remove("pop"), 320);
