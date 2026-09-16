@@ -249,23 +249,22 @@
        — your scroll, filters, cylinders, caps and JS are untouched below/above
        ═══════════════════════════════════════════════════════════════════ */
 
-    /* Fit your fixed 650px scroll to any screen. Proportions & design unchanged
-       — the whole assembly is simply scaled to the viewport width. */
+    /* Fit your fixed 650px scroll to any screen — width shrinks to the viewport
+       (capped at its native 650px on larger screens), same as the reference
+       prototype's own actual behavior on a phone. A uniform transform:scale()
+       was tried here before, but it shrinks the WHOLE assembly (fonts included)
+       well below the reference's look — on the reference file, the scale()
+       itself never even applies (dividing a length by a bare, unitless number
+       in calc() always yields another length, never the <number> scale()
+       needs, so browsers drop that whole declaration as invalid) and the
+       reference's actual on-screen size comes from this plain width shrink,
+       with every font-size and padding staying at its native px value. */
     .scroll-master-container {
         --unroll-progress: 0;   /* the scroll engine below writes this every frame, tied to scroll position */
         --paper-h: 740px;
+        width: 100%;
+        max-width: 650px;
         flex-shrink: 0;
-        /* 'vh' මත පදනම් වීම ඉවත් කර ඇත. දැන් දිග හැරීම අවුල් වන්නේ නැත */
-        /* dividing by 650 (a bare number) instead of 650px left this calc() producing a
-           <length>, not the <number> scale() requires — CSS.supports() confirms the whole
-           `transform` declaration was silently invalid and dropped at parse time. The scale
-           never applied on ANY screen: on phones the 650px-wide scroll rendered at full,
-           unscaled size — clipped by the iframe's overflow-x:hidden on both edges — and,
-           because the unscaled box is taller too, the section became far longer to scroll
-           through than intended. Dividing by 650px (not 650) keeps the division inside one
-           unit, which resolves to a valid unitless ratio. */
-        transform: scale(min(1, calc((100vw - 20px) / 650px)));
-        transform-origin: top center;
     }
 
     /* Spiral end-caps physically counter-rotate as the scroll unrolls — two full
