@@ -775,52 +775,26 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");  /* parchment grain */
 }
 
-/* ── Sannasa — Apple-style scroll-pin (isolated iframe, verbatim content) ──
-   .sannasa-runway is a TALL spacer: exactly one pin-window (100svh) plus a
-   reveal distance (app.js sets --sannasa-reveal from the viewport height).
-   .sannasa-sticky is a REAL CSS position:sticky element — the browser's own
-   compositor holds it in place while the runway scrolls past underneath, so
-   the pin itself is zero-JS and can never desync from the real scrollbar
-   (the previous design simulated the pin with a JS-computed iframe height +
-   an offset postMessaged into the iframe, which is what let the timing
-   drift — unrolling early/late, or the top edge clipping out of view).
-   app.js (setupSannasaScroll) only ever computes a 0..1 progress number from
-   the runway's real position and posts it in; sannasa.html applies it
-   directly to drive the unroll, and scales its own content to fit the fixed
-   100svh window so nothing is ever cut off regardless of content length. */
-.sannasa-runway{
-  position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  height: calc(100svh + var(--sannasa-reveal, 70vh));
-}
-.sannasa-sticky{
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%);
-}
-.sannasa-embed{position:relative; width:100%; height:100%}
+/* ── Sannasa — embedded standalone scroll (isolated iframe, verbatim) ── */
+/* Iframe sits in normal flow; app.js (setupSannasaScroll) drives the scroll-unroll from
+   the iframe's position in the viewport, so the invitation reveals on every device & deploy. */
+.sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem; margin-bottom:clamp(1.8rem,5vw,3rem);
+  background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%)}
 .sannasa-frame {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;              /* app.js (height message) sets the exact content-fit height */
+  min-height: 420px;         /* pre-measurement fallback only, before the first height message */
   border: 0;
   background: transparent;
   pointer-events: none;
+  /* No transition here on purpose: the real height arrives within the first
+     load cycle, well before a visitor can have scrolled this far down — an
+     animated grow only risked visibly PUSHING already-scrolled content if a
+     late correction (a font swap, a live admin edit) landed while the
+     visitor was already past the hero, which read as a scroll "jerk". */
 }
-@media (prefers-reduced-motion: reduce){
-  /* No scroll-jacking pin at all for reduced-motion visitors: the runway
-     collapses back to a normal in-flow block and sannasa.html itself locks
-     to the fully-unrolled resting state (see its own reduced-motion guard). */
-  .sannasa-runway{ height:auto }
-  .sannasa-sticky{ position:relative; height:auto; min-height:60vh }
-}
+@media (max-width:560px){ .sannasa-frame{ min-height: 360px } }
 /* keep app.js's #inviteBody target alive but invisible (no layout, no a11y noise) */
 .sannasa-hidden{position:absolute!important; width:1px; height:1px; overflow:hidden;
   clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none}

@@ -894,75 +894,58 @@ function setupParticles() {
   });
 }
 
-/* Sannasa scroll-unroll — Apple-style scroll-pin (same-origin iframe).
-   .sannasa-runway (styles.css) is a tall spacer: one real 100svh pin-window
-   plus a reveal distance we set below from the viewport height. Nested
-   inside it, .sannasa-sticky is a REAL CSS position:sticky element, so the
-   BROWSER's own compositor holds the sannasa fixed in the viewport while the
-   runway scrolls past underneath — the pin itself involves zero JS and can
-   never drift out of sync with the real scrollbar. All this function does
-   is compute how far the visitor has scrolled INTO that runway as a 0..1
-   number and postMessage it to the iframe; sannasa.html applies it directly
-   to --unroll-progress (see its own comments) and scales its content to
-   always fit the fixed pin-window, so the top of the scroll can never be
-   clipped no matter how long the decree text is.
+/* Sannasa scroll-unroll (same-origin iframe): the invitation unrolls tied to scroll
+   position as the visitor scrolls past it — sannasa.html computes its own runway height
+   (content height plus a bounded extra scroll distance, never a value disconnected from
+   the actual content) and posts it here; we HUG the iframe to that exact height so there
+   is never a black void below the lower roll, nor content clipped above it. Re-hugs the
+   instant the admin edits the decree or its content height otherwise changes.
 
-   This replaces an earlier design where sannasa.html itself computed a
-   "pin/extra" window and the parent iframe's HEIGHT was grown to simulate a
-   pin via a JS-set `top` offset inside the iframe — two documents' layouts
-   trying to agree on one shared illusion, which is exactly what let the
-   unroll start late or clip its own top edge: there was no real browser
-   pinning to fall back on, only a simulation that could desync. A real
-   position:sticky element cannot desync from real scroll, by construction.
-
-   Progress is read via a CONTINUOUS rAF loop, not the 'scroll' event: native
-   momentum/inertial scrolling (mobile Safari especially) visually updates
-   the compositor every frame without guaranteeing a matching 'scroll' EVENT
-   for each of those frames, so event-gated reads can lag and then jump —
-   the "chunky" stutter already fixed once for the old architecture and
-   preserved here. Posting only on an actual value change avoids spamming
-   postMessage while the page is simply idle. */
+   This also OWNS the scroll-to-progress math for the unroll itself. An earlier version
+   left that to sannasa.html, which read window.frameElement.getBoundingClientRect() from
+   INSIDE the iframe on every animation frame — same-origin-legal, but it forces the
+   browser to reconcile the iframe's position against the PARENT document's layout from a
+   second, independent browsing context, 60+ times a second. That's what caused the real-
+   device stutter/freeze (worst scrolling back up during momentum scrolling): it competes
+   with this page's own scroll-driven work (parallax, particles, the entry gateway) for
+   the main thread, and an iframe's own animation frames aren't always scheduled in
+   lockstep with the parent's compositor. Reading the SAME rect from out here instead is a
+   same-document, main-thread-native call — the browser already keeps this cheap as part
+   of ordinary scroll handling, exactly like setupParallax() above — and we just
+   postMessage the resulting 0..1 number in; sannasa.html only ever LERPs toward it. */
 function setupSannasaScroll() {
-  const runway = $("#sannasaRunway");
   const frame = $(".sannasa-frame");
-  if (!runway || !frame) return;
+  if (!frame) return;
+  let pin = 48, extra = 480; // sannasa.html's own pre-reflow defaults, until its first height message arrives
 
-  let reduceMotion = false;
-  try { reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) { }
-  if (reduceMotion) return; // CSS alone collapses the runway; no pin, no progress messages needed
-
-  const revealDistance = () => {
-    const vh = window.innerHeight || 700;
-    // How much scroll distance plays the full unroll — a UX pacing choice tied
-    // to viewport height, same envelope the previous design used for "extra".
-    return Math.max(420, Math.min(900, Math.round(vh * 0.85)));
-  };
-
-  let lastWidth = window.innerWidth;
-  const reflow = () => { runway.style.setProperty("--sannasa-reveal", revealDistance() + "px"); };
-  reflow();
-  window.addEventListener("resize", () => {
-    if (window.innerWidth === lastWidth) return; // mobile address-bar show/hide: height-only, ignore
-    lastWidth = window.innerWidth;
-    reflow();
+  window.addEventListener("message", (e) => {
+    const d = e && e.data;
+    if (!d || d.__sannasa !== "height" || typeof d.h !== "number") return;
+    const px = Math.max(320, Math.min(2600, Math.round(d.h) + 20)); // +20 buffer, clamped
+    frame.style.height = px + "px";
+    frame.style.minHeight = "0px";
+    if (typeof d.pin === "number") pin = d.pin;
+    if (typeof d.extra === "number") extra = d.extra;
   }, { passive: true });
 
-  const computeProgress = () => {
-    const rect = runway.getBoundingClientRect();
-    const vh = window.innerHeight || 700;
-    const extra = runway.offsetHeight - vh; // == the reveal distance actually in effect
-    if (extra <= 0) return 1;
-    const scrolledIn = -rect.top; // px scrolled past the runway's own top edge
-    return Math.max(0, Math.min(1, scrolledIn / extra));
-  };
-
+  /* Driven by a CONTINUOUS rAF loop, not the browser's 'scroll' event.
+     Native momentum/inertial scrolling (mobile Safari especially) visually
+     updates the compositor every frame but does not guarantee a matching
+     'scroll' EVENT for each of those frames — the event can fire less often
+     than the screen actually moves. Gating the read on that event, as the
+     previous version did, meant the sent progress could lag a frame or more
+     behind the true scroll position and then jump to catch up — exactly the
+     "chunky" stutter reported. Reading the rect fresh every animation frame,
+     the same pattern sannasa.html's own engine already uses for its LERP
+     loop, removes that dependency entirely. Posting only on an actual
+     change avoids spamming postMessage while the page is simply idle. */
   let active = false, running = false, rafId = null, lastP = -1;
   const tick = () => {
-    const p = computeProgress();
-    if (p !== lastP) {
-      lastP = p;
-      const win = frame.contentWindow;
-      if (win) win.postMessage({ __sannasa: "progress", p }, "*");
+    const win = frame.contentWindow;
+    if (win) {
+      const top = frame.getBoundingClientRect().top;
+      const p = extra > 0 ? Math.max(0, Math.min(1, (pin - top) / extra)) : 1;
+      if (p !== lastP) { lastP = p; win.postMessage({ __sannasa: "progress", p }, "*"); }
     }
     if (running) rafId = requestAnimationFrame(tick);
   };
@@ -974,8 +957,8 @@ function setupSannasaScroll() {
       const io = new IntersectionObserver((es) => {
         for (const en of es) active = en.isIntersecting;
         active ? start() : stop();
-      }, { rootMargin: "600px 0px 600px 0px" });
-      io.observe(runway);
+      }, { rootMargin: "800px 0px 800px 0px" });
+      io.observe(frame);
     } catch (_) { start(); }
   } else { start(); }
 }
