@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Native Sticky</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,22 +29,23 @@
         position: relative;
         width: 100%;
         height: 900px;
-        overflow: hidden;
+        /* overflow: hidden ඉවත් කර Native Sticky සඳහා ඉඩ ලබා දීම */
+        clip-path: inset(0); 
         padding: 28px 0 30px;
         background-color: transparent; 
     }
 
     /* =======================================================================
-       2. MASTER STICKY CONTAINER ARCHITECTURE
+       2. MASTER STICKY CONTAINER ARCHITECTURE (UPGRADED)
        ======================================================================= */
     .scroll-sticky-scene {
-        position: absolute;
-        left: 0; right: 0; top: 0;
+        /* NATIVE STICKY ENGINE: මේ මගින් සන්නස ඉහළින්ම ලොක් වේ */
+        position: sticky;
+        top: 20px; 
+        left: 0; right: 0;
         display: block; 
         pointer-events: none;
-        will-change: transform, opacity;
-        transform: translate3d(0, 0, 0); 
-        backface-visibility: hidden;
+        will-change: opacity;
         
         opacity: 0; 
         transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
@@ -58,11 +59,6 @@
     .scroll-sticky-scene:not(.synced) .scroll-body-wrapper,
     .scroll-sticky-scene:not(.synced) .embossed-seal {
         filter: none !important;
-    }
-    
-    .scroll-sticky-scene.pin-fixed { 
-        position: fixed !important; 
-        transform: translate3d(0, 0, 0) !important;
     }
 
     .scroll-master-container {
@@ -139,7 +135,6 @@
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        /* Ultra-fast hardware accelerated clipping mask */
         clip-path: inset(0 0 100% 0); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
@@ -540,13 +535,13 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 THE ULTIMATE GPU FIX: STRICTLY SYNCED PHYSICS 🔥 */
+      /* 🔥 STRICTLY ONLY HANDLING THE UNROLLING PHYSICS (NO JS CONTAINER MOVEMENT) 🔥 */
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
         var deg = p * 720;
         
-        // Using high-performance CSS inset clipping instead of polygon
+        // High-performance CSS inset clipping
         var invPct = ((1 - p) * 100).toFixed(3);
         var clip = 'inset(0 0 ' + invPct + '% 0)';
         
@@ -565,12 +560,8 @@
         if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
         if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
         if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
-
-        // SYNC-LOCK FIX: Applying sticky movement inside the EXACT same physics frame 
-        // to prevent the Sannasa from detaching or floating out of sync.
-        if(sameOriginFrame && scene && !scene.classList.contains('pin-fixed')) {
-             scene.style.transform = 'translate3d(0, ' + (p * extraPx) + 'px, 0)';
-        }
+        
+        // NO SCENE TRANSLATION HERE! CSS Native Sticky handles locking it to the top.
       }
 
       var framed = (window !== window.top);
@@ -599,8 +590,8 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 AUTO-SLEEP PHYSICS ENGINE 🔥 */
-      var lerpSpeed = 0.16; // Increased slightly for snappier real-time feeling               
+      /* 🔥 AUTO-SLEEP LERP ENGINE 🔥 */
+      var lerpSpeed = 0.16;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
       var running = false, rafId = null;
@@ -612,7 +603,7 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
-          target = parentProgress; // Update target immediately
+          target = parentProgress; 
           
           if(!scene.classList.contains('synced')) {
               current = parentProgress;
@@ -620,7 +611,6 @@
               scene.classList.add('synced'); 
           }
           
-          // Wake up the physics engine instantly upon scroll message
           startEngine(); 
         }, { passive: true });
       }
@@ -637,7 +627,6 @@
       }
 
       if(!framed){ 
-          scene.classList.add('pin-fixed'); 
           scene.classList.add('synced');
       }   
 
@@ -649,8 +638,6 @@
           pinPx   = Math.max(24, Math.round(oh * 0.08));
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
-          
-          if(!framed){ scene.style.top = pinPx + 'px'; }   
           
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
@@ -671,17 +658,15 @@
       }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
-      // Core Game-Loop like physics engine
       function tick(){
         target = computeTargetProgress();
         var diff = target - current;
         
-        // Auto-Sleep: If the difference is microscopic, snap to target and stop burning CPU
         if(Math.abs(diff) < 0.0004) {
             current = target;
             applyPhysicsFrame(clampNum(current, 0, 1));
             vp.classList.toggle('unrolled', current > 0.92);
-            stopEngine(); // Engine goes to sleep gracefully
+            stopEngine(); 
             return;
         }
         
