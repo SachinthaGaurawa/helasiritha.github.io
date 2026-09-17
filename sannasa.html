@@ -8,188 +8,133 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    /* =======================================================================
-       1. CORE RESET & ENVIRONMENT MAPPING
-       ======================================================================= */
     *, *::before, *::after {
         box-sizing: border-box;
     }
 
-    body {
+    body, html {
         margin: 0;
         padding: 0;
         background-color: #030303;
         font-family: sans-serif;
         color: #fff;
-        overflow-x: hidden;
+        overflow: hidden;
+        overscroll-behavior: none; /* Stops scroll chaining to main page */
     }
 
-    /* Long viewport wrapper to allow the user to scroll and unfurl the scroll */
-  .scroll-viewport {
+    .scroll-viewport {
         position: relative;
         width: 100%;
-        /* The real scroll runway a visitor scrolls THROUGH while the reveal plays —
-           computed and set by the engine below (content height + a bounded extra
-           scroll distance), never a hardcoded, content-disconnected value. This
-           fallback only covers the instant before JS first runs. */
         height: 900px;
-        overflow: hidden;            /* clips ONLY the empty scaled-reserve gap — never a wooden roll */
-        padding: 28px 0 30px;        /* breathing above the top roll and below the bottom roll */
+        overflow: hidden;            
+        padding: 28px 0 30px;        
         background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
+        contain: strict; /* PERFECT ISOLATION: Locks layout, style, and paint inside */
+        transform: translateZ(0); /* Hardware acceleration forced */
     }
 
-    /* =======================================================================
-       2. MASTER STICKY CONTAINER ARCHITECTURE
-       ======================================================================= */
-  .scroll-sticky-scene {
-        /* Pinned in place while the runway scrolls past underneath it — the engine
-           below sets `top` every frame (standalone/top-level pages use real
-           position:fixed instead; see the engine's mode 2). */
+    .scroll-sticky-scene {
         position: absolute;
         left: 0; right: 0; top: 0;
         display: flex;
         justify-content: center;
-        align-items: flex-start;     /* top roll pinned to the top of the assembly */
-        padding: 0 10px;             /* side breathing only; vertical handled by .scroll-viewport */
-        overflow: visible;           /* NEVER clip the wooden rolls */
+        align-items: flex-start;     
+        padding: 0 10px;             
+        overflow: visible;           
         pointer-events: none;
+        will-change: top;
     }
-    /* Mode 2 (standalone/top-level, no iframe involved): the JS engine below
-       switches to real position:fixed here, identical to the reference
-       prototype — this only ever applies when sannasa.html is navigated to
-       directly, never in production where it's always framed. */
     .scroll-sticky-scene.pin-fixed { position: fixed; }
 
-  .scroll-master-container {
+    .scroll-master-container {
         position: relative;
-        width: 650px;
+        width: 100%;
+        max-width: 650px;
+        flex-shrink: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         perspective: 1500px; 
         transform-style: preserve-3d;
-        /* Cinematic drop shadow creates deep detachment from the dark canvas */
         filter: drop-shadow(0 50px 70px rgba(0,0,0,0.98));
         pointer-events: auto;
+        --unroll-progress: 0;   
+        --paper-h: 740px;
     }
 
-    /* =======================================================================
-       3. CYLINDRICAL ROLLS WITH ORGANIC TEXTURING
-       ======================================================================= */
-  .scroll-cylinder {
+    .scroll-cylinder {
         position: relative;
-        width: 110%; /* Extends past unrolled margins for volumetric structural realism */
+        width: 110%; 
         height: 84px;
         z-index: 10;
         border-radius: 42px; 
         filter: url('#edge-fray-light');
         background-repeat: repeat;
-        /* Promotes cylinder layers to individual GPU compositor layers */
         will-change: transform, background-position;
-        transform: translateZ(0);
+        transform: translate3d(0,0,0);
+        backface-visibility: hidden;
     }
 
-    /* TOP CYLINDER LIGHTING AND SHADOWS */
-  .scroll-cylinder.top {
-        margin-bottom: -22px; /* Pulls flat paper underneath the roll core */
+    .scroll-cylinder.top {
+        margin-bottom: -22px; 
         background-image: 
             url('#paper-grain'), 
-            linear-gradient(
-                to bottom, 
-                #331502 0%,    /* Core shadow rolling backward away from light */
-                #8e5d32 15%,   /* Highlight transition */
-                #fcdcab 35%,   /* Specular highlight reflecting light source */
-                #8e5d32 65%,   /* Mid-tone decay */
-                #331502 90%,   /* Shadow approaching under-curve */
-                #140700 100%   /* Complete ambient occlusion */
-            );
+            linear-gradient(to bottom, #331502 0%, #8e5d32 15%, #fcdcab 35%, #8e5d32 65%, #331502 90%, #140700 100%);
         background-blend-mode: multiply;
-        box-shadow: 
-            0 15px 30px -5px rgba(0,0,0,0.85),
-            0 5px 10px -2px rgba(0,0,0,0.95);
+        box-shadow: 0 15px 30px -5px rgba(0,0,0,0.85), 0 5px 10px -2px rgba(0,0,0,0.95);
         background-position-y: calc(var(--unroll-progress) * 320px);
     }
 
-    /* BOTTOM CYLINDER LIGHTING AND SHADOWS */
-  .scroll-cylinder.bottom {
+    .scroll-cylinder.bottom {
         margin-top: -22px; 
         background-image: 
             url('#paper-grain'), 
-            linear-gradient(
-                to bottom, 
-                #140700 0%,    
-                #331502 15%,   
-                #fcdcab 50%,   /* Highlights face slightly upward toward the center screen */
-                #8e5d32 75%,   
-                #1a0901 100%   
-            );
+            linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
-        box-shadow: 
-            0 30px 45px -10px rgba(0,0,0,0.95),
-            0 12px 20px -5px rgba(0,0,0,0.98);
+        box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
         background-position-y: calc(var(--unroll-progress) * -320px);
     }
 
-    /* =======================================================================
-       4. CONCENTRIC SPIRAL END-CAPS (Pixel-by-pixel match to reference image)
-       ======================================================================= */
-  .cylinder-cap {
+    .cylinder-cap {
         position: absolute;
         top: 50%;
         width: 32px;
         height: 72px;
-        margin-top: -36px; /* Centered along the cylinder equator */
+        margin-top: -36px; 
         z-index: -1;
         filter: url('#edge-fray-light');
         will-change: transform;
+        transform: translate3d(0,0,0);
     }
 
-  .cylinder-cap.left {
-        left: -14px;
-    }
+    .cylinder-cap.left { left: -14px; }
+    .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
-  .cylinder-cap.right {
-        right: -14px;
-        transform: scaleX(-1); /* Inverts path horizontally for organic asymmetry */
-    }
-
-    /* =======================================================================
-       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR DOMRevealer)
-       ======================================================================= */
-  .scroll-body-wrapper {
+    .scroll-body-wrapper {
         position: relative;
         width: 100%;
-        /* Driven completely via GPU-calculated custom CSS variables to avoid layout reflows */
         height: calc(var(--unroll-progress) * var(--paper-h));
-        overflow: hidden; /* Clamps inner paper container during reveal */
+        overflow: hidden; 
         filter: url('#edge-fray-heavy'); 
         will-change: height;
-        transform: translateZ(0);
+        transform: translate3d(0,0,0);
+        backface-visibility: hidden;
     }
 
-  .scroll-flat-paper {
+    .scroll-flat-paper {
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 0; left: 0;
         width: 100%;
-        height: var(--paper-h); /* content-driven target (fitSannasa) */
-        background-color: #d6a874; /* Base organic parchment hue */
-        
-        /* Edge destruction coordinates mimicking natural fiber erosion */
+        height: var(--paper-h); 
+        background-color: #d6a874; 
         clip-path: polygon(
-            0% 0%, 100% 0%, 
-            100% 8%, 94% 11%, 98% 13%, 100% 16%, 
+            0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
             100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
             100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 
-            100% 83%, 93% 87%, 100% 92%, 
-            100% 100%, 0% 100%, 
-            0% 90%, 5% 86%, 0% 82%, 
-            0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 
-            0% 40%, 8% 35%, 2% 31%, 
-            0% 20%, 6% 16%, 0% 13%
+            100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 
+            0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 
+            0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%
         );
-
-        /* Surface decay, stains, edge-burn and vignette gradients */
         background-image: 
             url('#paper-grain'),
             radial-gradient(circle at 18% 28%, rgba(54, 23, 2, 0.25) 0%, transparent 22%), 
@@ -198,27 +143,20 @@
             radial-gradient(circle at center, transparent 20%, rgba(77, 43, 14, 0.8) 100%);
         background-blend-mode: multiply;
         box-shadow: inset 0 0 100px rgba(43, 19, 4, 0.98);
+        transform: translateZ(0);
     }
 
-    /* =======================================================================
-       6. PROCEDURAL 3D EMBOSSED ROYAL SEAL (Historically Accurate Sinhala Crest)
-       ======================================================================= */
-  .embossed-seal {
+    .embossed-seal {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 240px;
-        height: 240px;
-        opacity: 0.28; /* Pressed watermark blending */
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) translateZ(0);
+        width: 240px; height: 240px;
+        opacity: 0.28; 
         mix-blend-mode: overlay;
         filter: url('#emboss-filter');
     }
 
-    /* =======================================================================
-       7. DECORATIVE LAYERS
-       ======================================================================= */
-  .scroll-decorations {
+    .scroll-decorations {
         position: absolute;
         inset: 40px;
         border: 2px solid rgba(77, 43, 14, 0.4);
@@ -226,7 +164,7 @@
         box-shadow: 0 0 15px rgba(77, 43, 14, 0.2);
     }
 
-  .scroll-instruction {
+    .scroll-instruction {
         position: absolute;
         bottom: 40px;
         font-size: 14px;
@@ -237,71 +175,34 @@
         text-align: center;
         width: 100%;
         animation: pulse 2.5s infinite ease-in-out;
+        transition: opacity .6s ease;
     }
 
-    @keyframes pulse {
-        0%, 100% { opacity: 0.3; }
-        50% { opacity: 0.7; }
-    }
-
-    /* ═══════════════════════════════════════════════════════════════════
-       ADDED (non-destructive): responsive fit + crisp wedding-content overlay
-       — your scroll, filters, cylinders, caps and JS are untouched below/above
-       ═══════════════════════════════════════════════════════════════════ */
-
-    /* Fit your fixed 650px scroll to any screen — width shrinks to the viewport
-       (capped at its native 650px on larger screens), same as the reference
-       prototype's own actual behavior on a phone. A uniform transform:scale()
-       was tried here before, but it shrinks the WHOLE assembly (fonts included)
-       well below the reference's look — on the reference file, the scale()
-       itself never even applies (dividing a length by a bare, unitless number
-       in calc() always yields another length, never the <number> scale()
-       needs, so browsers drop that whole declaration as invalid) and the
-       reference's actual on-screen size comes from this plain width shrink,
-       with every font-size and padding staying at its native px value. */
-    .scroll-master-container {
-        --unroll-progress: 0;   /* the scroll engine below writes this every frame, tied to scroll position */
-        --paper-h: 740px;
-        width: 100%;
-        max-width: 650px;
-        flex-shrink: 0;
-    }
-
-    /* Spiral end-caps physically counter-rotate as the scroll unrolls — two full
-       turns, matching the direction each roll spins as paper feeds off it. Driven
-       by the SAME --unroll-progress the JS reveal loop writes every frame, so
-       they stay perfectly in sync with the paper without any separate wiring. */
-    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)); }
-    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)); }
-    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)); }
-    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)); }
-
-    /* The "scroll to unfurl" cue fades away once the reveal starts playing */
-    .scroll-instruction { transition: opacity .6s ease; }
     .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
 
-    /* Safety net: whatever the JS reveal loop is doing, Reduce Motion always wins
-       and forces the fully-unrolled resting state — the !important here beats
-       even an inline style the animation loop may be mid-way through writing. */
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
+    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
+    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
+    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
+
     @media (prefers-reduced-motion: reduce) {
         .scroll-master-container { --unroll-progress: 1 !important; }
         .scroll-instruction { display: none; }
     }
 
-
-    /* Invitation text lives in its OWN layer — revealed in perfect sync with the
-       parchment (shares --unroll-progress) but OUTSIDE the edge-fray-heavy filter,
-       so the writing stays crisp while the paper edges still tear organically. */
     .decree-overlay {
         position: absolute;
-        top: 62px;              /* aligns with the parchment (top cylinder 84px − 22px overlap) */
-        left: 0;
-        right: 0;
-        z-index: 5;             /* above the parchment, below the wooden rolls (z-index:10) */
+        top: 62px;              
+        left: 0; right: 0;
+        z-index: 5;             
         height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden;
         pointer-events: none;
+        transform: translateZ(0);
     }
+
     .decree-inner {
         width: 100%;
         height: var(--paper-h);
@@ -312,54 +213,34 @@
         text-align: center;
         color: #3d1f0b;
         font-family: 'Abhaya Libre', serif;
-        /* a soft warm glow lifts the writing area so aged ink stays legible */
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
     }
-    .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px;
-        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
+
+    .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
     .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
-    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px;
-        background: linear-gradient(90deg, transparent, #a9812f, transparent); }
+    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
     .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
     .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
-    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px;
-        text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
+    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
     .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
     .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
-    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f;
-        max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
-    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0;
-               width: 100%; max-width: 100%; box-sizing: border-box; }
-    /* Row 1 = date + time side by side.  Row 2 = venue, directly beneath. */
-    .dc-row2 { margin-top: 13px; }
-    .dc-row2 .b { flex: 0 1 auto; text-align: center; }
-    .dc-row1 { margin-top: 9px; }
-    .dc-row1 .b { flex: 1 1 100%; text-align: center; }
-    /* flex items must be allowed to shrink AND wrap, otherwise a long date such as
-       "Wednesday, 12 January 2028" pushes the row past both edges of the scroll. */
-    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box;
-                  overflow-wrap: anywhere; word-break: break-word; }
+    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f; max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
+    
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+    .dc-row2 { margin-top: 13px; } .dc-row2 .b { flex: 0 1 auto; text-align: center; }
+    .dc-row1 { margin-top: 9px; } .dc-row1 .b { flex: 1 1 100%; text-align: center; }
+    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
     .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
-    /* The scroll's internal layout is a fixed 650px that is scaled to fit, so the
-       row does NOT need to stack on small screens — it only needs tighter gaps.
-       Forcing 100% width here was what split date and time onto separate lines. */
     @media (max-width: 430px) { .dc-meta { gap: 6px 14px; } }
     .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
     .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
     .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
-    /* Auspicious closing seal — Swasti Siddham — a small framed cartouche (double gold border) */
-    .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em;
-        color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px;
-        background: rgba(247,226,182,0.32);
-        box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15);
-        text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
-    /* zoom-crash guard — disable heavy SVG filters only while pinch/zoomed in */
+    
+    .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
+    
     html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
-    /* Tamil rendering — only when the invitation is in Tamil (lang="ta"). Keeps Sinhala/English
-       fonts untouched; Tamil glyphs render in Noto Serif Tamil at the same sizes & weights. */
-    html[lang="ta"] .decree-inner,
-    html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
+    html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
 </style>
 </head>
 <body>
@@ -367,7 +248,7 @@
     <svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
         <defs>
             <filter id="paper-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="6" result="noise" />
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" /> <!-- Reduced Octaves for performance -->
                 <feDiffuseLighting in="noise" lightingColor="#ffe7cc" surfaceScale="3.8" result="light">
                     <feDistantLight azimuth="45" elevation="55" />
                 </feDiffuseLighting>
@@ -375,12 +256,12 @@
             </filter>
 
             <filter id="edge-fray-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="5" seed="28" result="tornNoise" />
+                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="3" seed="28" result="tornNoise" /> <!-- Reduced Octaves -->
                 <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
             <filter id="edge-fray-light" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="3" seed="14" result="tornNoiseLight" />
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" seed="14" result="tornNoiseLight" /> <!-- Reduced Octaves -->
                 <feDisplacementMap in="SourceGraphic" in2="tornNoiseLight" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
@@ -399,12 +280,9 @@
     </svg>
 
     <div class="scroll-viewport">
-        
         <div class="scroll-instruction"></div>
-
         <div class="scroll-sticky-scene">
             <div class="scroll-master-container">
-                
                 <div class="scroll-cylinder top">
                     <svg class="cylinder-cap left" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
@@ -420,7 +298,6 @@
                 
                 <div class="scroll-body-wrapper">
                     <div class="scroll-flat-paper">
-                        
                         <div class="embossed-seal">
                             <svg viewBox="0 0 200 200" width="100%" height="100%">
                                 <circle cx="100" cy="100" r="85" fill="none" stroke="#000" stroke-width="4" stroke-dasharray="10 6" />
@@ -433,9 +310,7 @@
                                 <path d="M148,95 C146,98 146,102 148,105 C150,108 154,110 158,110 C155,113 150,113 146,110 C142,107 142,100 148,95 Z" fill="#000" />
                             </svg>
                         </div>
-
                         <div class="scroll-decorations"></div>
-                        
                     </div>
                 </div>
                 
@@ -478,64 +353,16 @@
 
             </div>
         </div>
-
     </div>
 
     <script>
-    
-        /* (static scroll — no scroll-unroll engine; --unroll-progress stays 1) */
-    
-    /* Sannasa — language purity + live Firestore sync + zoom-crash guard.
-       Additive only. The scroll is STATIC (fully unrolled) — no scroll-unroll engine.
-       Same-origin iframe → shares localStorage('hs_lang') with the main page. */
     (function(){
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
-
-      /* Traditional-format default content (bride first). Firestore overrides these live. */
       var C = {
-        si: {
-          sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය",
-          brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,",
-          brideName:"කෞශානි",
-          groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
-          groomName:"ගෞරව",
-          join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
-          body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.",
-          lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය",
-          date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල",
-          poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට",
-          swasti:"ස්වස්ති සිද්ධම්",
-          cue:"සෙමින් පහළට"
-        },
-        en: {
-          sri:"✦", eyebrow:"The Honour of Your Presence is Requested",
-          brideParents:"the beloved daughter of Mr. & Mrs.",
-          brideName:"Kaushani",
-          groomParents:"the beloved son of Mr. & Mrs.",
-          groomName:"Gaurawa",
-          join:"on the joyous occasion of their marriage,",
-          body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.",
-          lDate:"Date", lTime:"Time", lVenue:"Venue",
-          date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala",
-          poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
-          swasti:"Swasti Siddham",
-          cue:"Scroll to unfurl"
-        },
-        ta: {
-          sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா",
-          brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,",
-          brideName:"கௌஷானி",
-          groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,",
-          groomName:"கௌரவ",
-          join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,",
-          body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
-          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
-          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்",
-          poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு",
-          swasti:"ஸ்வஸ்தி சித்தம்",
-          cue:"மெதுவாக கீழே"
-        }
+        si: { sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය", brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,", brideName:"කෞශානි", groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,", groomName:"ගෞරව", join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,", body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.", lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය", date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල", poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට", swasti:"ස්වස්ති සිද්ධම්", cue:"සෙමින් පහළට" },
+        en: { sri:"✦", eyebrow:"The Honour of Your Presence is Requested", brideParents:"the beloved daughter of Mr. & Mrs.", brideName:"Kaushani", groomParents:"the beloved son of Mr. & Mrs.", groomName:"Gaurawa", join:"on the joyous occasion of their marriage,", body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.", lDate:"Date", lTime:"Time", lVenue:"Venue", date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala", poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.", swasti:"Swasti Siddham", cue:"Scroll to unfurl" },
+        ta: { sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா", brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,", brideName:"கௌஷானி", groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,", groomName:"கௌரவ", join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,", body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.", lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்", date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்", poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு", swasti:"ஸ்வஸ்தி சித்தம்", cue:"மெதுவாக கீழே" }
       };
 
       var live = {};
@@ -544,46 +371,15 @@
       function ov(key){ var l=lang(), sfx=(l==='si'?'Si':l==='ta'?'Ta':'En'), v=live[key+sfx]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
-      /* ── CONTENT-ADAPTIVE MEASUREMENT ─────────────────────────────────────
-         Measures the decree's natural content height and grows/shrinks the
-         parchment (--paper-h) to fit it — exactly as before. What differs from
-         the old static version: the height reported to the parent is no longer
-         just "however tall the fully-unrolled scroll is" — it's that PLUS a
-         bounded extra scroll runway (see the engine below), so there is real
-         scroll distance to play the reveal through. --paper-h itself, and the
-         scene's own natural height, stay 100% content-driven either way — the
-         runway is additive, never a fixed value disconnected from content,
-         which is exactly what caused the original stretching bug.
-
-         GUARDED against its own feedback loop: the parent resizes THIS iframe
-         element to match what we report, and resizing an iframe element fires a
-         `resize` event on the iframe's OWN window — so an ordinary resize
-         listener here would re-measure, (re-)post, get resized again, forever.
-         Two guards break that cleanly, without losing the legitimate reasons to
-         re-measure (a real viewport-width change, a font finishing its swap,
-         the admin editing content live):
-           1. `resize` only re-measures when the VIEWPORT WIDTH actually moved —
-              a parent-driven height-only resize never changes window.innerWidth,
-              so it's ignored outright.
-           2. Every path is a no-op once `needed` stops changing, so on a real
-              device with slower font/network timing this converges to one
-              clean settle instead of visibly re-growing while the visitor
-              scrolls past it. */
       var lastNeeded = -1, lastWidth = window.innerWidth;
       function measureSceneHeight(){
         var mc = document.querySelector('.scroll-master-container');
         var inner = document.querySelector('.decree-inner');
         if(!mc || !inner) return 0;
-
-        var prevH = inner.style.height;
-        inner.style.height = 'auto';
-        var C = inner.scrollHeight;
-        inner.style.height = prevH;
-
-        /* 1480px උපරිම සීමාව ඉවත් කර ඇත. දැන් content කොතරම් වැඩි වුවත් සන්නස ඊට අනුව දිගු වේ */
+        var prevH = inner.style.height; inner.style.height = 'auto';
+        var C = inner.scrollHeight; inner.style.height = prevH;
         var paper = Math.max(560, Math.round(C + 120));
         mc.style.setProperty('--paper-h', paper + 'px');
-
         var prevP = mc.style.getPropertyValue('--unroll-progress');
         mc.style.setProperty('--unroll-progress','1');
         var R = mc.getBoundingClientRect().height;
@@ -595,101 +391,59 @@
 
       function fitSannasa(){
         try{
-          /* The scroll engine (second <script> block) owns .scroll-viewport's
-             height and the parent postMessage once it has loaded — it needs
-             to add its own extra scroll runway on top of the content height,
-             and it is the only one that knows whether that runway applies
-             (mode 1/2) or not (mode 3). Delegating to it here, instead of
-             also setting vp.style.height/posting ourselves, is what keeps
-             this function's own load/resize/font-ready/setTimeout callbacks
-             from racing the engine and clobbering its taller runway back
-             down to the content-only height. It re-measures internally, so
-             this function does not need to measure again first. */
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
-
-          /* Fallback for the brief instant before the engine script below has
-             run (or if it somehow failed to load): content-only sizing. */
           var sceneH = measureSceneHeight();
           var needed = Math.round(28 + sceneH + 30);
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
           lastNeeded = needed;
-          if(window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
-          }
+          if(window.parent && window.parent !== window){ window.parent.postMessage({ __sannasa:'height', h: needed }, '*'); }
         }catch(_){}
       }
-
       window.__fitSannasa = fitSannasa;
+
       function fitSannasaOnResize(){
-        if(window.innerWidth === lastWidth) return;   /* height-only resize (our own doing) — ignore */
-        lastWidth = window.innerWidth;
-        fitSannasa();   /* delegates to the scroll engine's reflow() when it's loaded — see fitSannasa() */
+        if(window.innerWidth === lastWidth) return; 
+        lastWidth = window.innerWidth; fitSannasa(); 
       }
 
       function render(){
         var l = lang(), t = C[l];
         try{ document.documentElement.lang = l; }catch(_){}
-        /* Every line on the decree is admin-editable except the Swasti Siddham
-           closing (t.swasti below) — that stays the fixed traditional phrase. */
         set('sri', ov('sri') || t.sri); set('eyebrow', ov('eyebrow') || t.eyebrow); set('conj', '✦');
-        /* "<father's initials + surname>" + "<phrase>", both admin-editable per language */
-        function joinFather(fk, pk, fallback){
-          var f = String(ov(fk) || plain(fk) || '').trim();
-          var ph = String(ov(pk) || fallback || '').trim();
-          return f ? (f + ' ' + ph) : ph;
-        }
+        function joinFather(fk, pk, fallback){ var f = String(ov(fk) || plain(fk) || '').trim(), ph = String(ov(pk) || fallback || '').trim(); return f ? (f + ' ' + ph) : ph; }
         set('brideParents', joinFather('brideFather','brideParents', t.brideParents));
-        set('brideName',    ov('brideName') || plain('brideName') || t.brideName);
+        set('brideName', ov('brideName') || plain('brideName') || t.brideName);
         set('groomParents', joinFather('groomFather','groomParents', t.groomParents));
-        set('groomName',    ov('groomName') || plain('groomName') || t.groomName);
-        set('join', ov('join') || t.join);
-        set('body', ov('sannasaBody') || ov('invite') || t.body);
+        set('groomName', ov('groomName') || plain('groomName') || t.groomName);
+        set('join', ov('join') || t.join); set('body', ov('sannasaBody') || ov('invite') || t.body);
         set('lDate', ov('lDate') || t.lDate); set('lTime', ov('lTime') || t.lTime); set('lVenue', ov('lVenue') || t.lVenue);
-        set('vDate', ov('date') || t.date);
-        set('vTime', ov('time') || t.time);
-        set('vVenue', ov('venue') || plain('venue') || t.venue);
-        /* Language-correct fallback. Previously this fell back to plain('venueCity'),
-           which is the Sinhala value — so English and Tamil both showed "කුරුණෑගල". */
+        set('vDate', ov('date') || t.date); set('vTime', ov('time') || t.time); set('vVenue', ov('venue') || plain('venue') || t.venue);
         var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
         set('vCity', ov('city') || plain(cityKey) || t.city);
-        set('poruwa', ov('poruwa') || t.poruwa);
-        set('swasti', t.swasti);   /* the one deliberate exception — always the fixed traditional phrase */
+        set('poruwa', ov('poruwa') || t.poruwa); set('swasti', t.swasti); 
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
-        try{ fitSannasa(); }catch(_){}   /* delegates to the scroll engine's reflow() when it's loaded */
+        try{ fitSannasa(); }catch(_){}
       }
       render();
-      /* keep the scroll hugged to its content — on load, font swap, a REAL resize, and
-         (via render) on every admin edit. `fitSannasaOnResize` (not fitSannasa directly)
-         on the resize listener — see its guard above. */
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
       setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
-      /* re-render instantly when the main page toggles language */
       window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
 
-      /* live Firestore sync — decree already shows full defaults, so this only enriches */
       Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
         var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
         m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
-          var d = snap.exists() ? (snap.data()||{}) : {};
-          live = d || {};
+          var d = snap.exists() ? (snap.data()||{}) : {}; live = d || {};
           if (live.dateISO && !live.dateSi && !live.dateEn){
-            try{
-              var dt = new Date(live.dateISO);
-              if(!isNaN(dt)){
-                live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-                live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-              }
-            }catch(_){}
+            try{ var dt = new Date(live.dateISO); if(!isNaN(dt)){ live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); } }catch(_){}
           }
           render();
-        }, function(){ /* offline → keep elegant defaults */ });
-      }).catch(function(){ /* SDK blocked → keep elegant defaults */ });
+        }, function(){});
+      }).catch(function(){});
 
-      /* zoom-crash guard — soften heavy SVG filters only while pinch/zoomed in */
       if (window.visualViewport){
         var vv = window.visualViewport;
         var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
@@ -699,54 +453,6 @@
     </script>
 
     <script>
-    /* ── Scroll-tied unroll engine ────────────────────────────────────────
-       Reproduces the reference prototype's continuous, bidirectional,
-       LERP-smoothed scroll-driven unroll — the scroll visibly unfurls as you
-       scroll, exactly in step, caps spinning — while staying immune to the
-       bug that made the very first version of this "stretch": that version
-       bound progress to raw scroll position against a FIXED 250vh runway
-       that had no relationship to the actual content height. Here the runway
-       is always content-height + a bounded extra distance (never a bare
-       constant), computed fresh on every real reflow.
-
-       Three embedding modes, detected automatically:
-
-       1. SAME-ORIGIN IFRAME (the production case — helasiritha.vercel.app's
-          own index.html embeds this same-origin sannasa.html). This document
-          never scrolls internally: it's sized to exactly match the runway,
-          so the "scroll" that should drive the unroll is the PARENT page
-          scrolling this iframe element through ITS OWN viewport.
-
-          An earlier version of this engine read that position from INSIDE
-          this document, every single animation frame, via
-          window.frameElement.getBoundingClientRect() — same-origin-legal,
-          but it forces the browser to reconcile this iframe's position
-          against the PARENT document's layout from a second, independent
-          browsing context, 60+ times a second. That cross-context layout
-          read is what caused the real-device stutter/freeze (worst while
-          scrolling back up during momentum/inertial scrolling): it competes
-          with the parent page's own scroll-driven work (parallax, particles,
-          the entry gateway) for the main thread, and iframes are not always
-          scheduled in lockstep with the parent's compositor.
-
-          Now the PARENT (app.js's setupSannasaScroll) reads its own
-          getBoundingClientRect() on the iframe element — a same-document,
-          main-thread-native read that the browser already keeps cheap as
-          part of ordinary scroll handling — and postMessages a plain 0..1
-          progress number in. This document only ever LISTENS for that
-          message and LERPs toward it; it never queries cross-context layout
-          itself. See the 'message' listener and computeTargetProgress()
-          below.
-       2. STANDALONE / TOP-LEVEL (this document opened directly, not framed).
-          window.frameElement is null and this IS window.top — the reference
-          prototype's own approach (real position:fixed, real window.scrollY)
-          works completely unmodified here, no manual math needed.
-       3. CROSS-ORIGIN IFRAME (the admin panel's live-preview embed —
-          a different origin embedding this page). window.frameElement is
-          inaccessible and unreadable by design (browser security), so there
-          is no way to know the outer page's scroll position at all. Falls
-          back to the same safe, content-height-only, one-shot reveal used
-          before — correct and simple, appropriate for a small preview pane. */
     (function(){
       var vp = document.querySelector('.scroll-viewport');
       var mc = document.querySelector('.scroll-master-container');
@@ -756,60 +462,36 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
-
       var framed = (window !== window.top);
       var sameOriginFrame = false;
-      if(framed){
-        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
-      }
+      if(framed){ try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; } }
 
-      /* ── Mode 3: cross-origin preview — simple, safe, one-shot ── */
       function runFallbackReveal(){
         var played = false;
-        function play(){
-          if(played) return; played = true;
-          vp.classList.add('unrolled');
-          setProgress(1);
-        }
+        function play(){ if(played) return; played = true; vp.classList.add('unrolled'); mc.style.setProperty('--unroll-progress', '1'); }
         if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
-        try{
-          var io = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.18 });
-          io.observe(vp);
-        }catch(_){ play(); }
+        try{ var io = new IntersectionObserver(function(entries){ for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } } }, { threshold: 0.18 }); io.observe(vp); }catch(_){ play(); }
         setTimeout(play, 4000);
       }
-
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* ── Modes 1 & 2: the real scroll-tied engine ── */
-      var lerpSpeed = 0.18;               /* identical smoothing to the reference prototype */
-      var current = 0, target = 0;
-      var extraPx = 480, pinPx = 48;      /* recomputed in reflow() below, sane pre-reflow defaults */
+      var lerpSpeed = 0.18; 
+      var current = 0, target = 0, lastRendered = -1;
+      var extraPx = 480, pinPx = 48; 
       var running = false, rafId = null;
-      var parentProgress = 0;             /* mode 1 only: last 0..1 value received from the parent — see below */
+      var parentProgress = 0; 
 
       if(sameOriginFrame){
         window.addEventListener('message', function(e){
           var d = e && e.data;
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-          /* The scene's pin POSITION tracks the parent's scroll instantly (no
-             LERP lag) so it never visibly detaches from the page scrolling
-             it — only the UNROLL itself (current, via tick() below) is
-             LERP-smoothed for a cinematic ease rather than a raw 1:1 jump. */
-          scene.style.top = (parentProgress * extraPx) + 'px';
+          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)'; 
         }, { passive: true });
       }
 
-      function outerHeight(){
-        try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
-        return window.innerHeight || 700;
-      }
-
-      if(!framed){ scene.classList.add('pin-fixed'); }   /* mode 2: real position:fixed, like the reference */
+      function outerHeight(){ try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){} return window.innerHeight || 700; }
+      if(!framed){ scene.classList.add('pin-fixed'); }
 
       function reflow(){
         try{
@@ -819,102 +501,55 @@
           pinPx   = Math.max(24, Math.round(oh * 0.08));
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
-          if(!framed){ scene.style.top = pinPx + 'px'; }   /* mode 2: fixed pin position, set once */
+          if(!framed){ scene.style.top = pinPx + 'px'; }
           if(sameOriginFrame && window.parent && window.parent !== window){
-            /* pin/extra ride along on the same message so the parent's own
-               progress math (setupSannasaScroll in app.js) uses the exact
-               same reveal window this document just computed — one source
-               of truth, no separate formula to keep in sync by hand. */
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
         }catch(_){}
       }
-      window.__reflowScrollEngine = reflow;
-      reflow();
+      window.__reflowScrollEngine = reflow; reflow();
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
-        if(sameOriginFrame){
-          /* No cross-context layout read here — parentProgress is kept fresh
-             by the 'message' listener above, posted from app.js's own
-             main-thread scroll handling. */
-          return parentProgress;
-        } else {
-          /* mode 2: real top-level document — the reference's own approach */
-          var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-          return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
-        }
+        if(sameOriginFrame){ return parentProgress; } 
+        else { var scrollTop = window.scrollY || document.documentElement.scrollTop || 0; return extraPx > 0 ? Math.max(0, Math.min(1, scrollTop / extraPx)) : 1; }
       }
-      function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
-      function applyCapRotation(progress){
-        var deg = progress * 720;
-        var topCyl = document.querySelector('.scroll-cylinder.top');
-        var botCyl = document.querySelector('.scroll-cylinder.bottom');
-        if(topCyl){
-          var tl = topCyl.querySelector('.cylinder-cap.left'), tr = topCyl.querySelector('.cylinder-cap.right');
-          if(tl) tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
-          if(tr) tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
-        }
-        if(botCyl){
-          var bl = botCyl.querySelector('.cylinder-cap.left'), br = botCyl.querySelector('.cylinder-cap.right');
-          if(bl) bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
-          if(br) br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
-        }
-      }
+      var topCyl = document.querySelector('.scroll-cylinder.top');
+      var botCyl = document.querySelector('.scroll-cylinder.bottom');
+      var tl = topCyl ? topCyl.querySelector('.cylinder-cap.left') : null, tr = topCyl ? topCyl.querySelector('.cylinder-cap.right') : null;
+      var bl = botCyl ? botCyl.querySelector('.cylinder-cap.left') : null, br = botCyl ? botCyl.querySelector('.cylinder-cap.right') : null;
 
       function tick(){
         target = computeTargetProgress();
         var diff = target - current;
         current += diff * lerpSpeed;
         if(Math.abs(diff) < 0.0004) current = target;
-        var progress = clampNum(current, 0, 1);
-        setProgress(progress);
-        applyCapRotation(progress);
-        vp.classList.toggle('unrolled', progress > 0.92);
+        var progress = Math.max(0, Math.min(1, current));
+        
+        // Optimize DOM Writes: Only update if changed significantly
+        if (Math.abs(lastRendered - progress) > 0.001 || progress === 1 || progress === 0) {
+            mc.style.setProperty('--unroll-progress', progress);
+            var deg = progress * 720;
+            if(tl) tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
+            if(tr) tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
+            if(bl) bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
+            if(br) br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
+            lastRendered = progress;
+            vp.classList.toggle('unrolled', progress > 0.92);
+        }
         if(running) rafId = requestAnimationFrame(tick);
       }
 
-      function start(){
-        if(running) return; running = true;
-        /* Snap immediately to the correct value for the CURRENT scroll position
-           rather than LERP-animating from whatever stale value was frozen when
-           tracking last paused — e.g. a fast fling, scrollbar drag, or End key
-           can jump straight past this section while it wasn't being tracked
-           (a deliberate perf pause outside the rootMargin below). LERP is for
-           smoothing gradual scrolling, not for masking a jump while paused. */
-        current = computeTargetProgress();
-        var p = clampNum(current, 0, 1);
-        setProgress(p); applyCapRotation(p);
-        if(!rafId) rafId = requestAnimationFrame(tick);
-      }
+      function start(){ if(running) return; running = true; current = computeTargetProgress(); if(!rafId) rafId = requestAnimationFrame(tick); }
       function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
 
-      if(reduceMotion){
-        setProgress(1); applyCapRotation(1); vp.classList.add('unrolled');
-        return;
-      }
+      if(reduceMotion){ mc.style.setProperty('--unroll-progress', '1'); vp.classList.add('unrolled'); return; }
 
-      /* Only run the continuous per-frame loop while roughly near the viewport —
-         a generous margin so there's no visible pop-in at the edges. */
-      if(!framed){ start(); }                       /* mode 2: always relevant, it's the whole page */
+      if(!framed){ start(); }
       else if('IntersectionObserver' in window){
-        try{
-          var io2 = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
-          }, { rootMargin: '800px 0px 800px 0px' });
-          io2.observe(vp);
-        }catch(_){ start(); }
+        try{ var io2 = new IntersectionObserver(function(entries){ for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); } }, { rootMargin: '800px 0px 800px 0px' }); io2.observe(vp); }catch(_){ start(); }
       } else { start(); }
-
-      /* NOTE: a real viewport-width resize is already handled by
-         fitSannasaOnResize() in the script above, which calls
-         window.__reflowScrollEngine() (this reflow) only after checking
-         window.innerWidth actually changed. A second, unguarded resize
-         listener here would re-trigger on the parent-driven height-only
-         resize this engine's own postMessage causes — the exact feedback
-         loop fitSannasaOnResize's guard exists to prevent — so this engine
-         deliberately does not listen for resize itself. */
     })();
     </script>
 </body>
