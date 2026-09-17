@@ -1,61 +1,67 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Ultra-Realistic Procedural Sannasa Scroll - Optimized 2050 Architecture</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra-Realistic Procedural Sannasa Scroll with Frame-Independent LERP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
-       1. CORE RESET & ENVIRONMENT MAPPING (Optimized for Hardware)
+       1. CORE RESET & ENVIRONMENT MAPPING
        ======================================================================= */
     *, *::before, *::after {
         box-sizing: border-box;
     }
 
-    body, html {
+    body {
         margin: 0;
         padding: 0;
         background-color: #030303;
         font-family: sans-serif;
         color: #fff;
         overflow-x: hidden;
-        overscroll-behavior-y: none; /* Prevents scroll chaining to parent */
+        /* අතිශය වැදගත්: Iframe එකෙහි ශරීරය හුදකලා කිරීම (Body Paint Containment) */
+        contain: paint;
     }
 
-    /* =======================================================================
-       2. STRICT IFRAME ISOLATION & CONTAINMENT
-       ======================================================================= */
     .scroll-viewport {
         position: relative;
         width: 100%;
-        height: 250vh; 
-        background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
-        /* STRICT CONTAINMENT: Completely isolates rendering from the parent document */
-        contain: strict; 
+        height: 900px;
         overflow: hidden;
+        padding: 28px 0 30px;
+        background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
+        
+        /* Iframe Isolation: CSS Containment මගින් Layout Bleeding නවතාලීම */
+        contain: strict;
+        will-change: transform;
     }
 
+    /* =======================================================================
+       2. MASTER STICKY CONTAINER ARCHITECTURE
+       ======================================================================= */
     .scroll-sticky-scene {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
+        position: absolute;
+        left: 0; right: 0; top: 0;
         display: flex;
         justify-content: center;
-        align-items: flex-start; 
-        padding-top: 8vh; 
-        overflow: hidden;
-        pointer-events: none; 
-        contain: layout paint size; /* Rendering boundary for the sticky scene */
+        align-items: flex-start;
+        padding: 0 10px;
+        overflow: visible;
+        pointer-events: none;
+        /* පිරිසැලසුම් සීමා කිරීම සහ ස්වාධීන කිරීම */
+        contain: layout style;
     }
+    
+    .scroll-sticky-scene.pin-fixed { position: fixed; }
 
     .scroll-master-container {
         position: relative;
-        width: 650px;
+        width: 100%;
+        max-width: 650px;
+        flex-shrink: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -63,32 +69,34 @@
         transform-style: preserve-3d;
         filter: drop-shadow(0 50px 70px rgba(0,0,0,0.98));
         pointer-events: auto;
-        /* Responsive scaling driven entirely by GPU composite layer */
-        --unroll-progress: 0;
-        transform: scale(min(1, calc((100vw - 20px) / 650))) translateZ(0);
-        transform-origin: top center;
+        
+        --unroll-progress: 0; 
+        --paper-h: 740px;
+        
+        /* GPU Compositor Thread Optimization */
         will-change: transform;
-        contain: layout style;
+        transform: translateZ(0);
     }
 
     /* =======================================================================
-       3. HARDWARE ACCELERATED CYLINDERS & CAPS
+       3. CYLINDRICAL ROLLS WITH ORGANIC TEXTURING
        ======================================================================= */
     .scroll-cylinder {
         position: relative;
-        width: 110%; 
+        width: 110%;
         height: 84px;
         z-index: 10;
         border-radius: 42px; 
         filter: url('#edge-fray-light');
         background-repeat: repeat;
-        /* Promotes cylinder layers to individual GPU compositor layers */
+        /* GPU Acceleration - ජංගම දුරකථන සඳහා අත්‍යවශ්‍යයි */
         will-change: transform, background-position;
-        transform: translateZ(0); 
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     .scroll-cylinder.top {
-        margin-bottom: -22px; 
+        margin-bottom: -22px;
         background-image: 
             url('#paper-grain'), 
             linear-gradient(to bottom, #331502 0%, #8e5d32 15%, #fcdcab 35%, #8e5d32 65%, #331502 90%, #140700 100%);
@@ -107,33 +115,37 @@
         background-position-y: calc(var(--unroll-progress) * -320px);
     }
 
+    /* =======================================================================
+       4. CONCENTRIC SPIRAL END-CAPS
+       ======================================================================= */
     .cylinder-cap {
         position: absolute;
         top: 50%;
         width: 32px;
         height: 72px;
-        margin-top: -36px; 
+        margin-top: -36px;
         z-index: -1;
         filter: url('#edge-fray-light');
         will-change: transform;
-        transform: translateZ(0); /* Pre-apply hardware acceleration */
+        transform: translateZ(0);
     }
 
     .cylinder-cap.left { left: -14px; }
-    .cylinder-cap.right { right: -14px; } 
+    .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
     /* =======================================================================
-       4. MAIN PARCHMENT BODY & GPU OPTIMIZED HEIGHT REVEAL
+       5. MAIN UNROLLED PARCHMENT BODY
        ======================================================================= */
     .scroll-body-wrapper {
         position: relative;
         width: 100%;
-        height: calc(var(--unroll-progress) * 650px);
+        height: calc(var(--unroll-progress) * var(--paper-h));
         overflow: hidden; 
         filter: url('#edge-fray-heavy'); 
-        will-change: height;
+        /* GPU Layer Promotion */
+        will-change: height, transform;
         transform: translateZ(0);
-        contain: strict; /* Isolates repaints caused by inner height changes */
+        contain: paint style;
     }
 
     .scroll-flat-paper {
@@ -141,12 +153,15 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 650px; 
+        height: var(--paper-h); 
         background-color: #d6a874; 
         clip-path: polygon(
-            0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
-            100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 
-            0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%
+            0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
+            100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
+            100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 
+            100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 
+            0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 
+            0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%
         );
         background-image: 
             url('#paper-grain'),
@@ -156,9 +171,12 @@
             radial-gradient(circle at center, transparent 20%, rgba(77, 43, 14, 0.8) 100%);
         background-blend-mode: multiply;
         box-shadow: inset 0 0 100px rgba(43, 19, 4, 0.98);
-        transform: translateZ(0); 
+        contain: strict;
     }
 
+    /* =======================================================================
+       6. PROCEDURAL 3D EMBOSSED ROYAL SEAL
+       ======================================================================= */
     .embossed-seal {
         position: absolute;
         top: 50%;
@@ -166,12 +184,15 @@
         transform: translate(-50%, -50%) translateZ(0);
         width: 240px;
         height: 240px;
-        opacity: 0.28; 
+        opacity: 0.28;
         mix-blend-mode: overlay;
         filter: url('#emboss-filter');
         will-change: transform;
     }
 
+    /* =======================================================================
+       7. DECORATIVE LAYERS & CONTENT OVERLAY
+       ======================================================================= */
     .scroll-decorations {
         position: absolute;
         inset: 40px;
@@ -179,50 +200,6 @@
         pointer-events: none;
         box-shadow: 0 0 15px rgba(77, 43, 14, 0.2);
     }
-
-    /* =======================================================================
-       5. CONTENT OVERLAY & TYPOGRAPHY
-       ======================================================================= */
-    .decree-overlay {
-        position: absolute;
-        top: 62px;              
-        left: 0;
-        right: 0;
-        z-index: 5;             
-        height: calc(var(--unroll-progress) * 650px);
-        overflow: hidden;
-        pointer-events: none;
-        will-change: height;
-        transform: translateZ(0);
-    }
-
-    .decree-inner {
-        width: 100%;
-        height: 650px;
-        padding: 58px 66px 42px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        color: #3d1f0b;
-        font-family: 'Abhaya Libre', serif;
-        background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
-    }
-
-    .dc-sri { font-weight: 800; font-size: 28px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
-    .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 11px; font-size: 13px; }
-    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 54px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
-    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 15.5px; letter-spacing: 0.2em; color: #5e3a1f; }
-    .dc-eyebrow-en { font-family: 'IM Fell English', serif; font-style: italic; font-size: 12px; letter-spacing: 0.05em; color: #6f421f; margin-bottom: 14px; }
-    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 43px; line-height: 1.06; color: #3d1f0b; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
-    .dc-name-en { font-family: 'Pinyon Script', cursive; font-size: 29px; line-height: 1; color: #7a1c12; margin: 1px 0 2px; }
-    .dc-amp { font-family: 'Pinyon Script', cursive; font-size: 28px; color: #a9812f; margin: 4px 0; }
-    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 16px; line-height: 1.65; color: #5e3a1f; max-width: 30ch; margin: 12px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
-    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 24px; margin: 15px auto 0; }
-    .dc-meta .b { min-width: 92px; }
-    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10.5px; letter-spacing: 0.12em; color: #7c5326; }
-    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15.5px; color: #3d1f0b; }
-    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10.5px; color: #6f421f; }
 
     .scroll-instruction {
         position: absolute;
@@ -235,36 +212,98 @@
         text-align: center;
         width: 100%;
         animation: pulse 2.5s infinite ease-in-out;
-        will-change: opacity;
+        transition: opacity .6s ease;
     }
 
     @keyframes pulse {
         0%, 100% { opacity: 0.3; }
         50% { opacity: 0.7; }
     }
+
+    .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .scroll-master-container { --unroll-progress: 1 !important; }
+        .scroll-instruction { display: none; }
+    }
+
+    .decree-overlay {
+        position: absolute;
+        top: 62px;
+        left: 0;
+        right: 0;
+        z-index: 5;
+        height: calc(var(--unroll-progress) * var(--paper-h));
+        overflow: hidden;
+        pointer-events: none;
+        will-change: height, transform;
+        transform: translateZ(0);
+    }
+
+    .decree-inner {
+        width: 100%;
+        height: var(--paper-h);
+        padding: 58px 66px 42px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        color: #3d1f0b;
+        font-family: 'Abhaya Libre', serif;
+        background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
+    }
+    
+    /* මුල් සැලසුමේ වර්ණ සහ මෝස්තර ඒ ආකාරයෙන්ම සුරක්ෂිත කර ඇත */
+    .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
+    .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
+    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
+    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
+    .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
+    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
+    .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
+    .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
+    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f; max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+    .dc-row2 { margin-top: 13px; }
+    .dc-row2 .b { flex: 0 1 auto; text-align: center; }
+    .dc-row1 { margin-top: 9px; }
+    .dc-row1 .b { flex: 1 1 100%; text-align: center; }
+    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
+    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
+    
+    @media (max-width: 430px) { .dc-meta { gap: 6px 14px; } }
+    
+    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
+    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
+    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
+    .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
+    .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
+    
+    html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
+    
+    html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
 </style>
 </head>
 <body>
 
-    <!-- SVG Filters Optimized for Hardware Acceleration (Reduced Octaves) -->
-    <svg width="0" height="0" style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+    <svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
         <defs>
             <filter id="paper-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-                <feDiffuseLighting in="noise" lightingColor="#ffe7cc" surfaceScale="2" result="light">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="6" result="noise" />
+                <feDiffuseLighting in="noise" lightingColor="#ffe7cc" surfaceScale="3.8" result="light">
                     <feDistantLight azimuth="45" elevation="55" />
                 </feDiffuseLighting>
                 <feComposite operator="arithmetic" k1="1" k2="0" k3="0" k4="0" in="SourceGraphic" in2="light" />
             </filter>
 
             <filter id="edge-fray-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="3" seed="28" result="tornNoise" />
-                <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="12" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="5" seed="28" result="tornNoise" />
+                <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
             <filter id="edge-fray-light" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" seed="14" result="tornNoiseLight" />
-                <feDisplacementMap in="SourceGraphic" in2="tornNoiseLight" scale="3" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="3" seed="14" result="tornNoiseLight" />
+                <feDisplacementMap in="SourceGraphic" in2="tornNoiseLight" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
             <filter id="emboss-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
@@ -281,19 +320,18 @@
         </defs>
     </svg>
 
-    <!-- Strictly Isolated Viewport -->
-    <div class="scroll-viewport" id="scrollViewport">
-        <div class="scroll-instruction">සෙමින් පහළට · Scroll to unfurl</div>
+    <div class="scroll-viewport">
+        <div class="scroll-instruction"></div>
         <div class="scroll-sticky-scene">
-            <div class="scroll-master-container" id="masterContainer">
+            <div class="scroll-master-container">
                 
-                <div class="scroll-cylinder top" id="topCylinder">
-                    <svg class="cylinder-cap left" id="capTopLeft" viewBox="0 0 50 100">
+                <div class="scroll-cylinder top">
+                    <svg class="cylinder-cap left" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
                         <path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round" />
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
                     </svg>
-                    <svg class="cylinder-cap right" id="capTopRight" viewBox="0 0 50 100">
+                    <svg class="cylinder-cap right" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
                         <path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round" />
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
@@ -320,31 +358,35 @@
                 
                 <div class="decree-overlay" aria-hidden="false">
                     <div class="decree-inner">
-                        <div class="dc-sri">ශ්‍රී</div>
+                        <div class="dc-sri" data-dc="sri">ශ්‍රී</div>
                         <div class="dc-rule"></div>
-                        <div class="dc-eyebrow">සුබ විවාහ මංගල්‍යය</div>
-                        <div class="dc-eyebrow-en">The Honour of Your Presence is Requested</div>
-                        <div class="dc-name">කෞශානි</div>
-                        <div class="dc-name-en">Kaushani</div>
-                        <div class="dc-amp">&amp;</div>
-                        <div class="dc-name">ගෞරව</div>
-                        <div class="dc-name-en">Gaurawa</div>
-                        <div class="dc-body">මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ගෞරවයෙන් අපේක්ෂා කරමු.</div>
-                        <div class="dc-meta">
-                            <div class="b"><div class="l">දිනය</div><div class="v">2028 ජනවාරි 12</div><div class="e">Wed, 12th January</div></div>
-                            <div class="b"><div class="l">වේලාව</div><div class="v">පෙ.ව. 9.00</div><div class="e">Forenoon</div></div>
-                            <div class="b"><div class="l">ස්ථානය</div><div class="v">The Epitome Hotel</div><div class="e">Kurunegala</div></div>
+                        <div class="dc-eyebrow" data-dc="eyebrow"></div>
+                        <div class="dc-lineage" data-dc="brideParents"></div>
+                        <div class="dc-name" data-dc="brideName"></div>
+                        <div class="dc-conj" data-dc="conj">&amp;</div>
+                        <div class="dc-lineage" data-dc="groomParents"></div>
+                        <div class="dc-name" data-dc="groomName"></div>
+                        <div class="dc-join" data-dc="join"></div>
+                        <div class="dc-body" data-dc="body"></div>
+                        <div class="dc-meta dc-row2">
+                            <div class="b"><div class="l" data-dc="lDate"></div><div class="v" data-dc="vDate"></div></div>
+                            <div class="b"><div class="l" data-dc="lTime"></div><div class="v" data-dc="vTime"></div></div>
                         </div>
+                        <div class="dc-meta dc-row1">
+                            <div class="b"><div class="l" data-dc="lVenue"></div><div class="v" data-dc="vVenue"></div><div class="e" data-dc="vCity"></div></div>
+                        </div>
+                        <div class="dc-poruwa" data-dc="poruwa"></div>
+                        <div class="dc-swasti" data-dc="swasti"></div>
                     </div>
                 </div>
 
-                <div class="scroll-cylinder bottom" id="bottomCylinder">
-                    <svg class="cylinder-cap left" id="capBottomLeft" viewBox="0 0 50 100">
+                <div class="scroll-cylinder bottom">
+                    <svg class="cylinder-cap left" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
                         <path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round" />
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
                     </svg>
-                    <svg class="cylinder-cap right" id="capBottomRight" viewBox="0 0 50 100">
+                    <svg class="cylinder-cap right" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
                         <path d="M25,2 C38,2 47,15 47,50 C47,85 38,98 25,98 C12,98 3,85 3,50 C3,20 18,10 25,10 C34,10 41,22 41,50 C41,78 34,90 25,90 C16,90 9,78 9,50 C9,28 20,18 25,18 C31,18 36,28 36,50 C36,72 31,82 25,82 C19,82 14,72 14,50 C14,34 22,26 25,26 C28,26 31,34 31,50 C31,66 28,74 25,74 C22,74 19,66 19,50 C19,40 23,34 25,34 C26,34 27,40 27,50" fill="none" stroke="#875127" stroke-width="2.2" stroke-linecap="round" />
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
@@ -355,73 +397,305 @@
         </div>
     </div>
 
+    <!-- CONTENT SYNC & MEASUREMENT ENGINE -->
+    <script type="module">
+      var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
+      var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
+
+      var C = {
+        si: {
+          sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය",
+          brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,",
+          brideName:"කෞශානි", groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
+          groomName:"ගෞරව", join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
+          body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.",
+          lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය",
+          date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල",
+          poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට", swasti:"ස්වස්ති සිද්ධම්", cue:"සෙමින් පහළට"
+        },
+        en: {
+          sri:"✦", eyebrow:"The Honour of Your Presence is Requested",
+          brideParents:"the beloved daughter of Mr. & Mrs.", brideName:"Kaushani",
+          groomParents:"the beloved son of Mr. & Mrs.", groomName:"Gaurawa",
+          join:"on the joyous occasion of their marriage,",
+          body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.",
+          lDate:"Date", lTime:"Time", lVenue:"Venue",
+          date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala",
+          poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.", swasti:"Swasti Siddham", cue:"Scroll to unfurl"
+        },
+        ta: {
+          sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா",
+          brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,", brideName:"கௌஷானி",
+          groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,", groomName:"கௌரவ",
+          join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,",
+          body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
+          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
+          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்",
+          poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு", swasti:"ஸ்வஸ்தி சித்தம்", cue:"மெதுவாக கீழே"
+        }
+      };
+
+      var live = {};
+      function lang(){ try{ var x=localStorage.getItem('hs_lang'); return (x==='en'||x==='ta') ? x : 'si'; }catch(_){ return 'si'; } }
+      function set(k, v){ var el=document.querySelector('[data-dc="'+k+'"]'); if(el) el.textContent = v; }
+      function ov(key){ var l=lang(), sfx=(l==='si'?'Si':l==='ta'?'Ta':'En'), v=live[key+sfx]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+      function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
+
+      var lastNeeded = -1, lastWidth = window.innerWidth;
+      function measureSceneHeight(){
+        var mc = document.querySelector('.scroll-master-container');
+        var inner = document.querySelector('.decree-inner');
+        if(!mc || !inner) return 0;
+        var prevH = inner.style.height;
+        inner.style.height = 'auto';
+        var C = inner.scrollHeight;
+        inner.style.height = prevH;
+        var paper = Math.max(560, Math.round(C + 120));
+        mc.style.setProperty('--paper-h', paper + 'px');
+        var prevP = mc.style.getPropertyValue('--unroll-progress');
+        mc.style.setProperty('--unroll-progress','1');
+        var R = mc.getBoundingClientRect().height;
+        if(prevP==='') mc.style.removeProperty('--unroll-progress');
+        else mc.style.setProperty('--unroll-progress', prevP);
+        return R;
+      }
+      window.__measureSceneHeight = measureSceneHeight;
+
+      function fitSannasa(){
+        try{
+          if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
+          var sceneH = measureSceneHeight();
+          var needed = Math.round(28 + sceneH + 30);
+          var vp = document.querySelector('.scroll-viewport');
+          if(vp) vp.style.height = needed + 'px';
+          if(needed === lastNeeded) return;
+          lastNeeded = needed;
+          if(window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
+          }
+        }catch(_){}
+      }
+      window.__fitSannasa = fitSannasa;
+      
+      function fitSannasaOnResize(){
+        if(window.innerWidth === lastWidth) return; 
+        lastWidth = window.innerWidth;
+        fitSannasa(); 
+      }
+
+      function render(){
+        var l = lang(), t = C[l];
+        try{ document.documentElement.lang = l; }catch(_){}
+        set('sri', ov('sri') || t.sri); set('eyebrow', ov('eyebrow') || t.eyebrow); set('conj', '✦');
+        function joinFather(fk, pk, fallback){
+          var f = String(ov(fk) || plain(fk) || '').trim();
+          var ph = String(ov(pk) || fallback || '').trim();
+          return f ? (f + ' ' + ph) : ph;
+        }
+        set('brideParents', joinFather('brideFather','brideParents', t.brideParents));
+        set('brideName',    ov('brideName') || plain('brideName') || t.brideName);
+        set('groomParents', joinFather('groomFather','groomParents', t.groomParents));
+        set('groomName',    ov('groomName') || plain('groomName') || t.groomName);
+        set('join', ov('join') || t.join);
+        set('body', ov('sannasaBody') || ov('invite') || t.body);
+        set('lDate', ov('lDate') || t.lDate); set('lTime', ov('lTime') || t.lTime); set('lVenue', ov('lVenue') || t.lVenue);
+        set('vDate', ov('date') || t.date); set('vTime', ov('time') || t.time); set('vVenue', ov('venue') || plain('venue') || t.venue);
+        var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
+        set('vCity', ov('city') || plain(cityKey) || t.city);
+        set('poruwa', ov('poruwa') || t.poruwa);
+        set('swasti', t.swasti); 
+        var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
+        try{ fitSannasa(); }catch(_){} 
+      }
+      render();
+      window.addEventListener('load', fitSannasa, { passive:true });
+      window.addEventListener('resize', fitSannasaOnResize, { passive:true });
+      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
+      setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
+      window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
+
+      Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
+        var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
+        m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
+          live = snap.exists() ? (snap.data()||{}) : {};
+          if (live.dateISO && !live.dateSi && !live.dateEn){
+            try{
+              var dt = new Date(live.dateISO);
+              if(!isNaN(dt)){
+                live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+                live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+              }
+            }catch(_){}
+          }
+          render();
+        }, function(){});
+      }).catch(function(){});
+
+      if (window.visualViewport){
+        var vv = window.visualViewport;
+        var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
+        vv.addEventListener('resize', z, {passive:true}); vv.addEventListener('scroll', z, {passive:true}); z();
+      }
+    </script>
+
+    <!-- ADVANCED FRAME-INDEPENDENT LERP & PHYSICS ENGINE -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const masterContainer = document.getElementById('masterContainer');
-            const capTopLeft = document.getElementById('capTopLeft');
-            const capTopRight = document.getElementById('capTopRight');
-            const capBottomLeft = document.getElementById('capBottomLeft');
-            const capBottomRight = document.getElementById('capBottomRight');
-            const viewport = document.getElementById('scrollViewport');
+    (function(){
+      var vp = document.querySelector('.scroll-viewport');
+      var mc = document.querySelector('.scroll-master-container');
+      var scene = document.querySelector('.scroll-sticky-scene');
+      var topCyl = document.querySelector('.scroll-cylinder.top');
+      var botCyl = document.querySelector('.scroll-cylinder.bottom');
+      if(!vp || !mc || !scene) return;
 
-            // 1. Frame-rate Independent Physics Variables
-            let currentScrollProgress = 0;
-            let targetScrollProgress = 0;
-            let lastTime = performance.now();
-            let animationFrameId = null;
-            let isVisible = false;
+      var reduceMotion = false;
+      try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-            // 2. Proactive Passive Event Listener
-            window.addEventListener('scroll', () => {
-                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-                targetScrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
-            }, { passive: true });
+      var framed = (window !== window.top);
+      var sameOriginFrame = false;
+      if(framed){
+        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
+      }
 
-            // 3. Perfect Iframe Isolation via Intersection Observer
-            const observer = new IntersectionObserver((entries) => {
-                const entry = entries[0];
-                isVisible = entry.isIntersecting;
-                
-                if (isVisible) {
-                    lastTime = performance.now();
-                    animationFrameId = requestAnimationFrame(updateRenderLoop);
-                } else if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
-                }
-            }, { threshold: 0 });
-            observer.observe(viewport);
+      function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
 
-            // 4. Time-based LERP Function
-            function updateRenderLoop(currentTime) {
-                if (!isVisible) return;
+      function runFallbackReveal(){
+        var played = false;
+        function play(){
+          if(played) return; played = true;
+          vp.classList.add('unrolled');
+          setProgress(1);
+        }
+        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
+        try{
+          var io = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
+          }, { threshold: 0.18 });
+          io.observe(vp);
+        }catch(_){ play(); }
+        setTimeout(play, 4000);
+      }
 
-                const deltaTime = Math.min(currentTime - lastTime, 100); 
-                lastTime = currentTime;
+      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-                const kFactor = 0.0119; 
-                const lerpFactor = 1 - Math.exp(-kFactor * deltaTime);
+      // රාමු අනුපාත ස්වාධීන LERP විචල්‍යයන් (Frame-rate independent LERP Variables)
+      var smoothSpeed = 10.0; // ඝාතීය ක්ෂයවීමේ වේගය (Exponential decay rate)
+      var current = 0, target = 0;
+      var extraPx = 480, pinPx = 48;
+      var running = false, rafId = null;
+      var parentProgress = 0;
+      var lastTime = performance.now(); // අතිශය නිවැරදි කාලමානය (High-resolution time)
 
-                const diff = targetScrollProgress - currentScrollProgress;
+      if(sameOriginFrame){
+        window.addEventListener('message', function(e){
+          var d = e && e.data;
+          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
+          parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
+          scene.style.top = (parentProgress * extraPx) + 'px';
+        }, { passive: true });
+      }
 
-                if (Math.abs(diff) > 0.0001) {
-                    currentScrollProgress += diff * lerpFactor;
-                    const progress = Math.max(0, Math.min(1, currentScrollProgress));
+      function outerHeight(){
+        try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
+        return window.innerHeight || 700;
+      }
 
-                    masterContainer.style.setProperty('--unroll-progress', progress.toFixed(4));
+      if(!framed){ scene.classList.add('pin-fixed'); }
 
-                    const capRotation = (progress * 720).toFixed(2);
-                    capTopLeft.style.transform = `rotate(${-capRotation}deg) translateZ(0)`;
-                    capTopRight.style.transform = `scaleX(-1) rotate(${capRotation}deg) translateZ(0)`;
-                    capBottomLeft.style.transform = `rotate(${capRotation}deg) translateZ(0)`;
-                    capBottomRight.style.transform = `scaleX(-1) rotate(${-capRotation}deg) translateZ(0)`;
-                } else {
-                    currentScrollProgress = targetScrollProgress;
-                }
+      function reflow(){
+        try{
+          var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
+          var oh = outerHeight();
+          extraPx = reduceMotion ? 0 : Math.max(420, Math.min(760, Math.round(oh * 0.85)));
+          pinPx   = Math.max(24, Math.round(oh * 0.08));
+          var needed = Math.round(28 + extraPx + sceneH + 30);
+          vp.style.height = needed + 'px';
+          if(!framed){ scene.style.top = pinPx + 'px'; } 
+          if(sameOriginFrame && window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
+          }
+        }catch(_){}
+      }
+      window.__reflowScrollEngine = reflow;
+      reflow();
 
-                animationFrameId = requestAnimationFrame(updateRenderLoop);
-            }
-        });
+      function computeTargetProgress(){
+        if(reduceMotion) return 1;
+        if(sameOriginFrame) return parentProgress;
+        var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
+      }
+      function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+
+      function applyCapRotation(progress){
+        var deg = progress * 720;
+        if(topCyl){
+          var tl = topCyl.querySelector('.cylinder-cap.left'), tr = topCyl.querySelector('.cylinder-cap.right');
+          if(tl) tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
+          if(tr) tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
+        }
+        if(botCyl){
+          var bl = botCyl.querySelector('.cylinder-cap.left'), br = botCyl.querySelector('.cylinder-cap.right');
+          if(bl) bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
+          if(br) br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
+        }
+      }
+
+      function tick(currentTime){
+        // Delta Time (dt) ගණනය කිරීම 
+        var dt = (currentTime - lastTime) / 1000.0;
+        lastTime = currentTime;
+        
+        // දුරකථනයේ පසුබිමේ තිබෙන විට (Tab inactive) විශාල කාල පරතරයක් ඇතිවීම වළක්වයි
+        if(dt > 0.1) dt = 0.016; 
+        
+        target = computeTargetProgress();
+        var diff = target - current;
+        
+        // Frame-rate independent Exponential Decay සමීකරණය
+        var lerpFactor = 1 - Math.exp(-smoothSpeed * dt);
+        current += diff * lerpFactor;
+        
+        if(Math.abs(diff) < 0.0004) current = target;
+        
+        var progress = clampNum(current, 0, 1);
+        setProgress(progress);
+        applyCapRotation(progress);
+        vp.classList.toggle('unrolled', progress > 0.92);
+        
+        if(running) rafId = requestAnimationFrame(tick);
+      }
+
+      function start(){
+        if(running) return; running = true;
+        current = computeTargetProgress();
+        var p = clampNum(current, 0, 1);
+        setProgress(p); applyCapRotation(p);
+        lastTime = performance.now();
+        if(!rafId) rafId = requestAnimationFrame(tick);
+      }
+      function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
+
+      if(reduceMotion){ setProgress(1); applyCapRotation(1); vp.classList.add('unrolled'); return; }
+
+      if(!framed){ start(); }
+      else if('IntersectionObserver' in window){
+        try{
+          var io2 = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
+          }, { rootMargin: '800px 0px 800px 0px' });
+          io2.observe(vp);
+        }catch(_){ start(); }
+      } else { start(); }
+      
+      // Standalone mode සඳහා Scroll Event එක (Passive)
+      if(!sameOriginFrame) {
+        window.addEventListener('scroll', function() {
+            target = computeTargetProgress();
+        }, { passive: true });
+      }
+
+    })();
     </script>
 </body>
 </html>
