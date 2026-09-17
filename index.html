@@ -2,6 +2,17 @@
 <html lang="si">
 <head>
 <meta charset="utf-8">
+<script>
+/* GitHub auto-publishes this exact repo via Pages (it's literally named
+   <user>.github.io) — but helasiritha.vercel.app is the one production
+   domain everything else (QR codes, RSVP links, the admin panel) points to.
+   Anyone who lands on the GitHub Pages mirror gets sent to the real site
+   immediately, before anything else here loads. */
+if (/\.github\.io$/i.test(location.hostname)) {
+  var __p = location.pathname.replace(/^\/helasiritha\.github\.io(\/|$)/, "/");
+  location.replace("https://helasiritha.vercel.app" + __p + location.search + location.hash);
+}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a0a0c">
