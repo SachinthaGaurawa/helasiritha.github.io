@@ -46,7 +46,6 @@
         transform: translate3d(0, 0, 0); 
         backface-visibility: hidden;
         
-        /* SYNC-LOCK: Hidden until parent syncs the scroll position */
         opacity: 0; 
         transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     }
@@ -63,7 +62,7 @@
     
     .scroll-sticky-scene.pin-fixed { 
         position: fixed !important; 
-        transform: none !important;
+        transform: translate3d(0, 0, 0) !important;
     }
 
     .scroll-master-container {
@@ -134,13 +133,14 @@
     .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
     /* =======================================================================
-       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR)
+       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR OPTIMIZED)
        ======================================================================= */
     .scroll-body-wrapper {
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
+        /* Ultra-fast hardware accelerated clipping mask */
+        clip-path: inset(0 0 100% 0); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
         transform: translateZ(0);
@@ -212,7 +212,7 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
-        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
+        clip-path: inset(0 0 100% 0); 
         will-change: clip-path;
         pointer-events: none;
         backface-visibility: hidden;
@@ -241,9 +241,6 @@
     .dc-row2 { margin-top: 13px; } .dc-row2 .b { flex: 0 1 auto; text-align: center; }
     .dc-row1 { margin-top: 9px; } .dc-row1 .b { flex: 1 1 100%; text-align: center; }
     .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
-    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
-    
-    @media (max-width: 430px) { .dc-meta { gap: 6px 14px; } }
     .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
     .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
@@ -543,14 +540,16 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 THE ULTIMATE GPU FIX: SEPARATED PHYSICS FROM PINNING 🔥 */
-      function setProgress(p){ 
-        var pct = (p * 100).toFixed(3) + '%';
+      /* 🔥 THE ULTIMATE GPU FIX: STRICTLY SYNCED PHYSICS 🔥 */
+      function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
         var deg = p * 720;
         
-        var clip = 'polygon(0% 0%, 100% 0%, 100% ' + pct + ', 0% ' + pct + ')';
+        // Using high-performance CSS inset clipping instead of polygon
+        var invPct = ((1 - p) * 100).toFixed(3);
+        var clip = 'inset(0 0 ' + invPct + '% 0)';
+        
         if(wrapper) wrapper.style.clipPath = clip;
         if(overlay) overlay.style.clipPath = clip;
 
@@ -566,6 +565,12 @@
         if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
         if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
         if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
+
+        // SYNC-LOCK FIX: Applying sticky movement inside the EXACT same physics frame 
+        // to prevent the Sannasa from detaching or floating out of sync.
+        if(sameOriginFrame && scene && !scene.classList.contains('pin-fixed')) {
+             scene.style.transform = 'translate3d(0, ' + (p * extraPx) + 'px, 0)';
+        }
       }
 
       var framed = (window !== window.top);
@@ -579,7 +584,7 @@
         function play(){
           if(played) return; played = true;
           vp.classList.add('unrolled');
-          setProgress(1);
+          applyPhysicsFrame(1);
           scene.classList.add('synced');
         }
         if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
@@ -594,8 +599,8 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 INCREASED LERP SPEED SO IT STAYS TIGHT (0.14) 🔥 */
-      var lerpSpeed = 0.14;               
+      /* 🔥 AUTO-SLEEP PHYSICS ENGINE 🔥 */
+      var lerpSpeed = 0.16; // Increased slightly for snappier real-time feeling               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
       var running = false, rafId = null;
@@ -607,14 +612,16 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
-          /* 🔥 BUG FIXED HERE: Pinning is strictly INSTANT, NOT LERP'ed! 🔥 */
-          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
+          target = parentProgress; // Update target immediately
           
           if(!scene.classList.contains('synced')) {
               current = parentProgress;
-              setProgress(current);
+              applyPhysicsFrame(current);
               scene.classList.add('synced'); 
           }
+          
+          // Wake up the physics engine instantly upon scroll message
+          startEngine(); 
         }, { passive: true });
       }
 
@@ -664,44 +671,58 @@
       }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
+      // Core Game-Loop like physics engine
       function tick(){
         target = computeTargetProgress();
         var diff = target - current;
-        current += diff * lerpSpeed;
-        if(Math.abs(diff) < 0.0004) current = target;
         
+        // Auto-Sleep: If the difference is microscopic, snap to target and stop burning CPU
+        if(Math.abs(diff) < 0.0004) {
+            current = target;
+            applyPhysicsFrame(clampNum(current, 0, 1));
+            vp.classList.toggle('unrolled', current > 0.92);
+            stopEngine(); // Engine goes to sleep gracefully
+            return;
+        }
+        
+        current += diff * lerpSpeed;
         var progress = clampNum(current, 0, 1);
         
-        /* ONLY the physics variables get LERP'ed */
-        setProgress(progress); 
-        
+        applyPhysicsFrame(progress); 
         vp.classList.toggle('unrolled', progress > 0.92);
-        if(running) rafId = requestAnimationFrame(tick);
+        
+        rafId = requestAnimationFrame(tick);
       }
 
-      function start(){
-        if(running) return; running = true;
-        current = computeTargetProgress();
-        var p = clampNum(current, 0, 1);
-        setProgress(p); 
+      function startEngine(){
+        if(running) return; 
+        running = true;
         if(!rafId) rafId = requestAnimationFrame(tick);
       }
-      function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
+      
+      function stopEngine(){ 
+        running = false; 
+        if(rafId){ cancelAnimationFrame(rafId); rafId = null; } 
+      }
 
       if(reduceMotion){
-        setProgress(1); vp.classList.add('unrolled');
+        applyPhysicsFrame(1); vp.classList.add('unrolled');
         return;
       }
 
-      if(!framed){ start(); }                       
-      else if('IntersectionObserver' in window){
+      if(!framed){ 
+          window.addEventListener('scroll', startEngine, { passive: true });
+          startEngine(); 
+      } else if('IntersectionObserver' in window) {
         try{
           var io2 = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
+            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? startEngine() : stopEngine(); }
           }, { rootMargin: '800px 0px 800px 0px' });
           io2.observe(vp);
-        }catch(_){ start(); }
-      } else { start(); }
+        }catch(_){ startEngine(); }
+      } else { 
+          startEngine(); 
+      }
 
     })();
     </script>
