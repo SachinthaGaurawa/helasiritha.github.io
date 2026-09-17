@@ -4,9 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
+<style>/* critical: paint the dark parchment canvas the instant this document's
+   HTML parses, before the font stylesheet below (or the big block further
+   down) has any chance to load — kills the white about:blank flash the
+   embedding iframe would otherwise show for the initial fraction of a
+   second on every load, worst on a slow connection. */
+html,body{background-color:#030303}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Non-blocking font stylesheet — see index.html's identical pattern. A
+     render-blocking <link rel=stylesheet> here would hold this document's
+     first paint (and therefore the inline dark background above) until this
+     cross-origin fetch resolves. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
     /* =======================================================================
        1. CORE RESET & ENVIRONMENT MAPPING
