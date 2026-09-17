@@ -40,10 +40,11 @@
     .scroll-sticky-scene {
         position: absolute;
         left: 0; right: 0; top: 0;
-        display: block; /* Removed flex to stop layout recalculations */
+        display: block; 
         pointer-events: none;
         will-change: transform;
-        transform: translate3d(0, 0, 0); /* GPU Accelerated Pinning */
+        transform: translate3d(0, 0, 0); 
+        backface-visibility: hidden; /* Fixes micro-stutters on some devices */
     }
     
     .scroll-sticky-scene.pin-fixed { 
@@ -53,10 +54,9 @@
 
     .scroll-master-container {
         position: relative;
-        margin: 0 auto; /* Horizontally center */
+        margin: 0 auto; 
         width: 100%;
         max-width: 650px;
-        /* Absolute bounded height - no layout thrashing during scroll! */
         height: calc(var(--paper-h) + 124px); 
         perspective: 1500px; 
         transform-style: preserve-3d;
@@ -64,6 +64,7 @@
         pointer-events: auto;
         flex-shrink: 0;
         will-change: transform;
+        backface-visibility: hidden;
     }
 
     /* =======================================================================
@@ -77,6 +78,7 @@
         background-repeat: repeat;
         will-change: transform, background-position;
         transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     .scroll-cylinder.top {
@@ -91,13 +93,13 @@
 
     .scroll-cylinder.bottom {
         position: absolute;
-        top: 40px; left: -5%; width: 110%; /* Start overlapped position */
+        top: 40px; left: -5%; width: 110%; 
         background-image: 
             url('#paper-grain'), 
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
-        transform: translate3d(0, 0, 0); /* Updated entirely via JS */
+        transform: translate3d(0, 0, 0); 
     }
 
     /* =======================================================================
@@ -117,17 +119,17 @@
     .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
     /* =======================================================================
-       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR - NO LAYOUT SHIFT)
+       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR)
        ======================================================================= */
     .scroll-body-wrapper {
         position: absolute;
         top: 62px; left: 0; width: 100%;
-        height: var(--paper-h); /* Static height - No Layout Thrashing! */
-        /* Start fully clipped (hidden) */
+        height: var(--paper-h); 
         clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
         filter: url('#edge-fray-heavy'); 
-        will-change: clip-path; /* GPU mask */
+        will-change: clip-path; 
         transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     .scroll-flat-paper {
@@ -194,10 +196,11 @@
         position: absolute;
         top: 62px; left: 0; right: 0;
         z-index: 5;
-        height: var(--paper-h); /* Fixed height */
-        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); /* Synchronized GPU mask */
+        height: var(--paper-h); 
+        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
         will-change: clip-path;
         pointer-events: none;
+        backface-visibility: hidden;
     }
 
     .decree-inner {
@@ -419,7 +422,6 @@
         var paper = Math.max(560, Math.round(C + 120));
         mc.style.setProperty('--paper-h', paper + 'px');
 
-        // Note: The height of mc is now dynamically driven by calc(var(--paper-h) + 124px) in CSS!
         var prevP = mc.style.getPropertyValue('--unroll-progress');
         mc.style.setProperty('--unroll-progress','1');
         var R = mc.getBoundingClientRect().height;
@@ -527,16 +529,13 @@
 
       /* 🔥 GPU ACCELERATED DOM UPDATES - BYPASSES LAYOUT CALCS 🔥 */
       function setProgress(p){ 
-        // Fallback variable setter for safety only
         mc.style.setProperty('--unroll-progress', p); 
         
-        // 100% Hardware Accelerated Clip Path Masking
         var pct = (p * 100).toFixed(3) + '%';
         var clip = 'polygon(0% 0%, 100% 0%, 100% ' + pct + ', 0% ' + pct + ')';
         if(wrapper) wrapper.style.clipPath = clip;
         if(overlay) overlay.style.clipPath = clip;
 
-        // Hardware Accelerated translateY logic
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
         
@@ -575,7 +574,8 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      var lerpSpeed = 0.18;               
+      /* 🔥 LERP SPEED REDUCED TO 0.08 FOR BUTTERY SMOOTH 'SYRUPY' FEEL 🔥 */
+      var lerpSpeed = 0.08;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
       var running = false, rafId = null;
@@ -587,7 +587,6 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
-          /* 🔥 No more Layout Thrashing -> Transformed over GPU directly! 🔥 */
           scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
         }, { passive: true });
       }
