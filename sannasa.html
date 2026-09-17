@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa with Content-Adaptive Zero-Space Wrapping</title>
+<title>Ultra-Realistic Sannasa with Automatic Pre-load Exact Fit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,7 +37,6 @@
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
     .scroll-sticky-scene {
-        /* ZERO-GAP NATIVE STICKY ENGINE */
         position: sticky;
         top: 0px; 
         left: 0; right: 0;
@@ -214,9 +213,9 @@
 
     .decree-inner {
         width: 100%; height: var(--paper-h);
-        padding: 58px 66px 42px;
+        padding: 58px 66px 20px; /* Reduced padding for perfect fit */
         display: flex; flex-direction: column; align-items: center; 
-        justify-content: center;
+        justify-content: flex-start; /* Do not center, let it fit exactly */
         text-align: center;
         color: #3d1f0b; font-family: 'Abhaya Libre', serif;
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
@@ -418,7 +417,7 @@
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
-      /* 🔥 AUTO-CONTENT WRAPPING ALGORITHM 🔥 */
+      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -429,9 +428,9 @@
         var contentHeight = inner.scrollHeight; 
         inner.style.height = prevH;
 
-        // අකුරු (Contents) වලට පමණක් ගැලපෙන පරිදි සන්නසේ කොළය (Paper) සකස් කිරීම. 
-        // අනවශ්‍ය දිගු කිරීම් (Stretch) සම්පූර්ණයෙන්ම ඉවත් කර ඇත.
-        var paper = Math.max(500, Math.round(contentHeight + 130));
+        // කිසිදු කෘතිම දිගු කිරීමක් (Stretch) හෝ Minimum Height අගයක් මෙහි නැත. 
+        // අකුරු ප්‍රමාණයට පමණක් හරියටම ගැලපෙන සේ කොළයේ දිග හැදේ. (පහළින් ඇති 10px යනු චූටිම ගැප් එකයි)
+        var paper = Math.round(contentHeight + 10); 
         mc.style.setProperty('--paper-h', paper + 'px');
 
         return mc.getBoundingClientRect().height;
@@ -634,35 +633,31 @@
           var oh = outerHeight();
           
           pinPx = 0; 
-          
-          // 🔥 ULTRA-EARLY TRIGGER: තිරයට ඇතුළු වූ සැණින් (95% දී) දිගහැරීම අරඹයි 🔥
           triggerPx = Math.round(oh * 0.95);
-          extraPx = reduceMotion ? 0 : Math.max(500, Math.round(oh * 1.2));
+          extraPx = reduceMotion ? 0 : Math.max(300, Math.round(oh * 0.7)); 
           
-          /* 🔥 ZERO DEAD-SPACE MATHEMATICAL FORMULA 🔥
-             මෙමඟින් Iframe එකේ උස සහ සන්නසේ උස හරියටම එකම ලක්ෂ්‍යයකට ගලපයි. 
-             කෙලින්ම Content එකේ දිගට පමණක් ගැලපෙන නිසා කිසිදු White space එකක් ඉතුරු නොවේ. */
-          var finalNeededHeight;
-          if (framed) {
-              var endRectTop = triggerPx - extraPx;
-              finalNeededHeight = sceneH;
-              if (endRectTop < pinPx) {
-                  finalNeededHeight = sceneH + (pinPx - endRectTop);
+          var needed;
+          if (!framed) {
+              needed = Math.round(sceneH + extraPx);
+              vp.style.height = needed + 'px';
+              if(scene) {
+                  scene.style.position = 'sticky';
+                  scene.style.top = '0px';
               }
           } else {
-              // Standalone mode එක සඳහා පමණක් Scroll වීමට ඉඩ තැබීම
-              finalNeededHeight = sceneH + extraPx;
-          }
-          
-          var needed = Math.round(finalNeededHeight);
-          vp.style.height = needed + 'px';
-          
-          if(scene) {
-              scene.style.top = pinPx + 'px';
+              /* 🔥 ZERO DEAD-SPACE FORMULA 🔥 
+                 Iframe එක ඇතුළේ කිසිදු හිඩැසක් තැබීම තහනම් කර ඇත.
+                 හරියටම සන්නසේ උස සහ මිලිමීටරයක කුඩා ගැප් එක (5px) පමණක් මෙහි ඇත. */
+              needed = Math.round(sceneH + 5); 
+              vp.style.height = needed + 'px';
+              if(scene) {
+                  scene.style.position = 'relative'; 
+                  scene.style.top = '0px';
+              }
           }
           
           if(sameOriginFrame && window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: 0, extra: extraPx }, '*');
           }
         }catch(_){}
       }
@@ -683,7 +678,6 @@
             var localProgress = extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
             return Math.max(localProgress, parentProgress);
         } else {
-            // Standalone view fallback
             var scrolled = window.scrollY || document.documentElement.scrollTop || 0;
             return extraPx > 0 ? clampNum(scrolled / extraPx, 0, 1) : 0;
         }
