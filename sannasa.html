@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa - Zero Lag & Auto-Padding</title>
+<title>Ultra-Realistic Sannasa - Zero Dead Space & Full Unroll</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,7 +42,6 @@
         display: block; 
         pointer-events: none;
         will-change: transform;
-        /* 🔥 BUG FIX 1: Opacity delay ඉවත් කර ඇත. දැන් 0ms වලින් Load වේ. 🔥 */
         opacity: 1; 
     }
 
@@ -201,8 +200,6 @@
 
     .decree-inner {
         width: 100%; height: var(--paper-h);
-        /* 🔥 BUG FIX 2: අකුරු කැපීම වැළැක්වීමට 100px ක Safe Zone Padding එකක් ලබා දී ඇත. 
-           දැන් රෝලය හරියටම හිස් ඉඩ මත රැඳෙනු ඇත. 🔥 */
         padding: 58px 66px 100px; 
         display: flex; flex-direction: column; align-items: center; 
         justify-content: flex-start; 
@@ -417,7 +414,7 @@
         var contentHeight = inner.scrollHeight; 
         inner.style.height = prevH;
 
-        var paper = Math.round(contentHeight); 
+        var paper = Math.max(500, Math.round(contentHeight)); 
         mc.style.setProperty('--paper-h', paper + 'px');
 
         return mc.getBoundingClientRect().height;
@@ -472,7 +469,6 @@
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
         try{ fitSannasa(); }catch(_){} 
       }
-      
       render();
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
@@ -599,12 +595,6 @@
         }, { passive: true });
       }
 
-      // Initial visual sync trigger (without CSS opacity delay)
-      if(scene && !scene.classList.contains('synced')) {
-          scene.classList.add('synced');
-          applyPhysicsFrame(0);
-      }
-
       function outerHeight(){
         try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
         return window.innerHeight || 700;
@@ -632,9 +622,11 @@
                   scene.style.top = '0px';
               }
           } else {
-              /* 🔥 BUG FIX 3: Iframe Container එකට අමතර දිගක් (extraPx) ලබා දීමෙන් සන්නස 100% ක් සම්පූර්ණයෙන්ම දිගහැරීමට ඉඩ සලස්වා ඇත. 🔥 */
+              /* 🔥 THE FINAL FIX: 
+                 Iframe එකේ උස (height) සඳහා අතිරේක Scroll දුර (extraPx) යෙදීම අක්‍රිය කර ඇත. 
+                 මෙනිසා කිසිදු සුදු පැහැති හිඩැසක් පහළින් ඇති නොවේ. */
               extraPx = reduceMotion ? 0 : Math.max(500, Math.round(oh * 0.8)); 
-              needed = Math.round(sceneH + extraPx + 28); 
+              needed = Math.round(sceneH + 28); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
@@ -663,10 +655,8 @@
             var scrolledPastTrigger = triggerPx - rectTop; 
             var localProgress = extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
             
-            // 🔥 BUG FIX 3 (Physics Snap): 96% ට ආ පසු ස්වයංක්‍රීයව 100% (1.0) දක්වා පූර්ණ ලෙස දිගහැරීම 🔥
             var combinedP = Math.max(localProgress, parentProgress);
             return combinedP > 0.96 ? 1 : combinedP;
-            
         } else {
             var scrolled = window.scrollY || document.documentElement.scrollTop || 0;
             var val = extraPx > 0 ? clampNum(scrolled / extraPx, 0, 1) : 0;
