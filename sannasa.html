@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa with Zero Scroll Trapping & Perfect Fit</title>
+<title>Ultra-Realistic Sannasa with Zero Cropping & Perfect Fit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,9 +21,7 @@
         background-color: transparent; 
         font-family: sans-serif;
         color: #fff;
-        /* 🔥 PERFECT SCROLL CHAINING FIX 🔥
-           Iframe එක ඇතුළේ Scroll වීම නතර කර සියලුම Touch/Wheel Events 
-           ක්ෂණිකව ප්‍රධාන පිටුවට (Main Page) ලබා දීම සඳහා */
+        /* SCROLL CHAINING FIX */
         overflow: hidden; 
         touch-action: pan-y;
     }
@@ -32,7 +30,8 @@
         position: relative;
         width: 100%;
         clip-path: inset(0); 
-        padding: 28px 0 0px; /* යටින් තිබූ 30px හිඩැස 0px කර ඇත */
+        /* 🔥 FIX: උඩින් 28px සහ යටින් Shadow එකට අවශ්‍ය 20px හරියටම ලබා දී ඇත 🔥 */
+        padding: 28px 0 20px; 
         background-color: transparent; 
     }
 
@@ -67,12 +66,12 @@
         margin: 0 auto; 
         width: 100%;
         max-width: 650px;
+        /* 124px යනු උඩ සහ යට සිලින්ඩර වල උසට අවශ්‍ය ඉඩ ප්‍රමාණයයි */
         height: calc(var(--paper-h) + 124px); 
         perspective: 1500px; 
         transform-style: preserve-3d;
         
-        /* 🔥 TOUCH TRAPPING FIX 🔥
-           සන්නස උඩින් Touch කළ විට එය ප්‍රධාන පිටුවට ගලා යාමට සලස්වයි */
+        /* TOUCH TRAPPING FIX */
         pointer-events: none; 
         
         flex-shrink: 0;
@@ -112,6 +111,7 @@
             url('#paper-grain'), 
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
+        /* පහළ රෝලයේ යථාර්ථවාදී Shadow එකක් ඇත. මෙය දැන් කැපෙන්නේ නැත */
         box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
         transform: translate3d(0, 0, 0); 
     }
@@ -424,7 +424,7 @@
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
-      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER (NO DEAD SPACE) 🔥 */
+      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -435,8 +435,6 @@
         var contentHeight = inner.scrollHeight; 
         inner.style.height = prevH;
 
-        // සම්පූර්ණයෙන්ම +10 සහ +5 වැනි කෘතිම Margin සියල්ල ඉවත් කර ඇත.
-        // අකුරු වල උසට හරියටම ගැලපෙන සේ පමණක් කොළය සැකසේ.
         var paper = Math.round(contentHeight); 
         mc.style.setProperty('--paper-h', paper + 'px');
 
@@ -448,7 +446,7 @@
         try{
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
           var sceneH = measureSceneHeight();
-          var needed = Math.round(28 + sceneH);
+          var needed = Math.round(28 + sceneH + 20); /* 20px added purely to secure bottom elements */
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
@@ -645,16 +643,17 @@
           
           var needed;
           if (!framed) {
-              needed = Math.round(sceneH + extraPx);
+              needed = Math.round(sceneH + extraPx + 48); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'sticky';
                   scene.style.top = '0px';
               }
           } else {
-              /* 🔥 ABSOLUTE ZERO DEAD-SPACE FORMULA 🔥 
-                 කෘතිමව ලබා දී තිබූ +5px මුළුමනින්ම ඉවත් කර ඇත. */
-              needed = Math.round(sceneH); 
+              /* 🔥 THE ELITE FIX: 
+                 සන්නසේ සම්පූර්ණ උසට ඉහළ 28px පඩින්ගය සහ පහළ රෝලයේ Shadow එකට අවශ්‍ය 20px එකතු කර
+                 Iframe එකේ උස හරියටම Pixel Perfect ලෙස හදා ඇත. කිසිදු කැපීමක් හෝ හිඩැසක් නොමැත. */
+              needed = Math.round(sceneH + 48); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
