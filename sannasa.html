@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa - Clean Cylinders & Full Unroll</title>
+<title>Ultra-Realistic Sannasa - True Zero Latency & Exact Fit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,7 +42,9 @@
         display: block; 
         pointer-events: none;
         will-change: transform;
-        opacity: 1; 
+        /* 🔥 ZERO LATENCY FIX 1: කිසිදු Opacity Delay එකක් නැත. සැණින් දර්ශනය වේ. 🔥 */
+        opacity: 1 !important; 
+        transform: translateZ(0); /* Hardware GPU Acceleration */
     }
 
     .scroll-master-container {
@@ -93,7 +95,8 @@
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        transform: translate3d(0, 0, 0); 
+        /* 🔥 ZERO LATENCY FIX 2: ආරම්භයේදීම යට රෝලය ඉහළින් පිහිටන ලෙස Hardcode කර ඇත 🔥 */
+        transform: translate3d(0, 0px, 0); 
     }
 
     /* =======================================================================
@@ -103,6 +106,7 @@
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
+        /* 🔥 ZERO LATENCY FIX 3: කේතය Load වෙද්දීම කොළය 100% ක් අකුලා ඇත 🔥 */
         clip-path: inset(0 0 100% 0); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
@@ -175,6 +179,7 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
+        /* 🔥 ZERO LATENCY FIX 4: Overlay එකත් Load වෙද්දීම 100% ක් අකුලා ඇත 🔥 */
         clip-path: inset(0 0 100% 0); 
         will-change: clip-path;
         pointer-events: none;
@@ -213,7 +218,6 @@
     
     .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     
-    html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .embossed-seal { filter: none !important; }
     html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
 </style>
 </head>
@@ -258,9 +262,7 @@
         <div class="scroll-sticky-scene">
             <div class="scroll-master-container" id="scrollMaster">
                 
-                <div class="scroll-cylinder top">
-                    <!-- Spiral End-Caps Removed -->
-                </div>
+                <div class="scroll-cylinder top"></div>
                 
                 <div class="scroll-body-wrapper">
                     <div class="scroll-flat-paper">
@@ -304,9 +306,7 @@
                     </div>
                 </div>
 
-                <div class="scroll-cylinder bottom">
-                    <!-- Spiral End-Caps Removed -->
-                </div>
+                <div class="scroll-cylinder bottom"></div>
 
             </div>
         </div>
@@ -314,6 +314,32 @@
 
     <script>
     (function(){
+      var vp = document.querySelector('.scroll-viewport');
+      var mc = document.getElementById('scrollMaster');
+      var wrapper = document.querySelector('.scroll-body-wrapper');
+      var overlay = document.querySelector('.decree-overlay');
+      var bottomCyl = document.querySelector('.scroll-cylinder.bottom');
+      
+      // 🔥 ZERO LATENCY FIX 5: JS මඟින් ආරම්භක ස්ථානය ක්ෂණිකව සකසයි 🔥
+      function applyPhysicsFrame(p){ 
+        var paperH = parseFloat(mc ? mc.style.getPropertyValue('--paper-h') : 740) || 740;
+        var ty = p * paperH;
+        var invPct = ((1 - p) * 100).toFixed(3);
+        var clip = 'inset(0 0 ' + invPct + '% 0)';
+        
+        if(wrapper) wrapper.style.clipPath = clip;
+        if(overlay) overlay.style.clipPath = clip;
+        if(bottomCyl) {
+            bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
+            bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
+        }
+      }
+      
+      // Load වීමටත් පෙර (Synchronously) Physics 0 තැනින් අරඹන්න
+      if(mc && wrapper && bottomCyl) {
+          applyPhysicsFrame(0);
+      }
+
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
 
@@ -371,7 +397,6 @@
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
       function measureSceneHeight(){
-        var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
         if(!mc || !inner) return 0;
 
@@ -392,7 +417,6 @@
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
           var sceneH = measureSceneHeight();
           var needed = Math.round(28 + sceneH);
-          var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
           lastNeeded = needed;
@@ -439,8 +463,9 @@
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
-      setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
-      window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
+      
+      // ක්ෂණිකව උස මැනීම
+      fitSannasa(); 
 
       Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
         var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
@@ -459,12 +484,6 @@
           render();
         }, function(){});
       }).catch(function(){});
-
-      if (window.visualViewport){
-        var vv = window.visualViewport;
-        var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
-        vv.addEventListener('resize', z, {passive:true}); vv.addEventListener('scroll', z, {passive:true}); z();
-      }
     })();
     </script>
 
@@ -473,7 +492,6 @@
       var vp = document.querySelector('.scroll-viewport');
       var mc = document.getElementById('scrollMaster');
       var scene = document.querySelector('.scroll-sticky-scene');
-      
       var wrapper = document.querySelector('.scroll-body-wrapper');
       var overlay = document.querySelector('.decree-overlay');
       var topCyl = document.querySelector('.scroll-cylinder.top');
@@ -487,13 +505,11 @@
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
-        
         var invPct = ((1 - p) * 100).toFixed(3);
         var clip = 'inset(0 0 ' + invPct + '% 0)';
         
         if(wrapper) wrapper.style.clipPath = clip;
         if(overlay) overlay.style.clipPath = clip;
-
         if(bottomCyl) {
             bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
             bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
@@ -509,26 +525,6 @@
         try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
       }
 
-      function runFallbackReveal(){
-        var played = false;
-        function play(){
-          if(played) return; played = true;
-          vp.classList.add('unrolled');
-          applyPhysicsFrame(1);
-          scene.classList.add('synced');
-        }
-        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
-        try{
-          var io = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.18 });
-          io.observe(vp);
-        }catch(_){ play(); }
-        setTimeout(play, 4000);
-      }
-
-      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
-
       var lerpSpeed = 0.08;               
       var current = 0, target = 0;
       var extraPx = 650, pinPx = 0, triggerPx = 0;      
@@ -540,13 +536,6 @@
           var d = e && e.data;
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-          
-          if(!scene.classList.contains('synced')) {
-              current = parentProgress;
-              applyPhysicsFrame(current);
-              scene.classList.add('synced'); 
-          }
-          
           startEngine(); 
         }, { passive: true });
       }
@@ -555,10 +544,6 @@
         try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
         return window.innerHeight || 700;
       }
-
-      if(!framed){ 
-          scene.classList.add('synced');
-      }   
 
       function reflow(){
         try{
@@ -597,6 +582,7 @@
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
+        var p = 0;
         
         if (sameOriginFrame && window.frameElement) {
             var rectTop;
@@ -607,14 +593,13 @@
             }
             var scrolledPastTrigger = triggerPx - rectTop; 
             var localProgress = extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
-            
-            var combinedP = Math.max(localProgress, parentProgress);
-            return combinedP > 0.96 ? 1 : combinedP;
+            p = Math.max(localProgress, parentProgress);
         } else {
             var scrolled = window.scrollY || document.documentElement.scrollTop || 0;
-            var val = extraPx > 0 ? clampNum(scrolled / extraPx, 0, 1) : 0;
-            return val > 0.96 ? 1 : val;
+            p = extraPx > 0 ? clampNum(scrolled / extraPx, 0, 1) : 0;
         }
+        
+        return p > 0.96 ? 1 : p;
       }
       
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
