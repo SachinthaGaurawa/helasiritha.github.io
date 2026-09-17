@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa - True Zero Latency & Exact Fit</title>
+<title>Ultra-Realistic Sannasa - Instant Pre-Load Zero Latency</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,9 +42,9 @@
         display: block; 
         pointer-events: none;
         will-change: transform;
-        /* 🔥 ZERO LATENCY FIX 1: කිසිදු Opacity Delay එකක් නැත. සැණින් දර්ශනය වේ. 🔥 */
+        /* 🔥 ZERO LATENCY FIX: සම්පූර්ණයෙන්ම දර්ශනය වී ඇත (No JS fading) 🔥 */
         opacity: 1 !important; 
-        transform: translateZ(0); /* Hardware GPU Acceleration */
+        transform: translateZ(0); 
     }
 
     .scroll-master-container {
@@ -60,7 +60,7 @@
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
-        box-shadow: none;
+        box-shadow: none; /* Shadow ඉවත් කර ඇත */
     }
 
     /* =======================================================================
@@ -95,7 +95,7 @@
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        /* 🔥 ZERO LATENCY FIX 2: ආරම්භයේදීම යට රෝලය ඉහළින් පිහිටන ලෙස Hardcode කර ඇත 🔥 */
+        /* 🔥 PURE CSS PRE-LOAD: ආරම්භයේදීම යට රෝලය ඉහළම ස්ථානයේ හිර කර ඇත 🔥 */
         transform: translate3d(0, 0px, 0); 
     }
 
@@ -106,7 +106,7 @@
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        /* 🔥 ZERO LATENCY FIX 3: කේතය Load වෙද්දීම කොළය 100% ක් අකුලා ඇත 🔥 */
+        /* 🔥 PURE CSS PRE-LOAD: 100% ක් අකුලා සඟවා ඇත (0ms load) 🔥 */
         clip-path: inset(0 0 100% 0); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
@@ -179,7 +179,7 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
-        /* 🔥 ZERO LATENCY FIX 4: Overlay එකත් Load වෙද්දීම 100% ක් අකුලා ඇත 🔥 */
+        /* 🔥 PURE CSS PRE-LOAD 🔥 */
         clip-path: inset(0 0 100% 0); 
         will-change: clip-path;
         pointer-events: none;
@@ -189,7 +189,7 @@
 
     .decree-inner {
         width: 100%; height: var(--paper-h);
-        padding: 58px 66px 100px; 
+        padding: 58px 66px 20px; 
         display: flex; flex-direction: column; align-items: center; 
         justify-content: flex-start; 
         text-align: center;
@@ -314,32 +314,6 @@
 
     <script>
     (function(){
-      var vp = document.querySelector('.scroll-viewport');
-      var mc = document.getElementById('scrollMaster');
-      var wrapper = document.querySelector('.scroll-body-wrapper');
-      var overlay = document.querySelector('.decree-overlay');
-      var bottomCyl = document.querySelector('.scroll-cylinder.bottom');
-      
-      // 🔥 ZERO LATENCY FIX 5: JS මඟින් ආරම්භක ස්ථානය ක්ෂණිකව සකසයි 🔥
-      function applyPhysicsFrame(p){ 
-        var paperH = parseFloat(mc ? mc.style.getPropertyValue('--paper-h') : 740) || 740;
-        var ty = p * paperH;
-        var invPct = ((1 - p) * 100).toFixed(3);
-        var clip = 'inset(0 0 ' + invPct + '% 0)';
-        
-        if(wrapper) wrapper.style.clipPath = clip;
-        if(overlay) overlay.style.clipPath = clip;
-        if(bottomCyl) {
-            bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
-            bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
-        }
-      }
-      
-      // Load වීමටත් පෙර (Synchronously) Physics 0 තැනින් අරඹන්න
-      if(mc && wrapper && bottomCyl) {
-          applyPhysicsFrame(0);
-      }
-
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
 
@@ -371,20 +345,6 @@
           poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
           swasti:"Swasti Siddham",
           cue:"Scroll to unfurl"
-        },
-        ta: {
-          sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா",
-          brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,",
-          brideName:"கௌஷானி",
-          groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,",
-          groomName:"கௌரவ",
-          join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,",
-          body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
-          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
-          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்",
-          poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு",
-          swasti:"ஸ்வஸ்தி சித்தம்",
-          cue:"மெதுவாக கீழே"
         }
       };
 
@@ -395,6 +355,8 @@
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
+      var mc = document.getElementById('scrollMaster');
+      var vp = document.querySelector('.scroll-viewport');
       
       function measureSceneHeight(){
         var inner = document.querySelector('.decree-inner');
@@ -434,7 +396,7 @@
       }
 
       function render(){
-        var l = lang(), t = C[l];
+        var l = lang(), t = C[l] || C['si'];
         try{ document.documentElement.lang = l; }catch(_){}
         set('sri', ov('sri') || t.sri); set('eyebrow', ov('eyebrow') || t.eyebrow); set('conj', '✦');
         function joinFather(fk, pk, fallback){
@@ -459,31 +421,36 @@
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
         try{ fitSannasa(); }catch(_){} 
       }
+      
+      // Initial Render & Measurement
       render();
+      fitSannasa(); 
+      
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
-      
-      // ක්ෂණිකව උස මැනීම
-      fitSannasa(); 
+      setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
 
-      Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
-        var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
-        m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
-          var d = snap.exists() ? (snap.data()||{}) : {};
-          live = d || {};
-          if (live.dateISO && !live.dateSi && !live.dateEn){
-            try{
-              var dt = new Date(live.dateISO);
-              if(!isNaN(dt)){
-                live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-                live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      // ASYNC Firebase Load (Does not block initial HTML/CSS render)
+      setTimeout(function(){
+          Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
+            var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
+            m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
+              var d = snap.exists() ? (snap.data()||{}) : {};
+              live = d || {};
+              if (live.dateISO && !live.dateSi && !live.dateEn){
+                try{
+                  var dt = new Date(live.dateISO);
+                  if(!isNaN(dt)){
+                    live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+                    live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+                  }
+                }catch(_){}
               }
-            }catch(_){}
-          }
-          render();
-        }, function(){});
-      }).catch(function(){});
+              render();
+            }, function(){});
+          }).catch(function(){});
+      }, 50); // Small 50ms delay ensures UI is painted instantly
     })();
     </script>
 
