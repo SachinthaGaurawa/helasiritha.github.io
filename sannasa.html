@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Native Sticky</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Advanced Offset Pinning</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,33 +22,33 @@
         font-family: sans-serif;
         color: #fff;
         overflow-x: hidden;
-        overscroll-behavior-y: none; /* PERFECT IFRAME ISOLATION */
+        overscroll-behavior-y: none;
     }
 
     .scroll-viewport {
         position: relative;
         width: 100%;
         height: 900px;
-        /* overflow: hidden ඉවත් කර Native Sticky සඳහා ඉඩ ලබා දීම */
         clip-path: inset(0); 
         padding: 28px 0 30px;
         background-color: transparent; 
     }
 
     /* =======================================================================
-       2. MASTER STICKY CONTAINER ARCHITECTURE (UPGRADED)
+       2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
     .scroll-sticky-scene {
-        /* NATIVE STICKY ENGINE: මේ මගින් සන්නස ඉහළින්ම ලොක් වේ */
+        /* NATIVE STICKY ENGINE WITH EYE-LEVEL OFFSET */
         position: sticky;
-        top: 20px; 
+        /* මේ අගය JS මගින් Dynamic ලෙස උපාංගයට ගැලපෙන සේ සැකසේ (Breathing Room) */
+        top: 12vh; 
         left: 0; right: 0;
         display: block; 
         pointer-events: none;
-        will-change: opacity;
+        will-change: opacity, transform;
         
         opacity: 0; 
-        transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     }
     
     .scroll-sticky-scene.synced {
@@ -535,13 +535,12 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 STRICTLY ONLY HANDLING THE UNROLLING PHYSICS (NO JS CONTAINER MOVEMENT) 🔥 */
+      /* 🔥 THE LERP ENGINE PHYSICS: ULTRA SILKY SMOOTH MULTIPLIER 🔥 */
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
         var deg = p * 720;
         
-        // High-performance CSS inset clipping
         var invPct = ((1 - p) * 100).toFixed(3);
         var clip = 'inset(0 0 ' + invPct + '% 0)';
         
@@ -560,8 +559,6 @@
         if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
         if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
         if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
-        
-        // NO SCENE TRANSLATION HERE! CSS Native Sticky handles locking it to the top.
       }
 
       var framed = (window !== window.top);
@@ -590,10 +587,10 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 AUTO-SLEEP LERP ENGINE 🔥 */
-      var lerpSpeed = 0.16;               
+      /* 🔥 IMPROVED LERP CONSTANT (0.085) FOR WEIGHTY, NATURAL SMOOTHNESS 🔥 */
+      var lerpSpeed = 0.085;               
       var current = 0, target = 0;
-      var extraPx = 480, pinPx = 48;      
+      var extraPx = 500, pinPx = 80;      
       var running = false, rafId = null;
       var parentProgress = 0;             
 
@@ -634,11 +631,23 @@
         try{
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
-          extraPx = reduceMotion ? 0 : Math.max(420, Math.min(760, Math.round(oh * 0.85)));
-          pinPx   = Math.max(24, Math.round(oh * 0.08));
+          
+          // Add slightly more extra distance for a smoother, longer scroll feel
+          extraPx = reduceMotion ? 0 : Math.max(500, Math.min(800, Math.round(oh * 0.90)));
+          
+          // 🔥 FIX: EYE-LEVEL OFFSET CALCULATION (Breathing Space)
+          // Set to ~12% of screen height, ensuring it doesn't crash into the top nav bar
+          pinPx = Math.max(85, Math.round(oh * 0.12));
+          
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
           
+          // Apply dynamic spacing to sticky engine
+          if(scene) {
+              scene.style.top = pinPx + 'px';
+          }
+          
+          // Sending the updated pin offset to parent so the progress engine starts lower down!
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
@@ -652,8 +661,10 @@
         if(sameOriginFrame){
           return parentProgress;
         } else {
-          var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-          return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
+          // Accurate bounding rect calculation for standalone viewing with breathing space
+          var rect = vp.getBoundingClientRect();
+          var scrolledPastPin = (pinPx + 20) - rect.top; 
+          return extraPx > 0 ? clampNum(scrolledPastPin / extraPx, 0, 1) : 0;
         }
       }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
