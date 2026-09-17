@@ -6,6 +6,13 @@
 <title>Ultra-Realistic Sannasa - Perfect Text Clearance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- This document runs in its own iframe browsing context, so it never inherits
+     the parent page's resource hints — it needs its own preconnect for the
+     Firebase SDK CDN and Firestore backend it loads below, or every visit pays
+     a full DNS+TLS handshake to both origins before the live text can even
+     start fetching. -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
@@ -15,20 +22,33 @@
         box-sizing: border-box;
     }
 
+    /* A transparent background here relies on the browser compositing this
+       iframe's content straight through to the parent page's own dark canvas
+       — but several elements below (.scroll-sticky-scene, the cylinders, the
+       overlay) are deliberately promoted to their own GPU layer for smooth
+       scroll performance (will-change/transform/backface-visibility). Once a
+       layer is GPU-composited this way, browsers commonly give it an OPAQUE
+       backing store instead of honoring true transparency — Chromium paints
+       it mid-grey, Mobile Safari paints it solid white — so the "empty" scroll
+       runway above the still-rolled scroll showed as a flat grey/white slab
+       instead of the site's dark background. A real solid color matching the
+       parent page's own background for this exact iframe (index.html sets
+       the <iframe> itself to the same #030303) sidesteps that compositing
+       quirk entirely, on every browser, instead of depending on it. */
     html, body {
         margin: 0;
         padding: 0;
-        background-color: transparent !important; 
+        background-color: #030303;
         font-family: sans-serif;
         color: #fff;
-        overflow: hidden; 
+        overflow: hidden;
         touch-action: pan-y;
     }
 
     .scroll-viewport {
         position: relative;
         width: 100%;
-        background-color: transparent !important; 
+        background-color: #030303;
         padding: 28px 0 0px;
     }
 
