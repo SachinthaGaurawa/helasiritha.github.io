@@ -18,7 +18,7 @@
     html, body {
         margin: 0;
         padding: 0;
-        background-color: transparent; /* FIXED: Blends with parent page seamlessly */
+        background-color: transparent;
         font-family: sans-serif;
         color: #fff;
         overflow-x: hidden;
@@ -31,7 +31,7 @@
         height: 900px;
         overflow: hidden;
         padding: 28px 0 30px;
-        background-color: transparent; /* FIXED: Removed harsh gradient during load */
+        background-color: transparent;
     }
 
     /* =======================================================================
@@ -43,25 +43,15 @@
         display: block; 
         pointer-events: none;
         will-change: transform, opacity;
-        transform: translate3d(0, 0, 0); 
+        transform: translateZ(0); 
         backface-visibility: hidden;
         
         /* SYNC-LOCK: Hidden until parent syncs the scroll position */
         opacity: 0; 
-        transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: opacity 0.4s ease-out;
     }
     
-    /* Revealed smoothly once sync message arrives */
-    .scroll-sticky-scene.synced {
-        opacity: 1;
-    }
-
-    /* FAST INITIAL PAINT: Bypass heavy SVG filters until the scroll is actually visible */
-    .scroll-sticky-scene:not(.synced) .scroll-cylinder,
-    .scroll-sticky-scene:not(.synced) .scroll-body-wrapper,
-    .scroll-sticky-scene:not(.synced) .embossed-seal {
-        filter: none !important;
-    }
+    .scroll-sticky-scene.synced { opacity: 1; }
     
     .scroll-sticky-scene.pin-fixed { 
         position: fixed !important; 
@@ -116,7 +106,7 @@
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
-        transform: translate3d(0, 0, 0); 
+        transform: translateZ(0); 
     }
 
     /* =======================================================================
@@ -136,17 +126,18 @@
     .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
     /* =======================================================================
-       5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR)
+       5. MAIN UNROLLED PARCHMENT BODY (ULTRA-FAST GPU MASKING)
        ======================================================================= */
     .scroll-body-wrapper {
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
-        filter: url('#edge-fray-heavy'); 
+        /* GPU Accelerated inset clipping replaces heavy polygons */
+        clip-path: inset(0 0 100% 0);
         will-change: clip-path; 
         transform: translateZ(0);
         backface-visibility: hidden;
+        /* WARNING: Heavy SVG filters completely removed here for 60fps performance */
     }
 
     .scroll-flat-paper {
@@ -214,7 +205,7 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
-        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
+        clip-path: inset(0 0 100% 0);
         will-change: clip-path;
         pointer-events: none;
         backface-visibility: hidden;
@@ -266,11 +257,6 @@
                     <feDistantLight azimuth="45" elevation="55" />
                 </feDiffuseLighting>
                 <feComposite operator="arithmetic" k1="1" k2="0" k3="0" k4="0" in="SourceGraphic" in2="light" />
-            </filter>
-
-            <filter id="edge-fray-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="5" seed="28" result="tornNoise" />
-                <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
             <filter id="edge-fray-light" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
@@ -544,13 +530,16 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
+      /* 🔥 ULTRA-FAST GPU INSET CLIPPING 🔥 */
       function setProgress(p){ 
         mc.style.setProperty('--unroll-progress', p); 
         
-        var pct = (p * 100).toFixed(3) + '%';
-        var clip = 'polygon(0% 0%, 100% 0%, 100% ' + pct + ', 0% ' + pct + ')';
-        if(wrapper) wrapper.style.clipPath = clip;
-        if(overlay) overlay.style.clipPath = clip;
+        /* 'inset(0% 0% 100% 0%)' when p=0, 'inset(0% 0% 0% 0%)' when p=1 */
+        var invPct = (100 - (p * 100)).toFixed(2) + '%';
+        var clipStr = 'inset(0% 0% ' + invPct + ' 0%)';
+        
+        if(wrapper) wrapper.style.clipPath = clipStr;
+        if(overlay) overlay.style.clipPath = clipStr;
 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
@@ -591,7 +580,8 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      var lerpSpeed = 0.08;               
+      /* 🔥 OPTIMIZED LERP SPEED FOR NO POSTMESSAGE DESYNC LAG 🔥 */
+      var lerpSpeed = 0.12;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
       var running = false, rafId = null;
@@ -605,18 +595,15 @@
           
           scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
           
-          /* 🔥 ZERO-TELEPORTATION SYNC-LOCK 🔥
-             Only reveal the scene AFTER it receives its true position from the parent */
           if(!scene.classList.contains('synced')) {
-              current = parentProgress; // Instantly snap internal physics to parent
+              current = parentProgress; 
               setProgress(current);
               applyCapRotation(current);
-              scene.classList.add('synced'); // Trigger smooth fade in
+              scene.classList.add('synced'); 
           }
         }, { passive: true });
       }
 
-      /* Safety fallback: If parent never sends a message, fade it in anyway after 800ms */
       setTimeout(function(){
           if(scene && !scene.classList.contains('synced')) {
               scene.classList.add('synced');
