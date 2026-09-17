@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa - Reduced Bottom Space</title>
+<title>Ultra-Realistic Sannasa - Zero Dead Space & Full Unroll</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -622,9 +622,11 @@
                   scene.style.top = '0px';
               }
           } else {
+              /* 🔥 THE FINAL FIX: 
+                 Iframe එකේ උස (height) සඳහා අතිරේක Scroll දුර (extraPx) යෙදීම අක්‍රිය කර ඇත. 
+                 මෙනිසා කිසිදු සුදු පැහැති හිඩැසක් පහළින් ඇති නොවේ. */
               extraPx = reduceMotion ? 0 : Math.max(500, Math.round(oh * 0.8)); 
-              // 🔥 FINAL FIX: Reduced needed height by 20px to eliminate the tiny empty gap at the bottom 🔥
-              needed = Math.round(sceneH + 8); 
+              needed = Math.round(sceneH + 28); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
