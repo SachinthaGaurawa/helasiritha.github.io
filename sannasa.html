@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Dynamic Viewport Elongation</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Dynamic Stretch & Center Trigger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
     .scroll-sticky-scene {
         /* NATIVE STICKY ENGINE */
         position: sticky;
-        top: 18vh; /* Adjusted specifically to allow perfect bottom unrolling */
+        top: 12vh; 
         left: 0; right: 0;
         display: block; 
         pointer-events: none;
@@ -417,7 +417,7 @@
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
-      /* 🔥 2050 FIX: DYNAMIC VIEWPORT-RELATIVE ELONGATION ALGORITHM 🔥 */
+      /* 🔥 FIX 1: DYNAMIC VISUAL STRETCH ENGINE 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -425,21 +425,26 @@
 
         var prevH = inner.style.height;
         inner.style.height = 'auto';
-        var C = inner.scrollHeight;
+        var contentH = inner.scrollHeight;
         inner.style.height = prevH;
 
-        var oh = window.innerHeight || 700;
-        
-        // අකුරු ප්‍රමාණය කුඩා වුවත්, සන්නසේ කොළය (Paper) උපාංගයේ තිරයේ උසින් අවම 85% ක් වත් 
-        // දිග හැරීමට මෙතැනින් බල කරයි. එමගින් පහළ රෝලය ඔබ පෙන්වා දුන් රතු කොටුව දක්වාම ගමන් කරයි.
-        var minPaperH = Math.max(680, oh * 0.85); 
-        var paper = Math.max(minPaperH, Math.round(C + 180));
-        
-        mc.style.setProperty('--paper-h', paper + 'px');
+        // උපාංගයේ තිරයේ උස (Device Height) මැනීම
+        var oh = window.innerHeight || 800;
+        try { if (window.innerHeight > 1200) oh = window.screen.height || 800; } catch(e) {}
 
+        // පරිශීලකයාට අවශ්‍ය පරිදි (රතු කොටුව දක්වා) තිරයෙන් 85% ක්ම ආවරණය වන සේ සන්නස දිගු කිරීම
+        var targetTotalHeight = oh * 0.85; 
+        var requiredPaperForStretch = targetTotalHeight - 124; // Cylinder overhead අඩු කිරීම
+
+        // අකුරු වලට අවශ්‍ය ඉඩ + හොඳ Margin එකක්
+        var requiredPaperForContent = contentH + 180; 
+
+        // අකුරු ඉවර වුණත් කමක් නෑ, තිරයේ පල්ලෙහාටම සන්නස දිග හැරෙන්න Force කිරීම!
+        var paper = Math.max(650, Math.max(requiredPaperForContent, requiredPaperForStretch));
+
+        mc.style.setProperty('--paper-h', paper + 'px');
         return mc.getBoundingClientRect().height;
       }
-      
       window.__measureSceneHeight = measureSceneHeight;
 
       function fitSannasa(){
@@ -569,56 +574,25 @@
         if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
       }
 
-      var framed = (window !== window.top);
-      var sameOriginFrame = false;
-      if(framed){
-        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
-      }
-
-      function runFallbackReveal(){
-        var played = false;
-        function play(){
-          if(played) return; played = true;
-          vp.classList.add('unrolled');
-          applyPhysicsFrame(1);
-          scene.classList.add('synced');
-        }
-        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
-        try{
-          var io = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.18 });
-          io.observe(vp);
-        }catch(_){ play(); }
-        setTimeout(play, 4000);
-      }
-
-      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
-
-      /* 🔥 IMPROVED LERP CONSTANT (0.09) FOR PERFECT RESPONSIVENESS AND SMOOTHNESS 🔥 */
-      var lerpSpeed = 0.09;               
+      /* 🔥 FIX 3: REMOVED IFRAME BLOCKERS! ACCEPTS MESSAGES FROM ANYWHERE 🔥 */
+      var lerpSpeed = 0.08;               
       var current = 0, target = 0;
-      var extraPx = 600, pinPx = 80;      
+      var extraPx = 600, pinPx = 80, triggerPx = 400;      
       var running = false, rafId = null;
-      var parentProgress = 0;             
+      var parentProgress = null;             
 
-      if(sameOriginFrame){
-        window.addEventListener('message', function(e){
-          var d = e && e.data;
-          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
-          parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-          
-          target = parentProgress; 
-          
-          if(!scene.classList.contains('synced')) {
-              current = parentProgress;
-              applyPhysicsFrame(current);
-              scene.classList.add('synced'); 
-          }
-          
-          startEngine(); 
-        }, { passive: true });
-      }
+      window.addEventListener('message', function(e){
+        var d = e && e.data;
+        if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
+        parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
+        target = parentProgress; 
+        if(!scene.classList.contains('synced')) {
+            current = parentProgress;
+            applyPhysicsFrame(current);
+            scene.classList.add('synced'); 
+        }
+        startEngine(); 
+      }, { passive: true });
 
       setTimeout(function(){
           if(scene && !scene.classList.contains('synced')) {
@@ -627,33 +601,32 @@
       }, 800);
 
       function outerHeight(){
-        try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
-        return window.innerHeight || 700;
+        return window.innerHeight || 800;
       }
-
-      if(!framed){ 
-          scene.classList.add('synced');
-      }   
 
       function reflow(){
         try{
-          var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
+          try { if (oh > 1200) oh = window.screen.height || 800; } catch(e) {}
           
-          pinPx = Math.max(40, Math.round(oh * 0.18));
+          /* 🔥 FIX 2: DUAL-AXIS CENTER TRIGGER ARCHITECTURE 🔥 */
+          // 1. කොතනද ලොක් වෙන්නේ (Sticky Point): තිරයේ උඩ ඉඳන් 12% ක ඉඩක් තියාගෙන.
+          pinPx = Math.max(40, Math.round(oh * 0.12)); 
           
-          // දිගහැරීමට අවශ්‍ය Scroll දුර ප්‍රමාණය
+          // 2. කොතනදීද දිග හැරෙන්න ගන්නේ (Trigger Point): හරියටම තිරයේ මැදට (60%) ආවාම.
+          triggerPx = Math.round(oh * 0.60);
+          
+          // දිග හැරෙන්න අවශ්‍ය Smooth scroll දුර
           extraPx = reduceMotion ? 0 : Math.max(600, Math.round(oh * 1.2));
           
+          var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
           
-          if(scene) {
-              scene.style.top = pinPx + 'px';
-          }
+          if(scene) { scene.style.top = pinPx + 'px'; }
           
-          if(sameOriginFrame && window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
+          if(window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx, trigger: triggerPx }, '*');
           }
         }catch(_){}
       }
@@ -662,12 +635,13 @@
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
-        if(sameOriginFrame){
+        if(parentProgress !== null){ // Parent page sending progress
           return parentProgress;
-        } else {
+        } else { // Native direct view calculation
           var rect = vp.getBoundingClientRect();
-          var scrolledPastPin = pinPx - rect.top; 
-          return extraPx > 0 ? clampNum(scrolledPastPin / extraPx, 0, 1) : 0;
+          // තිරයේ මැදට ආවට පස්සෙයි Progress එක බිංදුවේ ඉඳන් පටන් ගන්නේ!
+          var scrolledPastTrigger = triggerPx - rect.top; 
+          return extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
         }
       }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
@@ -709,18 +683,17 @@
         return;
       }
 
-      if(!framed){ 
-          window.addEventListener('scroll', startEngine, { passive: true });
-          startEngine(); 
-      } else if('IntersectionObserver' in window) {
+      window.addEventListener('scroll', startEngine, { passive: true });
+      startEngine(); 
+
+      // Fallback for deeply embedded iframes without postMessage support
+      if('IntersectionObserver' in window) {
         try{
           var io2 = new IntersectionObserver(function(entries){
             for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? startEngine() : stopEngine(); }
           }, { rootMargin: '800px 0px 800px 0px' });
           io2.observe(vp);
-        }catch(_){ startEngine(); }
-      } else { 
-          startEngine(); 
+        }catch(_){}
       }
 
     })();
