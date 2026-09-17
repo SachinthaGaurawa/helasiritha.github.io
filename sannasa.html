@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Frame-Independent LERP</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Proactive Performance Optimizations</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     /* =======================================================================
-       1. CORE RESET & ENVIRONMENT MAPPING
+       1. CORE RESET & ENVIRONMENT MAPPING (ISOLATED)
        ======================================================================= */
     *, *::before, *::after {
         box-sizing: border-box;
@@ -18,14 +18,15 @@
     body {
         margin: 0;
         padding: 0;
-        background-color: #030303;
-        font-family: sans-serif;
+        background-color: transparent; /* Allows parent page background integration if needed */
+        font-family: 'Abhaya Libre', sans-serif;
         color: #fff;
         overflow-x: hidden;
-        /* අතිශය වැදගත්: Iframe එකෙහි ශරීරය හුදකලා කිරීම (Body Paint Containment) */
-        contain: paint;
+        /* Ultimate Isolation: Prevents internal changes from causing global layout thrashing */
+        contain: layout size; 
     }
 
+    /* Long viewport wrapper */
     .scroll-viewport {
         position: relative;
         width: 100%;
@@ -33,10 +34,8 @@
         overflow: hidden;
         padding: 28px 0 30px;
         background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
-        
-        /* Iframe Isolation: CSS Containment මගින් Layout Bleeding නවතාලීම */
+        /* STRICT CONTAINMENT: Forces browser to isolate all repaint/reflow operations to this subtree */
         contain: strict;
-        will-change: transform;
     }
 
     /* =======================================================================
@@ -51,14 +50,17 @@
         padding: 0 10px;
         overflow: visible;
         pointer-events: none;
-        /* පිරිසැලසුම් සීමා කිරීම සහ ස්වාධීන කිරීම */
         contain: layout style;
     }
     
-    .scroll-sticky-scene.pin-fixed { position: fixed; }
+    .scroll-sticky-scene.pin-fixed { 
+        position: fixed; 
+    }
 
     .scroll-master-container {
         position: relative;
+        --unroll-progress: 0;
+        --paper-h: 740px;
         width: 100%;
         max-width: 650px;
         flex-shrink: 0;
@@ -69,13 +71,11 @@
         transform-style: preserve-3d;
         filter: drop-shadow(0 50px 70px rgba(0,0,0,0.98));
         pointer-events: auto;
-        
-        --unroll-progress: 0; 
-        --paper-h: 740px;
-        
-        /* GPU Compositor Thread Optimization */
+        /* Responsive scaling mechanism for ultimate device compatibility */
+        transform: scale(min(1, calc((100vw - 20px) / 650)));
+        transform-origin: top center;
+        /* Promotes this container to its own hardware-accelerated compositor layer */
         will-change: transform;
-        transform: translateZ(0);
     }
 
     /* =======================================================================
@@ -89,10 +89,18 @@
         border-radius: 42px; 
         filter: url('#edge-fray-light');
         background-repeat: repeat;
-        /* GPU Acceleration - ජංගම දුරකථන සඳහා අත්‍යවශ්‍යයි */
+        /* Hardware Acceleration setup */
         will-change: transform, background-position;
         transform: translateZ(0);
-        backface-visibility: hidden;
+        transition: filter 0.2s ease-out; /* Smooth transition for performance toggle */
+    }
+
+    /* Performance optimization: Remove heavy SVG filter during active scroll to prevent GPU lag */
+    .is-scrolling .scroll-cylinder,
+    .is-scrolling .scroll-body-wrapper,
+    .is-scrolling .cylinder-cap,
+    .is-scrolling .embossed-seal {
+        filter: none !important;
     }
 
     .scroll-cylinder.top {
@@ -127,11 +135,17 @@
         z-index: -1;
         filter: url('#edge-fray-light');
         will-change: transform;
-        transform: translateZ(0);
+        transition: filter 0.2s ease-out;
     }
 
     .cylinder-cap.left { left: -14px; }
     .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
+
+    /* CSS variable driven rotation - No JS reflows */
+    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)); }
+    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)); }
+    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)); }
+    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)); }
 
     /* =======================================================================
        5. MAIN UNROLLED PARCHMENT BODY
@@ -140,12 +154,12 @@
         position: relative;
         width: 100%;
         height: calc(var(--unroll-progress) * var(--paper-h));
-        overflow: hidden; 
+        overflow: hidden;
         filter: url('#edge-fray-heavy'); 
-        /* GPU Layer Promotion */
         will-change: height, transform;
         transform: translateZ(0);
-        contain: paint style;
+        contain: paint;
+        transition: filter 0.2s ease-out;
     }
 
     .scroll-flat-paper {
@@ -153,16 +167,9 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: var(--paper-h); 
-        background-color: #d6a874; 
-        clip-path: polygon(
-            0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
-            100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
-            100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 
-            100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 
-            0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 
-            0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%
-        );
+        height: var(--paper-h);
+        background-color: #d6a874;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%);
         background-image: 
             url('#paper-grain'),
             radial-gradient(circle at 18% 28%, rgba(54, 23, 2, 0.25) 0%, transparent 22%), 
@@ -181,7 +188,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) translateZ(0);
+        transform: translate(-50%, -50%);
         width: 240px;
         height: 240px;
         opacity: 0.28;
@@ -191,7 +198,7 @@
     }
 
     /* =======================================================================
-       7. DECORATIVE LAYERS & CONTENT OVERLAY
+       7. DECORATIVE LAYERS & INSTRUCTION
        ======================================================================= */
     .scroll-decorations {
         position: absolute;
@@ -214,19 +221,22 @@
         animation: pulse 2.5s infinite ease-in-out;
         transition: opacity .6s ease;
     }
+    .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
 
     @keyframes pulse {
         0%, 100% { opacity: 0.3; }
         50% { opacity: 0.7; }
     }
 
-    .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
-
+    /* Saftey net for accessibility */
     @media (prefers-reduced-motion: reduce) {
         .scroll-master-container { --unroll-progress: 1 !important; }
         .scroll-instruction { display: none; }
     }
 
+    /* =======================================================================
+       8. CRISP WEDDING-CONTENT OVERLAY (ISOLATED Z-INDEX)
+       ======================================================================= */
     .decree-overlay {
         position: absolute;
         top: 62px;
@@ -237,7 +247,7 @@
         overflow: hidden;
         pointer-events: none;
         will-change: height, transform;
-        transform: translateZ(0);
+        contain: size layout paint;
     }
 
     .decree-inner {
@@ -253,39 +263,40 @@
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
     }
     
-    /* මුල් සැලසුමේ වර්ණ සහ මෝස්තර ඒ ආකාරයෙන්ම සුරක්ෂිත කර ඇත */
-    .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
-    .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
-    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
-    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
+    .dc-sri { font-weight: 800; font-size: 28px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
+    .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 11px; font-size: 13px; }
+    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 54px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
+    .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 15.5px; letter-spacing: 0.2em; color: #5e3a1f; margin-bottom: 12px; }
     .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
-    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
-    .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
+    
+    .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 43px; line-height: 1.06; color: #3d1f0b; margin: 1px 0 2px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
+    
+    .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 28px; color: #a9812f; margin: 4px 0; line-height: 1; }
     .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
-    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f; max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
-    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+    .dc-body { font-family: 'Abhaya Libre', serif; font-size: 16px; line-height: 1.65; color: #5e3a1f; max-width: 30ch; margin: 12px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
+    
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 24px; margin: 15px auto 0; width: 100%; box-sizing: border-box; }
     .dc-row2 { margin-top: 13px; }
-    .dc-row2 .b { flex: 0 1 auto; text-align: center; }
     .dc-row1 { margin-top: 9px; }
-    .dc-row1 .b { flex: 1 1 100%; text-align: center; }
-    .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
-    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
+    .dc-meta .b { flex: 0 1 auto; min-width: 92px; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; text-align: center; }
     
     @media (max-width: 430px) { .dc-meta { gap: 6px 14px; } }
     
-    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
-    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
-    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
+    .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10.5px; letter-spacing: 0.12em; color: #7c5326; }
+    .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15.5px; color: #3d1f0b; }
+    .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10.5px; color: #6f421f; }
+    
     .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
     .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
-    
+
+    /* Zoom crash guard */
     html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
-    
     html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
 </style>
 </head>
 <body>
 
+    <!-- SVG Filters for organic rendering -->
     <svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
         <defs>
             <filter id="paper-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
@@ -295,17 +306,15 @@
                 </feDiffuseLighting>
                 <feComposite operator="arithmetic" k1="1" k2="0" k3="0" k4="0" in="SourceGraphic" in2="light" />
             </filter>
-
+            <!-- Heavy filters dynamically bypassed during scrolling via JS -->
             <filter id="edge-fray-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
                 <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="5" seed="28" result="tornNoise" />
                 <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
-
             <filter id="edge-fray-light" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
                 <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="3" seed="14" result="tornNoiseLight" />
                 <feDisplacementMap in="SourceGraphic" in2="tornNoiseLight" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
-
             <filter id="emboss-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur" />
                 <feSpecularLighting in="blur" surfaceScale="6" specularConstant="1" specularExponent="16" lighting-color="#ffffff" result="spec">
@@ -321,7 +330,8 @@
     </svg>
 
     <div class="scroll-viewport">
-        <div class="scroll-instruction"></div>
+        <div class="scroll-instruction" data-dc="cue">සෙමින් පහළට · Scroll to unfurl</div>
+        
         <div class="scroll-sticky-scene">
             <div class="scroll-master-container">
                 
@@ -360,23 +370,23 @@
                     <div class="decree-inner">
                         <div class="dc-sri" data-dc="sri">ශ්‍රී</div>
                         <div class="dc-rule"></div>
-                        <div class="dc-eyebrow" data-dc="eyebrow"></div>
-                        <div class="dc-lineage" data-dc="brideParents"></div>
-                        <div class="dc-name" data-dc="brideName"></div>
+                        <div class="dc-eyebrow" data-dc="eyebrow">සුබ විවාහ මංගල්‍යය</div>
+                        <div class="dc-lineage" data-dc="brideParents">මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,</div>
+                        <div class="dc-name" data-dc="brideName">කෞශානි</div>
                         <div class="dc-conj" data-dc="conj">&amp;</div>
-                        <div class="dc-lineage" data-dc="groomParents"></div>
-                        <div class="dc-name" data-dc="groomName"></div>
-                        <div class="dc-join" data-dc="join"></div>
-                        <div class="dc-body" data-dc="body"></div>
+                        <div class="dc-lineage" data-dc="groomParents">මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,</div>
+                        <div class="dc-name" data-dc="groomName">ගෞරව</div>
+                        <div class="dc-join" data-dc="join">සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,</div>
+                        <div class="dc-body" data-dc="body">මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ගෞරවයෙන් අපේක්ෂා කරමු.</div>
                         <div class="dc-meta dc-row2">
-                            <div class="b"><div class="l" data-dc="lDate"></div><div class="v" data-dc="vDate"></div></div>
-                            <div class="b"><div class="l" data-dc="lTime"></div><div class="v" data-dc="vTime"></div></div>
+                            <div class="b"><div class="l" data-dc="lDate">දිනය</div><div class="v" data-dc="vDate">2028 ජනවාරි 12</div><div class="e" data-dc="vDateEn">Wed, 12th January</div></div>
+                            <div class="b"><div class="l" data-dc="lTime">වේලාව</div><div class="v" data-dc="vTime">පෙ.ව. 9.00 සිට</div><div class="e" data-dc="vTimeEn">9:00 AM</div></div>
                         </div>
                         <div class="dc-meta dc-row1">
-                            <div class="b"><div class="l" data-dc="lVenue"></div><div class="v" data-dc="vVenue"></div><div class="e" data-dc="vCity"></div></div>
+                            <div class="b"><div class="l" data-dc="lVenue">ස්ථානය</div><div class="v" data-dc="vVenue">The Epitome Hotel</div><div class="e" data-dc="vCity">Kurunegala</div></div>
                         </div>
-                        <div class="dc-poruwa" data-dc="poruwa"></div>
-                        <div class="dc-swasti" data-dc="swasti"></div>
+                        <div class="dc-poruwa" data-dc="poruwa">පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට</div>
+                        <div class="dc-swasti" data-dc="swasti">ස්වස්ති සිද්ධම්</div>
                     </div>
                 </div>
 
@@ -397,8 +407,9 @@
         </div>
     </div>
 
-    <!-- CONTENT SYNC & MEASUREMENT ENGINE -->
-    <script type="module">
+    <!-- SCRIPT 1: Firebase Sync, Language purity & Dimensional Sizing -->
+    <script>
+    (function(){
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
 
@@ -406,11 +417,13 @@
         si: {
           sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය",
           brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,",
-          brideName:"කෞශානි", groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
-          groomName:"ගෞරව", join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
-          body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.",
+          brideName:"කෞශානි",
+          groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,",
+          groomName:"ගෞරව",
+          join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,",
+          body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ අගනා සහභාගීත්වය ගෞරවයෙන් අපේක්ෂා කරමු.",
           lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය",
-          date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල",
+          date:"2028 ජනවාරි 12", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල",
           poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට", swasti:"ස්වස්ති සිද්ධම්", cue:"සෙමින් පහළට"
         },
         en: {
@@ -442,6 +455,7 @@
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
+      
       function measureSceneHeight(){
         var mc = document.querySelector('.scroll-master-container');
         var inner = document.querySelector('.decree-inner');
@@ -476,7 +490,7 @@
         }catch(_){}
       }
       window.__fitSannasa = fitSannasa;
-      
+
       function fitSannasaOnResize(){
         if(window.innerWidth === lastWidth) return; 
         lastWidth = window.innerWidth;
@@ -499,14 +513,17 @@
         set('join', ov('join') || t.join);
         set('body', ov('sannasaBody') || ov('invite') || t.body);
         set('lDate', ov('lDate') || t.lDate); set('lTime', ov('lTime') || t.lTime); set('lVenue', ov('lVenue') || t.lVenue);
-        set('vDate', ov('date') || t.date); set('vTime', ov('time') || t.time); set('vVenue', ov('venue') || plain('venue') || t.venue);
+        set('vDate', ov('date') || t.date);
+        set('vTime', ov('time') || t.time);
+        set('vVenue', ov('venue') || plain('venue') || t.venue);
         var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
         set('vCity', ov('city') || plain(cityKey) || t.city);
         set('poruwa', ov('poruwa') || t.poruwa);
-        set('swasti', t.swasti); 
+        set('swasti', t.swasti);
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
         try{ fitSannasa(); }catch(_){} 
       }
+      
       render();
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
@@ -517,7 +534,8 @@
       Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
         var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
         m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
-          live = snap.exists() ? (snap.data()||{}) : {};
+          var d = snap.exists() ? (snap.data()||{}) : {};
+          live = d || {};
           if (live.dateISO && !live.dateSi && !live.dateEn){
             try{
               var dt = new Date(live.dateISO);
@@ -528,7 +546,7 @@
             }catch(_){}
           }
           render();
-        }, function(){});
+        });
       }).catch(function(){});
 
       if (window.visualViewport){
@@ -536,16 +554,15 @@
         var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
         vv.addEventListener('resize', z, {passive:true}); vv.addEventListener('scroll', z, {passive:true}); z();
       }
+    })();
     </script>
 
-    <!-- ADVANCED FRAME-INDEPENDENT LERP & PHYSICS ENGINE -->
+    <!-- SCRIPT 2: High-Performance LERP Engine & Proactive Scroll Optimizations -->
     <script>
     (function(){
       var vp = document.querySelector('.scroll-viewport');
       var mc = document.querySelector('.scroll-master-container');
       var scene = document.querySelector('.scroll-sticky-scene');
-      var topCyl = document.querySelector('.scroll-cylinder.top');
-      var botCyl = document.querySelector('.scroll-cylinder.bottom');
       if(!vp || !mc || !scene) return;
 
       var reduceMotion = false;
@@ -557,14 +574,13 @@
         try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
       }
 
-      function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
-
+      /* Fallback for cross-origin iframes without parent access */
       function runFallbackReveal(){
         var played = false;
         function play(){
           if(played) return; played = true;
           vp.classList.add('unrolled');
-          setProgress(1);
+          mc.style.setProperty('--unroll-progress', 1);
         }
         if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
         try{
@@ -578,13 +594,14 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      // රාමු අනුපාත ස්වාධීන LERP විචල්‍යයන් (Frame-rate independent LERP Variables)
-      var smoothSpeed = 10.0; // ඝාතීය ක්ෂයවීමේ වේගය (Exponential decay rate)
+      /* REAL LERP ENGINE WITH HIGH-PERFORMANCE UPDATES */
+      var lerpSpeed = 0.18; 
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;
       var running = false, rafId = null;
-      var parentProgress = 0;
-      var lastTime = performance.now(); // අතිශය නිවැරදි කාලමානය (High-resolution time)
+      var parentProgress = 0; 
+      var isScrolling = false;
+      var scrollTimeout = null;
 
       if(sameOriginFrame){
         window.addEventListener('message', function(e){
@@ -592,6 +609,30 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           scene.style.top = (parentProgress * extraPx) + 'px';
+          
+          /* Proactive Safari GPU protection: Toggle filter complexity when actively receiving scroll events */
+          if(!isScrolling) {
+              isScrolling = true;
+              mc.classList.add('is-scrolling');
+          }
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(function() {
+              isScrolling = false;
+              mc.classList.remove('is-scrolling');
+          }, 150); // Restore filters 150ms after scroll ends
+        }, { passive: true });
+      } else {
+        scene.classList.add('pin-fixed');
+        window.addEventListener('scroll', function() {
+            if(!isScrolling) {
+              isScrolling = true;
+              mc.classList.add('is-scrolling');
+            }
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+              isScrolling = false;
+              mc.classList.remove('is-scrolling');
+            }, 150);
         }, { passive: true });
       }
 
@@ -599,8 +640,6 @@
         try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
         return window.innerHeight || 700;
       }
-
-      if(!framed){ scene.classList.add('pin-fixed'); }
 
       function reflow(){
         try{
@@ -610,7 +649,7 @@
           pinPx   = Math.max(24, Math.round(oh * 0.08));
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
-          if(!framed){ scene.style.top = pinPx + 'px'; } 
+          if(!framed){ scene.style.top = pinPx + 'px'; }
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
@@ -621,80 +660,72 @@
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
-        if(sameOriginFrame) return parentProgress;
-        var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-        return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
-      }
-      function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
-
-      function applyCapRotation(progress){
-        var deg = progress * 720;
-        if(topCyl){
-          var tl = topCyl.querySelector('.cylinder-cap.left'), tr = topCyl.querySelector('.cylinder-cap.right');
-          if(tl) tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
-          if(tr) tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
-        }
-        if(botCyl){
-          var bl = botCyl.querySelector('.cylinder-cap.left'), br = botCyl.querySelector('.cylinder-cap.right');
-          if(bl) bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
-          if(br) br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
+        if(sameOriginFrame){ return parentProgress; } 
+        else {
+          var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+          return extraPx > 0 ? Math.max(0, Math.min(1, scrollTop / extraPx)) : 1;
         }
       }
 
-      function tick(currentTime){
-        // Delta Time (dt) ගණනය කිරීම 
-        var dt = (currentTime - lastTime) / 1000.0;
-        lastTime = currentTime;
-        
-        // දුරකථනයේ පසුබිමේ තිබෙන විට (Tab inactive) විශාල කාල පරතරයක් ඇතිවීම වළක්වයි
-        if(dt > 0.1) dt = 0.016; 
+      /* Main Rendering Loop utilizing requestAnimationFrame delta syncing */
+      var lastTime = performance.now();
+      
+      function tick(time){
+        var deltaTime = time - lastTime;
+        lastTime = time;
         
         target = computeTargetProgress();
         var diff = target - current;
         
-        // Frame-rate independent Exponential Decay සමීකරණය
-        var lerpFactor = 1 - Math.exp(-smoothSpeed * dt);
-        current += diff * lerpFactor;
+        /* Time-based LERP avoids varying speeds on 60hz vs 120hz displays */
+        var speedAdjust = Math.min(1, deltaTime / 16.666);
+        current += diff * (lerpSpeed * speedAdjust);
         
-        if(Math.abs(diff) < 0.0004) current = target;
+        if(Math.abs(diff) < 0.0004) {
+            current = target;
+        }
         
-        var progress = clampNum(current, 0, 1);
-        setProgress(progress);
-        applyCapRotation(progress);
+        var progress = Math.max(0, Math.min(1, current));
+        
+        /* Batch DOM Writes */
+        mc.style.setProperty('--unroll-progress', progress);
         vp.classList.toggle('unrolled', progress > 0.92);
-        
+
         if(running) rafId = requestAnimationFrame(tick);
       }
 
       function start(){
         if(running) return; running = true;
         current = computeTargetProgress();
-        var p = clampNum(current, 0, 1);
-        setProgress(p); applyCapRotation(p);
+        mc.style.setProperty('--unroll-progress', current);
         lastTime = performance.now();
         if(!rafId) rafId = requestAnimationFrame(tick);
       }
-      function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
+      
+      function stop(){ 
+          running = false; 
+          if(rafId){ cancelAnimationFrame(rafId); rafId = null; } 
+      }
 
-      if(reduceMotion){ setProgress(1); applyCapRotation(1); vp.classList.add('unrolled'); return; }
+      if(reduceMotion){
+        mc.style.setProperty('--unroll-progress', 1);
+        vp.classList.add('unrolled');
+        return;
+      }
 
-      if(!framed){ start(); }
-      else if('IntersectionObserver' in window){
+      /* Ultimate Battery Saver: IntersectionObserver pauses rAF when offscreen */
+      if('IntersectionObserver' in window){
         try{
           var io2 = new IntersectionObserver(function(entries){
-            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
+            for(var i=0;i<entries.length;i++){ 
+                entries[i].isIntersecting ? start() : stop(); 
+            }
           }, { rootMargin: '800px 0px 800px 0px' });
           io2.observe(vp);
         }catch(_){ start(); }
-      } else { start(); }
-      
-      // Standalone mode සඳහා Scroll Event එක (Passive)
-      if(!sameOriginFrame) {
-        window.addEventListener('scroll', function() {
-            target = computeTargetProgress();
-        }, { passive: true });
+      } else { 
+          start(); 
       }
-
     })();
     </script>
 </body>
