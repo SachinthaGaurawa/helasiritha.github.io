@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Early Center Trigger</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Early Trigger Physics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -225,7 +225,7 @@
 
     .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
     .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
-    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 100px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
+    .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
     .dc-eyebrow { font-family: 'Gemunu Libre', serif; font-size: 14px; letter-spacing: 0.18em; color: #5e3a1f; margin-bottom: 12px; }
     .dc-lineage { font-family: 'Gemunu Libre', serif; font-size: 12.5px; line-height: 1.4; letter-spacing: 0.015em; color: #6f4523; max-width: 31ch; margin: 0 auto; }
     .dc-name { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #3d1f0b; margin: 1px 0 2px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 2px 4px rgba(40,18,4,0.26), 0 0 3px rgba(50,24,8,0.3); }
@@ -433,7 +433,6 @@
         try{ if(window !== window.top) oh = window.parent.innerHeight || oh; }catch(_){}
 
         var pinPx = 0; 
-        
         var stretchPaper = oh - pinPx - 100; 
         var contentPaper = Math.round(C + 130);
         
@@ -639,13 +638,15 @@
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
           
-          // 🔥 1. Sticky Point (හිරවෙන තැන) හරියටම උඩටම (0) දී ඇත 🔥
+          // 🔥 1. Sticky Point: හරියටම උඩටම (0) දී ඇත
           pinPx = 0; 
           
-          // 🔥 2. Trigger Point (දිගහැරීම පටන් ගන්නා තැන) තිරයේ උසින් 65% ක් (Eye-level) ලබාදී ඇත 🔥
-          triggerPx = Math.round(oh * 0.65);
+          // 🔥 2. Ultra-Early Trigger Point: තිරයේ අඩියට (95%) ආපු ගමන්ම දිගහැරීම පටන් ගනී 🔥
+          // මේ නිසා සන්නස උඩට ගිහින් හිරවෙනකොට 80% ක් පමණ අතිශය සුමටව දිගහැරී අවසන් වේ.
+          triggerPx = Math.round(oh * 0.95);
           
-          extraPx = reduceMotion ? 0 : Math.max(650, Math.round(oh * 1.25));
+          // දිගහැරීමට අවශ්‍ය Scroll දුර 
+          extraPx = reduceMotion ? 0 : Math.max(650, Math.round(oh * 1.2));
           
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
@@ -668,7 +669,6 @@
         var rectTop;
         if (sameOriginFrame && window.frameElement) {
             try {
-                // Main page එක ඇතුළේ Iframe එක තියෙන තැන හරියටම මැනගැනීමේ තාක්ෂණය
                 rectTop = window.frameElement.getBoundingClientRect().top;
             } catch(e) {
                 rectTop = vp.getBoundingClientRect().top;
@@ -677,7 +677,6 @@
             rectTop = vp.getBoundingClientRect().top;
         }
 
-        // තිරයේ 65% සීමාවට ආපු ගමන්ම (උඩට යන්නත් කලින්) දිගහැරීම පටන් ගනී
         var scrolledPastTrigger = triggerPx - rectTop; 
         var localProgress = extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
         
