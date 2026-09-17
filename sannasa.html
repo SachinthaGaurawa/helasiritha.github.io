@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Dynamic Center Trigger</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Zero Top Gap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,10 +38,9 @@
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
     .scroll-sticky-scene {
-        /* NATIVE STICKY ENGINE */
+        /* 🔥 ZERO-GAP NATIVE STICKY ENGINE: හිඩැස ඉවත් කර උඩටම ගෙන ඇත 🔥 */
         position: sticky;
-        /* Default fallback, will be dynamically perfectly centered via JS based on device */
-        top: 25vh; 
+        top: 0px; 
         left: 0; right: 0;
         display: block; 
         pointer-events: none;
@@ -217,7 +216,9 @@
     .decree-inner {
         width: 100%; height: var(--paper-h);
         padding: 58px 66px 42px;
-        display: flex; flex-direction: column; align-items: center; text-align: center;
+        display: flex; flex-direction: column; align-items: center; 
+        justify-content: center; /* Centers the content vertically */
+        text-align: center;
         color: #3d1f0b; font-family: 'Abhaya Libre', serif;
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
     }
@@ -417,6 +418,7 @@
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
+      
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -427,7 +429,16 @@
         var C = inner.scrollHeight;
         inner.style.height = prevH;
 
-        var paper = Math.max(560, Math.round(C + 120));
+        var oh = window.innerHeight || 700;
+        try{ if(window !== window.top) oh = window.parent.innerHeight || oh; }catch(_){}
+
+        // 🔥 ZERO GAP CALIBRATION: හිඩැස බිංදුවයි 🔥
+        var pinPx = 0; 
+        
+        var stretchPaper = oh - pinPx - 100; 
+        var contentPaper = Math.round(C + 130);
+        
+        var paper = Math.max(560, Math.max(contentPaper, stretchPaper));
         mc.style.setProperty('--paper-h', paper + 'px');
 
         return mc.getBoundingClientRect().height;
@@ -579,7 +590,7 @@
         try{
           var io = new IntersectionObserver(function(entries){
             for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.0 });
+          }, { threshold: 0.18 });
           io.observe(vp);
         }catch(_){ play(); }
         setTimeout(play, 4000);
@@ -587,10 +598,9 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 IMPROVED LERP CONSTANT (0.09) FOR PERFECT RESPONSIVENESS AND SMOOTHNESS 🔥 */
-      var lerpSpeed = 0.09;               
+      var lerpSpeed = 0.12;               
       var current = 0, target = 0;
-      var extraPx = 550, pinPx = 80;      
+      var extraPx = 550, pinPx = 0;      
       var running = false, rafId = null;
       var parentProgress = 0;             
 
@@ -632,24 +642,18 @@
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
           
-          /* 🔥 DYNAMIC CENTER-VIEW OFFSET ALGORITHM 🔥 */
-          /* තිරයේ උසින් ~28% ත් 30% ත් අතර ප්‍රමාණයක් ස්වයංක්‍රීයව ගණනය කර (Eye-level center),
-             සන්නස හරියටම මැදදී දිග හැරීම අරඹයි. මොබයිල් සහ පරිගණක වලට වෙන වෙනම හැඩගැසේ. */
-          pinPx = Math.max(50, Math.round(oh * 0.28));
+          // 🔥 ZERO-GAP CALIBRATION 🔥
+          pinPx = 0; 
           
-          /* දිගහැරීමට අවශ්‍ය Scroll දුර ප්‍රමාණය තිරයේ උසට සාපේක්ෂව (110%) ලබාදීමෙන්, 
-             scroll එකේ latency එක සහ rigid ගතිය සම්පූර්ණයෙන්ම නැති කර ඇත. */
-          extraPx = reduceMotion ? 0 : Math.max(550, Math.round(oh * 1.1));
+          extraPx = reduceMotion ? 0 : Math.max(550, Math.round(oh * 1.15));
           
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
           
-          // Apply dynamic spacing strictly to native sticky engine
           if(scene) {
               scene.style.top = pinPx + 'px';
           }
           
-          // Sending the highly-accurate center pin offset to the parent engine
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
