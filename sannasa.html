@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Dynamic Stretch & Center Trigger</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll - Full Viewport Stretch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,9 +38,8 @@
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
     .scroll-sticky-scene {
-        /* NATIVE STICKY ENGINE */
         position: sticky;
-        top: 12vh; 
+        top: 25vh; 
         left: 0; right: 0;
         display: block; 
         pointer-events: none;
@@ -361,6 +360,16 @@
 
     <script>
     (function(){
+      // 🔥 GLOBAL DEVICE SENSOR: හරියටම උපාංගයේ තිරයේ උස මැනීමේ ඇල්ගොරිතමය 🔥
+      window.__getDeviceHeight = function() {
+          try {
+              if (window !== window.top && window.frameElement && window.parent) {
+                  return window.parent.innerHeight || window.innerHeight || 700;
+              }
+          } catch (e) {}
+          return window.innerHeight || 700;
+      };
+
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
 
@@ -416,8 +425,6 @@
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
-      
-      /* 🔥 FIX 1: DYNAMIC VISUAL STRETCH ENGINE 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -425,24 +432,18 @@
 
         var prevH = inner.style.height;
         inner.style.height = 'auto';
-        var contentH = inner.scrollHeight;
+        var C = inner.scrollHeight;
         inner.style.height = prevH;
 
-        // උපාංගයේ තිරයේ උස (Device Height) මැනීම
-        var oh = window.innerHeight || 800;
-        try { if (window.innerHeight > 1200) oh = window.screen.height || 800; } catch(e) {}
-
-        // පරිශීලකයාට අවශ්‍ය පරිදි (රතු කොටුව දක්වා) තිරයෙන් 85% ක්ම ආවරණය වන සේ සන්නස දිගු කිරීම
-        var targetTotalHeight = oh * 0.25; 
-        var requiredPaperForStretch = targetTotalHeight - 124; // Cylinder overhead අඩු කිරීම
-
-        // අකුරු වලට අවශ්‍ය ඉඩ + හොඳ Margin එකක්
-        var requiredPaperForContent = contentH + 180; 
-
-        // අකුරු ඉවර වුණත් කමක් නෑ, තිරයේ පල්ලෙහාටම සන්නස දිග හැරෙන්න Force කිරීම!
-        var paper = Math.max(650, Math.max(requiredPaperForContent, requiredPaperForStretch));
-
+        /* 🔥 DYNAMIC SCREEN-RATIO STRETCHING ALGORITHM 🔥 */
+        // තිරයේ උස ලබාගෙන එයින් 78% ක ප්‍රමාණයක් සන්නසේ අවම දිග (Minimum Height) ලෙස සකසයි.
+        // මේ නිසා සන්නස හැමවිටම ඔබ ඉල්ලා සිටි රතු කොටුව (පතුළ) දක්වාම දික් ගැස්සෙනු ඇත!
+        var oh = window.__getDeviceHeight();
+        var dynamicMinH = Math.max(580, oh * 0.78); 
+        
+        var paper = Math.max(dynamicMinH, Math.round(C + 130));
         mc.style.setProperty('--paper-h', paper + 'px');
+
         return mc.getBoundingClientRect().height;
       }
       window.__measureSceneHeight = measureSceneHeight;
@@ -548,7 +549,7 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 ZERO-LATENCY HARDWARE ACCELERATED LERP 🔥 */
+      /* 🔥 ZERO-LATENCY SUB-PIXEL HARDWARE ACCELERATED LERP 🔥 */
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
@@ -561,38 +562,70 @@
         if(overlay) overlay.style.clipPath = clip;
 
         if(bottomCyl) {
-            bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
-            bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
+            // toFixed(2) භාවිතයෙන් floating-point GPU jitter සම්පූර්ණයෙන්ම වළක්වයි
+            bottomCyl.style.transform = 'translate3d(0, ' + ty.toFixed(2) + 'px, 0)';
+            bottomCyl.style.backgroundPositionY = (p * -320).toFixed(2) + 'px';
         }
         if(topCyl) {
-            topCyl.style.backgroundPositionY = (p * 320) + 'px';
+            topCyl.style.backgroundPositionY = (p * 320).toFixed(2) + 'px';
         }
 
-        if(c_tl) c_tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
-        if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
-        if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
-        if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
+        if(c_tl) c_tl.style.transform = 'rotate(' + (-deg).toFixed(2) + 'deg) translateZ(0)';
+        if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg.toFixed(2) + 'deg) translateZ(0)';
+        if(c_bl) c_bl.style.transform = 'rotate(' + deg.toFixed(2) + 'deg) translateZ(0)';
+        if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg).toFixed(2) + 'deg) translateZ(0)';
       }
 
-      /* 🔥 FIX 3: REMOVED IFRAME BLOCKERS! ACCEPTS MESSAGES FROM ANYWHERE 🔥 */
-      var lerpSpeed = 0.08;               
-      var current = 0, target = 0;
-      var extraPx = 600, pinPx = 80, triggerPx = 400;      
-      var running = false, rafId = null;
-      var parentProgress = null;             
+      var framed = (window !== window.top);
+      var sameOriginFrame = false;
+      if(framed){
+        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
+      }
 
-      window.addEventListener('message', function(e){
-        var d = e && e.data;
-        if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
-        parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-        target = parentProgress; 
-        if(!scene.classList.contains('synced')) {
-            current = parentProgress;
-            applyPhysicsFrame(current);
-            scene.classList.add('synced'); 
+      function runFallbackReveal(){
+        var played = false;
+        function play(){
+          if(played) return; played = true;
+          vp.classList.add('unrolled');
+          applyPhysicsFrame(1);
+          scene.classList.add('synced');
         }
-        startEngine(); 
-      }, { passive: true });
+        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
+        try{
+          var io = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
+          }, { threshold: 0.18 });
+          io.observe(vp);
+        }catch(_){ play(); }
+        setTimeout(play, 4000);
+      }
+
+      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
+
+      /* 🔥 IMPROVED LERP CONSTANT (0.075) FOR ABSOLUTE BUTTERY SMOOTHNESS 🔥 */
+      var lerpSpeed = 0.075;               
+      var current = 0, target = 0;
+      var extraPx = 550, pinPx = 80;      
+      var running = false, rafId = null;
+      var parentProgress = 0;             
+
+      if(sameOriginFrame){
+        window.addEventListener('message', function(e){
+          var d = e && e.data;
+          if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
+          parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
+          
+          target = parentProgress; 
+          
+          if(!scene.classList.contains('synced')) {
+              current = parentProgress;
+              applyPhysicsFrame(current);
+              scene.classList.add('synced'); 
+          }
+          
+          startEngine(); 
+        }, { passive: true });
+      }
 
       setTimeout(function(){
           if(scene && !scene.classList.contains('synced')) {
@@ -600,33 +633,29 @@
           }
       }, 800);
 
-      function outerHeight(){
-        return window.innerHeight || 800;
-      }
+      if(!framed){ 
+          scene.classList.add('synced');
+      }   
 
       function reflow(){
         try{
-          var oh = outerHeight();
-          try { if (oh > 1200) oh = window.screen.height || 800; } catch(e) {}
-          
-          /* 🔥 FIX 2: DUAL-AXIS CENTER TRIGGER ARCHITECTURE 🔥 */
-          // 1. කොතනද ලොක් වෙන්නේ (Sticky Point): තිරයේ උඩ ඉඳන් 12% ක ඉඩක් තියාගෙන.
-          pinPx = Math.max(40, Math.round(oh * 0.12)); 
-          
-          // 2. කොතනදීද දිග හැරෙන්න ගන්නේ (Trigger Point): හරියටම තිරයේ මැදට (60%) ආවාම.
-          triggerPx = Math.round(oh * 0.60);
-          
-          // දිග හැරෙන්න අවශ්‍ය Smooth scroll දුර
-          extraPx = reduceMotion ? 0 : Math.max(600, Math.round(oh * 1.2));
-          
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
+          var oh = (window.__getDeviceHeight ? window.__getDeviceHeight() : window.innerHeight);
+          
+          pinPx = Math.max(50, Math.round(oh * 0.28));
+          
+          /* Extra scroll distance multiplier (1.15) for deeply smooth unroll effect */
+          extraPx = reduceMotion ? 0 : Math.max(550, Math.round(oh * 1.15));
+          
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
           
-          if(scene) { scene.style.top = pinPx + 'px'; }
+          if(scene) {
+              scene.style.top = pinPx + 'px';
+          }
           
-          if(window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx, trigger: triggerPx }, '*');
+          if(sameOriginFrame && window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
         }catch(_){}
       }
@@ -635,13 +664,12 @@
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
-        if(parentProgress !== null){ // Parent page sending progress
+        if(sameOriginFrame){
           return parentProgress;
-        } else { // Native direct view calculation
+        } else {
           var rect = vp.getBoundingClientRect();
-          // තිරයේ මැදට ආවට පස්සෙයි Progress එක බිංදුවේ ඉඳන් පටන් ගන්නේ!
-          var scrolledPastTrigger = triggerPx - rect.top; 
-          return extraPx > 0 ? clampNum(scrolledPastTrigger / extraPx, 0, 1) : 0;
+          var scrolledPastPin = pinPx - rect.top; 
+          return extraPx > 0 ? clampNum(scrolledPastPin / extraPx, 0, 1) : 0;
         }
       }
       function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
@@ -683,17 +711,18 @@
         return;
       }
 
-      window.addEventListener('scroll', startEngine, { passive: true });
-      startEngine(); 
-
-      // Fallback for deeply embedded iframes without postMessage support
-      if('IntersectionObserver' in window) {
+      if(!framed){ 
+          window.addEventListener('scroll', startEngine, { passive: true });
+          startEngine(); 
+      } else if('IntersectionObserver' in window) {
         try{
           var io2 = new IntersectionObserver(function(entries){
             for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? startEngine() : stopEngine(); }
           }, { rootMargin: '800px 0px 800px 0px' });
           io2.observe(vp);
-        }catch(_){}
+        }catch(_){ startEngine(); }
+      } else { 
+          startEngine(); 
       }
 
     })();
