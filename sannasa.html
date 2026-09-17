@@ -3,47 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with LERP Smooth Scrolling</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Extreme Performance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    /* මූලික හැඩතල සහ පරිසරය සකස් කිරීම */
     *, *::before, *::after {
         box-sizing: border-box;
     }
 
-    body, html {
+    body {
         margin: 0;
         padding: 0;
         background-color: #030303;
         font-family: sans-serif;
         color: #fff;
-        overflow: hidden;
-        overscroll-behavior: none; /* Stops scroll chaining to main page */
+        overflow-x: hidden;
     }
 
+    /* CSS සීමාකරණය (Containment): මෙමගින් Iframe එක ඇතුළත සිදුවන දේ බාහිර පිටුවට බලපෑම සම්පූර්ණයෙන්ම වළක්වයි */
     .scroll-viewport {
         position: relative;
         width: 100%;
         height: 900px;
-        overflow: hidden;            
-        padding: 28px 0 30px;        
+        overflow: hidden;
+        padding: 28px 0 30px;
         background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
-        contain: strict; /* PERFECT ISOLATION: Locks layout, style, and paint inside */
-        transform: translateZ(0); /* Hardware acceleration forced */
+        contain: strict; /* උපරිම කාර්ය සාධනය සඳහා අනිවාර්ය ගුණාංගයකි */
     }
 
+    /* දෘඩාංග ත්වරණය (Hardware Acceleration) යොදාගනිමින් ස්ථානීය පිහිටුම වෙනස් කිරීම */
     .scroll-sticky-scene {
         position: absolute;
         left: 0; right: 0; top: 0;
         display: flex;
         justify-content: center;
-        align-items: flex-start;     
-        padding: 0 10px;             
-        overflow: visible;           
+        align-items: flex-start;
+        padding: 0 10px;
+        overflow: visible;
         pointer-events: none;
-        will-change: top;
+        will-change: transform;
+        transform: translate3d(0, 0, 0); 
     }
+    
     .scroll-sticky-scene.pin-fixed { position: fixed; }
 
     .scroll-master-container {
@@ -58,21 +61,22 @@
         transform-style: preserve-3d;
         filter: drop-shadow(0 50px 70px rgba(0,0,0,0.98));
         pointer-events: auto;
-        --unroll-progress: 0;   
+        --unroll-progress: 0;
         --paper-h: 740px;
+        contain: layout style;
     }
 
+    /* සිලින්ඩරාකාර රෝල් සහ කාර්ය සාධනය කළමනාකරණය කළ පෙරහන් */
     .scroll-cylinder {
         position: relative;
-        width: 110%; 
+        width: 110%;
         height: 84px;
         z-index: 10;
         border-radius: 42px; 
         filter: url('#edge-fray-light');
         background-repeat: repeat;
         will-change: transform, background-position;
-        transform: translate3d(0,0,0);
-        backface-visibility: hidden;
+        transform: translateZ(0); 
     }
 
     .scroll-cylinder.top {
@@ -95,21 +99,25 @@
         background-position-y: calc(var(--unroll-progress) * -320px);
     }
 
+    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
+    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
+    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
+    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
+
     .cylinder-cap {
         position: absolute;
         top: 50%;
         width: 32px;
         height: 72px;
-        margin-top: -36px; 
+        margin-top: -36px;
         z-index: -1;
         filter: url('#edge-fray-light');
         will-change: transform;
-        transform: translate3d(0,0,0);
     }
-
     .cylinder-cap.left { left: -14px; }
-    .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
+    .cylinder-cap.right { right: -14px; }
 
+    /* ප්‍රධාන කඩදාසි කොටස (GPU Composite ස්ථරයක් ලෙස සැකසීම) */
     .scroll-body-wrapper {
         position: relative;
         width: 100%;
@@ -117,24 +125,15 @@
         overflow: hidden; 
         filter: url('#edge-fray-heavy'); 
         will-change: height;
-        transform: translate3d(0,0,0);
-        backface-visibility: hidden;
+        transform: translateZ(0); 
     }
 
     .scroll-flat-paper {
         position: absolute;
-        top: 0; left: 0;
-        width: 100%;
+        top: 0; left: 0; width: 100%;
         height: var(--paper-h); 
         background-color: #d6a874; 
-        clip-path: polygon(
-            0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
-            100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
-            100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 
-            100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 
-            0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 
-            0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%
-        );
+        clip-path: polygon(0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 100% 55%, 88% 60%, 95% 65%, 89% 69%, 100% 74%, 100% 83%, 93% 87%, 100% 92%, 100% 100%, 0% 100%, 0% 90%, 5% 86%, 0% 82%, 0% 70%, 12% 65%, 4% 60%, 10% 54%, 0% 49%, 0% 40%, 8% 35%, 2% 31%, 0% 20%, 6% 16%, 0% 13%);
         background-image: 
             url('#paper-grain'),
             radial-gradient(circle at 18% 28%, rgba(54, 23, 2, 0.25) 0%, transparent 22%), 
@@ -154,6 +153,7 @@
         opacity: 0.28; 
         mix-blend-mode: overlay;
         filter: url('#emboss-filter');
+        will-change: transform;
     }
 
     .scroll-decorations {
@@ -167,55 +167,42 @@
     .scroll-instruction {
         position: absolute;
         bottom: 40px;
-        font-size: 14px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
-        pointer-events: none;
-        text-align: center;
+        font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+        color: rgba(255,255,255,0.4); pointer-events: none; text-align: center;
         width: 100%;
         animation: pulse 2.5s infinite ease-in-out;
         transition: opacity .6s ease;
     }
-
     .scroll-viewport.unrolled .scroll-instruction { opacity: 0; transition-delay: .5s; }
-
-    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
-
-    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
-    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
-    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
-    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.7; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
         .scroll-master-container { --unroll-progress: 1 !important; }
         .scroll-instruction { display: none; }
     }
 
+    /* අකුරු සහිත කොටස */
     .decree-overlay {
         position: absolute;
-        top: 62px;              
-        left: 0; right: 0;
-        z-index: 5;             
+        top: 62px; left: 0; right: 0; z-index: 5;
         height: calc(var(--unroll-progress) * var(--paper-h));
-        overflow: hidden;
-        pointer-events: none;
+        overflow: hidden; pointer-events: none;
+        will-change: height;
+    }
+    
+    .decree-inner {
+        width: 100%; height: var(--paper-h);
+        padding: 58px 66px 42px;
+        display: flex; flex-direction: column; align-items: center;
+        text-align: center; color: #3d1f0b; font-family: 'Abhaya Libre', serif;
+        background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
         transform: translateZ(0);
     }
-
-    .decree-inner {
-        width: 100%;
-        height: var(--paper-h);
-        padding: 58px 66px 42px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        color: #3d1f0b;
-        font-family: 'Abhaya Libre', serif;
-        background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
-    }
-
+    
     .dc-sri { font-weight: 800; font-size: 27px; letter-spacing: 0.02em; margin-bottom: 3px; text-shadow: 0 1px 0 rgba(255,240,214,0.5), 0 0 2px rgba(45,22,8,0.4); }
     .dc-rule { display: flex; align-items: center; gap: 8px; color: #a9812f; margin: 2px 0 9px; font-size: 12px; }
     .dc-rule::before, .dc-rule::after { content: ""; height: 1px; width: 52px; background: linear-gradient(90deg, transparent, #a9812f, transparent); }
@@ -225,18 +212,15 @@
     .dc-conj { font-family: 'Pinyon Script', cursive; font-size: 26px; color: #a9812f; margin: 3px 0; line-height: 1; }
     .dc-join { font-family: 'Abhaya Libre', serif; font-style: italic; font-size: 13.5px; color: #5e3a1f; margin: 8px auto 0; max-width: 30ch; }
     .dc-body { font-family: 'Abhaya Libre', serif; font-size: 14.5px; line-height: 1.6; color: #5e3a1f; max-width: 30ch; margin: 9px auto 0; text-shadow: 0 1px 0 rgba(255,240,214,0.3); }
-    
-    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+    .dc-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin: 13px auto 0; width: 100%; box-sizing: border-box; }
     .dc-row2 { margin-top: 13px; } .dc-row2 .b { flex: 0 1 auto; text-align: center; }
     .dc-row1 { margin-top: 9px; } .dc-row1 .b { flex: 1 1 100%; text-align: center; }
     .dc-meta .b { flex: 0 1 auto; min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
-    .dc-meta .v, .dc-meta .e, .dc-meta .l { max-width: 100%; overflow-wrap: anywhere; }
     @media (max-width: 430px) { .dc-meta { gap: 6px 14px; } }
     .dc-meta .l { font-family: 'Gemunu Libre', serif; font-size: 10px; letter-spacing: 0.12em; color: #7c5326; }
     .dc-meta .v { font-family: 'Abhaya Libre', serif; font-weight: 700; font-size: 15px; color: #3d1f0b; }
     .dc-meta .e { font-family: 'Playfair Display', serif; font-style: italic; font-size: 10px; color: #6f421f; }
     .dc-poruwa { font-family: 'Gemunu Libre', serif; font-size: 11px; letter-spacing: 0.04em; color: #7c5326; margin: 11px auto 0; max-width: 33ch; line-height: 1.4; }
-    
     .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     
     html.vv-zoom .scroll-body-wrapper, html.vv-zoom .scroll-cylinder, html.vv-zoom .cylinder-cap, html.vv-zoom .embossed-seal { filter: none !important; }
@@ -247,8 +231,9 @@
 
     <svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
         <defs>
+            <!-- SVG පෙරහන් සංඛ්‍යාතය අඩු කර ජංගම උපාංග සඳහා ප්‍රශස්ත කර ඇත -->
             <filter id="paper-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" /> <!-- Reduced Octaves for performance -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
                 <feDiffuseLighting in="noise" lightingColor="#ffe7cc" surfaceScale="3.8" result="light">
                     <feDistantLight azimuth="45" elevation="55" />
                 </feDiffuseLighting>
@@ -256,12 +241,12 @@
             </filter>
 
             <filter id="edge-fray-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="3" seed="28" result="tornNoise" /> <!-- Reduced Octaves -->
+                <feTurbulence type="turbulence" baseFrequency="0.065" numOctaves="2" seed="28" result="tornNoise" /> 
                 <feDisplacementMap in="SourceGraphic" in2="tornNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
             <filter id="edge-fray-light" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
-                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" seed="14" result="tornNoiseLight" /> <!-- Reduced Octaves -->
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1" seed="14" result="tornNoiseLight" />
                 <feDisplacementMap in="SourceGraphic" in2="tornNoiseLight" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             </filter>
 
@@ -295,7 +280,6 @@
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
                     </svg>
                 </div>
-                
                 <div class="scroll-body-wrapper">
                     <div class="scroll-flat-paper">
                         <div class="embossed-seal">
@@ -313,7 +297,6 @@
                         <div class="scroll-decorations"></div>
                     </div>
                 </div>
-                
                 <div class="decree-overlay" aria-hidden="false">
                     <div class="decree-inner">
                         <div class="dc-sri" data-dc="sri">ශ්‍රී</div>
@@ -337,7 +320,6 @@
                         <div class="dc-swasti" data-dc="swasti"></div>
                     </div>
                 </div>
-
                 <div class="scroll-cylinder bottom">
                     <svg class="cylinder-cap left" viewBox="0 0 50 100">
                         <ellipse cx="25" cy="50" rx="24" ry="48" fill="#1b0c03" />
@@ -350,19 +332,19 @@
                         <ellipse cx="25" cy="50" rx="4.5" ry="11" fill="#000" />
                     </svg>
                 </div>
-
             </div>
         </div>
     </div>
 
+    <!-- දත්ත සහ අන්තර්ගතය සම්බන්ධ කරන ස්ක්‍රිප්ට් එක -->
     <script>
     (function(){
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
+
       var C = {
         si: { sri:"ශ්‍රී", eyebrow:"සුබ විවාහ මංගල්‍යය", brideParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය දියණිය වූ,", brideName:"කෞශානි", groomParents:"මහත්මා සහ එම මැතිනියගේ ආදරණීය පුත් වූ,", groomName:"ගෞරව", join:"සමඟ අතිනත ගැනීමේ ප්‍රීතිය නිමිත්තෙන්,", body:"මෙම සුවිශේෂී මංගල මොහොත අප සමඟ සැමරීමට ඔබ සැමගේ ගෞරවනීය සහභාගීත්වය සාදරයෙන් අපේක්ෂා කරමු.", lDate:"දිනය", lTime:"වේලාව", lVenue:"ස්ථානය", date:"2028 ජනවාරි 12 වන බදාදා", time:"පෙ.ව. 9.00 සිට", venue:"එපිටෝම් හෝටලය", city:"කුරුණෑගල", poruwa:"පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — පෙ.ව. 09.27ට", swasti:"ස්වස්ති සිද්ධම්", cue:"සෙමින් පහළට" },
-        en: { sri:"✦", eyebrow:"The Honour of Your Presence is Requested", brideParents:"the beloved daughter of Mr. & Mrs.", brideName:"Kaushani", groomParents:"the beloved son of Mr. & Mrs.", groomName:"Gaurawa", join:"on the joyous occasion of their marriage,", body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.", lDate:"Date", lTime:"Time", lVenue:"Venue", date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala", poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.", swasti:"Swasti Siddham", cue:"Scroll to unfurl" },
-        ta: { sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா", brideParents:"அன்பு பெற்றோரின் அன்பு மகள்,", brideName:"கௌஷானி", groomParents:"அன்பு பெற்றோரின் அன்பு மகன்,", groomName:"கௌரவ", join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,", body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.", lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்", date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்", poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு", swasti:"ஸ்வஸ்தி சித்தம்", cue:"மெதுவாக கீழே" }
+        en: { sri:"✦", eyebrow:"The Honour of Your Presence is Requested", brideParents:"the beloved daughter of Mr. & Mrs.", brideName:"Kaushani", groomParents:"the beloved son of Mr. & Mrs.", groomName:"Gaurawa", join:"on the joyous occasion of their marriage,", body:"We most warmly and respectfully request the honour of your presence to celebrate this special moment with us.", lDate:"Date", lTime:"Time", lVenue:"Venue", date:"Wednesday, 12th January 2028", time:"9.00 a.m. onwards", venue:"The Epitome Hotel", city:"Kurunegala", poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.", swasti:"Swasti Siddham", cue:"Scroll to unfurl" }
       };
 
       var live = {};
@@ -376,8 +358,10 @@
         var mc = document.querySelector('.scroll-master-container');
         var inner = document.querySelector('.decree-inner');
         if(!mc || !inner) return 0;
-        var prevH = inner.style.height; inner.style.height = 'auto';
-        var C = inner.scrollHeight; inner.style.height = prevH;
+        var prevH = inner.style.height;
+        inner.style.height = 'auto';
+        var C = inner.scrollHeight;
+        inner.style.height = prevH;
         var paper = Math.max(560, Math.round(C + 120));
         mc.style.setProperty('--paper-h', paper + 'px');
         var prevP = mc.style.getPropertyValue('--unroll-progress');
@@ -398,33 +382,38 @@
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
           lastNeeded = needed;
-          if(window.parent && window.parent !== window){ window.parent.postMessage({ __sannasa:'height', h: needed }, '*'); }
+          if(window.parent && window.parent !== window){
+            window.parent.postMessage({ __sannasa:'height', h: needed }, '*');
+          }
         }catch(_){}
       }
       window.__fitSannasa = fitSannasa;
-
+      
       function fitSannasaOnResize(){
         if(window.innerWidth === lastWidth) return; 
-        lastWidth = window.innerWidth; fitSannasa(); 
+        lastWidth = window.innerWidth;
+        fitSannasa(); 
       }
 
       function render(){
-        var l = lang(), t = C[l];
+        var l = lang(), t = C[l] || C['si'];
         try{ document.documentElement.lang = l; }catch(_){}
         set('sri', ov('sri') || t.sri); set('eyebrow', ov('eyebrow') || t.eyebrow); set('conj', '✦');
-        function joinFather(fk, pk, fallback){ var f = String(ov(fk) || plain(fk) || '').trim(), ph = String(ov(pk) || fallback || '').trim(); return f ? (f + ' ' + ph) : ph; }
+        function joinFather(fk, pk, fallback){ var f = String(ov(fk) || plain(fk) || '').trim(); var ph = String(ov(pk) || fallback || '').trim(); return f ? (f + ' ' + ph) : ph; }
         set('brideParents', joinFather('brideFather','brideParents', t.brideParents));
         set('brideName', ov('brideName') || plain('brideName') || t.brideName);
         set('groomParents', joinFather('groomFather','groomParents', t.groomParents));
         set('groomName', ov('groomName') || plain('groomName') || t.groomName);
-        set('join', ov('join') || t.join); set('body', ov('sannasaBody') || ov('invite') || t.body);
+        set('join', ov('join') || t.join);
+        set('body', ov('sannasaBody') || ov('invite') || t.body);
         set('lDate', ov('lDate') || t.lDate); set('lTime', ov('lTime') || t.lTime); set('lVenue', ov('lVenue') || t.lVenue);
         set('vDate', ov('date') || t.date); set('vTime', ov('time') || t.time); set('vVenue', ov('venue') || plain('venue') || t.venue);
         var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
         set('vCity', ov('city') || plain(cityKey) || t.city);
-        set('poruwa', ov('poruwa') || t.poruwa); set('swasti', t.swasti); 
+        set('poruwa', ov('poruwa') || t.poruwa);
+        set('swasti', t.swasti); 
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
-        try{ fitSannasa(); }catch(_){}
+        try{ fitSannasa(); }catch(_){} 
       }
       render();
       window.addEventListener('load', fitSannasa, { passive:true });
@@ -433,25 +422,10 @@
       setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
       window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='hs_lang') render(); });
 
-      Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
-        var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
-        m[1].onSnapshot(m[1].doc(db,"site","content"), function(snap){
-          var d = snap.exists() ? (snap.data()||{}) : {}; live = d || {};
-          if (live.dateISO && !live.dateSi && !live.dateEn){
-            try{ var dt = new Date(live.dateISO); if(!isNaN(dt)){ live.dateSi = dt.toLocaleDateString('si-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); live.dateEn = dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); } }catch(_){}
-          }
-          render();
-        }, function(){});
-      }).catch(function(){});
-
-      if (window.visualViewport){
-        var vv = window.visualViewport;
-        var z = function(){ document.documentElement.classList.toggle('vv-zoom', (vv.scale||1) > 1.25); };
-        vv.addEventListener('resize', z, {passive:true}); vv.addEventListener('scroll', z, {passive:true}); z();
-      }
     })();
     </script>
 
+    <!-- ඩෙල්ටා-කාලය මත පදනම් වූ භෞතික විද්‍යා එන්ජිම -->
     <script>
     (function(){
       var vp = document.querySelector('.scroll-viewport');
@@ -462,36 +436,36 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
+      function setProgress(p){ mc.style.setProperty('--unroll-progress', p); }
+
       var framed = (window !== window.top);
       var sameOriginFrame = false;
-      if(framed){ try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; } }
-
-      function runFallbackReveal(){
-        var played = false;
-        function play(){ if(played) return; played = true; vp.classList.add('unrolled'); mc.style.setProperty('--unroll-progress', '1'); }
-        if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
-        try{ var io = new IntersectionObserver(function(entries){ for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } } }, { threshold: 0.18 }); io.observe(vp); }catch(_){ play(); }
-        setTimeout(play, 4000);
+      if(framed){
+        try{ sameOriginFrame = !!window.frameElement; }catch(_){ sameOriginFrame = false; }
       }
-      if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      var lerpSpeed = 0.18; 
-      var current = 0, target = 0, lastRendered = -1;
+      var lerpSpeed = 0.12; 
+      var current = 0, target = 0;
       var extraPx = 480, pinPx = 48; 
       var running = false, rafId = null;
-      var parentProgress = 0; 
+      var parentProgress = 0;
+      var lastTime = 0; 
 
       if(sameOriginFrame){
         window.addEventListener('message', function(e){
           var d = e && e.data;
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
-          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)'; 
+          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
         }, { passive: true });
       }
 
-      function outerHeight(){ try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){} return window.innerHeight || 700; }
-      if(!framed){ scene.classList.add('pin-fixed'); }
+      function outerHeight(){
+        try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
+        return window.innerHeight || 700;
+      }
+
+      if(!framed){ scene.classList.add('pin-fixed'); } 
 
       function reflow(){
         try{
@@ -501,54 +475,73 @@
           pinPx   = Math.max(24, Math.round(oh * 0.08));
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
-          if(!framed){ scene.style.top = pinPx + 'px'; }
+          if(!framed){ scene.style.transform = 'translate3d(0, ' + pinPx + 'px, 0)'; }
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
         }catch(_){}
       }
-      window.__reflowScrollEngine = reflow; reflow();
+      window.__reflowScrollEngine = reflow;
+      reflow();
 
       function computeTargetProgress(){
         if(reduceMotion) return 1;
-        if(sameOriginFrame){ return parentProgress; } 
-        else { var scrollTop = window.scrollY || document.documentElement.scrollTop || 0; return extraPx > 0 ? Math.max(0, Math.min(1, scrollTop / extraPx)) : 1; }
+        if(sameOriginFrame){
+          return parentProgress;
+        } else {
+          var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+          return extraPx > 0 ? clampNum(scrollTop / extraPx, 0, 1) : 1;
+        }
       }
+      
+      function clampNum(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
-      var topCyl = document.querySelector('.scroll-cylinder.top');
-      var botCyl = document.querySelector('.scroll-cylinder.bottom');
-      var tl = topCyl ? topCyl.querySelector('.cylinder-cap.left') : null, tr = topCyl ? topCyl.querySelector('.cylinder-cap.right') : null;
-      var bl = botCyl ? botCyl.querySelector('.cylinder-cap.left') : null, br = botCyl ? botCyl.querySelector('.cylinder-cap.right') : null;
+      function tick(time){
+        if (!lastTime) lastTime = time;
+        var deltaTime = time - lastTime;
+        lastTime = time;
 
-      function tick(){
+        if (deltaTime > 100) deltaTime = 16.66;
+        var timeScale = deltaTime / 16.666;
+        if (timeScale > 3) timeScale = 3; 
+
         target = computeTargetProgress();
         var diff = target - current;
-        current += diff * lerpSpeed;
-        if(Math.abs(diff) < 0.0004) current = target;
-        var progress = Math.max(0, Math.min(1, current));
         
-        // Optimize DOM Writes: Only update if changed significantly
-        if (Math.abs(lastRendered - progress) > 0.001 || progress === 1 || progress === 0) {
-            mc.style.setProperty('--unroll-progress', progress);
-            var deg = progress * 720;
-            if(tl) tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
-            if(tr) tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
-            if(bl) bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
-            if(br) br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
-            lastRendered = progress;
-            vp.classList.toggle('unrolled', progress > 0.92);
-        }
+        current += diff * (lerpSpeed * timeScale);
+        
+        if(Math.abs(diff) < 0.0004) current = target;
+        var progress = clampNum(current, 0, 1);
+        setProgress(progress);
+        
+        vp.classList.toggle('unrolled', progress > 0.92);
         if(running) rafId = requestAnimationFrame(tick);
       }
 
-      function start(){ if(running) return; running = true; current = computeTargetProgress(); if(!rafId) rafId = requestAnimationFrame(tick); }
+      function start(){
+        if(running) return; running = true;
+        current = computeTargetProgress();
+        var p = clampNum(current, 0, 1);
+        setProgress(p); 
+        lastTime = 0; 
+        if(!rafId) rafId = requestAnimationFrame(tick);
+      }
+      
       function stop(){ running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
 
-      if(reduceMotion){ mc.style.setProperty('--unroll-progress', '1'); vp.classList.add('unrolled'); return; }
+      if(reduceMotion){
+        setProgress(1); vp.classList.add('unrolled');
+        return;
+      }
 
-      if(!framed){ start(); }
+      if(!framed){ start(); } 
       else if('IntersectionObserver' in window){
-        try{ var io2 = new IntersectionObserver(function(entries){ for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); } }, { rootMargin: '800px 0px 800px 0px' }); io2.observe(vp); }catch(_){ start(); }
+        try{
+          var io2 = new IntersectionObserver(function(entries){
+            for(var i=0;i<entries.length;i++){ entries[i].isIntersecting ? start() : stop(); }
+          }, { rootMargin: '800px 0px 800px 0px' });
+          io2.observe(vp);
+        }catch(_){ start(); }
       } else { start(); }
     })();
     </script>
