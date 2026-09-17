@@ -786,7 +786,13 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   height: auto;              /* app.js (height message) sets the exact content-fit height */
   min-height: 420px;         /* pre-measurement fallback only, before the first height message */
   border: 0;
-  background: transparent;
+  /* Matches sannasa.html's own body background (#030303) exactly. Not
+     transparent: an iframe's OWN document starts as an opaque white
+     about:blank canvas before it navigates to sannasa.html and that
+     document's CSS paints — the outer element's `background` is what shows
+     through during that gap, so `transparent` let the browser's white
+     default flash through on every load, worst on a slow connection. */
+  background: #030303;
   pointer-events: none;
   /* No transition here on purpose: the real height arrives within the first
      load cycle, well before a visitor can have scrolled this far down — an
