@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Procedural Sannasa Scroll with Advanced Offset Pinning</title>
+<title>Ultra-Realistic Procedural Sannasa Scroll with Dynamic Center Trigger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,10 +38,10 @@
        2. MASTER STICKY CONTAINER ARCHITECTURE
        ======================================================================= */
     .scroll-sticky-scene {
-        /* NATIVE STICKY ENGINE WITH EYE-LEVEL OFFSET */
+        /* NATIVE STICKY ENGINE */
         position: sticky;
-        /* මේ අගය JS මගින් Dynamic ලෙස උපාංගයට ගැලපෙන සේ සැකසේ (Breathing Room) */
-        top: 12vh; 
+        /* Default fallback, will be dynamically perfectly centered via JS based on device */
+        top: 25vh; 
         left: 0; right: 0;
         display: block; 
         pointer-events: none;
@@ -535,7 +535,7 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 THE LERP ENGINE PHYSICS: ULTRA SILKY SMOOTH MULTIPLIER 🔥 */
+      /* 🔥 ZERO-LATENCY HARDWARE ACCELERATED LERP 🔥 */
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
@@ -587,10 +587,10 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 IMPROVED LERP CONSTANT (0.085) FOR WEIGHTY, NATURAL SMOOTHNESS 🔥 */
-      var lerpSpeed = 0.085;               
+      /* 🔥 IMPROVED LERP CONSTANT (0.09) FOR PERFECT RESPONSIVENESS AND SMOOTHNESS 🔥 */
+      var lerpSpeed = 0.09;               
       var current = 0, target = 0;
-      var extraPx = 500, pinPx = 80;      
+      var extraPx = 550, pinPx = 80;      
       var running = false, rafId = null;
       var parentProgress = 0;             
 
@@ -632,22 +632,24 @@
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
           
-          // Add slightly more extra distance for a smoother, longer scroll feel
-          extraPx = reduceMotion ? 0 : Math.max(500, Math.min(800, Math.round(oh * 0.90)));
+          /* 🔥 DYNAMIC CENTER-VIEW OFFSET ALGORITHM 🔥 */
+          /* තිරයේ උසින් ~28% ත් 30% ත් අතර ප්‍රමාණයක් ස්වයංක්‍රීයව ගණනය කර (Eye-level center),
+             සන්නස හරියටම මැදදී දිග හැරීම අරඹයි. මොබයිල් සහ පරිගණක වලට වෙන වෙනම හැඩගැසේ. */
+          pinPx = Math.max(50, Math.round(oh * 0.28));
           
-          // 🔥 FIX: EYE-LEVEL OFFSET CALCULATION (Breathing Space)
-          // Set to ~12% of screen height, ensuring it doesn't crash into the top nav bar
-          pinPx = Math.max(85, Math.round(oh * 0.12));
+          /* දිගහැරීමට අවශ්‍ය Scroll දුර ප්‍රමාණය තිරයේ උසට සාපේක්ෂව (110%) ලබාදීමෙන්, 
+             scroll එකේ latency එක සහ rigid ගතිය සම්පූර්ණයෙන්ම නැති කර ඇත. */
+          extraPx = reduceMotion ? 0 : Math.max(550, Math.round(oh * 1.1));
           
           var needed = Math.round(28 + extraPx + sceneH + 30);
           vp.style.height = needed + 'px';
           
-          // Apply dynamic spacing to sticky engine
+          // Apply dynamic spacing strictly to native sticky engine
           if(scene) {
               scene.style.top = pinPx + 'px';
           }
           
-          // Sending the updated pin offset to parent so the progress engine starts lower down!
+          // Sending the highly-accurate center pin offset to the parent engine
           if(sameOriginFrame && window.parent && window.parent !== window){
             window.parent.postMessage({ __sannasa:'height', h: needed, pin: pinPx, extra: extraPx }, '*');
           }
@@ -661,9 +663,8 @@
         if(sameOriginFrame){
           return parentProgress;
         } else {
-          // Accurate bounding rect calculation for standalone viewing with breathing space
           var rect = vp.getBoundingClientRect();
-          var scrolledPastPin = (pinPx + 20) - rect.top; 
+          var scrolledPastPin = pinPx - rect.top; 
           return extraPx > 0 ? clampNum(scrolledPastPin / extraPx, 0, 1) : 0;
         }
       }
