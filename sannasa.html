@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa with Zero Cropping & Perfect Fit</title>
+<title>Ultra-Realistic Sannasa Full Unroll & Seamless Integration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,10 +18,9 @@
     html, body {
         margin: 0;
         padding: 0;
-        background-color: transparent; 
+        background-color: transparent !important; 
         font-family: sans-serif;
         color: #fff;
-        /* SCROLL CHAINING FIX */
         overflow: hidden; 
         touch-action: pan-y;
     }
@@ -29,10 +28,8 @@
     .scroll-viewport {
         position: relative;
         width: 100%;
-        clip-path: inset(0); 
-        /* 🔥 FIX: උඩින් 28px සහ යටින් Shadow එකට අවශ්‍ය 20px හරියටම ලබා දී ඇත 🔥 */
-        padding: 28px 0 20px; 
-        background-color: transparent; 
+        background-color: transparent !important; 
+        padding: 28px 0 0px;
     }
 
     /* =======================================================================
@@ -66,14 +63,10 @@
         margin: 0 auto; 
         width: 100%;
         max-width: 650px;
-        /* 124px යනු උඩ සහ යට සිලින්ඩර වල උසට අවශ්‍ය ඉඩ ප්‍රමාණයයි */
         height: calc(var(--paper-h) + 124px); 
         perspective: 1500px; 
         transform-style: preserve-3d;
-        
-        /* TOUCH TRAPPING FIX */
         pointer-events: none; 
-        
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
@@ -111,7 +104,6 @@
             url('#paper-grain'), 
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
-        /* පහළ රෝලයේ යථාර්ථවාදී Shadow එකක් ඇත. මෙය දැන් කැපෙන්නේ නැත */
         box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
         transform: translate3d(0, 0, 0); 
     }
@@ -409,7 +401,7 @@
           join:"இணைந்திடும் இம்மங்கள தருணத்தை முன்னிட்டு,",
           body:"இந்த சிறப்பு மங்கள தருணத்தை எங்களுடன் கொண்டாட தங்கள் மதிப்பிற்குரிய வருகையை அன்புடன் எதிர்பார்க்கிறோம்.",
           lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
-          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்",
+          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"மு.ப. 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", குருநாகல்:"குருநாகல்",
           poruwa:"பொருவ சடங்கிற்கான சுப முகூர்த்தம் — மு.ப. 09.27 மணிக்கு",
           swasti:"ஸ்வஸ்தி சித்தம்",
           cue:"மெதுவாக கீழே"
@@ -424,7 +416,7 @@
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
-      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER 🔥 */
+      /* 🔥 EXACT FULL-UNROLL CONTENT WRAPPER 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -446,7 +438,7 @@
         try{
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
           var sceneH = measureSceneHeight();
-          var needed = Math.round(28 + sceneH + 20); /* 20px added purely to secure bottom elements */
+          var needed = Math.round(28 + sceneH + 124); /* Full container height including cylinders */
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
@@ -639,21 +631,25 @@
           
           pinPx = 0; 
           triggerPx = Math.round(oh * 0.95);
-          extraPx = reduceMotion ? 0 : Math.max(300, Math.round(oh * 0.7)); 
+          
+          /* 🔥 FULL UNROLL RUNWAY FIX: 
+             සන්නස සම්පූර්ණයෙන්ම 100% ක් දිග හැරීමට ප්‍රමාණවත් Scroll දුරක් (extraPx) ලබා දී ඇත. 
+             මෙමඟින් Scroll කරද්දී අඩුවෙන් දිග හැරීම සම්පූර්ණයෙන්ම වැළකේ. */
+          extraPx = reduceMotion ? 0 : Math.max(500, Math.round(oh * 1.0)); 
           
           var needed;
           if (!framed) {
-              needed = Math.round(sceneH + extraPx + 48); 
+              needed = Math.round(sceneH + extraPx);
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'sticky';
                   scene.style.top = '0px';
               }
           } else {
-              /* 🔥 THE ELITE FIX: 
-                 සන්නසේ සම්පූර්ණ උසට ඉහළ 28px පඩින්ගය සහ පහළ රෝලයේ Shadow එකට අවශ්‍ය 20px එකතු කර
-                 Iframe එකේ උස හරියටම Pixel Perfect ලෙස හදා ඇත. කිසිදු කැපීමක් හෝ හිඩැසක් නොමැත. */
-              needed = Math.round(sceneH + 48); 
+              /* 🔥 SEAMLESS INTEGRATION FIX (REMOVING BLACK LINE):
+                 Iframe එකේ උස සන්නසේ සම්පූර්ණ උසට (sceneH + 28px padding + 124px cylinders) හරියටම සමාන කර ඇත. 
+                 කිසිදු කළු රේඛාවක් හෝ කපනයන් (Cropping) මෙහි සිදු නොවේ. */
+              needed = Math.round(sceneH + 28 + 124); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
