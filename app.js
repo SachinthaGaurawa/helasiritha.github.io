@@ -742,10 +742,25 @@ function AG_ICON(k) {
 let revObserver = null;
 function observeReveals() {
   if (!("IntersectionObserver" in window)) { $$(".reveal").forEach(e => e.classList.add("in")); return; }
+  /* rootMargin used to SHRINK the trigger zone (-8% off the bottom edge), so an
+     element only counted as "intersecting" once it was already well inside the
+     viewport. On a slow, deliberate scroll that's invisible — the observer still
+     fires while there's plenty of scroll motion left for the 1s fade to ride
+     along with. But a fast fling covers hundreds of pixels between browser
+     ticks, so by the time the (now-satisfied) intersection condition is finally
+     checked, the element is often already most of the way up the screen —
+     confirmed directly (a MutationObserver on the .in class showed it landing
+     ~55px from the TOP of the viewport, not the bottom) — leaving the fade to
+     play out on an element that looks "already there", i.e. no visible reveal
+     at all. Growing the margin OUTWARD instead (+35% past the bottom edge) and
+     dropping the threshold to a sliver makes the observer fire while the
+     element is still below the fold, so the fade has genuine room to run
+     before — or as — it actually comes into view, on a fast scroll same as
+     slow. */
   if (!revObserver) revObserver = new IntersectionObserver((es) => {
     es.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
       .forEach((e, i) => { e.target.style.transitionDelay = (i * 0.08) + "s"; e.target.classList.add("in"); revObserver.unobserve(e.target); });
-  }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+  }, { threshold: 0.01, rootMargin: "0px 0px 35% 0px" });
   $$(".reveal:not(.in)").forEach(e => revObserver.observe(e));
 }
 
