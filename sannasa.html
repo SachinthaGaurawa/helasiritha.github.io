@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa - Instant Pre-Load Zero Latency</title>
+<title>Ultra-Realistic Sannasa - Perfect Text Clearance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,7 +42,6 @@
         display: block; 
         pointer-events: none;
         will-change: transform;
-        /* 🔥 ZERO LATENCY FIX: සම්පූර්ණයෙන්ම දර්ශනය වී ඇත (No JS fading) 🔥 */
         opacity: 1 !important; 
         transform: translateZ(0); 
     }
@@ -60,7 +59,7 @@
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
-        box-shadow: none; /* Shadow ඉවත් කර ඇත */
+        box-shadow: none; 
     }
 
     /* =======================================================================
@@ -95,7 +94,6 @@
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        /* 🔥 PURE CSS PRE-LOAD: ආරම්භයේදීම යට රෝලය ඉහළම ස්ථානයේ හිර කර ඇත 🔥 */
         transform: translate3d(0, 0px, 0); 
     }
 
@@ -106,7 +104,6 @@
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        /* 🔥 PURE CSS PRE-LOAD: 100% ක් අකුලා සඟවා ඇත (0ms load) 🔥 */
         clip-path: inset(0 0 100% 0); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
@@ -179,7 +176,6 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
-        /* 🔥 PURE CSS PRE-LOAD 🔥 */
         clip-path: inset(0 0 100% 0); 
         will-change: clip-path;
         pointer-events: none;
@@ -189,7 +185,9 @@
 
     .decree-inner {
         width: 100%; height: var(--paper-h);
-        padding: 58px 66px 20px; 
+        /* 🔥 BUG FIX: යට ලී රෝලයෙන් අකුරු කැපීම වැළැක්වීමට Bottom Padding එක 110px දක්වා වැඩි කර ඇත. 
+           දැන් "ස්වස්ති සිද්ධම්" යටින් රෝලයට ඉහළින් ආරක්ෂිත ඉඩක් පවතිනු ඇත. 🔥 */
+        padding: 58px 66px 110px; 
         display: flex; flex-direction: column; align-items: center; 
         justify-content: flex-start; 
         text-align: center;
@@ -314,6 +312,33 @@
 
     <script>
     (function(){
+      var vp = document.querySelector('.scroll-viewport');
+      var mc = document.getElementById('scrollMaster');
+      var scene = document.querySelector('.scroll-sticky-scene');
+      var wrapper = document.querySelector('.scroll-body-wrapper');
+      var overlay = document.querySelector('.decree-overlay');
+      var topCyl = document.querySelector('.scroll-cylinder.top');
+      var bottomCyl = document.querySelector('.scroll-cylinder.bottom');
+      
+      function applyPhysicsFrame(p){ 
+        var paperH = parseFloat(mc ? mc.style.getPropertyValue('--paper-h') : 740) || 740;
+        var ty = p * paperH;
+        var invPct = ((1 - p) * 100).toFixed(3);
+        var clip = 'inset(0 0 ' + invPct + '% 0)';
+        
+        if(wrapper) wrapper.style.clipPath = clip;
+        if(overlay) overlay.style.clipPath = clip;
+        if(bottomCyl) {
+            bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
+            bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
+        }
+      }
+      
+      // Load වීමටත් පෙර (Synchronously) Physics 0 තැනින් අරඹන්න
+      if(mc && wrapper && bottomCyl) {
+          applyPhysicsFrame(0);
+      }
+
       var SDK = "https://www.gstatic.com/firebasejs/12.14.0";
       var cfg = { apiKey:"AIzaSyCC18zyof_ORDkKwxAMJK4G3Atu2AkWodM", authDomain:"helasiritha-official.firebaseapp.com", projectId:"helasiritha-official", storageBucket:"helasiritha-official.firebasestorage.app", messagingSenderId:"993883662089", appId:"1:993883662089:web:b583123218df07be9155d8" };
 
@@ -355,8 +380,6 @@
       function plain(key){ var v=live[key]; return (v!=null && String(v).trim()!=='') ? String(v) : ''; }
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
-      var mc = document.getElementById('scrollMaster');
-      var vp = document.querySelector('.scroll-viewport');
       
       function measureSceneHeight(){
         var inner = document.querySelector('.decree-inner');
@@ -422,7 +445,6 @@
         try{ fitSannasa(); }catch(_){} 
       }
       
-      // Initial Render & Measurement
       render();
       fitSannasa(); 
       
@@ -431,7 +453,6 @@
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
       setTimeout(fitSannasa, 300); setTimeout(fitSannasa, 1200);
 
-      // ASYNC Firebase Load (Does not block initial HTML/CSS render)
       setTimeout(function(){
           Promise.all([ import(SDK+"/firebase-app.js"), import(SDK+"/firebase-firestore.js") ]).then(function(m){
             var app = m[0].initializeApp(cfg), db = m[1].getFirestore(app);
@@ -450,7 +471,7 @@
               render();
             }, function(){});
           }).catch(function(){});
-      }, 50); // Small 50ms delay ensures UI is painted instantly
+      }, 50); 
     })();
     </script>
 
