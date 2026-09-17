@@ -18,11 +18,11 @@
     html, body {
         margin: 0;
         padding: 0;
-        background-color: #030303;
+        background-color: transparent; /* FIXED: Blends with parent page seamlessly */
         font-family: sans-serif;
         color: #fff;
         overflow-x: hidden;
-        overscroll-behavior-y: none; /* IFRAME ISOLATION: prevents scroll bleed to parent */
+        overscroll-behavior-y: none; /* IFRAME ISOLATION */
     }
 
     .scroll-viewport {
@@ -31,7 +31,7 @@
         height: 900px;
         overflow: hidden;
         padding: 28px 0 30px;
-        background-image: radial-gradient(circle at center, #181818 0%, #030303 100%);
+        background-color: transparent; /* FIXED: Removed harsh gradient during load */
     }
 
     /* =======================================================================
@@ -42,9 +42,25 @@
         left: 0; right: 0; top: 0;
         display: block; 
         pointer-events: none;
-        will-change: transform;
+        will-change: transform, opacity;
         transform: translate3d(0, 0, 0); 
-        backface-visibility: hidden; /* Fixes micro-stutters on some devices */
+        backface-visibility: hidden;
+        
+        /* SYNC-LOCK: Hidden until parent syncs the scroll position */
+        opacity: 0; 
+        transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    
+    /* Revealed smoothly once sync message arrives */
+    .scroll-sticky-scene.synced {
+        opacity: 1;
+    }
+
+    /* FAST INITIAL PAINT: Bypass heavy SVG filters until the scroll is actually visible */
+    .scroll-sticky-scene:not(.synced) .scroll-cylinder,
+    .scroll-sticky-scene:not(.synced) .scroll-body-wrapper,
+    .scroll-sticky-scene:not(.synced) .embossed-seal {
+        filter: none !important;
     }
     
     .scroll-sticky-scene.pin-fixed { 
@@ -53,9 +69,7 @@
     }
 
     .scroll-master-container {
-        /* යකෝ මෙන්න මේකයි අඩුවෙලා තිබ්බේ. Default height එකක් නොදුන්නම මුලින් render වෙන්නේ නෑ! */
         --paper-h: 740px; 
-        
         position: relative;
         margin: 0 auto; 
         width: 100%;
@@ -530,7 +544,6 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 GPU ACCELERATED DOM UPDATES - BYPASSES LAYOUT CALCS 🔥 */
       function setProgress(p){ 
         mc.style.setProperty('--unroll-progress', p); 
         
@@ -564,6 +577,7 @@
           vp.classList.add('unrolled');
           setProgress(1);
           applyCapRotation(1);
+          scene.classList.add('synced');
         }
         if(reduceMotion || !('IntersectionObserver' in window)){ play(); return; }
         try{
@@ -577,7 +591,6 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 LERP SPEED REDUCED TO 0.08 FOR BUTTERY SMOOTH 'SYRUPY' FEEL 🔥 */
       var lerpSpeed = 0.08;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
@@ -591,15 +604,34 @@
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
           scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
+          
+          /* 🔥 ZERO-TELEPORTATION SYNC-LOCK 🔥
+             Only reveal the scene AFTER it receives its true position from the parent */
+          if(!scene.classList.contains('synced')) {
+              current = parentProgress; // Instantly snap internal physics to parent
+              setProgress(current);
+              applyCapRotation(current);
+              scene.classList.add('synced'); // Trigger smooth fade in
+          }
         }, { passive: true });
       }
+
+      /* Safety fallback: If parent never sends a message, fade it in anyway after 800ms */
+      setTimeout(function(){
+          if(scene && !scene.classList.contains('synced')) {
+              scene.classList.add('synced');
+          }
+      }, 800);
 
       function outerHeight(){
         try{ if(sameOriginFrame) return window.parent.innerHeight || 700; }catch(_){}
         return window.innerHeight || 700;
       }
 
-      if(!framed){ scene.classList.add('pin-fixed'); }   
+      if(!framed){ 
+          scene.classList.add('pin-fixed'); 
+          scene.classList.add('synced');
+      }   
 
       function reflow(){
         try{
