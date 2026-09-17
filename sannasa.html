@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa with Automatic Pre-load Exact Fit</title>
+<title>Ultra-Realistic Sannasa with Zero Scroll Trapping & Perfect Fit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,15 +21,18 @@
         background-color: transparent; 
         font-family: sans-serif;
         color: #fff;
-        overflow-x: hidden;
-        overscroll-behavior-y: none;
+        /* 🔥 PERFECT SCROLL CHAINING FIX 🔥
+           Iframe එක ඇතුළේ Scroll වීම නතර කර සියලුම Touch/Wheel Events 
+           ක්ෂණිකව ප්‍රධාන පිටුවට (Main Page) ලබා දීම සඳහා */
+        overflow: hidden; 
+        touch-action: pan-y;
     }
 
     .scroll-viewport {
         position: relative;
         width: 100%;
         clip-path: inset(0); 
-        padding: 28px 0 30px;
+        padding: 28px 0 0px; /* යටින් තිබූ 30px හිඩැස 0px කර ඇත */
         background-color: transparent; 
     }
 
@@ -67,7 +70,11 @@
         height: calc(var(--paper-h) + 124px); 
         perspective: 1500px; 
         transform-style: preserve-3d;
-        pointer-events: auto;
+        
+        /* 🔥 TOUCH TRAPPING FIX 🔥
+           සන්නස උඩින් Touch කළ විට එය ප්‍රධාන පිටුවට ගලා යාමට සලස්වයි */
+        pointer-events: none; 
+        
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
@@ -213,9 +220,9 @@
 
     .decree-inner {
         width: 100%; height: var(--paper-h);
-        padding: 58px 66px 20px; /* Reduced padding for perfect fit */
+        padding: 58px 66px 20px; 
         display: flex; flex-direction: column; align-items: center; 
-        justify-content: flex-start; /* Do not center, let it fit exactly */
+        justify-content: flex-start; 
         text-align: center;
         color: #3d1f0b; font-family: 'Abhaya Libre', serif;
         background: radial-gradient(78% 58% at 50% 42%, rgba(247,226,182,0.26) 0%, transparent 62%);
@@ -417,7 +424,7 @@
 
       var lastNeeded = -1, lastWidth = window.innerWidth;
       
-      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER 🔥 */
+      /* 🔥 100% AUTOMATIC EXACT CONTENT WRAPPER (NO DEAD SPACE) 🔥 */
       function measureSceneHeight(){
         var mc = document.getElementById('scrollMaster');
         var inner = document.querySelector('.decree-inner');
@@ -428,9 +435,9 @@
         var contentHeight = inner.scrollHeight; 
         inner.style.height = prevH;
 
-        // කිසිදු කෘතිම දිගු කිරීමක් (Stretch) හෝ Minimum Height අගයක් මෙහි නැත. 
-        // අකුරු ප්‍රමාණයට පමණක් හරියටම ගැලපෙන සේ කොළයේ දිග හැදේ. (පහළින් ඇති 10px යනු චූටිම ගැප් එකයි)
-        var paper = Math.round(contentHeight + 10); 
+        // සම්පූර්ණයෙන්ම +10 සහ +5 වැනි කෘතිම Margin සියල්ල ඉවත් කර ඇත.
+        // අකුරු වල උසට හරියටම ගැලපෙන සේ පමණක් කොළය සැකසේ.
+        var paper = Math.round(contentHeight); 
         mc.style.setProperty('--paper-h', paper + 'px');
 
         return mc.getBoundingClientRect().height;
@@ -441,7 +448,7 @@
         try{
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
           var sceneH = measureSceneHeight();
-          var needed = Math.round(28 + sceneH + 30);
+          var needed = Math.round(28 + sceneH);
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
@@ -645,10 +652,9 @@
                   scene.style.top = '0px';
               }
           } else {
-              /* 🔥 ZERO DEAD-SPACE FORMULA 🔥 
-                 Iframe එක ඇතුළේ කිසිදු හිඩැසක් තැබීම තහනම් කර ඇත.
-                 හරියටම සන්නසේ උස සහ මිලිමීටරයක කුඩා ගැප් එක (5px) පමණක් මෙහි ඇත. */
-              needed = Math.round(sceneH + 5); 
+              /* 🔥 ABSOLUTE ZERO DEAD-SPACE FORMULA 🔥 
+                 කෘතිමව ලබා දී තිබූ +5px මුළුමනින්ම ඉවත් කර ඇත. */
+              needed = Math.round(sceneH); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
