@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+/* Same canonical-domain guard as index.html — this file is normally only
+   reached through the iframe on helasiritha.vercel.app, but a direct hit on
+   the GitHub Pages mirror (a shared link, a search result) should still
+   land on the real site instead of the mirror. */
+if (/\.github\.io$/i.test(location.hostname)) {
+  var __p = location.pathname.replace(/^\/helasiritha\.github\.io(\/|$)/, "/");
+  location.replace("https://helasiritha.vercel.app" + __p + location.search + location.hash);
+}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultra-Realistic Sannasa - Perfect Text Clearance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
