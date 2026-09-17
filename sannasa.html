@@ -579,7 +579,7 @@
         try{
           var io = new IntersectionObserver(function(entries){
             for(var i=0;i<entries.length;i++){ if(entries[i].isIntersecting){ play(); io.disconnect(); break; } }
-          }, { threshold: 0.18 });
+          }, { threshold: 0.0 });
           io.observe(vp);
         }catch(_){ play(); }
         setTimeout(play, 4000);
