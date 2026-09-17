@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Sannasa Full Unroll & Seamless Integration</title>
+<title>Ultra-Realistic Sannasa Full Unroll & Perfect Fit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Gemunu+Libre:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Serif+Tamil:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -70,7 +70,8 @@
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
-        box-shadow: 0 50px 70px rgba(0,0,0,0.98);
+        /* 🔥 REMOVED THE MASSIVE BLACK DROP SHADOW AS REQUESTED 🔥 */
+        box-shadow: none;
     }
 
     /* =======================================================================
@@ -104,7 +105,9 @@
             url('#paper-grain'), 
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
-        box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
+        /* 🔥 REMOVED THE HEAVY BLACK BLEEDING SHADOW 🔥
+           (Only kept a tiny 3px natural edge shade so the roll doesn't look flat) */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         transform: translate3d(0, 0, 0); 
     }
 
@@ -437,7 +440,7 @@
         try{
           if(window.__reflowScrollEngine){ window.__reflowScrollEngine(); return; }
           var sceneH = measureSceneHeight();
-          var needed = Math.round(28 + sceneH + 124); 
+          var needed = Math.round(28 + sceneH);
           var vp = document.querySelector('.scroll-viewport');
           if(vp) vp.style.height = needed + 'px';
           if(needed === lastNeeded) return;
@@ -534,6 +537,7 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
+      /* ZERO-LATENCY HARDWARE ACCELERATED LERP */
       function applyPhysicsFrame(p){ 
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
@@ -630,8 +634,9 @@
           pinPx = 0; 
           triggerPx = Math.round(oh * 0.95);
           
-          /* 🔥 100% FULL UNROLL FIX: සම්පූර්ණ සන්නසම බාධාවකින් තොරව දිග හැරීමට අත්‍යවශ්‍ය Scroll දුර ප්‍රමාණය (Runway) නිවැරදිව සකසා ඇත. */
-          extraPx = reduceMotion ? 0 : Math.max(700, Math.round(oh * 1.25)); 
+          /* 🔥 100% UNROLL FIX: ලබා දී ඇති extraPx අගය මගින් සම්පූර්ණයෙන්ම දිගහැරෙන තෙක් 
+             scroll කිරීමට ඉඩ ලබාදේ. 🔥 */
+          extraPx = reduceMotion ? 0 : Math.max(500, Math.round(oh * 1.0)); 
           
           var needed;
           if (!framed) {
@@ -642,9 +647,8 @@
                   scene.style.top = '0px';
               }
           } else {
-              /* 🔥 SEAMLESS ZERO-GAP INTEGRATION: 
-                 අර කළු පාට ඉර සම්පූර්ණයෙන්ම ඉවත් කිරීමට Iframe එකේ උස සන්නසේ සැබෑ උසට (sceneH + 28px padding + 124px cylinders) හරියටම ගැලපෙන ලෙස සකසා ඇත. */
-              needed = Math.round(sceneH + 28 + 124); 
+              /* 🔥 THE ELITE FIX: සම්පූර්ණ උස සීමාව නිවැරදි කර ඇත. */
+              needed = Math.round(sceneH + 28); 
               vp.style.height = needed + 'px';
               if(scene) {
                   scene.style.position = 'relative'; 
