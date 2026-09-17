@@ -529,7 +529,6 @@
       var mc = document.getElementById('scrollMaster');
       var scene = document.querySelector('.scroll-sticky-scene');
       
-      /* 🔥 CACHING DOM NODES FOR ZERO-OVERHEAD JS UPDATES 🔥 */
       var wrapper = document.querySelector('.scroll-body-wrapper');
       var overlay = document.querySelector('.decree-overlay');
       var topCyl = document.querySelector('.scroll-cylinder.top');
@@ -544,22 +543,17 @@
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 THE ULTIMATE GPU FIX: DIRECT DOM `.style` UPDATES, NO CSS VARIABLE THRASHING 🔥 */
+      /* 🔥 THE ULTIMATE GPU FIX: SEPARATED PHYSICS FROM PINNING 🔥 */
       function setProgress(p){ 
         var pct = (p * 100).toFixed(3) + '%';
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
         var ty = p * paperH;
         var deg = p * 720;
         
-        // 1. PERFECT SYNC: Pinning transform uses the EXACT same 'p' as the unroll!
-        if(scene) scene.style.transform = 'translate3d(0, ' + (p * extraPx) + 'px, 0)';
-        
-        // 2. Hardware Accelerated Masks
         var clip = 'polygon(0% 0%, 100% 0%, 100% ' + pct + ', 0% ' + pct + ')';
         if(wrapper) wrapper.style.clipPath = clip;
         if(overlay) overlay.style.clipPath = clip;
 
-        // 3. Cylinders & Textures
         if(bottomCyl) {
             bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
             bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
@@ -568,7 +562,6 @@
             topCyl.style.backgroundPositionY = (p * 320) + 'px';
         }
 
-        // 4. Cap Rotations (Moved out of CSS for direct compositor access)
         if(c_tl) c_tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
         if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
         if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
@@ -601,7 +594,7 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      /* 🔥 TIGHTENED LERP SPEED FOR 120Hz DISPLAYS (0.14) 🔥 */
+      /* 🔥 INCREASED LERP SPEED SO IT STAYS TIGHT (0.14) 🔥 */
       var lerpSpeed = 0.14;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
@@ -614,7 +607,8 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
-          /* 🔥 IMPORTANT: NO scene.style.transform HERE! It's handled in setProgress() 🔥 */
+          /* 🔥 BUG FIXED HERE: Pinning is strictly INSTANT, NOT LERP'ed! 🔥 */
+          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
           
           if(!scene.classList.contains('synced')) {
               current = parentProgress;
@@ -677,7 +671,9 @@
         if(Math.abs(diff) < 0.0004) current = target;
         
         var progress = clampNum(current, 0, 1);
-        setProgress(progress); // Everything perfectly synced!
+        
+        /* ONLY the physics variables get LERP'ed */
+        setProgress(progress); 
         
         vp.classList.toggle('unrolled', progress > 0.92);
         if(running) rafId = requestAnimationFrame(tick);
