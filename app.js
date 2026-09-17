@@ -1139,6 +1139,30 @@ function setupBlessings() {
    is intrinsically taller than a laptop viewport (up to +240px), so CSS padding
    alone could never fix it. We measure the real content and scale it down only
    as much as the device needs — nothing is ever cut off.                      */
+/* Viewport height CACHE — captured once, on load, and only ever refreshed on
+   a genuine orientation/width change (see the resize/orientationchange
+   listeners below). fitHero() reads this instead of a live window.innerHeight.
+
+   Why this exists: fitHero() is not only called from the width-guarded
+   resize listener — it is ALSO called from plain setTimeout timers (260ms,
+   1200ms below, to catch a late web-font swap or image reflow) and from
+   document.fonts.ready. Those calls have no resize event to gate on, so
+   they used to read window.innerHeight live. On mobile, if a visitor starts
+   scrolling within that first ~1.2s window, the address bar's own
+   show/hide animation is often still in flight at that exact instant, and
+   window.innerHeight briefly reports a TRANSITIONAL value that matches
+   neither its before nor after state. fitHero() would then compute a zoom
+   scale from that transitional height and snap inner.style.zoom straight to
+   it — a sudden, visible "zoom and jerk" mid-scroll, exactly while the
+   fixed timers or fonts.ready happened to fire. Because the exact timing of
+   the address bar's own animation differs per browser, this only showed up
+   inconsistently across Safari/Chrome/Firefox — never a single reliable
+   repro. Reading a value cached BEFORE any scroll could begin (and frozen
+   through every timer/fonts.ready call afterward) removes the transitional
+   read entirely: the zoom decision is made once, from a stable number, and
+   every later call recomputes the exact same result — a genuine no-op. */
+let cachedViewportH = window.innerHeight;
+
 function fitHero() {
   const hero = document.querySelector(".hero");
   const inner = document.querySelector(".hero-inner");
@@ -1162,7 +1186,7 @@ function fitHero() {
         (parseFloat(ccs.marginTop) || 0) + (parseFloat(ccs.marginBottom) || 0);
     }
   }
-  const avail = (window.innerHeight || 0) - padT - padB - cueH - 4;
+  const avail = cachedViewportH - padT - padB - cueH - 4;
   const natural = inner.scrollHeight;
   if (!avail || !natural || natural <= avail) return;
 
@@ -1171,26 +1195,36 @@ function fitHero() {
     inner.style.zoom = String(k);                 /* affects layout — the grid row shrinks too */
   } else {
     inner.style.transformOrigin = "top center";
-    inner.style.transform = "scale(" + k + ")";
+    inner.style.transform = "scale(" + k + ") translateZ(0)"; /* GPU-composited, hardware-accelerated */
     inner.style.height = Math.round(natural * k) + "px";
   }
 }
 let heroFitT;
 function scheduleHeroFit() { clearTimeout(heroFitT); heroFitT = setTimeout(fitHero, 90); }
-/* fitHero() toggles inner.style.zoom/transform based on window.innerHeight —
-   exactly the property that visibly "zooms" the hero if this re-runs mid-
-   scroll. On mobile, the address bar hiding/showing fires a resize event
-   that changes innerHeight but NOT innerWidth; refitting on that alone was
-   the actual "zoom and jerk" the visitor sees while scrolling past the hero.
-   Only a genuine viewport WIDTH change re-triggers the fit here — a real
-   orientation change still always does, via its own listener below. */
+/* Used only by a genuine width/orientation change: re-reads innerHeight
+   AFTER the same 90ms settle delay (not synchronously at event time, when
+   some browsers haven't finished updating innerHeight for the new
+   orientation yet), THEN caches it, THEN fits — so a real change is still
+   picked up, while every other caller keeps using the frozen baseline. */
+function scheduleHeroFitWithRecache() {
+  clearTimeout(heroFitT);
+  heroFitT = setTimeout(() => { cachedViewportH = window.innerHeight; fitHero(); }, 90);
+}
+/* fitHero() toggles inner.style.zoom/transform based on the cached viewport
+   height above — exactly the property that visibly "zooms" the hero if it
+   changes mid-scroll. On mobile, the address bar hiding/showing fires a
+   resize event that changes innerHeight but NOT innerWidth; refitting on
+   that alone was the original "zoom and jerk" the visitor saw while
+   scrolling past the hero. Only a genuine viewport WIDTH change re-caches
+   and re-triggers the fit here — a real orientation change still always
+   does, via its own listener below. */
 let lastHeroWidth = window.innerWidth;
 window.addEventListener("resize", () => {
   if (window.innerWidth === lastHeroWidth) return;
   lastHeroWidth = window.innerWidth;
-  scheduleHeroFit();
+  scheduleHeroFitWithRecache();
 }, { passive: true });
-window.addEventListener("orientationchange", scheduleHeroFit, { passive: true });
+window.addEventListener("orientationchange", scheduleHeroFitWithRecache, { passive: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleHeroFit);
 
 /* ── adaptive imagery ─────────────────────────────────────────────────────────
