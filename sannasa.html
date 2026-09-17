@@ -67,14 +67,7 @@
     }
 
     .scroll-master-container {
-        /* PROACTIVE OPTIMIZATION: All JS updates are batched into these CSS vars */
         --paper-h: 740px; 
-        --unroll-progress: 0;
-        --clip-pct: 0%;
-        --bg-pos-top: 0px;
-        --bg-pos-bot: 0px;
-        --bot-y: 0px;
-        
         position: relative;
         margin: 0 auto; 
         width: 100%;
@@ -86,8 +79,6 @@
         flex-shrink: 0;
         will-change: transform;
         backface-visibility: hidden;
-        
-        /* THE GPU FIX: Replaced expensive drop-shadow with hardware-accelerated box-shadow */
         box-shadow: 0 50px 70px rgba(0,0,0,0.98);
     }
 
@@ -112,8 +103,6 @@
             linear-gradient(to bottom, #331502 0%, #8e5d32 15%, #fcdcab 35%, #8e5d32 65%, #331502 90%, #140700 100%);
         background-blend-mode: multiply;
         box-shadow: 0 15px 30px -5px rgba(0,0,0,0.85), 0 5px 10px -2px rgba(0,0,0,0.95);
-        /* Driven purely by CSS Var */
-        background-position-y: var(--bg-pos-top);
         transform: translateZ(0);
     }
 
@@ -125,13 +114,11 @@
             linear-gradient(to bottom, #140700 0%, #331502 15%, #fcdcab 50%, #8e5d32 75%, #1a0901 100%);
         background-blend-mode: multiply;
         box-shadow: 0 30px 45px -10px rgba(0,0,0,0.95), 0 12px 20px -5px rgba(0,0,0,0.98);
-        /* Driven purely by CSS Vars */
-        background-position-y: var(--bg-pos-bot);
-        transform: translate3d(0, var(--bot-y), 0); 
+        transform: translate3d(0, 0, 0); 
     }
 
     /* =======================================================================
-       4. CONCENTRIC SPIRAL END-CAPS (Automated via CSS!)
+       4. CONCENTRIC SPIRAL END-CAPS 
        ======================================================================= */
     .cylinder-cap {
         position: absolute;
@@ -146,12 +133,6 @@
     .cylinder-cap.left { left: -14px; }
     .cylinder-cap.right { right: -14px; transform: scaleX(-1); }
 
-    /* CSS driven rotation - zero JS needed! */
-    .scroll-cylinder.top .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
-    .scroll-cylinder.top .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
-    .scroll-cylinder.bottom .cylinder-cap.left { transform: rotate(calc(var(--unroll-progress) * 720deg)) translateZ(0); }
-    .scroll-cylinder.bottom .cylinder-cap.right { transform: scaleX(-1) rotate(calc(var(--unroll-progress) * -720deg)) translateZ(0); }
-
     /* =======================================================================
        5. MAIN UNROLLED PARCHMENT BODY (GPU COMPOSITOR)
        ======================================================================= */
@@ -159,8 +140,7 @@
         position: absolute;
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h); 
-        /* Driven purely by CSS Var */
-        clip-path: polygon(0% 0%, 100% 0%, 100% var(--clip-pct), 0% var(--clip-pct)); 
+        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
         filter: url('#edge-fray-heavy'); 
         will-change: clip-path; 
         transform: translateZ(0);
@@ -232,8 +212,7 @@
         top: 62px; left: 0; right: 0;
         z-index: 5;
         height: var(--paper-h); 
-        /* Driven purely by CSS Var */
-        clip-path: polygon(0% 0%, 100% 0%, 100% var(--clip-pct), 0% var(--clip-pct)); 
+        clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); 
         will-change: clip-path;
         pointer-events: none;
         backface-visibility: hidden;
@@ -459,12 +438,7 @@
         var paper = Math.max(560, Math.round(C + 120));
         mc.style.setProperty('--paper-h', paper + 'px');
 
-        var prevP = mc.style.getPropertyValue('--unroll-progress');
-        mc.style.setProperty('--unroll-progress','1');
-        var R = mc.getBoundingClientRect().height;
-        if(prevP==='') mc.style.removeProperty('--unroll-progress');
-        else mc.style.setProperty('--unroll-progress', prevP);
-        return R;
+        return mc.getBoundingClientRect().height;
       }
       window.__measureSceneHeight = measureSceneHeight;
 
@@ -555,21 +529,50 @@
       var mc = document.getElementById('scrollMaster');
       var scene = document.querySelector('.scroll-sticky-scene');
       
+      /* 🔥 CACHING DOM NODES FOR ZERO-OVERHEAD JS UPDATES 🔥 */
+      var wrapper = document.querySelector('.scroll-body-wrapper');
+      var overlay = document.querySelector('.decree-overlay');
+      var topCyl = document.querySelector('.scroll-cylinder.top');
+      var bottomCyl = document.querySelector('.scroll-cylinder.bottom');
+      var c_tl = topCyl ? topCyl.querySelector('.cylinder-cap.left') : null;
+      var c_tr = topCyl ? topCyl.querySelector('.cylinder-cap.right') : null;
+      var c_bl = bottomCyl ? bottomCyl.querySelector('.cylinder-cap.left') : null;
+      var c_br = bottomCyl ? bottomCyl.querySelector('.cylinder-cap.right') : null;
+      
       if(!vp || !mc || !scene) return;
 
       var reduceMotion = false;
       try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){}
 
-      /* 🔥 THE ULTIMATE GPU FIX: Single node CSS Variable updates! NO MORE DOM THRASHING 🔥 */
+      /* 🔥 THE ULTIMATE GPU FIX: DIRECT DOM `.style` UPDATES, NO CSS VARIABLE THRASHING 🔥 */
       function setProgress(p){ 
-        var pct = (p * 100).toFixed(2) + '%';
+        var pct = (p * 100).toFixed(3) + '%';
         var paperH = parseFloat(mc.style.getPropertyValue('--paper-h')) || 740;
+        var ty = p * paperH;
+        var deg = p * 720;
         
-        mc.style.setProperty('--unroll-progress', p); 
-        mc.style.setProperty('--clip-pct', pct);
-        mc.style.setProperty('--bg-pos-top', (p * 320) + 'px');
-        mc.style.setProperty('--bg-pos-bot', (p * -320) + 'px');
-        mc.style.setProperty('--bot-y', (p * paperH) + 'px');
+        // 1. PERFECT SYNC: Pinning transform uses the EXACT same 'p' as the unroll!
+        if(scene) scene.style.transform = 'translate3d(0, ' + (p * extraPx) + 'px, 0)';
+        
+        // 2. Hardware Accelerated Masks
+        var clip = 'polygon(0% 0%, 100% 0%, 100% ' + pct + ', 0% ' + pct + ')';
+        if(wrapper) wrapper.style.clipPath = clip;
+        if(overlay) overlay.style.clipPath = clip;
+
+        // 3. Cylinders & Textures
+        if(bottomCyl) {
+            bottomCyl.style.transform = 'translate3d(0, ' + ty + 'px, 0)';
+            bottomCyl.style.backgroundPositionY = (p * -320) + 'px';
+        }
+        if(topCyl) {
+            topCyl.style.backgroundPositionY = (p * 320) + 'px';
+        }
+
+        // 4. Cap Rotations (Moved out of CSS for direct compositor access)
+        if(c_tl) c_tl.style.transform = 'rotate(' + (-deg) + 'deg) translateZ(0)';
+        if(c_tr) c_tr.style.transform = 'scaleX(-1) rotate(' + deg + 'deg) translateZ(0)';
+        if(c_bl) c_bl.style.transform = 'rotate(' + deg + 'deg) translateZ(0)';
+        if(c_br) c_br.style.transform = 'scaleX(-1) rotate(' + (-deg) + 'deg) translateZ(0)';
       }
 
       var framed = (window !== window.top);
@@ -598,7 +601,8 @@
 
       if(framed && !sameOriginFrame){ runFallbackReveal(); return; }
 
-      var lerpSpeed = 0.08;               
+      /* 🔥 TIGHTENED LERP SPEED FOR 120Hz DISPLAYS (0.14) 🔥 */
+      var lerpSpeed = 0.14;               
       var current = 0, target = 0;
       var extraPx = 480, pinPx = 48;      
       var running = false, rafId = null;
@@ -610,7 +614,7 @@
           if(!d || d.__sannasa !== 'progress' || typeof d.p !== 'number') return;
           parentProgress = d.p < 0 ? 0 : (d.p > 1 ? 1 : d.p);
           
-          scene.style.transform = 'translate3d(0, ' + (parentProgress * extraPx) + 'px, 0)';
+          /* 🔥 IMPORTANT: NO scene.style.transform HERE! It's handled in setProgress() 🔥 */
           
           if(!scene.classList.contains('synced')) {
               current = parentProgress;
@@ -671,9 +675,9 @@
         var diff = target - current;
         current += diff * lerpSpeed;
         if(Math.abs(diff) < 0.0004) current = target;
-        var progress = clampNum(current, 0, 1);
         
-        setProgress(progress);
+        var progress = clampNum(current, 0, 1);
+        setProgress(progress); // Everything perfectly synced!
         
         vp.classList.toggle('unrolled', progress > 0.92);
         if(running) rafId = requestAnimationFrame(tick);
