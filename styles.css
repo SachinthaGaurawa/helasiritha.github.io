@@ -647,20 +647,34 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 }
 
 /* ── Entry gateway ── */
-.entry{position:fixed;inset:0;z-index:300;display:grid;place-items:center;overflow:hidden;background:#08080a;text-align:center;
+.entry{position:fixed;inset:0;z-index:300;display:grid;place-items:center;overflow:hidden;background:#08080a;text-align:center;will-change:opacity,transform;
   /* Staged, not simultaneous: the lamp ignites and the screen floods with gold
      light FIRST (see .entry-flash / .lamp-glow / .lamp-flame below, all fast
      sub-.5s beats) — only THEN does the gate itself visibly dissolve, so
      tapping the lamp reads as "ignite → flood with light → the light clears
      to reveal the invitation", not everything crossfading at once in a
      blink. The scale starts almost immediately (feels instantly responsive
-     to the tap); the fade/blur that actually reveals the page waits for the
+     to the tap); the fade that actually reveals the page waits for the
      flash to peak. Tuned so the ENTIRE sequence — tap to fully-revealed
      hero — lands at ~1.05s, safely inside a 1.2s hard cap: fast enough to
      never read as "waiting", long enough for the flood-then-clear beat to
      still register as a deliberate effect rather than an abrupt cut. */
-  transition:opacity .8s var(--ease) .12s,transform 1s var(--ease) .05s,filter .8s var(--ease) .12s}
-.entry.go{opacity:0;transform:scale(1.16);filter:blur(7px);pointer-events:none}
+  transition:opacity .8s var(--ease) .12s,transform 1s var(--ease) .05s}
+/* No animated filter:blur() here on purpose — animating blur over this whole
+   fixed, full-viewport element (stacked with its own kenburns background,
+   the flash overlay, and the lamp burst, all at once) is expensive enough on
+   real phones to drop frames for the entire dismiss sequence: the browser
+   ends up skipping past the flash's peak-visibility window entirely and only
+   painting the far end of the transition, which is exactly why the flash
+   read as invisible on-device despite rendering correctly in the (unthrottled,
+   GPU-accelerated) sandbox used to verify it. Opacity+transform alone are
+   cheap to composite and don't cost the flash its frames. */
+.entry.go{opacity:0;transform:scale(1.16);pointer-events:none}
+/* Continuous decorative loops (Ken Burns pan, floating arch, CTA pulse, the
+   foil text sheen) serve no purpose once dismissal starts and the whole gate
+   is on its way out within ~1.15s — freeze them right on tap so every spare
+   compositor frame during that window goes to the flash/burst instead. */
+.entry.go .entry-bg,.entry.go .entry-arch,.entry.go .entry-cta,.entry.go .entry-names.foil{animation-play-state:paused}
 .entry-bg{position:absolute;inset:0;background:var(--s-entry) center/cover no-repeat;transform:scale(1.06);opacity:.5;animation:kenburns 20s ease-in-out infinite alternate}
 .entry-veil{position:absolute;inset:0;background:
   radial-gradient(120% 90% at 50% 42%, rgba(8,8,10,.32), rgba(8,8,10,.88) 78%),
@@ -711,7 +725,7 @@ html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
    governing how bright it looks, undiminished by how the gate is fading.
    Triggered via the ~ general sibling combinator, since .go still only
    ever gets added to #entry itself. */
-.entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 55%,
+.entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at 50% 55%,
   #fff 0%, rgba(255,246,224,.99) 10%, rgba(255,228,172,.94) 26%, rgba(255,208,138,.72) 48%, rgba(255,196,110,.34) 74%, rgba(255,196,110,0) 100%)}
 .entry.go ~ .entry-flash{animation:flash .85s ease-out}
 .entry.go .lamp-glow{animation:lampBurst .5s cubic-bezier(.2,.7,.2,1) forwards}
@@ -763,10 +777,10 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
   #invitation::after,#rsvp::after,#agenda::after,#gallery::after{animation:none}
   /* Keep the gateway → site handoff visible even with Reduce Motion:
-     fade the veil (drop the scale/blur which is the vestibular part), let the
+     fade the veil (drop the scale, which is the vestibular part), let the
      gold bloom play, and fade the site in — never an abrupt instant swap. */
   .entry{transition:opacity .95s ease}
-  .entry.go{transform:none;filter:none}
+  .entry.go{transform:none}
   .entry.go .lamp-glow,.entry.go .lamp-flame{animation:none}
   html.entered body{animation:pageFade 1s ease .12s both}
 }
