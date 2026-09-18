@@ -54,6 +54,14 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 </head>
 <body>
 
+<!-- The entry gate (below) hides itself under @media(scripting:none), but
+     everything past it — hero names, invitation text, agenda, gallery, RSVP —
+     is populated at runtime by app.js from Firestore/defaults, so a no-JS
+     visitor was left looking at an entirely blank page with no explanation.
+     <noscript> is the one 100%-reliable way to detect this (the scripting
+     media feature isn't consistently supported across browsers), so it gets
+     its own plain, unmissable message instead of just going quiet. -->
+<noscript><div class="noscript-banner">මෙම ආරාධනය නැරඹීමට කරුණාකර ඔබගේ බ්‍රවුසරයේ JavaScript සක්‍රීය කරන්න.<br>Please enable JavaScript in your browser to view this invitation.</div></noscript>
 
 <!-- ░░ Cinematic Entry Gateway (පහන → enter) ░░ -->
 <div id="entry" class="entry" role="dialog" aria-modal="true" aria-label="ආරාධනය">
