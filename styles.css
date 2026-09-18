@@ -863,6 +863,17 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
      default flash through on every load, worst on a slow connection. */
   background: #030303;
   pointer-events: none;
+  /* Promotes the IFRAME ELEMENT ITSELF to its own persistent GPU layer at
+     the parent page's compositing level — a different, untried angle from
+     the will-change hints already inside sannasa.html's own document (which
+     only ask the browser to cache individual filtered elements' raster
+     output). This asks the browser to keep the whole iframe's compositing
+     surface stable across scroll instead of potentially tearing it down and
+     rebuilding it, which is a separate, real mechanism for the same
+     symptom (the sannasa briefly going black on scrolling back to it) on
+     mobile browsers. Doesn't touch anything the iframe itself renders. */
+  will-change: transform;
+  transform: translateZ(0);
   /* No transition here on purpose: the real height arrives within the first
      load cycle, well before a visitor can have scrolled this far down — an
      animated grow only risked visibly PUSHING already-scrolled content if a
