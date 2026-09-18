@@ -696,15 +696,24 @@ html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
 .lamp-glow{position:absolute;left:50%;top:-8%;width:64%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
   background:radial-gradient(circle,rgba(255,206,120,.5),rgba(255,206,120,0) 70%);animation:glow 2.6s ease-in-out infinite}
 .entry-cta{margin-top:1.1rem;font-family:var(--f-si);letter-spacing:.12em;color:var(--gold-bright);font-size:.86rem;animation:ctaPulse 2.2s ease-in-out infinite}
-/* Used to fade to transparent at 74% of the circle's radius, so most of the
-   screen (top edge, corners) never actually lit up — only a modest halo
-   around the lamp — which is exactly why the ~1s wait for the gate itself to
-   dissolve read as dead time instead of a deliberate effect. Stretched the
-   falloff all the way to 100% with a lingering warm mid-tone so the light
-   genuinely floods edge-to-edge. */
-.entry-flash{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 55%,
-  rgba(255,238,196,1) 0%, rgba(255,224,164,.92) 20%, rgba(255,212,132,.6) 46%, rgba(255,196,110,.26) 75%, rgba(255,196,110,0) 100%)}
-.entry.go .entry-flash{animation:flash .75s ease-out}
+/* Two compounding reasons the ignite flash read as "not there" before:
+   (1) its gradient faded to transparent at 74% of the circle's radius, so
+   most of the screen (top edge, corners) never actually lit up — only a
+   modest halo around the lamp; and (2) as a CHILD of .entry, it rode along
+   with the gate's own opacity fade AND its filter:blur(7px) as .entry.go
+   dissolves — both starting ~120ms after the flash itself, multiplying its
+   peak brightness down and softening it exactly when it should have read
+   as a crisp flood of light. Fixed both: the gradient now has a genuine
+   white-hot flashbulb core (not just a warm tint) fading through gold all
+   the way to 100% of the radius, and the element itself moved to be a
+   SIBLING of #entry in the markup — its own independent position:fixed
+   overlay, one z-index above the gate — so its opacity is the only thing
+   governing how bright it looks, undiminished by how the gate is fading.
+   Triggered via the ~ general sibling combinator, since .go still only
+   ever gets added to #entry itself. */
+.entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 55%,
+  #fff 0%, rgba(255,246,224,.99) 10%, rgba(255,228,172,.94) 26%, rgba(255,208,138,.72) 48%, rgba(255,196,110,.34) 74%, rgba(255,196,110,0) 100%)}
+.entry.go ~ .entry-flash{animation:flash .85s ease-out}
 .entry.go .lamp-glow{animation:lampBurst .5s cubic-bezier(.2,.7,.2,1) forwards}
 .entry.go .lamp-flame{animation:flameBurst .42s ease-out forwards}
 .entry-names.foil{animation:sheen 8s ease-in-out infinite}
@@ -725,7 +734,7 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes flame{0%,100%{transform:translateX(-50%) scale(1) rotate(-2deg)}50%{transform:translateX(-50%) scale(1.14,1.2) rotate(2deg)}}
 @keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
-@keyframes flash{0%{opacity:0}20%{opacity:1}52%{opacity:.55}100%{opacity:0}}
+@keyframes flash{0%{opacity:0}16%{opacity:1}45%{opacity:.9}72%{opacity:.4}100%{opacity:0}}
 @keyframes lampBurst{0%{opacity:.5;transform:translateX(-50%) scale(1)}42%{opacity:1;transform:translateX(-50%) scale(3.1)}100%{opacity:0;transform:translateX(-50%) scale(4.3)}}
 @keyframes flameBurst{0%{opacity:.95;transform:translateX(-50%) scaleY(1)}40%{opacity:1;transform:translateX(-50%) scale(1.6,2.6)}100%{opacity:0;transform:translateX(-50%) scale(1.7,2.9)}}
 @keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
