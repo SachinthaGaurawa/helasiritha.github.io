@@ -404,9 +404,26 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     }catch(_){}
     e.classList.add('go');
     document.documentElement.classList.remove('entry-lock'); /* unlocks page scroll */
-    bg.forEach(function(el){ if(el) el.removeAttribute('inert'); });
     var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
     setTimeout(function(){
+      /* Un-inerting nav/main/footer here (not synchronously at tap time,
+         where it originally sat right next to entry-lock's removal) —
+         these are the ENTIRE page's three top-level subtrees, and removing
+         `inert` from all three forces the browser to redo accessibility-tree
+         and focusability bookkeeping for everything under them in one go.
+         Done at the exact instant the gate's opacity/transform transition
+         is trying to render its first frame, that synchronous cost was
+         real main-thread contention capable of stalling the transition
+         entirely on a real phone — the fade never visibly plays at all,
+         just a hard cut from gate to hero (confirmed by frame-by-frame
+         video: opacity holds at 1 for several frames, then jumps straight
+         to the hero with nothing in between). The gate's `pointer-events:
+         none` (added the moment .go is applied, see styles.css) already
+         makes the background untouchable for the whole fade regardless of
+         `inert`, and the gate is still substantially covering the screen
+         throughout that fade — so nothing needs `inert` lifted before this
+         point, where it's not fighting the transition for the main thread. */
+      bg.forEach(function(el){ if(el) el.removeAttribute('inert'); });
       if(e&&e.parentNode){ e.parentNode.removeChild(e); }
       /* 'entered' no longer drives any animation on body (see the note in
          styles.css where pageIn used to be) — everything underneath #entry
