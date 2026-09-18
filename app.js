@@ -1322,6 +1322,29 @@ function setupLang() {
   };
 }
 
+/* Defers a Firestore-triggered re-render until the entry gate is actually gone
+   from the DOM. connect() starts at page load, well before the visitor has
+   even seen the lamp — so on a fast tap, the FIRST live snapshot (content,
+   agenda, gallery, blessings can each trigger a full innerHTML rebuild) can
+   land squarely inside the ~1.1s entry-dismiss animation, competing with it
+   for the main thread. CSS transitions don't get "priority" over synchronous
+   JS: a long-enough script blocks the browser from ever compositing the
+   transition's remaining frames, so the animation visibly freezes at
+   whatever it looked like when the script started, then the WHOLE page
+   (animation's true end state + this render's DOM changes) appears to pop in
+   at once the instant the main thread frees up — exactly the "long dead
+   pause, then everything at once" pattern this was reported as. Deferring
+   costs nothing: the entry gate covers the whole screen regardless, so a
+   render that happens to land during it is invisible either way — it only
+   needs to happen before the reveal, not in perfect lockstep with it. */
+function whenEntryGone(fn) {
+  if (!document.getElementById("entry")) { fn(); return; }
+  const mo = new MutationObserver(() => {
+    if (!document.getElementById("entry")) { mo.disconnect(); fn(); }
+  });
+  mo.observe(document.body, { childList: true });
+}
+
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
 async function connect() {
   try {
@@ -1339,13 +1362,13 @@ async function connect() {
       const data = snap.exists() ? snap.data() : {};
       S = Object.assign({}, DEFAULTS, data);
       S.show = Object.assign({}, DEFAULTS.show, data.show || {});
-      renderAll(); syncMusicBtn();
+      whenEntryGone(() => { renderAll(); syncMusicBtn(); });
     }, (err) => console.warn("content listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
       const items = snap.exists() && Array.isArray(snap.data().items) ? snap.data().items : null;
       AGENDA = (items && items.length) ? items : AGENDA_DEFAULT.slice();
-      renderAgenda(); observeReveals();
+      whenEntryGone(() => { renderAgenda(); observeReveals(); });
     }, (err) => console.warn("agenda listener", err));
 
     fs.onSnapshot(fs.collection(db, "gallery"), (snap) => {
@@ -1353,7 +1376,7 @@ async function connect() {
       /* admin drag-and-drop order wins; upload time is the fallback */
       arr.sort((a, b) => ((a.order == null ? 1e9 : Number(a.order)) - (b.order == null ? 1e9 : Number(b.order)))
         || (((a.ts && a.ts.seconds) || 0) - ((b.ts && b.ts.seconds) || 0)));
-      GALLERY = arr; renderGallery(); observeReveals();
+      GALLERY = arr; whenEntryGone(() => { renderGallery(); observeReveals(); });
     }, (err) => console.warn("gallery listener", err));
 
     /* Blessings MUST be queried with approved == true: the security rules gate
@@ -1362,7 +1385,7 @@ async function connect() {
     fs.onSnapshot(fs.query(fs.collection(db, "blessings"), fs.where("approved", "==", true)), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data())));
       arr.sort((a, b) => ((b.ts && b.ts.seconds) || 0) - ((a.ts && a.ts.seconds) || 0));
-      BLESSINGS = arr; renderBlessings(); observeReveals();
+      BLESSINGS = arr; whenEntryGone(() => { renderBlessings(); observeReveals(); });
     }, (err) => console.warn("blessings listener", err));
 
     /* Only the {name, family, side} mirror — never the full `guests` doc, which
