@@ -498,8 +498,21 @@ function renderAll() {
   const lt = $("#langToggle"); if (lt) { lt.textContent = T.langLabel; lt.title = T.langTitle; lt.setAttribute("aria-label", T.langTitle); }
 
   renderHero(); renderInvitation(); renderCountdown(); renderRsvpShell();
-  renderAgenda(); renderGallery(); renderLove(); renderBlessings(); renderFooter();
   applyVisibility(); observeReveals();
+  /* Agenda/gallery/blessings/footer are below the fold — never visible at
+     the moment this runs, whether that's the initial page load or the
+     instant the entry gate finishes disappearing. Rebuilding all four is
+     real synchronous DOM work (gallery especially, once there are several
+     photos); doing it inline here risked blocking the main thread for
+     however long that takes right when the ABOVE-the-fold hero should be
+     painting — the exact "long freeze, then everything pops in at once"
+     pattern that was reported even after deferring content's render until
+     the entry gate was gone (see whenEntryGone below): that fix correctly
+     stopped it from landing mid-animation, but still let it block the
+     critical instant right after. Deferred via runIdle so the part that
+     actually needs to appear immediately doesn't wait on the part that
+     doesn't. */
+  runIdle(() => { renderAgenda(); renderGallery(); renderLove(); renderBlessings(); renderFooter(); observeReveals(); });
 }
 
 function renderHero() {
@@ -1345,6 +1358,19 @@ function whenEntryGone(fn) {
   mo.observe(document.body, { childList: true });
 }
 
+/* Runs fn once the browser has idle time, bounded by a worst-case timeout —
+   requestIdleCallback doesn't exist in Safari (iOS included) at all, so this
+   falls back to a short setTimeout there, which at minimum still yields the
+   main thread back for a paint before fn runs, instead of chaining straight
+   into more synchronous work. Used to keep below-the-fold rebuilds (agenda,
+   gallery, blessings) from piling up back-to-back with each other, or with
+   renderAll()'s own deferred batch, right at the moment whenEntryGone()
+   finally lets them run. */
+function runIdle(fn) {
+  if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 300 });
+  else setTimeout(fn, 60);
+}
+
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
 async function connect() {
   try {
@@ -1368,7 +1394,7 @@ async function connect() {
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
       const items = snap.exists() && Array.isArray(snap.data().items) ? snap.data().items : null;
       AGENDA = (items && items.length) ? items : AGENDA_DEFAULT.slice();
-      whenEntryGone(() => { renderAgenda(); observeReveals(); });
+      whenEntryGone(() => runIdle(() => { renderAgenda(); observeReveals(); }));
     }, (err) => console.warn("agenda listener", err));
 
     fs.onSnapshot(fs.collection(db, "gallery"), (snap) => {
@@ -1376,7 +1402,7 @@ async function connect() {
       /* admin drag-and-drop order wins; upload time is the fallback */
       arr.sort((a, b) => ((a.order == null ? 1e9 : Number(a.order)) - (b.order == null ? 1e9 : Number(b.order)))
         || (((a.ts && a.ts.seconds) || 0) - ((b.ts && b.ts.seconds) || 0)));
-      GALLERY = arr; whenEntryGone(() => { renderGallery(); observeReveals(); });
+      GALLERY = arr; whenEntryGone(() => runIdle(() => { renderGallery(); observeReveals(); }));
     }, (err) => console.warn("gallery listener", err));
 
     /* Blessings MUST be queried with approved == true: the security rules gate
@@ -1385,7 +1411,7 @@ async function connect() {
     fs.onSnapshot(fs.query(fs.collection(db, "blessings"), fs.where("approved", "==", true)), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data())));
       arr.sort((a, b) => ((b.ts && b.ts.seconds) || 0) - ((a.ts && a.ts.seconds) || 0));
-      BLESSINGS = arr; whenEntryGone(() => { renderBlessings(); observeReveals(); });
+      BLESSINGS = arr; whenEntryGone(() => runIdle(() => { renderBlessings(); observeReveals(); }));
     }, (err) => console.warn("blessings listener", err));
 
     /* Only the {name, family, side} mirror — never the full `guests` doc, which
