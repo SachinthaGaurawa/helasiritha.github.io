@@ -813,6 +813,39 @@ html.entry-lock, html.entry-lock body{ overflow:hidden !important; height:100%; 
 html.entry-lock .entry{ touch-action:auto }
 @media (scripting: none){ html, html body{ overflow:auto !important; height:auto } }
 
+/* ── Post-wedding lockdown: mirrors .entry-lock — #postWedding itself keeps
+   its own overflow-y so an unusually long custom message stays reachable
+   even though the page underneath can no longer scroll. ── */
+html.pw-lock, html.pw-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
+html.pw-lock #postWedding{ touch-action:pan-y }
+
+/* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░ ──────────────────────────────── */
+.post-wedding{
+  position:fixed; inset:0; z-index:120; overflow-y:auto;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 18%, rgba(232,201,135,.10), transparent 60%),
+    var(--bg);
+  padding:max(3.2rem,env(safe-area-inset-top)) 1.4rem max(3.2rem,env(safe-area-inset-bottom));
+}
+.pw-inner{ max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
+.pw-portrait{ margin-bottom:1.8rem; box-shadow:0 0 0 1px var(--line), 0 18px 60px rgba(0,0,0,.5) }
+.post-wedding .eyebrow{ margin-bottom:.7rem }
+.pw-title{
+  font-family:var(--f-royal); font-weight:800; letter-spacing:.02em;
+  font-size:clamp(3rem,13vw,5.4rem); line-height:1.05; margin:0 0 1.4rem;
+  text-shadow:0 0 28px rgba(232,201,135,.45), 0 0 60px rgba(212,175,106,.22);
+}
+.post-wedding .hansa-divider{ margin-bottom:1.8rem }
+.pw-message{
+  font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.28rem); line-height:2;
+  color:var(--ink); max-width:44ch; margin:0 0 2rem; white-space:pre-wrap;
+}
+.pw-signature{
+  font-family:var(--f-royal); font-weight:700; font-size:clamp(1.5rem,5vw,2.1rem);
+  text-shadow:0 0 22px rgba(232,201,135,.35);
+}
+
 /* ── Zoom-crash guard: soften GPU-heavy effects only while the user is pinch/zoomed in ── */
 html.vv-zoom .nav, html.vv-zoom .lightbox, html.vv-zoom .drawer, html.vv-zoom .nav-drawer{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important }
 html.vv-zoom .aurora, html.vv-zoom #fxCanvas, html.vv-zoom body::before, html.vv-zoom body::after{ opacity:0 !important }

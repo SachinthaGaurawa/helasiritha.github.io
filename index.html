@@ -328,6 +328,22 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 
 </main>
 
+<!-- ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░
+     Hidden by default. Shown in place of #nav/main/.footer (all `hidden`
+     together — see applyPostWeddingState() in app.js) once postWeddingMode
+     is on or the SLT schedule has passed. Always pure Sinhala, regardless
+     of the EN/TA language toggle. -->
+<div id="postWedding" class="post-wedding" hidden>
+  <div class="pw-inner wrap center">
+    <div id="pwPortrait" class="hero-portrait pw-portrait"></div>
+    <p class="eyebrow">සුභ මංගල්‍යය නිමවිණි</p>
+    <h1 class="pw-title foil">ස්තූතියි</h1>
+    <div class="hansa-divider" aria-hidden="true"><span class="hansa-mark"></span></div>
+    <p id="pwMessage" class="pw-message"></p>
+    <div id="pwSignature" class="pw-signature foil"></div>
+  </div>
+</div>
+
 <!-- ░░ FOOTER ░░ -->
 <footer class="footer">
   <div class="wrap center">
