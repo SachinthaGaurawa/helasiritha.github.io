@@ -372,10 +372,11 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   var lang='si'; try{ lang = localStorage.getItem('hs_lang') || 'si'; }catch(_){}
   var TX = {
     si:{ eyebrow:'ශුභ මංගලම්', names:'කෞශානි <span class="amp">&amp;</span> ගෞරව', sub:'අපගේ විවාහ මංගල්‍යයට ඔබ සාදරයෙන් ආරාධනා කරමු', cta:'පහන දැල්වීමට ස්පර්ශ කරන්න' },
-    en:{ eyebrow:'The Wedding Of', names:'Kaushani <span class="amp">&amp;</span> Gaurawa', sub:'We joyfully invite you to celebrate our wedding day', cta:'Tap the lamp to enter' }
+    en:{ eyebrow:'The Wedding Of', names:'Kaushani <span class="amp">&amp;</span> Gaurawa', sub:'We joyfully invite you to celebrate our wedding day', cta:'Tap the lamp to enter' },
+    ta:{ eyebrow:'திருமண மங்களம்', names:'கௌஷானி <span class="amp">&amp;</span> கௌரவ', sub:'எங்கள் திருமண நாளைக் கொண்டாட உங்களை அன்புடன் அழைக்கிறோம்', cta:'விளக்கை ஏற்ற தொடவும்' }
   };
   var tx = TX[lang] || TX.si;
-  if(lang==='en'){ try{ document.documentElement.lang='en'; }catch(_){} }
+  if(lang==='en' || lang==='ta'){ try{ document.documentElement.lang=lang; }catch(_){} }
   (function(){
     var eb=e.querySelector('.entry-eyebrow'); if(eb) eb.textContent=tx.eyebrow;
     var nm=e.querySelector('.entry-names'); if(nm) nm.innerHTML=tx.names;
