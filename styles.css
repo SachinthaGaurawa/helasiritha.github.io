@@ -126,17 +126,27 @@ body.lang-swap main,body.lang-swap .nav-inner{animation:swap .42s var(--ease)}
 @keyframes swap{0%{opacity:.25;filter:blur(2px)}100%{opacity:1;filter:blur(0)}}
 body.lite.lang-swap main{animation:none}
 
-/* ════════ PRELOADER ════════ */
+/* ════════ PRELOADER ════════
+   Kept to four elements on purpose — greeting, portrait, one ornament, the
+   loading dots — so the "wow" comes from motion and warmth, not from adding
+   more things to look at. Every element below is staggered in once via
+   preRise rather than appearing flat/static the instant the preloader
+   mounts; app.js holds the preloader up for a minimum time (see its own
+   comment) specifically so this sequence is never cut short on a fast or
+   cached load. */
 .preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease;overflow:hidden}
 .preloader.gone{opacity:0;visibility:hidden}
-.pre-inner{position:relative;display:grid;place-items:center;gap:.8rem;text-align:center;padding:0 1.4rem}
-.pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.1rem,9vw,3.2rem)}
+.pre-inner{position:relative;display:grid;place-items:center;gap:1rem;text-align:center;padding:0 1.4rem}
+@keyframes preRise{0%{opacity:0;transform:translateY(16px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.1rem,9vw,3.2rem);
+  animation:preRise .9s var(--ease-soft) .1s both,sheen 9s ease-in-out infinite}
 /* The couple linework is the preloader's one asset fetched over the network
    (every other element here is CSS/font, guaranteed to paint) — a slow or
    failed load must never leave a broken-image glyph on the very first thing
-   a visitor sees. onerror hides the <img> outright; the greeting, ornament
-   and dots above/below it already carry the moment on their own. */
-.pre-couple{position:relative;width:clamp(116px,32vw,166px);margin-block:.1rem}
+   a visitor sees. onerror hides the <img> outright; the greeting and dots
+   already carry the moment on their own. */
+.pre-couple{position:relative;width:clamp(116px,32vw,166px);margin-block:.1rem;
+  animation:preRise 1s var(--ease-soft) .35s both}
 .pre-couple::before{content:"";position:absolute;inset:-42%;z-index:-1;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(232,201,135,.3),transparent 68%);
   animation:preGlow 5s ease-in-out infinite}
@@ -146,18 +156,22 @@ body.lite.lang-swap main{animation:none}
    hansa ornament around it. */
 .pre-couple img{width:100%;height:auto;display:block;filter:var(--goldify) drop-shadow(0 10px 26px rgba(0,0,0,.55))}
 .pre-couple img.broken{display:none}
-.pre-hansa{width:min(210px,62%);margin-block:0}
-.pre-hansa .hansa-mark{width:clamp(26px,6vw,34px);height:clamp(26px,6vw,34px)}
-.pre-text{font-family:var(--f-si);letter-spacing:.3em;color:var(--mut);font-size:.8rem;text-transform:uppercase}
-.pre-dots{display:flex;gap:.4rem;margin-top:.1rem}
+/* .hansa-mark.pre-mark (not .pre-mark alone) so this beats the plain
+   .hansa-mark rule's own width/height/animation regardless of the two
+   rules' order in the file, instead of depending on source position. */
+.hansa-mark.pre-mark{width:clamp(24px,5.5vw,30px);height:clamp(24px,5.5vw,30px);
+  animation:preRise .8s var(--ease-soft) .6s both,hansaGlow 4.6s ease-in-out infinite}
+.pre-dots{display:flex;gap:.4rem;animation:preRise .7s var(--ease-soft) .8s both}
 .pre-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
 .pre-dots span:nth-child(2){animation-delay:.18s}
 .pre-dots span:nth-child(3){animation-delay:.36s}
 @keyframes preGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes preDot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
+body.lite .pre-greet,body.lite .pre-couple,body.lite .pre-mark,body.lite .pre-dots{animation:none!important}
 body.lite .pre-couple::before{animation:none;opacity:.8}
 body.lite .pre-dots span{animation:none;opacity:.7}
 @media (prefers-reduced-motion:reduce){
+  .pre-greet,.pre-couple,.pre-mark,.pre-dots{animation:none!important}
   .pre-couple::before{animation:none;opacity:.8}
   .pre-dots span{animation:none;opacity:.7}
 }
@@ -447,7 +461,7 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
    wide tracking only when the page switches to English (Latin). app.js keeps
    <html lang> in sync, so this flips automatically on the Translate toggle. */
 html:not([lang="en"]) :is(
-  .eyebrow, .pre-text, .pre-greet, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
+  .eyebrow, .pre-greet, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
   .inv-when .lbl, .cd-lbl, .counter-cap, .ag-time, .hero-date, .hero-names, .sec-title,
   .inv-name, .foot-date, .foot-credit, .lang-toggle, .nav-link, .btn, .hero-venue
 ){ letter-spacing: normal !important; }
