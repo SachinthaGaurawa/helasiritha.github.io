@@ -905,6 +905,13 @@ function setupParticles() {
   }, { passive: true });
   function frame() {
     if (document.documentElement.classList.contains("vv-zoom")) { particleRAF = requestAnimationFrame(frame); return; }
+    /* The entry gateway sits at z-index:300, fully opaque, on top of the hero
+       this canvas lives behind — every dot this loop draws while it's up is
+       invisible, yet still costs a clearRect + per-dot arc/fill 60x a second,
+       competing for main-thread/compositor time with the gateway's own
+       dismiss animation right as the visitor taps. Skip the drawing work
+       (but keep ticking so it resumes instantly once the gate is gone). */
+    if (document.getElementById("entry")) { particleRAF = requestAnimationFrame(frame); return; }
     ctx.clearRect(0, 0, w, h);
     for (const d of dots) {
       d.x += d.vx; d.y += d.vy;
