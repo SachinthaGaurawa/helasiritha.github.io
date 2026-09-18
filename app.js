@@ -1678,12 +1678,14 @@ function init() {
   const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
   const gatewayReady = Promise.all(GATEWAY_CRITICAL_IMAGES.map(preloadDecodedImage));
   /* The preloader's own greeting/portrait/ornament/dots stagger in over ~1s
-     (see preRise in styles.css) — on a fast or cached load, everything above
-     could resolve in well under that, cutting the sequence off mid-reveal
-     before the visitor ever sees it finish. This floor guarantees it always
-     gets to play out, without changing anything for a slow connection, which
-     was already waiting past 1s on the real assets anyway. */
-  const minShow = new Promise((resolve) => setTimeout(resolve, 1100));
+     (see preRise in styles.css), and the ambient glow behind the portrait
+     starts its breathing pulse at 1.5s (preGlowPulse) — on a fast or cached
+     load, everything above could resolve well under that, cutting both off
+     before the visitor ever sees them. This floor guarantees the entrance
+     sequence finishes and the glow gets into its pulse, without changing
+     anything for a slow connection, which was already waiting past 1.6s on
+     the real assets anyway. */
+  const minShow = new Promise((resolve) => setTimeout(resolve, 1600));
   Promise.all([fontsReady, gatewayReady, minShow]).then(dismissPreloader);
   setTimeout(dismissPreloader, 2500); // safety — never leave the visitor waiting, even if an asset stalls
   setTimeout(fitHero, 260); setTimeout(fitHero, 1200);

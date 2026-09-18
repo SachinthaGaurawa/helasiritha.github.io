@@ -138,10 +138,10 @@ body.lite.lang-swap main{animation:none}
 .preloader.gone{opacity:0;visibility:hidden}
 .pre-inner{position:relative;display:grid;place-items:center;gap:1rem;text-align:center;padding:0 1.4rem}
 /* The user's own tested recipe for this glow (exact gradient stops/colors,
-   circular shape, blur, fade-in curve) — sized/positioned against
-   .pre-inner's own box (this card) instead of the full viewport their
-   standalone demo used, since this glow lives inside a compact preloader
-   card rather than filling the whole screen. */
+   circular shape, blur, fade-in-then-pulse curve) — sized/positioned
+   against .pre-inner's own box (this card) instead of the full viewport
+   their standalone demo used, since this glow lives inside a compact
+   preloader card rather than filling the whole screen. */
 .pre-inner::before{content:"";position:absolute;top:50%;left:50%;z-index:-1;pointer-events:none;
   width:190%;height:190%;border-radius:50%;transform:translate(-50%,-50%);
   background:radial-gradient(circle at center,
@@ -149,7 +149,7 @@ body.lite.lang-swap main{animation:none}
     rgba(153,101,36,.5) 40%,rgba(26,17,8,0) 75%);
   filter:blur(24px);
   opacity:0;
-  animation:preGlowIn 2.2s ease-in-out .3s both}
+  animation:preGlowIn 1.5s ease-out forwards,preGlowPulse 3.2s 1.5s infinite ease-in-out}
 @keyframes preRise{0%{opacity:0;transform:translateY(16px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.25rem,9.6vw,3.42rem);
   animation:preRise .9s var(--ease-soft) .1s both,sheen 9s ease-in-out infinite}
@@ -160,11 +160,13 @@ body.lite.lang-swap main{animation:none}
    already carry the moment on their own. */
 .pre-couple{position:relative;width:clamp(148px,40vw,210px);margin-block:.1rem;
   animation:preRise 1s var(--ease-soft) .35s both}
-/* The source artwork's linework is plain sepia/brown — --goldify (already used
-   to tint the hero's own decorative flourishes) shifts it to match the site's
-   champagne-gold palette instead of sitting duller than the foil text and
-   hansa ornament around it. */
-.pre-couple img{width:100%;height:auto;display:block;filter:var(--goldify) drop-shadow(0 10px 26px rgba(0,0,0,.55))}
+/* The source artwork's linework is plain sepia/brown. --goldify (tuned for
+   the hero's paler champagne flourishes) reads too pale against this card's
+   own much warmer amber glow (255,215,120 -> 153,101,36) — richer saturation,
+   slightly less brightness and a small hue pull toward orange keeps the
+   couple's outline in the same amber family as the light behind them. */
+.pre-couple img{width:100%;height:auto;display:block;
+  filter:grayscale(1) sepia(1) saturate(3) brightness(.98) hue-rotate(-4deg) drop-shadow(0 10px 26px rgba(0,0,0,.55))}
 .pre-couple img.broken{display:none}
 /* .hansa-mark.pre-mark (not .pre-mark alone) so this beats the plain
    .hansa-mark rule's own width/height/animation regardless of the two
@@ -175,7 +177,12 @@ body.lite.lang-swap main{animation:none}
 .pre-dots span{width:8px;height:8px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
 .pre-dots span:nth-child(2){animation-delay:.18s}
 .pre-dots span:nth-child(3){animation-delay:.36s}
-@keyframes preGlowIn{to{opacity:.6}}
+@keyframes preGlowIn{to{opacity:.42}}
+@keyframes preGlowPulse{
+  0%{opacity:.36;transform:translate(-50%,-50%) scale(.95)}
+  50%{opacity:.6;transform:translate(-50%,-50%) scale(1.05)}
+  100%{opacity:.36;transform:translate(-50%,-50%) scale(.95)}
+}
 @keyframes preDot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
 body.lite .pre-greet,body.lite .pre-couple,body.lite .pre-mark,body.lite .pre-dots{animation:none!important}
 body.lite .pre-inner::before{animation:none;opacity:.6}
