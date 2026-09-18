@@ -140,7 +140,11 @@ body.lite.lang-swap main{animation:none}
 .pre-couple::before{content:"";position:absolute;inset:-42%;z-index:-1;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(232,201,135,.3),transparent 68%);
   animation:preGlow 5s ease-in-out infinite}
-.pre-couple img{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 26px rgba(0,0,0,.55))}
+/* The source artwork's linework is plain sepia/brown — --goldify (already used
+   to tint the hero's own decorative flourishes) shifts it to match the site's
+   champagne-gold palette instead of sitting duller than the foil text and
+   hansa ornament around it. */
+.pre-couple img{width:100%;height:auto;display:block;filter:var(--goldify) drop-shadow(0 10px 26px rgba(0,0,0,.55))}
 .pre-couple img.broken{display:none}
 .pre-hansa{width:min(210px,62%);margin-block:0}
 .pre-hansa .hansa-mark{width:clamp(26px,6vw,34px);height:clamp(26px,6vw,34px)}
