@@ -725,9 +725,26 @@ html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
    governing how bright it looks, undiminished by how the gate is fading.
    Triggered via the ~ general sibling combinator, since .go still only
    ever gets added to #entry itself. */
-.entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at 50% 55%,
+/* --flash-x/--flash-y: the flame's OWN on-screen position, measured fresh
+   at tap time (see enter() in index.html) and written as inline custom
+   properties on <html> — not a guessed percentage. The flame sits at a
+   different height depending on font scaling, language (Sinhala/Tamil/
+   English line counts differ), and viewport, so a fixed "50% 55%" was
+   only ever an approximation; this makes the flood of light originate
+   from the actual flame on every device, not near it. Falls back to that
+   same approximation if the measurement ever fails. */
+.entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at var(--flash-x,50%) var(--flash-y,55%),
   #fff 0%, rgba(255,246,224,.99) 10%, rgba(255,228,172,.94) 26%, rgba(255,208,138,.72) 48%, rgba(255,196,110,.34) 74%, rgba(255,196,110,0) 100%)}
 .entry.go ~ .entry-flash{animation:flash .85s ease-out}
+/* A thin ring of light expanding outward from that same point, right as
+   the flame ignites — gives the flood of light an actual point of origin
+   and a sense of physical force, instead of the screen just uniformly
+   brightening. Pure opacity+transform (cheap to composite), gone well
+   before the flash itself finishes. */
+.entry-shock{position:fixed;left:var(--flash-x,50%);top:var(--flash-y,55%);width:14px;height:14px;margin:-7px 0 0 -7px;
+  z-index:302;pointer-events:none;opacity:0;border-radius:50%;border:1.5px solid rgba(255,246,224,.95);
+  box-shadow:0 0 24px 6px rgba(255,206,120,.5);will-change:opacity,transform}
+.entry.go ~ .entry-shock{animation:shockwave .6s cubic-bezier(.16,.72,.28,1) forwards}
 .entry.go .lamp-glow{animation:lampBurst .5s cubic-bezier(.2,.7,.2,1) forwards}
 .entry.go .lamp-flame{animation:flameBurst .42s ease-out forwards}
 .entry-names.foil{animation:sheen 8s ease-in-out infinite}
@@ -749,6 +766,7 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes flash{0%{opacity:0}16%{opacity:1}45%{opacity:.9}72%{opacity:.4}100%{opacity:0}}
+@keyframes shockwave{0%{opacity:.85;transform:scale(1)}60%{opacity:.4}100%{opacity:0;transform:scale(48)}}
 /* Both used to fade to opacity:0 by the end of their own burst (500ms /
    420ms) — well before the screen-wide .entry-flash overlay (peaking
    136-382ms of its own 850ms run, still bright past 600ms) had finished
@@ -794,6 +812,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   .entry{transition:opacity .95s ease}
   .entry.go{transform:none}
   .entry.go .lamp-glow,.entry.go .lamp-flame{animation:none}
+  .entry.go ~ .entry-shock{animation:none}
   html.entered body{animation:pageFade 1s ease .12s both}
 }
 @keyframes pageFade{from{opacity:.35}to{opacity:1}}
