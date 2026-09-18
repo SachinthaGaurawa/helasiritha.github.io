@@ -159,7 +159,7 @@ body.lite.lang-swap main{animation:none}
 /* .hansa-mark.pre-mark (not .pre-mark alone) so this beats the plain
    .hansa-mark rule's own width/height/animation regardless of the two
    rules' order in the file, instead of depending on source position. */
-.hansa-mark.pre-mark{width:clamp(24px,5.5vw,30px);height:clamp(24px,5.5vw,30px);
+.hansa-mark.pre-mark{width:clamp(34px,8vw,46px);height:clamp(34px,8vw,46px);
   animation:preRise .8s var(--ease-soft) .6s both,hansaGlow 4.6s ease-in-out infinite}
 .pre-dots{display:flex;gap:.5rem;animation:preRise .7s var(--ease-soft) .8s both}
 .pre-dots span{width:8px;height:8px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
