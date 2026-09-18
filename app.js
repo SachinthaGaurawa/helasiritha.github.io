@@ -431,7 +431,12 @@ const DEFAULTS = {
   loveNote: "", loveSign: "කෞශානි & ගෞරව",
   phone: "", whatsapp: "", ambientAudioUrl: "",
   rsvpOpen: true,
-  show: { countdown: true, agenda: true, gallery: true, lovenote: true, lamp: true, blessings: true, rsvp: true }
+  show: { countdown: true, agenda: true, gallery: true, lovenote: true, lamp: true, blessings: true, rsvp: true },
+  /* Post-wedding "Thank You" lockdown — see isPostWeddingActive()/
+     applyPostWeddingState() below. Mirrors the admin panel's own schema
+     exactly (postWeddingScheduleAt is an SLT ISO string, same
+     "+05:30"-suffixed format as dateISO). */
+  postWeddingMode: false, postWeddingScheduleAt: "", postWeddingMessage: ""
 };
 /* Default schedule — bilingual; admin items (titleSi/descSi) override and fall back gracefully */
 const AGENDA_DEFAULT = [
@@ -1516,6 +1521,77 @@ function runIdle(fn) {
   else setTimeout(fn, 60);
 }
 
+/* ════════════════════════ POST-WEDDING · "ස්තූතියි" ═══════════════════════
+   Active when the admin's manual switch is on, OR the admin's SLT-scheduled
+   time has already passed. postWeddingScheduleAt is stored as the same
+   "+05:30"-suffixed ISO string the admin panel already uses for dateISO
+   (see fromLocalInput() there) — native Date parsing does the SLT math, so
+   there is nothing timezone-specific to compute here at all. */
+function isPostWeddingActive() {
+  if (S.postWeddingMode) return true;
+  if (S.postWeddingScheduleAt) {
+    const t = new Date(S.postWeddingScheduleAt).getTime();
+    if (!isNaN(t) && Date.now() >= t) return true;
+  }
+  return false;
+}
+/* Always pure Sinhala — this screen ignores LANG entirely, per spec. */
+function renderPostWedding() {
+  const port = document.getElementById("pwPortrait");
+  if (port) {
+    const b = S.brideName || "කෞශානි", g = S.groomName || "ගෞරව";
+    if (S.heroImageUrl) {
+      port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(b + " සහ " + g) + '" loading="eager" decoding="async">';
+      port.classList.remove("is-mono");
+    } else {
+      port.innerHTML = '<div class="hero-emblem" aria-hidden="true"></div>';
+      port.classList.add("is-mono");
+    }
+    const sig = document.getElementById("pwSignature");
+    if (sig) sig.textContent = b + " සහ " + g;
+  }
+  const msgEl = document.getElementById("pwMessage");
+  if (msgEl) {
+    msgEl.textContent = String(S.postWeddingMessage || "").trim() ||
+      "අප දෙදෙනාගේ විශේෂ දිනයේ ඔබ අප සමඟ සිටි බැවින්, හදවතින්ම ස්තූතිවන්ත වෙමු.";
+  }
+}
+/* Structural show/hide only runs on an actual state change (cheap `hidden`
+   toggles); the text content refreshes on every call so an admin editing
+   the message while the screen is already live is reflected without a
+   spurious re-toggle of the surrounding layout. */
+let pwActive = null;
+function applyPostWeddingState() {
+  const active = isPostWeddingActive();
+  if (active !== pwActive) {
+    pwActive = active;
+    document.documentElement.classList.toggle("pw-lock", active);
+    const navEl = document.getElementById("nav");
+    const mainEl = document.querySelector("main");
+    const footEl = document.querySelector(".footer");
+    const pw = document.getElementById("postWedding");
+    if (navEl) navEl.hidden = active;
+    if (mainEl) mainEl.hidden = active;
+    if (footEl) footEl.hidden = active;
+    if (pw) pw.hidden = !active;
+  }
+  if (active) renderPostWedding();
+}
+/* Catches the "site already open when the scheduled SLT time arrives" edge
+   case: the Firestore doc itself doesn't change at that instant (only
+   postWeddingScheduleAt's value does, back when it was first set), so no
+   onSnapshot fires — a poll is the only way to notice the clock has since
+   caught up. 30s, not a single setTimeout for the exact moment: a schedule
+   set far enough in the future would overflow setTimeout's ~24.8-day
+   (2^31-1ms) cap. Started once, from inside whenEntryGone (see connect()
+   below), so it never stacks a second interval across repeated snapshots. */
+let pwWatchStarted = false;
+function startPostWeddingWatch() {
+  if (pwWatchStarted) return;
+  pwWatchStarted = true;
+  setInterval(applyPostWeddingState, 30000);
+}
+
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
 async function connect() {
   try {
@@ -1544,7 +1620,11 @@ async function connect() {
         pre.decoding = "async";
         pre.src = S.heroImageUrl;
       }
-      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); });
+      /* Runs immediately — even while the entry gate is still up — so
+         scrolling is disabled and the main content hidden the instant
+         Firestore says so, not only once the visitor taps past the gate. */
+      applyPostWeddingState();
+      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startPostWeddingWatch(); });
     }, (err) => console.warn("content listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
