@@ -767,20 +767,21 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes flash{0%{opacity:0}16%{opacity:1}45%{opacity:.9}72%{opacity:.4}100%{opacity:0}}
 @keyframes shockwave{0%{opacity:.85;transform:scale(1)}60%{opacity:.4}100%{opacity:0;transform:scale(48)}}
-/* Both used to fade to opacity:0 by the end of their own burst (500ms /
-   420ms) — well before the screen-wide .entry-flash overlay (peaking
-   136-382ms of its own 850ms run, still bright past 600ms) had finished
-   reading as "the light." That made the lamp's own flame visibly go out
-   a beat before the flood of light it's supposed to be the SOURCE of,
-   which looked like two disconnected effects rather than one continuous
-   ignition. Neither keyframe fades on its own anymore — they stay lit
-   (just hugely scaled up, blending into the flash) and only dim later as
-   part of #entry's own opacity transition, together with everything else
-   in the gate, so the flame reads as feeding the flash rather than dying
-   out before it. Same durations, same scale growth — only the ending
-   opacity changed. */
-@keyframes lampBurst{0%{opacity:.5;transform:translateX(-50%) scale(1)}42%{opacity:1;transform:translateX(-50%) scale(3.1)}100%{opacity:1;transform:translateX(-50%) scale(4.3)}}
-@keyframes flameBurst{0%{opacity:.95;transform:translateX(-50%) scaleY(1)}40%{opacity:1;transform:translateX(-50%) scale(1.6,2.6)}100%{opacity:1;transform:translateX(-50%) scale(1.7,2.9)}}
+/* Scaling the flame/glow up to 3-4x their size (an earlier attempt at
+   "bursting") stretched the tall, thin flame into a huge smeared cone —
+   it read as a rendering glitch, not light. The actual flame stays
+   EXACTLY its normal size and shape the whole time (no transform here at
+   all now, so its own static transform is simply never touched); what
+   "flashes" is its brightness — filter:brightness() spikes it hot, near
+   white, right as .entry-flash (already anchored to this same point,
+   see --flash-x/--flash-y) floods the rest of the screen — so the small
+   flame reads as the actual source of that flood, not a separate,
+   distorted shape next to it. Neither keyframe fades back to opacity:0
+   on its own either — they hold lit and only dim later as part of
+   #entry's own opacity transition, together with everything else in the
+   gate. Same two durations as before (.5s / .42s). */
+@keyframes lampBurst{0%{opacity:.5}42%{opacity:1}100%{opacity:1}}
+@keyframes flameBurst{0%{opacity:.95;filter:blur(.6px) brightness(1)}40%{opacity:1;filter:blur(.6px) brightness(2.6)}100%{opacity:1;filter:blur(.6px) brightness(1.15)}}
 @keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
 html.entered body{animation:pageIn .8s var(--ease) .1s both}
 
