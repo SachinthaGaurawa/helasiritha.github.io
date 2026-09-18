@@ -749,8 +749,20 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes flash{0%{opacity:0}16%{opacity:1}45%{opacity:.9}72%{opacity:.4}100%{opacity:0}}
-@keyframes lampBurst{0%{opacity:.5;transform:translateX(-50%) scale(1)}42%{opacity:1;transform:translateX(-50%) scale(3.1)}100%{opacity:0;transform:translateX(-50%) scale(4.3)}}
-@keyframes flameBurst{0%{opacity:.95;transform:translateX(-50%) scaleY(1)}40%{opacity:1;transform:translateX(-50%) scale(1.6,2.6)}100%{opacity:0;transform:translateX(-50%) scale(1.7,2.9)}}
+/* Both used to fade to opacity:0 by the end of their own burst (500ms /
+   420ms) — well before the screen-wide .entry-flash overlay (peaking
+   136-382ms of its own 850ms run, still bright past 600ms) had finished
+   reading as "the light." That made the lamp's own flame visibly go out
+   a beat before the flood of light it's supposed to be the SOURCE of,
+   which looked like two disconnected effects rather than one continuous
+   ignition. Neither keyframe fades on its own anymore — they stay lit
+   (just hugely scaled up, blending into the flash) and only dim later as
+   part of #entry's own opacity transition, together with everything else
+   in the gate, so the flame reads as feeding the flash rather than dying
+   out before it. Same durations, same scale growth — only the ending
+   opacity changed. */
+@keyframes lampBurst{0%{opacity:.5;transform:translateX(-50%) scale(1)}42%{opacity:1;transform:translateX(-50%) scale(3.1)}100%{opacity:1;transform:translateX(-50%) scale(4.3)}}
+@keyframes flameBurst{0%{opacity:.95;transform:translateX(-50%) scaleY(1)}40%{opacity:1;transform:translateX(-50%) scale(1.6,2.6)}100%{opacity:1;transform:translateX(-50%) scale(1.7,2.9)}}
 @keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
 html.entered body{animation:pageIn .8s var(--ease) .1s both}
 
