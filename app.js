@@ -77,6 +77,7 @@ const TEXT = {
     galleryTitle: "සෙනෙහසේ මතකයන්",
     gallerySub: "අප එක්ව ගෙවූ ලස්සන මොහොත් කිහිපයක්…",
     galleryEmpty: "ඡායාරූප ඉක්මනින් මෙහි දිස් වේ…",
+    viewPhoto: "ඡායාරූපය විශාල කර බලන්න",
     lampEyebrow: "ආදරයෙන්",
     lampTitle: "සතුටින් එක්වන ආදරණීයයෝ",
     lampSub: "අප සමඟ සැමරීමට පැමිණෙන ආදරණීයන් සංඛ්‍යාව",
@@ -209,6 +210,7 @@ const TEXT = {
     galleryTitle: "Moments of Love",
     gallerySub: "A few of the beautiful moments we've shared…",
     galleryEmpty: "Photos will appear here soon…",
+    viewPhoto: "View photo",
     lampEyebrow: "With love",
     lampTitle: "Loved ones joining us",
     lampSub: "Guests who've joyfully confirmed",
@@ -341,6 +343,7 @@ const TEXT = {
     galleryTitle: "அன்பின் நினைவுகள்",
     gallerySub: "நாங்கள் ஒன்றாகக் கழித்த அழகிய தருணங்கள் சில…",
     galleryEmpty: "புகைப்படங்கள் விரைவில் இங்கே தோன்றும்…",
+    viewPhoto: "புகைப்படத்தைப் பெரிதாகக் காண",
     lampEyebrow: "அன்புடன்",
     lampTitle: "மகிழ்ச்சியுடன் இணையும் அன்பர்கள்",
     lampSub: "எங்களுடன் கொண்டாட வரும் அன்பர்களின் எண்ணிக்கை",
@@ -628,7 +631,7 @@ function renderGallery() {
      not an empty frame. onerror hides the <img> and flags the figure so CSS
      paints a quiet gold "✦" instead, matching the site's own ornamental mark. */
   box.innerHTML = GALLERY.map((g, i) =>
-    '<figure class="reveal" data-i="' + i + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.display=&quot;none&quot;;this.closest(&quot;figure&quot;).classList.add(&quot;fig-broken&quot;)">' +
+    '<figure class="reveal" data-i="' + i + '" tabindex="0" role="button" aria-label="' + esc(g.caption || T.viewPhoto) + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.display=&quot;none&quot;;this.closest(&quot;figure&quot;).classList.add(&quot;fig-broken&quot;)">' +
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
@@ -1393,12 +1396,29 @@ function openLightbox(i) {
     const n = GALLERY[(k + GALLERY.length) % GALLERY.length];
     if (n && n.url) { const p = new Image(); p.decoding = "async"; p.src = cld(n.url, viewerWidth()); }
   });
-  lb.classList.add("open"); document.body.classList.add("noscroll");
+  lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); document.body.classList.add("noscroll");
+  $("#lbClose").focus();
 }
-function closeLightbox() { $("#lightbox").classList.remove("open"); document.body.classList.remove("noscroll"); }
+function closeLightbox() {
+  const lb = $("#lightbox");
+  lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); document.body.classList.remove("noscroll");
+  if (lbOpener) { lbOpener.focus(); lbOpener = null; }
+}
 function lbStep(d) { if (!GALLERY.length) return; lbIndex = (lbIndex + d + GALLERY.length) % GALLERY.length; openLightbox(lbIndex); }
+let lbOpener = null;
 function setupLightbox() {
-  $("#masonry").addEventListener("click", (e) => { const f = e.target.closest("figure"); if (f) openLightbox(+f.dataset.i); });
+  /* Thumbnails were only openable by mouse click — a keyboard/switch-access
+     visitor had no way to reach a single photo, a complete dead end rather
+     than a rough edge. tabindex+role=button on each <figure> (renderGallery)
+     makes them focusable; this delegates Enter/Space the same way click
+     already delegates, and remembers the opener so focus returns to it on
+     close instead of vanishing into the body. */
+  $("#masonry").addEventListener("click", (e) => { const f = e.target.closest("figure"); if (f) { lbOpener = f; openLightbox(+f.dataset.i); } });
+  $("#masonry").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const f = e.target.closest("figure"); if (!f) return;
+    e.preventDefault(); lbOpener = f; openLightbox(+f.dataset.i);
+  });
   $("#lbClose").onclick = closeLightbox; $("#lbPrev").onclick = () => lbStep(-1); $("#lbNext").onclick = () => lbStep(1);
   $("#lightbox").addEventListener("click", (e) => { if (e.target.id === "lightbox") closeLightbox(); });
   document.addEventListener("keydown", (e) => {
