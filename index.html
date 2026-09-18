@@ -77,14 +77,13 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     <span class="entry-cta">පහන දැල්වීමට ස්පර්ශ කරන්න</span>
   </div>
 </div>
-<!-- Siblings of #entry, not children: their own independent fixed overlays, so the
+<!-- Sibling of #entry, not a child: its own independent fixed overlay, so the
      ignite flash reads as a crisp, undimmed flood of light — not muted and
      blurred by riding along with the gate's own fade/blur as it dissolves
-     (see the note above .entry-flash in styles.css). Both are anchored to
-     the flame's actual measured position (--flash-x/--flash-y, set in
-     enter() below), not a guessed spot on the screen. -->
+     (see the note above .entry-flash in styles.css). Anchored to the
+     flame's actual measured position (--flash-x/--flash-y, set in enter()
+     below), not a guessed spot on the screen. -->
 <div class="entry-flash" aria-hidden="true"></div>
-<div class="entry-shock" aria-hidden="true"></div>
 
 <!-- ░░ Preloader ░░ -->
 <div id="preloader" class="preloader" aria-hidden="true" style="background-color:#0a0a0c">
@@ -368,9 +367,9 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     /* Measure the flame's ACTUAL on-screen position right now — it sits at
        a different height depending on font scaling, language line count,
        and viewport size, so a fixed guess can't track it. Written as custom
-       properties before .go is added, so the flash and shockwave (styles.css)
-       paint their very first frame already anchored to the real flame,
-       not a generic screen-center guess. */
+       properties before .go is added, so the flash (styles.css) paints its
+       very first frame already anchored to the real flame, not a generic
+       screen-center guess. */
     try{
       var flame=e.querySelector('.lamp-flame');
       if(flame){
