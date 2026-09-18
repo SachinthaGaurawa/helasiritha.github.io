@@ -98,10 +98,16 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .scroll-cylinder {
         height: 84px;
         z-index: 10;
-        border-radius: 42px; 
+        border-radius: 42px;
         filter: url('#edge-fray-light');
         background-repeat: repeat;
-        will-change: transform, background-position;
+        /* `filter` is in will-change alongside transform/background-position so the
+           browser keeps this layer's already-rasterized (expensive feTurbulence)
+           bitmap cached instead of dropping and fully recomputing it after the
+           element has been scrolled far off-screen — see the note above
+           .scroll-body-wrapper for the full story (that's the layer where this
+           was actually visible as a black flash on scroll-back). */
+        will-change: transform, background-position, filter;
         backface-visibility: hidden;
     }
 
@@ -133,10 +139,18 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .scroll-body-wrapper {
         position: absolute;
         top: 62px; left: 0; width: 100%;
-        height: var(--paper-h); 
-        clip-path: inset(0 0 100% 0); 
-        filter: url('#edge-fray-heavy'); 
-        will-change: clip-path; 
+        height: var(--paper-h);
+        clip-path: inset(0 0 100% 0);
+        /* The heavy edge-fray filter used to live directly on THIS element —
+           but this clip-path is what JS animates every frame during the
+           scroll-unroll, and a filter sitting on the same element as an
+           animated clip-path forces the browser to re-run the whole filter
+           pass on every frame the clip changes (visible as scroll stutter
+           right as the sannasa unrolls). The filter now lives one level down,
+           on .scroll-flat-paper, whose own clip-path is a fixed shape set
+           once in CSS — so it rasterizes and caches a single time instead of
+           on every unroll frame. See the note on .scroll-flat-paper below. */
+        will-change: clip-path;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
@@ -147,6 +161,19 @@ if (/\.github\.io$/i.test(location.hostname)) {
         width: 100%;
         height: var(--paper-h);
         background-color: #d6a874;
+        /* Moved here from the parent .scroll-body-wrapper: that element's
+           clip-path animates every frame during the scroll-unroll, and this
+           filter is the heaviest on the sannasa (feTurbulence numOctaves=5 +
+           feDisplacementMap) — pairing an expensive filter with a per-frame
+           clip-path forced a full re-rasterization on every unroll frame,
+           the main contributor to scroll stutter through the sannasa. This
+           element's own clip-path below is a fixed torn-edge shape set once,
+           never animated, so the filter now rasterizes a single time and
+           will-change keeps that raster cached — including across the
+           scroll-away-and-back-into-view case that used to show the sannasa
+           going black for close to a second while the filter recomputed. */
+        filter: url('#edge-fray-heavy');
+        will-change: filter;
         clip-path: polygon(
             0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
             100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 
@@ -176,6 +203,11 @@ if (/\.github\.io$/i.test(location.hostname)) {
         opacity: 0.28;
         mix-blend-mode: overlay;
         filter: url('#emboss-filter');
+        /* Same raster-cache-retention reasoning as .scroll-body-wrapper above:
+           this filter (feSpecularLighting + feDiffuseLighting) is expensive
+           enough that letting the browser evict and recompute it on scroll-back
+           is visible as a delayed repaint. */
+        will-change: filter;
     }
 
     /* =======================================================================
@@ -247,6 +279,20 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     
     html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
+
+    /* Print: the parent page (styles.css) switches to a clean white/dark-text
+       theme for print, but this document had zero @media print rules of its
+       own and unconditionally set html/body to near-black with white text.
+       Printers/print-preview commonly drop background colors by default
+       (only the parchment's own backgrounds survive, via "print backgrounds"
+       being opt-in), which left the surrounding canvas either wasting a full
+       page of ink on near-black or, worse, leaving nothing behind white text
+       on white paper. The decree text itself is already dark (#3d1f0b) and
+       reads fine on paper unchanged — only the outer canvas needs to flip. */
+    @media print {
+        html, body, .scroll-viewport { background-color: #fff !important; color: #1a140a; }
+        .scroll-instruction { display: none !important; }
+    }
 </style>
 </head>
 <body>
@@ -400,6 +446,20 @@ if (/\.github\.io$/i.test(location.hostname)) {
           poruwa:"The auspicious Poruwa ceremony commences at 9.27 a.m.",
           swasti:"Swasti Siddham",
           cue:"Scroll to unfurl"
+        },
+        ta: {
+          sri:"ஸ்ரீ", eyebrow:"மங்கள திருமண விழா",
+          brideParents:"திரு. மற்றும் திருமதி. அவர்களின் அன்பு மகளான,",
+          brideName:"கௌஷானி",
+          groomParents:"திரு. மற்றும் திருமதி. அவர்களின் அன்பு மகனான,",
+          groomName:"கௌரவ",
+          join:"அவர்களது திருமண மங்கள நிகழ்வையொட்டி,",
+          body:"இந்த சிறப்பு மங்கள வேளையை எங்களுடன் இணைந்து கொண்டாட தங்களது மதிப்பிற்குரிய வருகையை அன்புடன் வேண்டுகிறோம்.",
+          lDate:"தேதி", lTime:"நேரம்", lVenue:"இடம்",
+          date:"2028 ஜனவரி 12, புதன்கிழமை", time:"காலை 9.00 மணி முதல்", venue:"எபிடோம் ஹோட்டல்", city:"குருநாகல்",
+          poruwa:"பொருவை சடங்கிற்கான சுப வேளை — காலை 09.27 மணிக்கு",
+          swasti:"ஸ்வஸ்தி சித்தம்",
+          cue:"கீழே உருட்டவும்"
         }
       };
 

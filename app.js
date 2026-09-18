@@ -53,6 +53,7 @@ const TEXT = {
     searching: "සොයමින්…",
     noGuest: "කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය.",
     proceedTyped: "මෙම නමින් ඉදිරියට යන්න",
+    guestsLoading: "ආරාධිත ලැයිස්තුව පූරණය වෙමින්… තත්පරයකින් නැවත සොයන්න.",
     selectName: "කරුණාකර ඔබගේ නම තෝරන්න",
     willAttend: "ඔබ පැමිණෙනවා ද?",
     yesAttend: "ඔව්, සතුටින් පැමිණෙමි", noAttend: "කණගාටුයි, බැරිවෙයි",
@@ -64,6 +65,8 @@ const TEXT = {
     rsvpThanks: "බොහොම ස්තූතියි!",
     rsvpYesMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු ✦",
     rsvpNoMsg: "ඔබව අපි මිස් කරනවා — ඔබගේ ආදරයට ස්තූතියි.",
+    rsvpError: "සම්බන්ධතාවයේ දෝෂයක් — ඔබගේ පිළිතුර සුරැකුණේ නැත. කරුණාකර නැවත උත්සාහ කරන්න.",
+    rsvpPickFirst: "කරුණාකර පැමිණේද නැද්ද කියා තෝරන්න.",
     changeResponse: "පිළිතුර වෙනස් කරන්න",
     back: "ආපසු",
     rsvpClosed: "පැමිණීම දැනුම්දීමේ කාලය දැනට අවසන්. ස්තූතියි.",
@@ -74,10 +77,7 @@ const TEXT = {
     galleryTitle: "සෙනෙහසේ මතකයන්",
     gallerySub: "අප එක්ව ගෙවූ ලස්සන මොහොත් කිහිපයක්…",
     galleryEmpty: "ඡායාරූප ඉක්මනින් මෙහි දිස් වේ…",
-    lampEyebrow: "ආදරයෙන්",
-    lampTitle: "සතුටින් එක්වන ආදරණීයයෝ",
-    lampSub: "අප සමඟ සැමරීමට පැමිණෙන ආදරණීයන් සංඛ්‍යාව",
-    confirmedCap: "ආරාධිතයන් තහවුරු වී ඇත",
+    viewPhoto: "ඡායාරූපය විශාල කර බලන්න",
     loveEyebrow: "හදවතින්",
     loveTitle: "විශේෂ සටහනක්",
     loveSub: "අපගේ ආදරණීය අමුත්තනට",
@@ -182,6 +182,7 @@ const TEXT = {
     searching: "Searching…",
     noGuest: "Sorry, we couldn't find that name.",
     proceedTyped: "Continue with this name",
+    guestsLoading: "Loading the guest list… please search again in a moment.",
     selectName: "Please select your name",
     willAttend: "Will you be attending?",
     yesAttend: "Yes, with joy", noAttend: "Sorry, can't make it",
@@ -193,6 +194,8 @@ const TEXT = {
     rsvpThanks: "Thank you so much!",
     rsvpYesMsg: "We can't wait to celebrate with you ✦",
     rsvpNoMsg: "We'll miss you — thank you for your love.",
+    rsvpError: "Connection error — your response wasn't saved. Please try again.",
+    rsvpPickFirst: "Please choose whether you'll be attending.",
     changeResponse: "Change response",
     back: "Back",
     rsvpClosed: "RSVPs are closed for now. Thank you.",
@@ -203,10 +206,7 @@ const TEXT = {
     galleryTitle: "Moments of Love",
     gallerySub: "A few of the beautiful moments we've shared…",
     galleryEmpty: "Photos will appear here soon…",
-    lampEyebrow: "With love",
-    lampTitle: "Loved ones joining us",
-    lampSub: "Guests who've joyfully confirmed",
-    confirmedCap: "guests confirmed",
+    viewPhoto: "View photo",
     loveEyebrow: "From the heart",
     loveTitle: "A Special Note",
     loveSub: "To our lovely guests",
@@ -311,6 +311,7 @@ const TEXT = {
     searching: "தேடுகிறது…",
     noGuest: "மன்னிக்கவும், அந்தப் பெயரில் அழைப்பாளர் யாரும் இல்லை.",
     proceedTyped: "இந்தப் பெயரில் தொடரவும்",
+    guestsLoading: "அழைப்பாளர் பட்டியல் ஏற்றப்படுகிறது… சிறிது நேரத்தில் மீண்டும் தேடவும்.",
     selectName: "உங்கள் பெயரைத் தேர்ந்தெடுக்கவும்",
     willAttend: "நீங்கள் வருகிறீர்களா?",
     yesAttend: "ஆம், மகிழ்ச்சியுடன் வருகிறேன்", noAttend: "மன்னிக்கவும், வர இயலாது",
@@ -322,6 +323,8 @@ const TEXT = {
     rsvpThanks: "மிக்க நன்றி!",
     rsvpYesMsg: "உங்களைச் சந்திக்க நாங்கள் ஆவலுடன் காத்திருக்கிறோம் ✦",
     rsvpNoMsg: "உங்களை நாங்கள் மிஸ் செய்வோம் — உங்கள் அன்பிற்கு நன்றி.",
+    rsvpError: "இணைப்பு தவறு — உங்கள் பதில் சேமிக்கப்படவில்லை. மீண்டும் முயற்சிக்கவும்.",
+    rsvpPickFirst: "நீங்கள் கலந்துகொள்வீர்களா என்று தேர்ந்தெடுக்கவும்.",
     changeResponse: "பதிலை மாற்று",
     back: "பின்செல்",
     rsvpClosed: "வருகை அறிவிக்கும் காலம் தற்போது முடிந்துவிட்டது. நன்றி.",
@@ -332,10 +335,7 @@ const TEXT = {
     galleryTitle: "அன்பின் நினைவுகள்",
     gallerySub: "நாங்கள் ஒன்றாகக் கழித்த அழகிய தருணங்கள் சில…",
     galleryEmpty: "புகைப்படங்கள் விரைவில் இங்கே தோன்றும்…",
-    lampEyebrow: "அன்புடன்",
-    lampTitle: "மகிழ்ச்சியுடன் இணையும் அன்பர்கள்",
-    lampSub: "எங்களுடன் கொண்டாட வரும் அன்பர்களின் எண்ணிக்கை",
-    confirmedCap: "அழைப்பாளர்கள் உறுதி செய்யப்பட்டுள்ளனர்",
+    viewPhoto: "புகைப்படத்தைப் பெரிதாகக் காண",
     loveEyebrow: "இதயத்திலிருந்து",
     loveTitle: "ஒரு சிறப்புக் குறிப்பு",
     loveSub: "எங்கள் அன்பு விருந்தினர்களுக்கு",
@@ -444,7 +444,7 @@ const AGENDA_DEFAULT = [
 /* ── State + helpers ─────────────────────────────────────────────────────── */
 let S = Object.assign({}, DEFAULTS);
 let AGENDA = AGENDA_DEFAULT.slice();
-let GALLERY = [], GUESTS = [], BLESSINGS = [], confirmedGuests = 0;
+let GALLERY = [], GUESTS = [], BLESSINGS = [], guestsLoaded = false;
 let fb = null;
 let LANG = (function () { try { var x = localStorage.getItem("hs_lang"); return (x === "en" || x === "ta") ? x : "si"; } catch (e) { return "si"; } })();
 
@@ -568,7 +568,7 @@ function renderInvitation() {
     '</div>' +
     '<p class="inv-close">' + esc(T.closing) + '</p>' +
     '<p class="inv-from">' + esc(T.from) + '</p>' +
-    (S.venueMapUrl ? '<a class="btn ghost maplink" href="' + esc(S.venueMapUrl) + '" target="_blank" rel="noopener">⌖ ' + esc(T.viewLocation) + '</a>' : "");
+    (S.venueMapUrl ? '<a class="btn ghost maplink" href="' + esc(S.venueMapUrl) + '" target="_blank" rel="noopener noreferrer">⌖ ' + esc(T.viewLocation) + '</a>' : "");
   $("#inviteBody").innerHTML = html;
 }
 
@@ -619,21 +619,10 @@ function renderGallery() {
      not an empty frame. onerror hides the <img> and flags the figure so CSS
      paints a quiet gold "✦" instead, matching the site's own ornamental mark. */
   box.innerHTML = GALLERY.map((g, i) =>
-    '<figure class="reveal" data-i="' + i + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.display=&quot;none&quot;;this.closest(&quot;figure&quot;).classList.add(&quot;fig-broken&quot;)">' +
+    '<figure class="reveal" data-i="' + i + '" tabindex="0" role="button" aria-label="' + esc(g.caption || T.viewPhoto) + '" style="background:#14141a url(&quot;' + esc(cld(g.url, 24, "e_blur:600")) + '&quot;) center/cover no-repeat"><img src="' + esc(cld(g.url, 640)) + '" srcset="' + esc(gridSrcset(g.url)) + '" sizes="(min-width:1100px) 33vw,(min-width:700px) 45vw,90vw" alt="' + esc(g.caption || "memory") + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity .6s ease" onload="this.style.opacity=1" onerror="this.style.display=&quot;none&quot;;this.closest(&quot;figure&quot;).classList.add(&quot;fig-broken&quot;)">' +
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
-}
-
-let counterDone = false;
-function renderCounter() {
-  const lc = $("#lampCount"); if (!lc) return;   // lamp/counter section not present — no-op
-  const T = L();
-  $("#lampEyebrow").textContent = T.lampEyebrow;
-  $("#lampTitle").textContent = T.lampTitle;
-  $("#lampSub").textContent = T.lampSub;
-  $("#lampCap").textContent = T.confirmedCap;
-  $("#lampCount").textContent = String(confirmedGuests);
 }
 
 function renderLove() {
@@ -703,6 +692,7 @@ function renderRsvpShell() {
   // stage-local labels
   $("#rsvpHelp").textContent = T.rsvpHelp;
   $("#rsvpSearchInput").placeholder = T.searchPlaceholder;
+  $("#rsvpSearchInput").setAttribute("aria-label", T.searchPlaceholder);
   $("#rsvpSearchBtn").textContent = T.searchBtn;
   $("#willAttendQ").textContent = T.willAttend;
   $("#choiceYes").textContent = T.yesAttend;
@@ -734,7 +724,7 @@ function renderFooter() {
 }
 
 function applyVisibility() {
-  const map = { countdown: "#countdown", agenda: "#agenda", gallery: "#gallery", lovenote: "#lovenote", lamp: "#lamp", blessings: "#blessings", rsvp: "#rsvp" };
+  const map = { countdown: "#countdown", agenda: "#agenda", gallery: "#gallery", lovenote: "#lovenote", blessings: "#blessings", rsvp: "#rsvp" };
   Object.keys(map).forEach(k => { const el = $(map[k]); if (el) el.style.display = (S.show && S.show[k] === false) ? "none" : ""; });
 }
 
@@ -777,26 +767,6 @@ function observeReveals() {
   $$(".reveal:not(.in)").forEach(e => revObserver.observe(e));
 }
 
-/* Count-up for confirmed guests when the counter scrolls into view */
-function setupCounter() {
-  const el = $("#lampCount"); if (!el || !("IntersectionObserver" in window)) return;
-  const io = new IntersectionObserver((es) => {
-    es.forEach(e => {
-      if (e.isIntersecting && !counterDone) {
-        counterDone = true;
-        const target = confirmedGuests, dur = 1100, t0 = performance.now();
-        const step = (t) => {
-          const p = Math.min(1, (t - t0) / dur);
-          el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
-          if (p < 1) requestAnimationFrame(step);
-        };
-        if (!document.body.classList.contains("lite")) requestAnimationFrame(step); else el.textContent = String(target);
-      }
-    });
-  }, { threshold: 0.4 });
-  io.observe($("#lamp"));
-}
-
 /* Sticky nav: scroll progress, condense, scroll-spy, mobile drawer */
 function setupNav() {
   const nav = $("#nav"), prog = $("#scrollProgress"), toTop = $("#toTop");
@@ -837,10 +807,19 @@ function setupNav() {
   }
   // mobile drawer
   const burger = $("#navBurger"), drawer = $("#navDrawer");
-  const closeDrawer = () => { drawer.classList.remove("open"); burger.classList.remove("open"); document.body.classList.remove("noscroll"); };
+  /* The drawer used to be hidden purely with a CSS transform (translateX past
+     the edge) — invisible, but still in the tab order and screen-reader flow
+     the whole time, so a keyboard/AT user closed could still Tab into its
+     links or have them announced. `inert` removes it from both while closed,
+     same fix as the entry gate's background above; aria-expanded on the
+     burger reflects state for assistive tech the way a disclosure control
+     should. */
+  const closeDrawer = () => { drawer.classList.remove("open"); burger.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); drawer.setAttribute("inert", ""); document.body.classList.remove("noscroll"); };
   if (burger && drawer) {
     burger.onclick = () => {
       const open = drawer.classList.toggle("open"); burger.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      if (open) drawer.removeAttribute("inert"); else drawer.setAttribute("inert", "");
       document.body.classList.toggle("noscroll", open);
     };
     $$(".js-drawer-link").forEach(a => a.addEventListener("click", closeDrawer));
@@ -903,7 +882,18 @@ function setupParticles() {
     lastParticleWidth = window.innerWidth;
     resize();
   }, { passive: true });
+  /* This loop used to run for the entire visit regardless of scroll position —
+     once the visitor scrolled past the hero it kept clearing/redrawing 26-54
+     dots 60x a second for content that was no longer on screen at all,
+     permanently eating a slice of every frame's budget everywhere else on the
+     page (a real contributor to the "stuttery, not smooth" scroll feel
+     reported on longer pages). Gated the same way the sannasa's own
+     scroll-unroll engine gates its RAF loop: an IntersectionObserver pauses
+     drawing entirely once the canvas is well outside the viewport, and
+     resumes it only once it's back within range. */
+  let inView = true;
   function frame() {
+    if (!inView) { particleRAF = null; return; }
     if (document.documentElement.classList.contains("vv-zoom")) { particleRAF = requestAnimationFrame(frame); return; }
     /* The entry gateway sits at z-index:300, fully opaque, on top of the hero
        this canvas lives behind — every dot this loop draws while it's up is
@@ -922,10 +912,17 @@ function setupParticles() {
     }
     particleRAF = requestAnimationFrame(frame);
   }
+  function startFrame() { if (!particleRAF && inView && !document.hidden) particleRAF = requestAnimationFrame(frame); }
   frame();
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => {
+      inView = es[es.length - 1].isIntersecting;
+      if (inView) startFrame(); else if (particleRAF) { cancelAnimationFrame(particleRAF); particleRAF = null; }
+    }, { rootMargin: "200px 0px 200px 0px" }).observe(c);
+  }
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) { if (particleRAF) cancelAnimationFrame(particleRAF), particleRAF = null; }
-    else if (!particleRAF) frame();
+    else startFrame();
   });
 }
 
@@ -1069,6 +1066,14 @@ function shareWa() {
 }
 
 /* ════════════════════════════════ RSVP ═══════════════════════════════════ */
+/* FNV-1a over the trimmed/lowercased name — deterministic, so the same typed
+   name always yields the same fallback guest id (see #proceedTyped below). */
+function stableSlug(s) {
+  s = (s || "").trim().toLowerCase();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0).toString(36);
+}
 const rsvp = { guest: null, attending: null, liquor: false, party: 1, dietary: "" };
 function showStage(id) { $$(".rsvp-stage").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
 function pickGuest(g) {
@@ -1076,6 +1081,7 @@ function pickGuest(g) {
   $("#confName").textContent = g.name + (g.family ? " · " + g.family : "");
   $("#choiceYes").classList.remove("sel"); $("#choiceNo").classList.remove("sel");
   $("#attendExtras").style.display = "none"; rsvp.attending = null;
+  const errEl = $("#rsvpError"); if (errEl) errEl.style.display = "none";
   showStage("#stConfirm");
 }
 function setupRsvp() {
@@ -1084,11 +1090,30 @@ function setupRsvp() {
     const q = $("#rsvpSearchInput").value.trim().toLowerCase();
     const box = $("#rsvpResults"); box.innerHTML = "";
     if (!q) return;
+    /* GUESTS only fills once the guestsPublic snapshot resolves (setupFirebase
+       runs concurrently with everything else, no wait here before now). Searching
+       in that window always found 0 hits and jumped straight to "no guest found,
+       continue with this name" — misleading a guest who IS in the list into
+       thinking they aren't, right as they're most likely to search (immediately
+       after the page loads). Show a neutral "still loading" note instead of the
+       false-negative until the first snapshot has actually arrived. */
+    if (!guestsLoaded) {
+      box.innerHTML = '<p class="note">' + esc(T().guestsLoading) + '</p>';
+      return;
+    }
     const hits = GUESTS.filter(g => (g.name || "").toLowerCase().includes(q) || (g.family || "").toLowerCase().includes(q)).slice(0, 12);
     if (!hits.length) {
       box.innerHTML = '<p class="note">' + esc(T().noGuest) + '</p>' +
         '<button class="btn ghost sm" id="proceedTyped">' + esc(T().proceedTyped) + '</button>';
-      $("#proceedTyped").onclick = () => pickGuest({ id: "guest-" + Date.now(), name: $("#rsvpSearchInput").value.trim(), family: "", side: "" });
+      $("#proceedTyped").onclick = () => {
+        const typed = $("#rsvpSearchInput").value.trim();
+        /* A stable id derived from the typed name (not Date.now()) — so a guest
+           who clicks this more than once (a retry after a failed submit, or a
+           second visit) reuses the same rsvps/{guestId} doc instead of minting a
+           brand-new one every time, which was silently inflating the confirmed
+           guest count with duplicates. */
+        pickGuest({ id: "guest-" + stableSlug(typed), name: typed, family: "", side: "" });
+      };
       return;
     }
     box.innerHTML = hits.map((g, i) =>
@@ -1097,8 +1122,8 @@ function setupRsvp() {
     $$("#rsvpResults .guest-pick").forEach((b, i) => b.onclick = () => pickGuest(hits[i]));
   };
   $("#rsvpSearchInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#rsvpSearchBtn").click(); } });
-  $("#choiceYes").onclick = () => { rsvp.attending = true; $("#choiceYes").classList.add("sel"); $("#choiceNo").classList.remove("sel"); $("#attendExtras").style.display = "block"; };
-  $("#choiceNo").onclick = () => { rsvp.attending = false; $("#choiceNo").classList.add("sel"); $("#choiceYes").classList.remove("sel"); $("#attendExtras").style.display = "none"; };
+  $("#choiceYes").onclick = () => { rsvp.attending = true; $("#choiceYes").classList.add("sel"); $("#choiceNo").classList.remove("sel"); $("#attendExtras").style.display = "block"; $("#rsvpError").style.display = "none"; };
+  $("#choiceNo").onclick = () => { rsvp.attending = false; $("#choiceNo").classList.add("sel"); $("#choiceYes").classList.remove("sel"); $("#attendExtras").style.display = "none"; $("#rsvpError").style.display = "none"; };
   $("#liqYes").onclick = () => { rsvp.liquor = true; $("#liqYes").classList.add("sel"); $("#liqNo").classList.remove("sel"); };
   $("#liqNo").onclick = () => { rsvp.liquor = false; $("#liqNo").classList.add("sel"); $("#liqYes").classList.remove("sel"); };
   $("#pMinus").onclick = () => { rsvp.party = Math.max(1, rsvp.party - 1); $("#pVal").textContent = rsvp.party; };
@@ -1112,8 +1137,13 @@ function setupRsvp() {
   $("#rsvpSubmit").onclick = submitRsvp;
 }
 async function submitRsvp() {
-  if (rsvp.attending === null || !rsvp.guest) return;
   const T = L();
+  if (!rsvp.guest) return;
+  if (rsvp.attending === null) {
+    const errEl = $("#rsvpError");
+    if (errEl) { errEl.textContent = T.rsvpPickFirst; errEl.style.display = ""; }
+    return;
+  }
   rsvp.dietary = $("#rsvpDiet").value.trim();
   const party = rsvp.attending ? rsvp.party : 0;
   const payload = {
@@ -1121,9 +1151,26 @@ async function submitRsvp() {
     attending: rsvp.attending, liquor: rsvp.attending ? rsvp.liquor : false,
     party: party, count: party, dietary: rsvp.dietary
   };
-  const btn = $("#rsvpSubmit"); btn.disabled = true; btn.textContent = T.sending;
-  try { if (fb) await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true }); }
-  catch (e) { console.warn("RSVP save failed", e); }
+  const btn = $("#rsvpSubmit"), errEl = $("#rsvpError");
+  btn.disabled = true; btn.textContent = T.sending;
+  if (errEl) errEl.style.display = "none";
+  /* A guest's RSVP is the single most consequential action on this site — the
+     couple's headcount/catering depends on it. This used to advance to the
+     "Thank you" screen unconditionally, even when `fb` was still null (Firestore
+     not yet connected — plausible on a bad venue connection) or the write threw
+     (a dropped connection mid-submit). The guest would believe they'd RSVP'd
+     while nothing was ever saved, with no way for them or the couple to know.
+     Now a failure keeps them on the form with a visible, localized error and a
+     re-enabled button, matching how the blessings form already handles this. */
+  try {
+    if (!fb) throw new Error("Firestore not connected");
+    await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true });
+  } catch (e) {
+    console.warn("RSVP save failed", e);
+    btn.disabled = false; btn.textContent = T.confirmRsvp;
+    if (errEl) { errEl.textContent = T.rsvpError; errEl.style.display = ""; }
+    return;
+  }
   btn.disabled = false; btn.textContent = T.confirmRsvp;
   $("#rsvpThanksBig").textContent = T.rsvpThanks;
   $("#rsvpThanksMsg").textContent = rsvp.attending ? T.rsvpYesMsg : T.rsvpNoMsg;
@@ -1316,12 +1363,29 @@ function openLightbox(i) {
     const n = GALLERY[(k + GALLERY.length) % GALLERY.length];
     if (n && n.url) { const p = new Image(); p.decoding = "async"; p.src = cld(n.url, viewerWidth()); }
   });
-  lb.classList.add("open"); document.body.classList.add("noscroll");
+  lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); document.body.classList.add("noscroll");
+  $("#lbClose").focus();
 }
-function closeLightbox() { $("#lightbox").classList.remove("open"); document.body.classList.remove("noscroll"); }
+function closeLightbox() {
+  const lb = $("#lightbox");
+  lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); document.body.classList.remove("noscroll");
+  if (lbOpener) { lbOpener.focus(); lbOpener = null; }
+}
 function lbStep(d) { if (!GALLERY.length) return; lbIndex = (lbIndex + d + GALLERY.length) % GALLERY.length; openLightbox(lbIndex); }
+let lbOpener = null;
 function setupLightbox() {
-  $("#masonry").addEventListener("click", (e) => { const f = e.target.closest("figure"); if (f) openLightbox(+f.dataset.i); });
+  /* Thumbnails were only openable by mouse click — a keyboard/switch-access
+     visitor had no way to reach a single photo, a complete dead end rather
+     than a rough edge. tabindex+role=button on each <figure> (renderGallery)
+     makes them focusable; this delegates Enter/Space the same way click
+     already delegates, and remembers the opener so focus returns to it on
+     close instead of vanishing into the body. */
+  $("#masonry").addEventListener("click", (e) => { const f = e.target.closest("figure"); if (f) { lbOpener = f; openLightbox(+f.dataset.i); } });
+  $("#masonry").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const f = e.target.closest("figure"); if (!f) return;
+    e.preventDefault(); lbOpener = f; openLightbox(+f.dataset.i);
+  });
   $("#lbClose").onclick = closeLightbox; $("#lbPrev").onclick = () => lbStep(-1); $("#lbNext").onclick = () => lbStep(1);
   $("#lightbox").addEventListener("click", (e) => { if (e.target.id === "lightbox") closeLightbox(); });
   document.addEventListener("keydown", (e) => {
@@ -1437,11 +1501,8 @@ async function connect() {
        guest's RSVP details private from a visitor using this search box. */
     fs.onSnapshot(fs.collection(db, "guestsPublic"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
-    }, (err) => console.warn("guestsPublic listener", err));
-
-    fs.onSnapshot(fs.doc(db, "site", "stats"), (snap) => {
-      confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
-    }, (err) => console.warn("stats listener", err));
+      guestsLoaded = true;
+    }, (err) => { console.warn("guestsPublic listener", err); guestsLoaded = true; });
 
     /* Live theme — the admin colour palette repaints the site instantly. */
     fs.onSnapshot(fs.doc(db, "site", "theme"), (snap) => {

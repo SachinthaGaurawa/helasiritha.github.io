@@ -827,6 +827,9 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 
 /* ── No-JS fallback: never trap the visitor ── */
 @media (scripting: none){ #entry{display:none!important} }
+.noscript-banner{position:relative;z-index:400;margin:0;padding:1.4rem 1.2rem;
+  background:#0a0a0c;color:var(--gold);font-family:var(--f-si);
+  font-size:1rem;line-height:1.6;text-align:center;border-bottom:1px solid rgba(232,201,135,.3)}
 
 /* ── Print ── */
 @media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after{display:none!important} }
