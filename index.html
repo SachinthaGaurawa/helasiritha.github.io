@@ -174,8 +174,18 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
       <div class="hansa-divider reveal" aria-hidden="true"><span class="hansa-mark"></span></div>
     </div>
     <!-- ░░ Sannasa — your exact standalone file, embedded verbatim (isolated) ░░ -->
+    <!-- fetchpriority="high" + loading="eager": this iframe sits below the
+         hero, so browsers that would otherwise treat an off-screen iframe's
+         own document fetch as low-priority network traffic (queued behind
+         the page's several fetchpriority="high" hero/gateway images) now
+         start it immediately, at the same priority — so sannasa.html has
+         already loaded, run its own reflow(), and posted its real height
+         back (see setupSannasaScroll() in app.js) well before a visitor
+         actually scrolls down to it, instead of still being blank/mid-load
+         at that moment. This only changes WHEN the browser fetches the
+         unmodified file — sannasa.html itself is untouched. -->
     <div class="sannasa-embed reveal">
-      <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" style="background-color:#030303"></iframe>
+      <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" style="background-color:#030303" loading="eager" fetchpriority="high"></iframe>
     </div>
     <!-- hidden stub so app.js (#inviteBody) keeps working without error -->
     <div class="sannasa-hidden" aria-hidden="true"><div id="inviteBody"></div></div>
