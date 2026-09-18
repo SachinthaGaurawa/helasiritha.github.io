@@ -766,9 +766,24 @@ function AG_ICON(k) {
 let revealRafId = null;
 const revealActive = new Set();
 const REVEAL_AT = 0.78; // element's top reaches this fraction of viewport height -> fully revealed
+/* Same cached-height guard as fitHero()/setupParallax()/setupParticles():
+   window.innerHeight shifts on mobile whenever the address bar shows/hides
+   (a real, unavoidable resize — not something a site can prevent), and
+   this loop reads its height reference every single frame. Recomputing
+   startAt/revealAt from a live height that's mid-transition during that
+   browser-chrome animation risked an extra, avoidable flicker in the
+   reveal's own opacity/transform on top of the address bar's own motion.
+   Only a genuine viewport WIDTH change (rotation, real resize) recaches. */
+let cachedRevealVH = window.innerHeight || 1;
+let lastRevealWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+  if (window.innerWidth === lastRevealWidth) return;
+  lastRevealWidth = window.innerWidth;
+  cachedRevealVH = window.innerHeight || 1;
+}, { passive: true });
 
 function revealFrame() {
-  const vh = window.innerHeight || 1;
+  const vh = cachedRevealVH;
   const startAt = vh, revealAt = vh * REVEAL_AT;
   const span = startAt - revealAt;
   for (const el of Array.from(revealActive)) {
@@ -791,7 +806,7 @@ function startRevealLoop() { if (!revealRafId && revealActive.size) revealRafId 
 
 function observeReveals() {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const vh = window.innerHeight || 1;
+  const vh = cachedRevealVH;
   const revealAt = vh * REVEAL_AT;
   $$(".reveal:not(.in)").forEach((e, i) => {
     if (reduced) { e.classList.add("in"); return; }
