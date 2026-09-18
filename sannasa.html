@@ -141,19 +141,16 @@ if (/\.github\.io$/i.test(location.hostname)) {
         top: 62px; left: 0; width: 100%;
         height: var(--paper-h);
         clip-path: inset(0 0 100% 0);
-        filter: url('#edge-fray-heavy');
-        /* This carries the heaviest live SVG filter on the whole sannasa
-           (feTurbulence numOctaves=5 + feDisplacementMap) and wraps the entire
-           parchment body/text. After it sits far outside the viewport for a
-           while, browsers reclaim its composited bitmap to save memory; on
-           scroll back into view the filter then has to be fully recomputed
-           from scratch, which for this cost is visible as the sannasa going
-           black (the iframe's own #030303 body showing through) for close to
-           a second before it repaints. Listing `filter` in will-change (not
-           just clip-path) asks the browser to keep this layer's raster cache
-           around instead of evicting it, so the repaint on scroll-back is
-           cheap rather than a full recompute. */
-        will-change: clip-path, filter;
+        /* The heavy edge-fray filter used to live directly on THIS element —
+           but this clip-path is what JS animates every frame during the
+           scroll-unroll, and a filter sitting on the same element as an
+           animated clip-path forces the browser to re-run the whole filter
+           pass on every frame the clip changes (visible as scroll stutter
+           right as the sannasa unrolls). The filter now lives one level down,
+           on .scroll-flat-paper, whose own clip-path is a fixed shape set
+           once in CSS — so it rasterizes and caches a single time instead of
+           on every unroll frame. See the note on .scroll-flat-paper below. */
+        will-change: clip-path;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
@@ -164,6 +161,19 @@ if (/\.github\.io$/i.test(location.hostname)) {
         width: 100%;
         height: var(--paper-h);
         background-color: #d6a874;
+        /* Moved here from the parent .scroll-body-wrapper: that element's
+           clip-path animates every frame during the scroll-unroll, and this
+           filter is the heaviest on the sannasa (feTurbulence numOctaves=5 +
+           feDisplacementMap) — pairing an expensive filter with a per-frame
+           clip-path forced a full re-rasterization on every unroll frame,
+           the main contributor to scroll stutter through the sannasa. This
+           element's own clip-path below is a fixed torn-edge shape set once,
+           never animated, so the filter now rasterizes a single time and
+           will-change keeps that raster cached — including across the
+           scroll-away-and-back-into-view case that used to show the sannasa
+           going black for close to a second while the filter recomputed. */
+        filter: url('#edge-fray-heavy');
+        will-change: filter;
         clip-path: polygon(
             0% 0%, 100% 0%, 100% 8%, 94% 11%, 98% 13%, 100% 16%, 
             100% 28%, 90% 32%, 97% 37%, 92% 41%, 100% 45%, 

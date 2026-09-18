@@ -903,7 +903,18 @@ function setupParticles() {
     lastParticleWidth = window.innerWidth;
     resize();
   }, { passive: true });
+  /* This loop used to run for the entire visit regardless of scroll position —
+     once the visitor scrolled past the hero it kept clearing/redrawing 26-54
+     dots 60x a second for content that was no longer on screen at all,
+     permanently eating a slice of every frame's budget everywhere else on the
+     page (a real contributor to the "stuttery, not smooth" scroll feel
+     reported on longer pages). Gated the same way the sannasa's own
+     scroll-unroll engine gates its RAF loop: an IntersectionObserver pauses
+     drawing entirely once the canvas is well outside the viewport, and
+     resumes it only once it's back within range. */
+  let inView = true;
   function frame() {
+    if (!inView) { particleRAF = null; return; }
     if (document.documentElement.classList.contains("vv-zoom")) { particleRAF = requestAnimationFrame(frame); return; }
     /* The entry gateway sits at z-index:300, fully opaque, on top of the hero
        this canvas lives behind — every dot this loop draws while it's up is
@@ -922,10 +933,17 @@ function setupParticles() {
     }
     particleRAF = requestAnimationFrame(frame);
   }
+  function startFrame() { if (!particleRAF && inView && !document.hidden) particleRAF = requestAnimationFrame(frame); }
   frame();
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => {
+      inView = es[es.length - 1].isIntersecting;
+      if (inView) startFrame(); else if (particleRAF) { cancelAnimationFrame(particleRAF); particleRAF = null; }
+    }, { rootMargin: "200px 0px 200px 0px" }).observe(c);
+  }
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) { if (particleRAF) cancelAnimationFrame(particleRAF), particleRAF = null; }
-    else if (!particleRAF) frame();
+    else startFrame();
   });
 }
 
