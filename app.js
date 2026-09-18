@@ -1386,8 +1386,19 @@ async function connect() {
 
     fs.onSnapshot(fs.doc(db, "site", "content"), (snap) => {
       const data = snap.exists() ? snap.data() : {};
+      const prevHero = S.heroImageUrl;
       S = Object.assign({}, DEFAULTS, data);
       S.show = Object.assign({}, DEFAULTS.show, data.show || {});
+      /* Warm the browser's cache for the portrait the instant its URL is known
+         (even while the entry gate is still up) — otherwise the <img> tag
+         isn't created until whenEntryGone() below, and the reveal has to
+         wait out a fresh network fetch + decode right at the critical
+         moment instead of reusing an already-fetched image. */
+      if (S.heroImageUrl && S.heroImageUrl !== prevHero) {
+        const pre = new Image();
+        pre.decoding = "async";
+        pre.src = S.heroImageUrl;
+      }
       whenEntryGone(() => { renderAll(); syncMusicBtn(); });
     }, (err) => console.warn("content listener", err));
 
