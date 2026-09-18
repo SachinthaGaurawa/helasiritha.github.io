@@ -98,10 +98,16 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .scroll-cylinder {
         height: 84px;
         z-index: 10;
-        border-radius: 42px; 
+        border-radius: 42px;
         filter: url('#edge-fray-light');
         background-repeat: repeat;
-        will-change: transform, background-position;
+        /* `filter` is in will-change alongside transform/background-position so the
+           browser keeps this layer's already-rasterized (expensive feTurbulence)
+           bitmap cached instead of dropping and fully recomputing it after the
+           element has been scrolled far off-screen — see the note above
+           .scroll-body-wrapper for the full story (that's the layer where this
+           was actually visible as a black flash on scroll-back). */
+        will-change: transform, background-position, filter;
         backface-visibility: hidden;
     }
 
@@ -133,10 +139,21 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .scroll-body-wrapper {
         position: absolute;
         top: 62px; left: 0; width: 100%;
-        height: var(--paper-h); 
-        clip-path: inset(0 0 100% 0); 
-        filter: url('#edge-fray-heavy'); 
-        will-change: clip-path; 
+        height: var(--paper-h);
+        clip-path: inset(0 0 100% 0);
+        filter: url('#edge-fray-heavy');
+        /* This carries the heaviest live SVG filter on the whole sannasa
+           (feTurbulence numOctaves=5 + feDisplacementMap) and wraps the entire
+           parchment body/text. After it sits far outside the viewport for a
+           while, browsers reclaim its composited bitmap to save memory; on
+           scroll back into view the filter then has to be fully recomputed
+           from scratch, which for this cost is visible as the sannasa going
+           black (the iframe's own #030303 body showing through) for close to
+           a second before it repaints. Listing `filter` in will-change (not
+           just clip-path) asks the browser to keep this layer's raster cache
+           around instead of evicting it, so the repaint on scroll-back is
+           cheap rather than a full recompute. */
+        will-change: clip-path, filter;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
@@ -176,6 +193,11 @@ if (/\.github\.io$/i.test(location.hostname)) {
         opacity: 0.28;
         mix-blend-mode: overlay;
         filter: url('#emboss-filter');
+        /* Same raster-cache-retention reasoning as .scroll-body-wrapper above:
+           this filter (feSpecularLighting + feDiffuseLighting) is expensive
+           enough that letting the browser evict and recompute it on scroll-back
+           is visible as a delayed repaint. */
+        will-change: filter;
     }
 
     /* =======================================================================
