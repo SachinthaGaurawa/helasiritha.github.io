@@ -381,52 +381,15 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     e.classList.add('go');
     document.documentElement.classList.remove('entry-lock'); /* unlocks page scroll */
     var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
-    /* CRITICAL: release body's pageIn animation once it finishes, or its
-       transform never truly reverts to the CSS keyword `none` — animation
-       fill-mode:both keeps outranking any other style source for that
-       property indefinitely, even though the *visual* end state (scale(1))
-       looks identical to no transform at all. A computed transform of
-       anything other than literally `none` — including a harmless identity
-       matrix left behind this way — establishes a new containing block for
-       every `position:fixed` DESCENDANT of body (the mobile nav drawer, the
-       nav bar, the floating buttons, the lightbox — all of them): instead of
-       being positioned against the real viewport, they resolve against
-       body's own box, which is as tall as the ENTIRE page's scrollable
-       content. That's what made the drawer (and the flourish pinned to its
-       bottom) balloon to thousands of pixels tall and land far below the
-       visible screen — not a color/opacity problem, a mispositioned
-       container. Cancelling the animation after it's done removes its
-       styling authority entirely, with no visible change (it has already
-       reached its natural end state) but a genuinely inert `none` behind it. */
-    document.body.addEventListener('animationend', function(ev){
-      if(ev.animationName === 'pageIn' && ev.target === document.body){
-        try{
-          document.body.getAnimations().forEach(function(a){
-            if(a.animationName === 'pageIn') a.cancel();
-          });
-        }catch(_){}
-      }
-    });
     setTimeout(function(){
       if(e&&e.parentNode){ e.parentNode.removeChild(e); }
-      /* Only NOW does adding 'entered' start body's pageIn fade-in — not at
-         tap time. #entry, .entry-flash and #preloader are ALL direct
-         children of <body>: triggering pageIn immediately used to animate
-         body's own opacity from .4→1 (with transform .995→none) starting
-         120ms after tap, right through the flash's brief peak-visibility
-         window — an ancestor's opacity multiplies into everything painted
-         inside it, position:fixed or not, so the "independent" flash (see
-         the note above .entry-flash in styles.css) was silently being
-         dimmed by its own great-grandparent the whole time, exactly the
-         same class of bug already fixed once for #entry itself. Measured
-         directly (actual rendered pixel brightness, not just the flash's
-         own opacity property, which looked fine in isolation): the flash's
-         true on-screen peak brightness was cut roughly in half by this.
-         Waiting until #entry is actually gone means body sits untouched at
-         its default opacity:1 for the entire dismiss + flash sequence, and
-         pageIn instead does the job it was actually meant for — easing the
-         now-revealed page in from a soft 40% rather than popping to full
-         brightness the instant it appears. */
+      /* 'entered' no longer drives any animation on body (see the note in
+         styles.css where pageIn used to be) — everything underneath #entry
+         was already fully rendered and visible the whole time it was
+         covered, so removing it here is the entire reveal; there's nothing
+         left to ease in afterward, and a post-hoc opacity animation only
+         ever produced a visible dimming jolt of already-shown content.
+         Kept for any future CSS/JS that wants to key off "past the gate". */
       document.documentElement.classList.add('entered');
     }, 1150); /* matches the staged fade in styles.css (.entry's transform: .05s delay + 1s, the longest of the three) */
   }

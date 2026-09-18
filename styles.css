@@ -772,8 +772,19 @@ html.vv-zoom .hero-emblem{ animation:none !important }
    gate. Same two durations as before (.5s / .42s). */
 @keyframes lampBurst{0%{opacity:.5}42%{opacity:1}100%{opacity:1}}
 @keyframes flameBurst{0%{opacity:.95;filter:blur(.6px) brightness(1)}40%{opacity:1;filter:blur(.6px) brightness(2.6)}100%{opacity:1;filter:blur(.6px) brightness(1.15)}}
-@keyframes pageIn{from{opacity:.4;transform:scale(.995)}to{opacity:1;transform:none}}
-html.entered body{animation:pageIn .8s var(--ease) .1s both}
+/* There used to be a pageIn animation here that faded <body> in from 40%
+   opacity once 'entered' was added. Everything underneath #entry (hero,
+   nav, the rest) is already fully rendered and painted at full opacity
+   the whole time it's covered — #entry's removal is what reveals it, and
+   that removal is instant by nature, nothing needs easing in. Adding an
+   opacity animation with fill-mode:both AFTER that removal (the only
+   timing that doesn't dilute the ignite flash — see the note that used
+   to be here) meant body's opacity SNAPPED to .4 the instant the fully-
+   revealed, already-bright hero appeared, then slowly climbed back to 1
+   over the next ~700ms — a jarring dimming of content the visitor could
+   already see, not a reveal of anything new. Removed outright rather
+   than re-timed again: there was never content here that actually needed
+   fading in. */
 
 /* ── Hero atmospheric depth (img2, heavily darkened for legibility) ── */
 .hero{background:linear-gradient(rgba(10,10,12,.85),rgba(10,10,12,.93)),var(--s-hero-bg) center/cover no-repeat}
@@ -798,14 +809,14 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
   #invitation::after,#rsvp::after,#agenda::after,#gallery::after{animation:none}
   /* Keep the gateway → site handoff visible even with Reduce Motion:
-     fade the veil (drop the scale, which is the vestibular part), let the
-     gold bloom play, and fade the site in — never an abrupt instant swap. */
+     fade the veil (drop the scale, which is the vestibular part) — the
+     page underneath is already fully rendered, so there's nothing to
+     additionally fade in once the gate itself is gone (see the note
+     where pageIn used to be, above). */
   .entry{transition:opacity .95s ease}
   .entry.go{transform:none}
   .entry.go .lamp-glow,.entry.go .lamp-flame{animation:none}
-  html.entered body{animation:pageFade 1s ease .12s both}
 }
-@keyframes pageFade{from{opacity:.35}to{opacity:1}}
 
 /* ── Responsive gateway ── */
 @media (max-width:600px){
