@@ -137,6 +137,17 @@ body.lite.lang-swap main{animation:none}
 .preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease;overflow:hidden}
 .preloader.gone{opacity:0;visibility:hidden}
 .pre-inner{position:relative;display:grid;place-items:center;gap:1rem;text-align:center;padding:0 1.4rem}
+/* The card-wide warm wash from the reference image, measured directly off
+   it (sampled pixel colors + the glow's own center/radius as a fraction of
+   the photo's canvas) rather than eyeballed — centered low enough to sit
+   behind the couple (where the reference's own hottest point falls) and
+   sized against .pre-inner's own box so it scales with this card the same
+   way it did with the reference's, instead of a fixed pixel radius. */
+.pre-inner::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 72% 56% at 50% 48%,
+    rgba(244,196,120,.55) 0%,rgba(196,148,74,.32) 24%,
+    rgba(110,80,42,.16) 48%,rgba(40,28,14,.06) 70%,transparent 88%);
+  animation:preGlow 5s ease-in-out infinite}
 @keyframes preRise{0%{opacity:0;transform:translateY(16px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.25rem,9.6vw,3.42rem);
   animation:preRise .9s var(--ease-soft) .1s both,sheen 9s ease-in-out infinite}
@@ -147,9 +158,6 @@ body.lite.lang-swap main{animation:none}
    already carry the moment on their own. */
 .pre-couple{position:relative;width:clamp(148px,40vw,210px);margin-block:.1rem;
   animation:preRise 1s var(--ease-soft) .35s both}
-.pre-couple::before{content:"";position:absolute;inset:-16%;z-index:-1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(ellipse at center,rgba(247,233,196,.5) 0%,rgba(232,201,135,.26) 34%,rgba(184,143,77,.1) 62%,transparent 82%);
-  animation:preGlow 5s ease-in-out infinite}
 /* The source artwork's linework is plain sepia/brown — --goldify (already used
    to tint the hero's own decorative flourishes) shifts it to match the site's
    champagne-gold palette instead of sitting duller than the foil text and
@@ -168,11 +176,11 @@ body.lite.lang-swap main{animation:none}
 @keyframes preGlow{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
 @keyframes preDot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
 body.lite .pre-greet,body.lite .pre-couple,body.lite .pre-mark,body.lite .pre-dots{animation:none!important}
-body.lite .pre-couple::before{animation:none;opacity:.8}
+body.lite .pre-inner::before{animation:none;opacity:.8}
 body.lite .pre-dots span{animation:none;opacity:.7}
 @media (prefers-reduced-motion:reduce){
   .pre-greet,.pre-couple,.pre-mark,.pre-dots{animation:none!important}
-  .pre-couple::before{animation:none;opacity:.8}
+  .pre-inner::before{animation:none;opacity:.8}
   .pre-dots span{animation:none;opacity:.7}
 }
 
