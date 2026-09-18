@@ -1102,6 +1102,23 @@ function getAudio() {
   return audio;
 }
 function syncMusicBtn() { const b = $("#musicBtn"); if (!b) return; b.classList.toggle("on", playing); b.setAttribute("aria-pressed", String(playing)); b.style.display = S.ambientAudioUrl ? "grid" : "none"; }
+/* Autoplay once, right as the visitor comes through the entry gate. Browsers
+   only allow unmuted audio to start once the page has a genuine user
+   gesture on record — the lamp tap itself is exactly that, and Chrome's
+   "sticky" activation (unlike the short-lived kind other APIs use) doesn't
+   expire on a timer, so calling play() here, once the gate is gone, still
+   counts as a direct response to it. Only ever tried once: a browser that
+   still blocks it falls back to the manual button exactly as before, and a
+   later Firestore update (S.ambientAudioUrl arriving, or an unrelated admin
+   edit) must never restart music a visitor has deliberately paused. */
+let autoplayAttempted = false;
+function tryAutoplayMusic() {
+  if (autoplayAttempted || playing) return;
+  const a = getAudio();
+  if (!a) return; // ambientAudioUrl not known yet — a later settings update retries this
+  autoplayAttempted = true;
+  a.play().then(() => { playing = true; syncMusicBtn(); }).catch(() => {});
+}
 function toggleMusic() { const a = getAudio(); if (!a) return; if (playing) { a.pause(); playing = false; } else { a.play().then(() => { playing = true; syncMusicBtn(); }).catch(() => {}); } syncMusicBtn(); }
 
 /* Calendar + share */
@@ -1527,7 +1544,7 @@ async function connect() {
         pre.decoding = "async";
         pre.src = S.heroImageUrl;
       }
-      whenEntryGone(() => { renderAll(); syncMusicBtn(); });
+      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); });
     }, (err) => console.warn("content listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
