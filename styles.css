@@ -145,7 +145,7 @@ body.lite.lang-swap main{animation:none}
    failed load must never leave a broken-image glyph on the very first thing
    a visitor sees. onerror hides the <img> outright; the greeting and dots
    already carry the moment on their own. */
-.pre-couple{position:relative;width:clamp(116px,32vw,166px);margin-block:.1rem;
+.pre-couple{position:relative;width:clamp(148px,40vw,210px);margin-block:.1rem;
   animation:preRise 1s var(--ease-soft) .35s both}
 .pre-couple::before{content:"";position:absolute;inset:-42%;z-index:-1;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(232,201,135,.3),transparent 68%);
@@ -161,8 +161,8 @@ body.lite.lang-swap main{animation:none}
    rules' order in the file, instead of depending on source position. */
 .hansa-mark.pre-mark{width:clamp(24px,5.5vw,30px);height:clamp(24px,5.5vw,30px);
   animation:preRise .8s var(--ease-soft) .6s both,hansaGlow 4.6s ease-in-out infinite}
-.pre-dots{display:flex;gap:.4rem;animation:preRise .7s var(--ease-soft) .8s both}
-.pre-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
+.pre-dots{display:flex;gap:.5rem;animation:preRise .7s var(--ease-soft) .8s both}
+.pre-dots span{width:8px;height:8px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
 .pre-dots span:nth-child(2){animation-delay:.18s}
 .pre-dots span:nth-child(3){animation-delay:.36s}
 @keyframes preGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
