@@ -23,6 +23,7 @@
 
   /* Fonts (loaded in index.html) — Latin first, Sinhala fallback per glyph */
   --f-disp:'Playfair Display','Noto Serif Sinhala','Noto Serif Tamil',serif;
+  --f-royal:'Abhaya Libre','Noto Serif Sinhala','Noto Serif Tamil',serif;
   --f-body:'Cormorant Garamond','Noto Sans Sinhala','Noto Sans Tamil',serif;
   --f-si:'Noto Sans Sinhala','Noto Sans Tamil',sans-serif;
   --f-en:'Cormorant Garamond','Noto Sans Tamil',serif;
@@ -126,14 +127,36 @@ body.lang-swap main,body.lang-swap .nav-inner{animation:swap .42s var(--ease)}
 body.lite.lang-swap main{animation:none}
 
 /* ════════ PRELOADER ════════ */
-.preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease}
+.preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease;overflow:hidden}
 .preloader.gone{opacity:0;visibility:hidden}
-.pre-inner{display:grid;place-items:center;gap:1rem;text-align:center}
-.pre-ring{width:74px;height:74px;border-radius:50%;border:1.5px solid var(--line);border-top-color:var(--gold);animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.pre-mono{font-family:var(--f-disp);font-weight:800;font-size:2.6rem;letter-spacing:.04em}
-.pre-text{font-family:var(--f-si);letter-spacing:.3em;color:var(--mut);font-size:.85rem;text-transform:uppercase}
-body.lite .pre-ring{animation-duration:1.6s}
+.pre-inner{position:relative;display:grid;place-items:center;gap:.8rem;text-align:center;padding:0 1.4rem}
+.pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.1rem,9vw,3.2rem)}
+/* The couple linework is the preloader's one asset fetched over the network
+   (every other element here is CSS/font, guaranteed to paint) — a slow or
+   failed load must never leave a broken-image glyph on the very first thing
+   a visitor sees. onerror hides the <img> outright; the greeting, ornament
+   and dots above/below it already carry the moment on their own. */
+.pre-couple{position:relative;width:clamp(116px,32vw,166px);margin-block:.1rem}
+.pre-couple::before{content:"";position:absolute;inset:-42%;z-index:-1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(232,201,135,.3),transparent 68%);
+  animation:preGlow 5s ease-in-out infinite}
+.pre-couple img{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 26px rgba(0,0,0,.55))}
+.pre-couple img.broken{display:none}
+.pre-hansa{width:min(210px,62%);margin-block:0}
+.pre-hansa .hansa-mark{width:clamp(26px,6vw,34px);height:clamp(26px,6vw,34px)}
+.pre-text{font-family:var(--f-si);letter-spacing:.3em;color:var(--mut);font-size:.8rem;text-transform:uppercase}
+.pre-dots{display:flex;gap:.4rem;margin-top:.1rem}
+.pre-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold-2);opacity:.3;animation:preDot 1.4s ease-in-out infinite}
+.pre-dots span:nth-child(2){animation-delay:.18s}
+.pre-dots span:nth-child(3){animation-delay:.36s}
+@keyframes preGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes preDot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
+body.lite .pre-couple::before{animation:none;opacity:.8}
+body.lite .pre-dots span{animation:none;opacity:.7}
+@media (prefers-reduced-motion:reduce){
+  .pre-couple::before{animation:none;opacity:.8}
+  .pre-dots span{animation:none;opacity:.7}
+}
 
 /* ════════ SCROLL PROGRESS ════════ */
 .scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;transform:scaleX(0);transform-origin:0 50%;
@@ -277,7 +300,7 @@ body.lite .hero-aurora{animation:none}
 body.lite .cue-dot::after{animation:none}
 
 /* Foil sheen only on marquee names (perf-gated) */
-.hero-names.foil,.foot-names.foil,.pre-mono.foil{animation:sheen 9s ease-in-out infinite}
+.hero-names.foil,.foot-names.foil,.pre-greet.foil{animation:sheen 9s ease-in-out infinite}
 @keyframes sheen{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 body.lite .foil{animation:none!important}
 @media (prefers-reduced-motion:reduce){.foil{animation:none!important}}
@@ -420,7 +443,7 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
    wide tracking only when the page switches to English (Latin). app.js keeps
    <html lang> in sync, so this flips automatically on the Translate toggle. */
 html:not([lang="en"]) :is(
-  .eyebrow, .pre-text, .pre-mono, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
+  .eyebrow, .pre-text, .pre-greet, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
   .inv-when .lbl, .cd-lbl, .counter-cap, .ag-time, .hero-date, .hero-names, .sec-title,
   .inv-name, .foot-date, .foot-credit, .lang-toggle, .nav-link, .btn, .hero-venue
 ){ letter-spacing: normal !important; }
@@ -930,6 +953,7 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
 /* ── Sinhala combining-mark clipping fix (roomier line-box + padded paint box) ── */
 .hero-names{line-height:1.16;padding-block:.06em}
 .entry-names{line-height:1.16;padding-block:.06em}
+.pre-greet{line-height:1.2;padding-block:.06em}
 .sec-title{line-height:1.26;padding-block:.05em}
 .inv-name{line-height:1.24;padding-block:.05em}
 .foot-names{line-height:1.2;padding-block:.05em}
