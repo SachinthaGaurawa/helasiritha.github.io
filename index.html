@@ -76,8 +76,12 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     </button>
     <span class="entry-cta">පහන දැල්වීමට ස්පර්ශ කරන්න</span>
   </div>
-  <div class="entry-flash" aria-hidden="true"></div>
 </div>
+<!-- Sibling of #entry, not a child: its own independent fixed overlay, so the
+     ignite flash reads as a crisp, undimmed flood of light — not muted and
+     blurred by riding along with the gate's own fade/blur as it dissolves
+     (see the note above .entry-flash in styles.css). -->
+<div class="entry-flash" aria-hidden="true"></div>
 
 <!-- ░░ Preloader ░░ -->
 <div id="preloader" class="preloader" aria-hidden="true" style="background-color:#0a0a0c">
