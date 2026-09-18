@@ -569,14 +569,14 @@ if (/\.github\.io$/i.test(location.hostname)) {
           var oh = outerHeight();
           
           /* This is when the unroll should BEGIN, as a fraction of viewport
-             height down from the top: 0.5 means "start once the sannasa's
-             top edge has scrolled up to roughly the middle of the screen",
-             matching where the visitor asked for the unroll to visibly
-             start. (Previously 0.95 here, but that value was never actually
-             the one driving the real behavior — see the note by the
-             pin:0 below.) */
+             height down from the top: 0.75 means "start once the sannasa's
+             top edge has scrolled up to about three-quarters of the way
+             down the screen" — i.e. as soon as the still-rolled cylinder is
+             comfortably on screen, matching the exact reference position
+             asked for (moved here from 0.5, which started noticeably later
+             — only once it had scrolled up near the screen's middle). */
           pinPx = 0;
-          triggerPx = Math.round(oh * 0.5);
+          triggerPx = Math.round(oh * 0.75);
           
           var needed;
           if (!framed) {
