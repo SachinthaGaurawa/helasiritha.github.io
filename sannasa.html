@@ -279,6 +279,20 @@ if (/\.github\.io$/i.test(location.hostname)) {
     .dc-swasti { font-family: 'Abhaya Libre', serif; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; color: #5a3410; margin: 15px auto 2px; padding: 6px 20px; border: 1.5px solid #a9812f; border-radius: 2px; background: rgba(247,226,182,0.32); box-shadow: inset 0 0 0 3px rgba(169,129,47,0.22), 0 1px 2px rgba(40,18,4,0.15); text-shadow: 0 1px 0 rgba(255,240,214,0.55); }
     
     html[lang="ta"] .decree-inner, html[lang="ta"] .decree-inner * { font-family: 'Noto Serif Tamil', 'Abhaya Libre', serif; }
+
+    /* Print: the parent page (styles.css) switches to a clean white/dark-text
+       theme for print, but this document had zero @media print rules of its
+       own and unconditionally set html/body to near-black with white text.
+       Printers/print-preview commonly drop background colors by default
+       (only the parchment's own backgrounds survive, via "print backgrounds"
+       being opt-in), which left the surrounding canvas either wasting a full
+       page of ink on near-black or, worse, leaving nothing behind white text
+       on white paper. The decree text itself is already dark (#3d1f0b) and
+       reads fine on paper unchanged — only the outer canvas needs to flip. */
+    @media print {
+        html, body, .scroll-viewport { background-color: #fff !important; color: #1a140a; }
+        .scroll-instruction { display: none !important; }
+    }
 </style>
 </head>
 <body>
