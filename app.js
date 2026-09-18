@@ -580,7 +580,7 @@ function renderInvitation() {
     '</div>' +
     '<p class="inv-close">' + esc(T.closing) + '</p>' +
     '<p class="inv-from">' + esc(T.from) + '</p>' +
-    (S.venueMapUrl ? '<a class="btn ghost maplink" href="' + esc(S.venueMapUrl) + '" target="_blank" rel="noopener">⌖ ' + esc(T.viewLocation) + '</a>' : "");
+    (S.venueMapUrl ? '<a class="btn ghost maplink" href="' + esc(S.venueMapUrl) + '" target="_blank" rel="noopener noreferrer">⌖ ' + esc(T.viewLocation) + '</a>' : "");
   $("#inviteBody").innerHTML = html;
 }
 
@@ -715,6 +715,7 @@ function renderRsvpShell() {
   // stage-local labels
   $("#rsvpHelp").textContent = T.rsvpHelp;
   $("#rsvpSearchInput").placeholder = T.searchPlaceholder;
+  $("#rsvpSearchInput").setAttribute("aria-label", T.searchPlaceholder);
   $("#rsvpSearchBtn").textContent = T.searchBtn;
   $("#willAttendQ").textContent = T.willAttend;
   $("#choiceYes").textContent = T.yesAttend;
@@ -849,10 +850,19 @@ function setupNav() {
   }
   // mobile drawer
   const burger = $("#navBurger"), drawer = $("#navDrawer");
-  const closeDrawer = () => { drawer.classList.remove("open"); burger.classList.remove("open"); document.body.classList.remove("noscroll"); };
+  /* The drawer used to be hidden purely with a CSS transform (translateX past
+     the edge) — invisible, but still in the tab order and screen-reader flow
+     the whole time, so a keyboard/AT user closed could still Tab into its
+     links or have them announced. `inert` removes it from both while closed,
+     same fix as the entry gate's background above; aria-expanded on the
+     burger reflects state for assistive tech the way a disclosure control
+     should. */
+  const closeDrawer = () => { drawer.classList.remove("open"); burger.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); drawer.setAttribute("inert", ""); document.body.classList.remove("noscroll"); };
   if (burger && drawer) {
     burger.onclick = () => {
       const open = drawer.classList.toggle("open"); burger.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      if (open) drawer.removeAttribute("inert"); else drawer.setAttribute("inert", "");
       document.body.classList.toggle("noscroll", open);
     };
     $$(".js-drawer-link").forEach(a => a.addEventListener("click", closeDrawer));

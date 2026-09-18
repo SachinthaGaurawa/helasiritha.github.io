@@ -56,7 +56,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 
 
 <!-- ░░ Cinematic Entry Gateway (පහන → enter) ░░ -->
-<div id="entry" class="entry" role="dialog" aria-label="ආරාධනය">
+<div id="entry" class="entry" role="dialog" aria-modal="true" aria-label="ආරාධනය">
   <div class="entry-bg" aria-hidden="true"></div>
   <div class="entry-veil" aria-hidden="true"></div>
   <div class="entry-arch" aria-hidden="true"></div>
@@ -110,13 +110,13 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     </nav>
     <div class="nav-actions">
       <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch to English">EN</button>
-      <button id="navBurger" class="nav-burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+      <button id="navBurger" class="nav-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navDrawer"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
 <!-- ░░ Mobile drawer ░░ -->
-<nav id="navDrawer" class="nav-drawer" aria-label="Menu">
+<nav id="navDrawer" class="nav-drawer" aria-label="Menu" inert>
   <a class="js-drawer-link" data-k="invitation" href="#invitation">ආරාධනය</a>
   <a class="js-drawer-link" data-k="agenda" href="#agenda">වැඩසටහන</a>
   <a class="js-drawer-link" data-k="gallery" href="#gallery">මතකයන්</a>
@@ -197,10 +197,10 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
           <div id="stSearch" class="rsvp-stage active">
             <p id="rsvpHelp" class="note"></p>
             <div class="search-row">
-              <input id="rsvpSearchInput" class="inp" type="text" autocomplete="off" inputmode="text">
+              <input id="rsvpSearchInput" class="inp" type="text" autocomplete="off" inputmode="text" aria-label="Guest name">
               <button id="rsvpSearchBtn" class="btn" type="button"></button>
             </div>
-            <div id="rsvpResults" class="guest-results"></div>
+            <div id="rsvpResults" class="guest-results" aria-live="polite"></div>
           </div>
 
           <div id="stConfirm" class="rsvp-stage">
@@ -346,6 +346,20 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   var e=document.getElementById('entry');
   if(!e){ document.documentElement.classList.remove('entry-lock'); return; }
 
+  /* role=dialog alone doesn't stop a keyboard user from Tabbing straight past
+     the gate's own button into the nav/hero/RSVP controls sitting behind it
+     (nothing here visually shows through, but the DOM's tab order doesn't
+     know that) — and that let a background control's own Enter/Space
+     activation ALSO trigger the gate's global keydown handler below,
+     dismissing the gate and operating the hidden control in the same
+     keypress. `inert` is the standard fix: it removes everything behind the
+     gate from the tab order and click/keyboard reach entirely, with no
+     custom focus-cycling logic to get wrong or leave someone stuck in (kept
+     to a short, explicit list rather than the whole body, so nothing here
+     is any more "trapping" than a normal modal). */
+  var bg=[document.getElementById('nav'), document.querySelector('main'), document.querySelector('.footer')];
+  bg.forEach(function(el){ if(el) el.setAttribute('inert',''); });
+
   /* Entry text in the visitor's stored language only (Sinhala default) — language purity */
   var lang='si'; try{ lang = localStorage.getItem('hs_lang') || 'si'; }catch(_){}
   var TX = {
@@ -381,6 +395,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
     }catch(_){}
     e.classList.add('go');
     document.documentElement.classList.remove('entry-lock'); /* unlocks page scroll */
+    bg.forEach(function(el){ if(el) el.removeAttribute('inert'); });
     var p=document.getElementById('preloader'); if(p){ p.classList.add('gone'); }
     setTimeout(function(){
       if(e&&e.parentNode){ e.parentNode.removeChild(e); }
