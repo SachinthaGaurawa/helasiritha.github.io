@@ -138,7 +138,7 @@ body.lite.lang-swap main{animation:none}
 .preloader.gone{opacity:0;visibility:hidden}
 .pre-inner{position:relative;display:grid;place-items:center;gap:1rem;text-align:center;padding:0 1.4rem}
 @keyframes preRise{0%{opacity:0;transform:translateY(16px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
-.pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.1rem,9vw,3.2rem);
+.pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.25rem,9.6vw,3.42rem);
   animation:preRise .9s var(--ease-soft) .1s both,sheen 9s ease-in-out infinite}
 /* The couple linework is the preloader's one asset fetched over the network
    (every other element here is CSS/font, guaranteed to paint) — a slow or
