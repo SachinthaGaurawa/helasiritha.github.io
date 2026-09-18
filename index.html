@@ -35,22 +35,23 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 <link rel="preconnect" href="https://iili.io" crossorigin>
 <link rel="dns-prefetch" href="https://iili.io">
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-<link rel="preload" href="styles.css?v=2026091501" as="style">
+<link rel="preload" href="styles.css?v=2026091801" as="style">
 <!-- crest preload removed: that Cloudinary asset returns 404 -->
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg" fetchpriority="high">
 <link rel="preload" as="image" href="https://iili.io/CGU3TaR.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://iili.io/CGU2ZpS.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103105/IMG_0010_d9wjfl.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/c_trim/f_auto,q_auto,w_320/v1789752741/IMG_2617_ftrppu.png" fetchpriority="high">
 <!-- Non-blocking font stylesheet: a render-blocking <link rel=stylesheet> here
      would hold the FIRST PAINT of the entire page — inline background or not —
      until this cross-origin fetch resolves. Loading it as media="print" (never
      matches on screen, so it never blocks) and flipping to "all" once it has
      actually loaded lets the dark canvas above paint immediately even on a slow
      connection; the <noscript> fallback covers the no-JS case. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="styles.css?v=2026091501">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="styles.css?v=2026091801">
 </head>
 <body>
 
@@ -96,9 +97,12 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 <!-- ░░ Preloader ░░ -->
 <div id="preloader" class="preloader" aria-hidden="true" style="background-color:#0a0a0c">
   <div class="pre-inner">
-    <div class="pre-ring"></div>
-    <div class="pre-mono foil">K<span class="amp">&amp;</span>G</div>
-    <div class="pre-text">හෙළ සිරිත</div>
+    <p class="pre-greet foil">ආයුබෝවන්</p>
+    <div class="pre-couple">
+      <img src="https://res.cloudinary.com/dzrfpc9be/image/upload/c_trim/f_auto,q_auto,w_320/v1789752741/IMG_2617_ftrppu.png" alt="" onerror="this.classList.add('broken')">
+    </div>
+    <span class="hansa-mark pre-mark"></span>
+    <div class="pre-dots"><span></span><span></span><span></span></div>
   </div>
 </div>
 
@@ -343,7 +347,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script type="module" src="app.js?v=2026091501"></script>
+<script type="module" src="app.js?v=2026091801"></script>
 <script>
 /* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
 (function(){
