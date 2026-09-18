@@ -742,29 +742,71 @@ function AG_ICON(k) {
 }
 
 /* ════════════════════════════ INTERACTIONS ═══════════════════════════════ */
-let revObserver = null;
+/* Reveal-on-scroll used to be IntersectionObserver-threshold-based: trigger
+   `.in` once, then let a 1s CSS transition play out. That has one dial
+   (how far below the fold to pre-fire) fighting two opposite failure modes —
+   too small and a fast fling skips the observer's check entirely while the
+   element rockets past (it used to land ~55px from the TOP of the viewport
+   with .in only just added, i.e. no visible fade at all); too large (the
+   +35% fix that was here) and the 1s fade completes well BEFORE the element
+   is actually on screen at anything but a crawl, which is exactly what made
+   every reveal across the site look like it was simply "there" with no
+   animation once scrolling was reasonably brisk (or got smoother/faster
+   from other fixes) — the same invisible-effect symptom from the opposite
+   direction. There's no single threshold that avoids both at every scroll
+   speed, because a one-shot timer has no idea how fast the visitor is
+   scrolling.
+   The actual fix: stop timing the reveal and tie it directly to scroll
+   position instead, every frame, the same way this file already drives the
+   hero parallax and the sannasa hands its own progress to its scroll
+   engine — opacity/translateY become a direct function of how far the
+   element's top has travelled from the bottom of the viewport up to the
+   reveal line, so the fade is visibly mid-flight at whatever point the
+   visitor's eyes actually reach it, at any scroll speed, slow or fast. */
+let revealRafId = null;
+const revealActive = new Set();
+const REVEAL_AT = 0.78; // element's top reaches this fraction of viewport height -> fully revealed
+
+function revealFrame() {
+  const vh = window.innerHeight || 1;
+  const startAt = vh, revealAt = vh * REVEAL_AT;
+  const span = startAt - revealAt;
+  for (const el of Array.from(revealActive)) {
+    if (!el.isConnected) { revealActive.delete(el); continue; }
+    const top = el.getBoundingClientRect().top;
+    const p = span > 0 ? Math.max(0, Math.min(1, (startAt - top) / span)) : 1;
+    if (p >= 1) {
+      el.classList.remove("reveal-tracking");
+      el.style.opacity = ""; el.style.transform = "";
+      el.classList.add("in");
+      revealActive.delete(el);
+    } else {
+      el.style.opacity = String(p);
+      el.style.transform = "translateY(" + ((1 - p) * 34).toFixed(1) + "px)";
+    }
+  }
+  revealRafId = revealActive.size ? requestAnimationFrame(revealFrame) : null;
+}
+function startRevealLoop() { if (!revealRafId && revealActive.size) revealRafId = requestAnimationFrame(revealFrame); }
+
 function observeReveals() {
-  if (!("IntersectionObserver" in window)) { $$(".reveal").forEach(e => e.classList.add("in")); return; }
-  /* rootMargin used to SHRINK the trigger zone (-8% off the bottom edge), so an
-     element only counted as "intersecting" once it was already well inside the
-     viewport. On a slow, deliberate scroll that's invisible — the observer still
-     fires while there's plenty of scroll motion left for the 1s fade to ride
-     along with. But a fast fling covers hundreds of pixels between browser
-     ticks, so by the time the (now-satisfied) intersection condition is finally
-     checked, the element is often already most of the way up the screen —
-     confirmed directly (a MutationObserver on the .in class showed it landing
-     ~55px from the TOP of the viewport, not the bottom) — leaving the fade to
-     play out on an element that looks "already there", i.e. no visible reveal
-     at all. Growing the margin OUTWARD instead (+35% past the bottom edge) and
-     dropping the threshold to a sliver makes the observer fire while the
-     element is still below the fold, so the fade has genuine room to run
-     before — or as — it actually comes into view, on a fast scroll same as
-     slow. */
-  if (!revObserver) revObserver = new IntersectionObserver((es) => {
-    es.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-      .forEach((e, i) => { e.target.style.transitionDelay = (i * 0.08) + "s"; e.target.classList.add("in"); revObserver.unobserve(e.target); });
-  }, { threshold: 0.01, rootMargin: "0px 0px 35% 0px" });
-  $$(".reveal:not(.in)").forEach(e => revObserver.observe(e));
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const vh = window.innerHeight || 1;
+  const revealAt = vh * REVEAL_AT;
+  $$(".reveal:not(.in)").forEach((e, i) => {
+    if (reduced) { e.classList.add("in"); return; }
+    if (e.getBoundingClientRect().top >= revealAt) {
+      e.classList.add("reveal-tracking");
+      revealActive.add(e);
+    } else {
+      /* Already at/past the reveal line right now (on load, or content that
+         just rendered above the fold) — no scroll left to tie an animation
+         to, so it gets the classic staggered timed fade-in instead. */
+      e.style.transitionDelay = (i * 0.08) + "s";
+      e.classList.add("in");
+    }
+  });
+  startRevealLoop();
 }
 
 /* Sticky nav: scroll progress, condense, scroll-spy, mobile drawer */

@@ -104,9 +104,19 @@ main{position:relative;z-index:1}
   background:linear-gradient(180deg,rgba(255,250,232,.06),transparent 30%)}
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line-soft)}
 
-/* Reveal on scroll */
+/* Reveal on scroll.
+   .reveal-tracking (app.js observeReveals/revealFrame) means this element's
+   opacity/transform are being driven directly, every frame, from its actual
+   scroll position — so the transition below must not fight that: each
+   direct style write would otherwise itself kick off a fresh 1s transition
+   toward the new value, compounding into a laggy blur that never keeps up
+   with the scroll. Elements that are already past the reveal point the
+   moment observeReveals() runs (on load, or right after dynamic content
+   renders, with no scroll left to tie an animation to) skip tracking and
+   get this timed transition instead — the classic staggered fade-in. */
 .reveal{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease-soft),transform 1s var(--ease-soft)}
 .reveal.in{opacity:1;transform:none}
+.reveal.reveal-tracking{transition:none}
 body.lite .reveal{transition-duration:.4s}
 @media (prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none}}
 
