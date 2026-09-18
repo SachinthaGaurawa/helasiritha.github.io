@@ -568,8 +568,15 @@ if (/\.github\.io$/i.test(location.hostname)) {
           var sceneH = (window.__measureSceneHeight ? window.__measureSceneHeight() : mc.getBoundingClientRect().height);
           var oh = outerHeight();
           
-          pinPx = 0; 
-          triggerPx = Math.round(oh * 0.95);
+          /* This is when the unroll should BEGIN, as a fraction of viewport
+             height down from the top: 0.5 means "start once the sannasa's
+             top edge has scrolled up to roughly the middle of the screen",
+             matching where the visitor asked for the unroll to visibly
+             start. (Previously 0.95 here, but that value was never actually
+             the one driving the real behavior — see the note by the
+             pin:0 below.) */
+          pinPx = 0;
+          triggerPx = Math.round(oh * 0.5);
           
           var needed;
           if (!framed) {
@@ -591,7 +598,22 @@ if (/\.github\.io$/i.test(location.hostname)) {
           }
           
           if(sameOriginFrame && window.parent && window.parent !== window){
-            window.parent.postMessage({ __sannasa:'height', h: needed, pin: 0, extra: extraPx }, '*');
+            /* This document has TWO progress calculations that feed the same
+               tick() via Math.max: this file's own computeTargetProgress()
+               (using triggerPx above), and the parent's setupSannasaScroll()
+               in app.js, driven by the pin/extra sent here. They were out of
+               sync — this always sent pin:0, meaning (per app.js's
+               p=(pin-top)/extra) the parent-driven progress couldn't start
+               until the iframe's top had scrolled ALL THE WAY UP PAST the
+               viewport's own top edge, entirely off-screen. Measured
+               directly: that was in practice the one actually driving the
+               visible unroll, so the sannasa stayed fully rolled the whole
+               time it was still visible on screen, only starting to unroll
+               once it had scrolled nearly out of view at the top — much
+               later than intended. Sending the same triggerPx here keeps
+               both calculations in agreement, starting the unroll while the
+               sannasa is still comfortably on screen. */
+            window.parent.postMessage({ __sannasa:'height', h: needed, pin: triggerPx, extra: extraPx }, '*');
           }
         }catch(_){}
       }
