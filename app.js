@@ -78,10 +78,6 @@ const TEXT = {
     gallerySub: "අප එක්ව ගෙවූ ලස්සන මොහොත් කිහිපයක්…",
     galleryEmpty: "ඡායාරූප ඉක්මනින් මෙහි දිස් වේ…",
     viewPhoto: "ඡායාරූපය විශාල කර බලන්න",
-    lampEyebrow: "ආදරයෙන්",
-    lampTitle: "සතුටින් එක්වන ආදරණීයයෝ",
-    lampSub: "අප සමඟ සැමරීමට පැමිණෙන ආදරණීයන් සංඛ්‍යාව",
-    confirmedCap: "ආරාධිතයන් තහවුරු වී ඇත",
     loveEyebrow: "හදවතින්",
     loveTitle: "විශේෂ සටහනක්",
     loveSub: "අපගේ ආදරණීය අමුත්තනට",
@@ -211,10 +207,6 @@ const TEXT = {
     gallerySub: "A few of the beautiful moments we've shared…",
     galleryEmpty: "Photos will appear here soon…",
     viewPhoto: "View photo",
-    lampEyebrow: "With love",
-    lampTitle: "Loved ones joining us",
-    lampSub: "Guests who've joyfully confirmed",
-    confirmedCap: "guests confirmed",
     loveEyebrow: "From the heart",
     loveTitle: "A Special Note",
     loveSub: "To our lovely guests",
@@ -344,10 +336,6 @@ const TEXT = {
     gallerySub: "நாங்கள் ஒன்றாகக் கழித்த அழகிய தருணங்கள் சில…",
     galleryEmpty: "புகைப்படங்கள் விரைவில் இங்கே தோன்றும்…",
     viewPhoto: "புகைப்படத்தைப் பெரிதாகக் காண",
-    lampEyebrow: "அன்புடன்",
-    lampTitle: "மகிழ்ச்சியுடன் இணையும் அன்பர்கள்",
-    lampSub: "எங்களுடன் கொண்டாட வரும் அன்பர்களின் எண்ணிக்கை",
-    confirmedCap: "அழைப்பாளர்கள் உறுதி செய்யப்பட்டுள்ளனர்",
     loveEyebrow: "இதயத்திலிருந்து",
     loveTitle: "ஒரு சிறப்புக் குறிப்பு",
     loveSub: "எங்கள் அன்பு விருந்தினர்களுக்கு",
@@ -456,7 +444,7 @@ const AGENDA_DEFAULT = [
 /* ── State + helpers ─────────────────────────────────────────────────────── */
 let S = Object.assign({}, DEFAULTS);
 let AGENDA = AGENDA_DEFAULT.slice();
-let GALLERY = [], GUESTS = [], BLESSINGS = [], confirmedGuests = 0, guestsLoaded = false;
+let GALLERY = [], GUESTS = [], BLESSINGS = [], guestsLoaded = false;
 let fb = null;
 let LANG = (function () { try { var x = localStorage.getItem("hs_lang"); return (x === "en" || x === "ta") ? x : "si"; } catch (e) { return "si"; } })();
 
@@ -637,17 +625,6 @@ function renderGallery() {
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
 }
 
-let counterDone = false;
-function renderCounter() {
-  const lc = $("#lampCount"); if (!lc) return;   // lamp/counter section not present — no-op
-  const T = L();
-  $("#lampEyebrow").textContent = T.lampEyebrow;
-  $("#lampTitle").textContent = T.lampTitle;
-  $("#lampSub").textContent = T.lampSub;
-  $("#lampCap").textContent = T.confirmedCap;
-  $("#lampCount").textContent = String(confirmedGuests);
-}
-
 function renderLove() {
   const T = L(), n = names();
   $("#loveEyebrow").textContent = T.loveEyebrow;
@@ -747,7 +724,7 @@ function renderFooter() {
 }
 
 function applyVisibility() {
-  const map = { countdown: "#countdown", agenda: "#agenda", gallery: "#gallery", lovenote: "#lovenote", lamp: "#lamp", blessings: "#blessings", rsvp: "#rsvp" };
+  const map = { countdown: "#countdown", agenda: "#agenda", gallery: "#gallery", lovenote: "#lovenote", blessings: "#blessings", rsvp: "#rsvp" };
   Object.keys(map).forEach(k => { const el = $(map[k]); if (el) el.style.display = (S.show && S.show[k] === false) ? "none" : ""; });
 }
 
@@ -788,26 +765,6 @@ function observeReveals() {
       .forEach((e, i) => { e.target.style.transitionDelay = (i * 0.08) + "s"; e.target.classList.add("in"); revObserver.unobserve(e.target); });
   }, { threshold: 0.01, rootMargin: "0px 0px 35% 0px" });
   $$(".reveal:not(.in)").forEach(e => revObserver.observe(e));
-}
-
-/* Count-up for confirmed guests when the counter scrolls into view */
-function setupCounter() {
-  const el = $("#lampCount"); if (!el || !("IntersectionObserver" in window)) return;
-  const io = new IntersectionObserver((es) => {
-    es.forEach(e => {
-      if (e.isIntersecting && !counterDone) {
-        counterDone = true;
-        const target = confirmedGuests, dur = 1100, t0 = performance.now();
-        const step = (t) => {
-          const p = Math.min(1, (t - t0) / dur);
-          el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
-          if (p < 1) requestAnimationFrame(step);
-        };
-        if (!document.body.classList.contains("lite")) requestAnimationFrame(step); else el.textContent = String(target);
-      }
-    });
-  }, { threshold: 0.4 });
-  io.observe($("#lamp"));
 }
 
 /* Sticky nav: scroll progress, condense, scroll-spy, mobile drawer */
@@ -1546,10 +1503,6 @@ async function connect() {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
       guestsLoaded = true;
     }, (err) => { console.warn("guestsPublic listener", err); guestsLoaded = true; });
-
-    fs.onSnapshot(fs.doc(db, "site", "stats"), (snap) => {
-      confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
-    }, (err) => console.warn("stats listener", err));
 
     /* Live theme — the admin colour palette repaints the site instantly. */
     fs.onSnapshot(fs.doc(db, "site", "theme"), (snap) => {
