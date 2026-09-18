@@ -53,6 +53,7 @@ const TEXT = {
     searching: "සොයමින්…",
     noGuest: "කණගාටුයි, එම නමින් ආරාධිතයෙකු හමු නොවීය.",
     proceedTyped: "මෙම නමින් ඉදිරියට යන්න",
+    guestsLoading: "ආරාධිත ලැයිස්තුව පූරණය වෙමින්… තත්පරයකින් නැවත සොයන්න.",
     selectName: "කරුණාකර ඔබගේ නම තෝරන්න",
     willAttend: "ඔබ පැමිණෙනවා ද?",
     yesAttend: "ඔව්, සතුටින් පැමිණෙමි", noAttend: "කණගාටුයි, බැරිවෙයි",
@@ -64,6 +65,8 @@ const TEXT = {
     rsvpThanks: "බොහොම ස්තූතියි!",
     rsvpYesMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු ✦",
     rsvpNoMsg: "ඔබව අපි මිස් කරනවා — ඔබගේ ආදරයට ස්තූතියි.",
+    rsvpError: "සම්බන්ධතාවයේ දෝෂයක් — ඔබගේ පිළිතුර සුරැකුණේ නැත. කරුණාකර නැවත උත්සාහ කරන්න.",
+    rsvpPickFirst: "කරුණාකර පැමිණේද නැද්ද කියා තෝරන්න.",
     changeResponse: "පිළිතුර වෙනස් කරන්න",
     back: "ආපසු",
     rsvpClosed: "පැමිණීම දැනුම්දීමේ කාලය දැනට අවසන්. ස්තූතියි.",
@@ -182,6 +185,7 @@ const TEXT = {
     searching: "Searching…",
     noGuest: "Sorry, we couldn't find that name.",
     proceedTyped: "Continue with this name",
+    guestsLoading: "Loading the guest list… please search again in a moment.",
     selectName: "Please select your name",
     willAttend: "Will you be attending?",
     yesAttend: "Yes, with joy", noAttend: "Sorry, can't make it",
@@ -193,6 +197,8 @@ const TEXT = {
     rsvpThanks: "Thank you so much!",
     rsvpYesMsg: "We can't wait to celebrate with you ✦",
     rsvpNoMsg: "We'll miss you — thank you for your love.",
+    rsvpError: "Connection error — your response wasn't saved. Please try again.",
+    rsvpPickFirst: "Please choose whether you'll be attending.",
     changeResponse: "Change response",
     back: "Back",
     rsvpClosed: "RSVPs are closed for now. Thank you.",
@@ -311,6 +317,7 @@ const TEXT = {
     searching: "தேடுகிறது…",
     noGuest: "மன்னிக்கவும், அந்தப் பெயரில் அழைப்பாளர் யாரும் இல்லை.",
     proceedTyped: "இந்தப் பெயரில் தொடரவும்",
+    guestsLoading: "அழைப்பாளர் பட்டியல் ஏற்றப்படுகிறது… சிறிது நேரத்தில் மீண்டும் தேடவும்.",
     selectName: "உங்கள் பெயரைத் தேர்ந்தெடுக்கவும்",
     willAttend: "நீங்கள் வருகிறீர்களா?",
     yesAttend: "ஆம், மகிழ்ச்சியுடன் வருகிறேன்", noAttend: "மன்னிக்கவும், வர இயலாது",
@@ -322,6 +329,8 @@ const TEXT = {
     rsvpThanks: "மிக்க நன்றி!",
     rsvpYesMsg: "உங்களைச் சந்திக்க நாங்கள் ஆவலுடன் காத்திருக்கிறோம் ✦",
     rsvpNoMsg: "உங்களை நாங்கள் மிஸ் செய்வோம் — உங்கள் அன்பிற்கு நன்றி.",
+    rsvpError: "இணைப்பு தவறு — உங்கள் பதில் சேமிக்கப்படவில்லை. மீண்டும் முயற்சிக்கவும்.",
+    rsvpPickFirst: "நீங்கள் கலந்துகொள்வீர்களா என்று தேர்ந்தெடுக்கவும்.",
     changeResponse: "பதிலை மாற்று",
     back: "பின்செல்",
     rsvpClosed: "வருகை அறிவிக்கும் காலம் தற்போது முடிந்துவிட்டது. நன்றி.",
@@ -444,7 +453,7 @@ const AGENDA_DEFAULT = [
 /* ── State + helpers ─────────────────────────────────────────────────────── */
 let S = Object.assign({}, DEFAULTS);
 let AGENDA = AGENDA_DEFAULT.slice();
-let GALLERY = [], GUESTS = [], BLESSINGS = [], confirmedGuests = 0;
+let GALLERY = [], GUESTS = [], BLESSINGS = [], confirmedGuests = 0, guestsLoaded = false;
 let fb = null;
 let LANG = (function () { try { var x = localStorage.getItem("hs_lang"); return (x === "en" || x === "ta") ? x : "si"; } catch (e) { return "si"; } })();
 
@@ -1087,6 +1096,14 @@ function shareWa() {
 }
 
 /* ════════════════════════════════ RSVP ═══════════════════════════════════ */
+/* FNV-1a over the trimmed/lowercased name — deterministic, so the same typed
+   name always yields the same fallback guest id (see #proceedTyped below). */
+function stableSlug(s) {
+  s = (s || "").trim().toLowerCase();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0).toString(36);
+}
 const rsvp = { guest: null, attending: null, liquor: false, party: 1, dietary: "" };
 function showStage(id) { $$(".rsvp-stage").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
 function pickGuest(g) {
@@ -1094,6 +1111,7 @@ function pickGuest(g) {
   $("#confName").textContent = g.name + (g.family ? " · " + g.family : "");
   $("#choiceYes").classList.remove("sel"); $("#choiceNo").classList.remove("sel");
   $("#attendExtras").style.display = "none"; rsvp.attending = null;
+  const errEl = $("#rsvpError"); if (errEl) errEl.style.display = "none";
   showStage("#stConfirm");
 }
 function setupRsvp() {
@@ -1102,11 +1120,30 @@ function setupRsvp() {
     const q = $("#rsvpSearchInput").value.trim().toLowerCase();
     const box = $("#rsvpResults"); box.innerHTML = "";
     if (!q) return;
+    /* GUESTS only fills once the guestsPublic snapshot resolves (setupFirebase
+       runs concurrently with everything else, no wait here before now). Searching
+       in that window always found 0 hits and jumped straight to "no guest found,
+       continue with this name" — misleading a guest who IS in the list into
+       thinking they aren't, right as they're most likely to search (immediately
+       after the page loads). Show a neutral "still loading" note instead of the
+       false-negative until the first snapshot has actually arrived. */
+    if (!guestsLoaded) {
+      box.innerHTML = '<p class="note">' + esc(T().guestsLoading) + '</p>';
+      return;
+    }
     const hits = GUESTS.filter(g => (g.name || "").toLowerCase().includes(q) || (g.family || "").toLowerCase().includes(q)).slice(0, 12);
     if (!hits.length) {
       box.innerHTML = '<p class="note">' + esc(T().noGuest) + '</p>' +
         '<button class="btn ghost sm" id="proceedTyped">' + esc(T().proceedTyped) + '</button>';
-      $("#proceedTyped").onclick = () => pickGuest({ id: "guest-" + Date.now(), name: $("#rsvpSearchInput").value.trim(), family: "", side: "" });
+      $("#proceedTyped").onclick = () => {
+        const typed = $("#rsvpSearchInput").value.trim();
+        /* A stable id derived from the typed name (not Date.now()) — so a guest
+           who clicks this more than once (a retry after a failed submit, or a
+           second visit) reuses the same rsvps/{guestId} doc instead of minting a
+           brand-new one every time, which was silently inflating the confirmed
+           guest count with duplicates. */
+        pickGuest({ id: "guest-" + stableSlug(typed), name: typed, family: "", side: "" });
+      };
       return;
     }
     box.innerHTML = hits.map((g, i) =>
@@ -1115,8 +1152,8 @@ function setupRsvp() {
     $$("#rsvpResults .guest-pick").forEach((b, i) => b.onclick = () => pickGuest(hits[i]));
   };
   $("#rsvpSearchInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#rsvpSearchBtn").click(); } });
-  $("#choiceYes").onclick = () => { rsvp.attending = true; $("#choiceYes").classList.add("sel"); $("#choiceNo").classList.remove("sel"); $("#attendExtras").style.display = "block"; };
-  $("#choiceNo").onclick = () => { rsvp.attending = false; $("#choiceNo").classList.add("sel"); $("#choiceYes").classList.remove("sel"); $("#attendExtras").style.display = "none"; };
+  $("#choiceYes").onclick = () => { rsvp.attending = true; $("#choiceYes").classList.add("sel"); $("#choiceNo").classList.remove("sel"); $("#attendExtras").style.display = "block"; $("#rsvpError").style.display = "none"; };
+  $("#choiceNo").onclick = () => { rsvp.attending = false; $("#choiceNo").classList.add("sel"); $("#choiceYes").classList.remove("sel"); $("#attendExtras").style.display = "none"; $("#rsvpError").style.display = "none"; };
   $("#liqYes").onclick = () => { rsvp.liquor = true; $("#liqYes").classList.add("sel"); $("#liqNo").classList.remove("sel"); };
   $("#liqNo").onclick = () => { rsvp.liquor = false; $("#liqNo").classList.add("sel"); $("#liqYes").classList.remove("sel"); };
   $("#pMinus").onclick = () => { rsvp.party = Math.max(1, rsvp.party - 1); $("#pVal").textContent = rsvp.party; };
@@ -1130,8 +1167,13 @@ function setupRsvp() {
   $("#rsvpSubmit").onclick = submitRsvp;
 }
 async function submitRsvp() {
-  if (rsvp.attending === null || !rsvp.guest) return;
   const T = L();
+  if (!rsvp.guest) return;
+  if (rsvp.attending === null) {
+    const errEl = $("#rsvpError");
+    if (errEl) { errEl.textContent = T.rsvpPickFirst; errEl.style.display = ""; }
+    return;
+  }
   rsvp.dietary = $("#rsvpDiet").value.trim();
   const party = rsvp.attending ? rsvp.party : 0;
   const payload = {
@@ -1139,9 +1181,26 @@ async function submitRsvp() {
     attending: rsvp.attending, liquor: rsvp.attending ? rsvp.liquor : false,
     party: party, count: party, dietary: rsvp.dietary
   };
-  const btn = $("#rsvpSubmit"); btn.disabled = true; btn.textContent = T.sending;
-  try { if (fb) await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true }); }
-  catch (e) { console.warn("RSVP save failed", e); }
+  const btn = $("#rsvpSubmit"), errEl = $("#rsvpError");
+  btn.disabled = true; btn.textContent = T.sending;
+  if (errEl) errEl.style.display = "none";
+  /* A guest's RSVP is the single most consequential action on this site — the
+     couple's headcount/catering depends on it. This used to advance to the
+     "Thank you" screen unconditionally, even when `fb` was still null (Firestore
+     not yet connected — plausible on a bad venue connection) or the write threw
+     (a dropped connection mid-submit). The guest would believe they'd RSVP'd
+     while nothing was ever saved, with no way for them or the couple to know.
+     Now a failure keeps them on the form with a visible, localized error and a
+     re-enabled button, matching how the blessings form already handles this. */
+  try {
+    if (!fb) throw new Error("Firestore not connected");
+    await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true });
+  } catch (e) {
+    console.warn("RSVP save failed", e);
+    btn.disabled = false; btn.textContent = T.confirmRsvp;
+    if (errEl) { errEl.textContent = T.rsvpError; errEl.style.display = ""; }
+    return;
+  }
   btn.disabled = false; btn.textContent = T.confirmRsvp;
   $("#rsvpThanksBig").textContent = T.rsvpThanks;
   $("#rsvpThanksMsg").textContent = rsvp.attending ? T.rsvpYesMsg : T.rsvpNoMsg;
@@ -1455,7 +1514,8 @@ async function connect() {
        guest's RSVP details private from a visitor using this search box. */
     fs.onSnapshot(fs.collection(db, "guestsPublic"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
-    }, (err) => console.warn("guestsPublic listener", err));
+      guestsLoaded = true;
+    }, (err) => { console.warn("guestsPublic listener", err); guestsLoaded = true; });
 
     fs.onSnapshot(fs.doc(db, "site", "stats"), (snap) => {
       confirmedGuests = (snap.exists() && snap.data().confirmedCount) || 0;
