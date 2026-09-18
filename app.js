@@ -1553,7 +1553,7 @@ function renderPostWedding() {
   const msgEl = document.getElementById("pwMessage");
   if (msgEl) {
     msgEl.textContent = String(S.postWeddingMessage || "").trim() ||
-      "අප දෙදෙනාගේ විශේෂ දිනයේ ඔබ අප සමඟ සිටි බැවින්, හදවතින්ම ස්තූතිවන්ත වෙමු.";
+      "අපගේ ජීවිතයේ මෙම අතිශය සුවිශේෂී දිනය වඩාත් අර්ථවත් හා සුන්දර මතකයක් බවට පත්කිරීමට ආශිර්වාද කළ ඔබ සැමට, අපගේ හදපිරි ගෞරවනීය ස්තූතිය පුදකරමු.";
   }
 }
 /* Structural show/hide only runs on an actual state change (cheap `hidden`
