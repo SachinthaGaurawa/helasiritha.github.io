@@ -862,6 +862,15 @@ html.pw-lock #postWedding{ touch-action:pan-y }
 .pw-title{
   font-family:var(--f-royal); font-weight:800; letter-spacing:.02em;
   font-size:clamp(3rem,13vw,5.4rem); line-height:1.16; padding-block:.06em; margin:0 0 1.4rem;
+  /* .foil's background-size:220% 100% is tuned for long runs (hero names,
+     footer names) where a wide gradient sweep reads as a traveling sheen.
+     "ස්තූතියි" is 4-5 glyphs — at 220% only a narrow slice of the 7-stop
+     gradient falls across that short a run at any one animation frame, so
+     the color spread that's actually there reads as closer to a single
+     flat tone. Tightening the size for this element alone packs more of
+     the same stops across the shorter text, without touching the shared
+     .foil rule or its colors. */
+  background-size:130% 100%;
   /* text-shadow shadows the glyph OUTLINE using its own color, independent
      of how the fill itself is painted — combined with .foil's
      color:transparent + -webkit-background-clip:text, that's mixing two
@@ -904,6 +913,9 @@ html.pw-lock #postWedding{ touch-action:pan-y }
 .pw-signature{
   font-family:var(--f-royal); font-weight:700; font-size:clamp(1.5rem,5vw,2.1rem);
   line-height:1.22; padding-block:.06em;
+  /* Same reasoning as .pw-title's background-size above: short text, so
+     tighten the gradient's sweep to pack more of .foil's own stops across it. */
+  background-size:130% 100%;
   /* Same reasoning as .pw-title above: drop-shadow, not text-shadow, on a
      .foil-clipped element — repeats .foil's own two layers, then chains the
      glow on as a third. */
