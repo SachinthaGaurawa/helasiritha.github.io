@@ -879,8 +879,14 @@ html.pw-lock #postWedding{ touch-action:pan-y }
      alone — same stop positions as --foil, each pushed toward the pale end,
      for a sharper metallic read against this screen's darker canvas. Same
      specificity as .foil, declared later, so it wins without !important;
-     doesn't touch --foil or anything else that uses it. */
-  background:linear-gradient(105deg,#FFF5DA 0%,#F5DEAA 20%,#C9A35C 40%,#FFE9B8 55%,#A87F42 75%,#F5DEAA 90%,#FFEFC7 100%);
+     doesn't touch --foil or anything else that uses it.
+     MUST be background-image, not the background SHORTHAND: the shorthand
+     resets every sub-property it doesn't mention — including
+     background-clip — back to its initial value (border-box). That silently
+     overrode .foil's background-clip:text, so the gradient clipped to the
+     whole element box instead of the glyphs: a solid gold rectangle instead
+     of "ස්තූතියි", exactly what shipped and was reported live. */
+  background-image:linear-gradient(105deg,#FFF5DA 0%,#F5DEAA 20%,#C9A35C 40%,#FFE9B8 55%,#A87F42 75%,#F5DEAA 90%,#FFEFC7 100%);
   /* text-shadow shadows the glyph OUTLINE using its own color, independent
      of how the fill itself is painted — combined with color:transparent +
      -webkit-background-clip:text above, that's mixing two different paint
