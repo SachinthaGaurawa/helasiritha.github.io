@@ -833,12 +833,17 @@ html.pw-lock #postWedding{ touch-action:pan-y }
 .post-wedding{
   position:fixed; inset:0; z-index:120; overflow-y:auto;
   display:flex; align-items:center; justify-content:center;
+  /* Third layer (warm glow rising from the bottom) and the vertical base
+     gradient (in place of a flat var(--bg)) add depth behind the vast,
+     otherwise-empty canvas this screen is — the top glow alone left the
+     lower half of tall viewports reading flat. */
   background:
-    radial-gradient(ellipse 80% 60% at 50% 18%, rgba(232,201,135,.10), transparent 60%),
-    var(--bg);
+    radial-gradient(circle 800px at 50% 18%, rgba(232,201,135,.15), transparent 70%),
+    radial-gradient(ellipse 100% 70% at 50% 100%, rgba(120,80,30,.25), transparent 60%),
+    linear-gradient(180deg, #09090b 0%, #030304 100%);
   padding:max(3.2rem,env(safe-area-inset-top)) 1.4rem max(3.2rem,env(safe-area-inset-bottom));
 }
-.pw-inner{ position:relative; z-index:1; max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
+.pw-inner{ position:relative; z-index:1; max-width:580px; display:flex; flex-direction:column; align-items:center; text-align:center }
 /* .pw-portrait KEEPS every one of .hero-portrait's own layers (ring line,
    faint halo, deep drop shadow, var(--glow) ambient bloom — an earlier flat
    override here once quietly replaced that whole stack, which is what made
@@ -850,68 +855,70 @@ html.pw-lock #postWedding{ touch-action:pan-y }
 .pw-portrait{
   margin-bottom:1.8rem;
   box-shadow:
-    0 0 0 1px var(--line),
-    0 0 0 8px rgba(232,201,135,.06),
-    inset 0 1px 0 rgba(255,250,232,.24),
-    inset 0 -2px 5px rgba(0,0,0,.5),
-    0 26px 60px rgba(0,0,0,.6),
+    0 0 0 1px rgba(232,201,135,.4),
+    0 0 0 8px rgba(232,201,135,.08),
+    inset 0 2px 4px rgba(255,250,232,.4),
+    inset 0 -4px 8px rgba(0,0,0,.7),
+    0 26px 60px rgba(0,0,0,.7),
     var(--glow),
-    0 0 110px 26px rgba(232,201,135,.16);
+    0 0 120px 30px rgba(232,201,135,.22);
 }
-.post-wedding .eyebrow{ margin-bottom:.7rem }
+.post-wedding .eyebrow{ margin-bottom:.8rem; color:var(--gold-bright); text-shadow:0 0 12px rgba(232,201,135,.3) }
 .pw-title{
   font-family:var(--f-royal); font-weight:800; letter-spacing:.02em;
-  font-size:clamp(3rem,13vw,5.4rem); line-height:1.16; padding-block:.06em; margin:0 0 1.4rem;
+  font-size:clamp(3.2rem,14vw,5.6rem); line-height:1.15; padding-block:.06em; margin:0 0 1.2rem;
   /* .foil's background-size:220% 100% is tuned for long runs (hero names,
      footer names) where a wide gradient sweep reads as a traveling sheen.
      "ස්තූතියි" is 4-5 glyphs — at 220% only a narrow slice of the 7-stop
      gradient falls across that short a run at any one animation frame, so
      the color spread that's actually there reads as closer to a single
      flat tone. Tightening the size for this element alone packs more of
-     the same stops across the shorter text, without touching the shared
-     .foil rule or its colors. */
+     the same stops across the shorter text. */
   background-size:130% 100%;
+  /* A brighter, higher-contrast champagne variant scoped to this element
+     alone — same stop positions as --foil, each pushed toward the pale end,
+     for a sharper metallic read against this screen's darker canvas. Same
+     specificity as .foil, declared later, so it wins without !important;
+     doesn't touch --foil or anything else that uses it. */
+  background:linear-gradient(105deg,#FFF5DA 0%,#F5DEAA 20%,#C9A35C 40%,#FFE9B8 55%,#A87F42 75%,#F5DEAA 90%,#FFEFC7 100%);
   /* text-shadow shadows the glyph OUTLINE using its own color, independent
-     of how the fill itself is painted — combined with .foil's
-     color:transparent + -webkit-background-clip:text, that's mixing two
-     different paint mechanisms on the same clipped run, which is a fragile
-     pattern across engines. filter:drop-shadow() instead shadows the
-     element's actual composited (post-clip) pixels, so it's unconditionally
-     safe with clipped gradient text everywhere. Because .foil already sets
-     its own two-layer filter, and `filter` (unlike text-shadow) doesn't
-     merge across rules on the same element, this repeats .foil's exact two
-     layers verbatim and chains the "stamped gold" depth + glow on as more
-     drop-shadow() functions in the same property, rather than losing .foil's
-     layers to full override. */
-  /* The two glow layers (not the stamp/emboss ones above them, which are
-     about physical depth, not radiance) widened and intensified — against
-     the vast dark canvas here, the original glow read as too contained. */
+     of how the fill itself is painted — combined with color:transparent +
+     -webkit-background-clip:text above, that's mixing two different paint
+     mechanisms on the same clipped run, which is a fragile pattern across
+     engines. filter:drop-shadow() instead shadows the element's actual
+     composited (post-clip) pixels, so it's unconditionally safe with
+     clipped gradient text everywhere. Because .foil already sets its own
+     two-layer filter, and `filter` (unlike text-shadow) doesn't merge
+     across rules on the same element, this repeats equivalent highlight/
+     shadow layers verbatim and chains the "stamped gold" depth + glow on
+     as more drop-shadow() functions in the same property. */
   filter:
-    drop-shadow(0 1px 0 rgba(255,250,232,.18))
-    drop-shadow(0 2px 10px rgba(0,0,0,.5))
+    drop-shadow(0 2px 0 rgba(255,250,232,.35))
+    drop-shadow(0 4px 12px rgba(0,0,0,.7))
     drop-shadow(0 2px 1px rgba(0,0,0,.4))
-    drop-shadow(0 0 40px rgba(232,201,135,.65))
-    drop-shadow(0 0 85px rgba(212,175,106,.4));
+    drop-shadow(0 0 35px rgba(232,201,135,.85))
+    drop-shadow(0 0 80px rgba(212,175,106,.5));
 }
 /* Scoped to this screen only — the shared .hansa-mark (hero section etc.)
    stays at its own size; here it reads a touch larger and adds its own
    soft glow on top of the class's existing emboss filter (filter functions
    chain, so both apply together). */
 .post-wedding .hansa-mark{
-  width:clamp(60px,13.5vw,86px); height:clamp(60px,13.5vw,86px);
-  filter:var(--orn-emboss) drop-shadow(0 0 22px rgba(232,201,135,.55));
+  width:clamp(64px,14.5vw,92px); height:clamp(64px,14.5vw,92px);
+  filter:var(--orn-emboss) drop-shadow(0 0 28px rgba(232,201,135,.75));
 }
 /* ~35% wider than the shared .hansa-divider (360px/82%) — against this
    screen's vast, otherwise-empty dark space, the hero size read as
    proportionally small; this is the one screen that's ENTIRELY this
    divider's moment, not a small accent among lots of other content. */
-.post-wedding .hansa-divider{ width:min(486px,92%); margin-bottom:1.8rem }
+.post-wedding .hansa-divider{ width:min(520px,94%); margin-bottom:1.8rem; filter:drop-shadow(0 0 10px rgba(232,201,135,.4)) }
 .pw-message{
-  font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.28rem); line-height:2;
-  color:#EDE3CB; max-width:44ch; margin:0 0 2rem; padding-inline:.4rem; white-space:pre-wrap;
+  font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.3rem); line-height:2.05;
+  color:#EDE3CB; max-width:46ch; margin:0 0 2.2rem; padding-inline:.5rem; white-space:pre-wrap;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);
 }
 .pw-signature{
-  font-family:var(--f-royal); font-weight:700; font-size:clamp(1.5rem,5vw,2.1rem);
+  font-family:var(--f-royal); font-weight:700; font-size:clamp(1.6rem,5.2vw,2.2rem);
   line-height:1.22; padding-block:.06em;
   /* Same reasoning as .pw-title's background-size above: short text, so
      tighten the gradient's sweep to pack more of .foil's own stops across it. */
@@ -920,9 +927,9 @@ html.pw-lock #postWedding{ touch-action:pan-y }
      .foil-clipped element — repeats .foil's own two layers, then chains the
      glow on as a third. */
   filter:
-    drop-shadow(0 1px 0 rgba(255,250,232,.18))
-    drop-shadow(0 2px 10px rgba(0,0,0,.5))
-    drop-shadow(0 0 22px rgba(232,201,135,.35));
+    drop-shadow(0 1px 0 rgba(255,250,232,.25))
+    drop-shadow(0 2px 10px rgba(0,0,0,.6))
+    drop-shadow(0 0 28px rgba(232,201,135,.45));
 }
 
 /* ── Zoom-crash guard: soften GPU-heavy effects only while the user is pinch/zoomed in ── */
@@ -987,10 +994,10 @@ html.vv-zoom .hero-emblem{ animation:none !important }
    just gently growing but visibly fading in and out of the dark — the
    "living, cinematic depth" this one screen calls for on its own. */
 #postWedding::after{
-  -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(560px,86vw);
-  animation:orn-breathe 11s ease-in-out infinite, pw-glow-breathe 13s ease-in-out infinite;
+  -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(620px,92vw);
+  animation:orn-breathe 10s ease-in-out infinite, pw-glow-breathe 8s ease-in-out infinite;
 }
-@keyframes pw-glow-breathe{0%,100%{opacity:.06}50%{opacity:.16}}
+@keyframes pw-glow-breathe{0%,100%{opacity:.08}50%{opacity:.22}}
 
 /* ── Card hover polish (subtle champagne aura) ── */
 .inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
