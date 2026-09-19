@@ -481,6 +481,25 @@ function byLang(base) {
   return S[base];
 }
 
+/* The entry gate (index.html's own standalone inline script) paints the
+   couple's names INSTANTLY from a hardcoded default, deliberately before
+   this module or Firestore have loaded anything -- see that script's own
+   comment ("standalone, independent of app.js so it can never trap a
+   visitor"). That's correct for the very first frame, but it never gets
+   corrected afterwards: nothing ever went back to swap in the live
+   admin-configured names once Firestore actually answered, so a couple
+   who changed their names in admin kept seeing the original placeholder
+   ("කෞශානි & ගෞරව") on this one screen forever. Patching it here, the
+   instant live content arrives, closes that gap without touching the
+   gate's markup/CSS at all -- if it's already been dismissed and removed
+   from the DOM (the common case once someone lingers), this is a no-op. */
+function paintEntryGateLive() {
+  const nm = document.querySelector("#entry .entry-names");
+  if (!nm) return;
+  const n = names();
+  nm.innerHTML = esc(n.b) + ' <span class="amp">&amp;</span> ' + esc(n.g);
+}
+
 function liteMode() {
   const m = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const sd = navigator.connection && navigator.connection.saveData;
@@ -1749,6 +1768,11 @@ async function connect() {
          scrolling is disabled and the main content hidden the instant
          Firestore says so, not only once the visitor taps past the gate. */
       applySiteState();
+      /* Also immediate, same reasoning: if the couple's names just changed
+         in admin, the entry gate should say so on the very next paint, not
+         only after whenEntryGone's render of the (already correct) real
+         hero underneath it. */
+      paintEntryGateLive();
       whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startSiteStateWatch(); });
     }, (err) => console.warn("content listener", err));
 
