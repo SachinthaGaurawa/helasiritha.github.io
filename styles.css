@@ -838,7 +838,7 @@ html.pw-lock #postWedding{ touch-action:pan-y }
     var(--bg);
   padding:max(3.2rem,env(safe-area-inset-top)) 1.4rem max(3.2rem,env(safe-area-inset-bottom));
 }
-.pw-inner{ max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
+.pw-inner{ position:relative; z-index:1; max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
 /* Deliberately NO box-shadow override here — .pw-portrait only adds spacing,
    so #pwPortrait inherits .hero-portrait's own gold ring + ambient glow
    (box-shadow:...,var(--glow)) untouched, and — while it's showing the
@@ -909,7 +909,7 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 .hero{background:linear-gradient(rgba(10,10,12,.85),rgba(10,10,12,.93)),var(--s-hero-bg) center/cover no-repeat}
 
 /* ── New section seals (champagne mask, faint, breathing) ── */
-#invitation::after,#rsvp::after,#agenda::after,#gallery::after{
+#invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{
   content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(520px,84vw);aspect-ratio:1;z-index:0;opacity:.05;pointer-events:none;background:var(--foil);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;
@@ -918,15 +918,19 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 #rsvp::after{-webkit-mask-image:var(--s-seal-rsvp);mask-image:var(--s-seal-rsvp)}
 #agenda::after{-webkit-mask-image:var(--s-seal-agenda);mask-image:var(--s-seal-agenda)}
 #gallery::after{-webkit-mask-image:var(--s-seal-gallery);mask-image:var(--s-seal-gallery)}
+/* Same faint breathing medallion already used behind #countdown/#lovenote/
+   #blessings — the closest precedent to a single centered "message" screen
+   like this one, rather than one of the seals tied to a specific section. */
+#postWedding::after{-webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(560px,86vw)}
 
 /* ── Card hover polish (subtle champagne aura) ── */
 .inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
 
 /* ── Motion off: lite / reduced-motion ── */
-body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after{animation:none}
+body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after,body.lite #postWedding::after{animation:none}
 @media (prefers-reduced-motion:reduce){
   .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
-  #invitation::after,#rsvp::after,#agenda::after,#gallery::after{animation:none}
+  #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{animation:none}
   /* Keep the gateway → site handoff visible even with Reduce Motion:
      fade the veil (drop the scale, which is the vestibular part) — the
      page underneath is already fully rendered, so there's nothing to
@@ -951,7 +955,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   font-size:1rem;line-height:1.6;text-align:center;border-bottom:1px solid rgba(232,201,135,.3)}
 
 /* ── Print ── */
-@media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after{display:none!important} }
+@media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{display:none!important} }
 
 /* ════════════════════════════════════════════════════════════════════════
    SANNASA INVITATION SCROLL · HERO EMBLEM · SINHALA-GLYPH FIX · DEVICE POLISH
