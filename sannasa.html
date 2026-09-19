@@ -676,14 +676,29 @@ if (/\.github\.io$/i.test(location.hostname)) {
         if(rafId){ cancelAnimationFrame(rafId); rafId = null; } 
       }
 
-      if(reduceMotion){
+      /* A cross-origin embed (the admin panel's live-preview widget loads
+         this page from a different domain via an absolute URL) has no
+         reliable progress signal at all: it can't receive the parent's
+         postMessage (that channel is same-origin only, see sameOriginFrame
+         above), and computeTargetProgress()'s own fallback for this case
+         reads the IFRAME's OWN internal window.scrollY -- but reflow()
+         deliberately sizes this document's height to the content plus a
+         few px, leaving nothing to scroll internally. The result wasn't a
+         slow or broken animation, it was a permanently stuck one: target
+         stayed 0 forever, so the sannasa never got past its rolled-up
+         opening state no matter how long the admin looked at it. There is
+         no "correct" scroll position to reconstruct here, and an admin
+         checking their edits wants to see the actual content, not the
+         guest-facing reveal animation anyway -- so skip straight to fully
+         unrolled, exactly like the reduced-motion case already does. */
+      if(reduceMotion || (framed && !sameOriginFrame)){
         applyPhysicsFrame(1); vp.classList.add('unrolled');
         return;
       }
 
-      if(!framed){ 
+      if(!framed){
           window.addEventListener('scroll', startEngine, { passive: true });
-          startEngine(); 
+          startEngine();
       } else if('IntersectionObserver' in window) {
         try{
           var io2 = new IntersectionObserver(function(entries){
