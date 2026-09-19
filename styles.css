@@ -839,24 +839,49 @@ html.pw-lock #postWedding{ touch-action:pan-y }
   padding:max(3.2rem,env(safe-area-inset-top)) 1.4rem max(3.2rem,env(safe-area-inset-bottom));
 }
 .pw-inner{ position:relative; z-index:1; max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
-/* Deliberately NO box-shadow override here — .pw-portrait only adds spacing,
-   so #pwPortrait inherits .hero-portrait's own gold ring + ambient glow
-   (box-shadow:...,var(--glow)) untouched, and — while it's showing the
-   .hero-emblem fallback — the slow rotating rim-light (.hero-portrait
-   .is-mono::after) and floating animation too. An earlier flatter
-   box-shadow here was quietly replacing that whole glow with a plain drop
-   shadow, which is what made the portrait read as a dim, broken circle. */
-.pw-portrait{ margin-bottom:1.8rem }
+/* .pw-portrait KEEPS every one of .hero-portrait's own layers (ring line,
+   faint halo, deep drop shadow, var(--glow) ambient bloom — an earlier flat
+   override here once quietly replaced that whole stack, which is what made
+   the portrait read as a dim, broken circle) and ADDS to that same stack:
+   a thin embossed bevel (a bright top edge + dark underside, the standard
+   two-line trick for a metal ring reading as 3D rather than flat) and one
+   much wider, very soft bloom behind it, so the portrait reads as glowing
+   from within a dark chamber rather than sitting flush on the background. */
+.pw-portrait{
+  margin-bottom:1.8rem;
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 0 0 8px rgba(232,201,135,.06),
+    inset 0 1px 0 rgba(255,250,232,.24),
+    inset 0 -2px 5px rgba(0,0,0,.5),
+    0 26px 60px rgba(0,0,0,.6),
+    var(--glow),
+    0 0 110px 26px rgba(232,201,135,.16);
+}
 .post-wedding .eyebrow{ margin-bottom:.7rem }
 .pw-title{
   font-family:var(--f-royal); font-weight:800; letter-spacing:.02em;
   font-size:clamp(3rem,13vw,5.4rem); line-height:1.16; padding-block:.06em; margin:0 0 1.4rem;
-  text-shadow:0 0 28px rgba(232,201,135,.45), 0 0 60px rgba(212,175,106,.22);
+  /* A tight, dark near-offset shadow first — physical relief, as if the
+     letters were pressed into gold leaf — then the two soft glow layers
+     already tuned in an earlier pass, kept exactly as they were. */
+  text-shadow:
+    0 2px 1px rgba(0,0,0,.4),
+    0 0 28px rgba(232,201,135,.45),
+    0 0 60px rgba(212,175,106,.22);
+}
+/* Scoped to this screen only — the shared .hansa-mark (hero section etc.)
+   stays at its own size; here it reads a touch larger and adds its own
+   soft glow on top of the class's existing emboss filter (filter functions
+   chain, so both apply together). */
+.post-wedding .hansa-mark{
+  width:clamp(44px,10vw,64px); height:clamp(44px,10vw,64px);
+  filter:var(--orn-emboss) drop-shadow(0 0 16px rgba(232,201,135,.4));
 }
 .post-wedding .hansa-divider{ margin-bottom:1.8rem }
 .pw-message{
   font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.28rem); line-height:2;
-  color:var(--ink); max-width:44ch; margin:0 0 2rem; white-space:pre-wrap;
+  color:#EDE3CB; max-width:44ch; margin:0 0 2rem; padding-inline:.4rem; white-space:pre-wrap;
 }
 .pw-signature{
   font-family:var(--f-royal); font-weight:700; font-size:clamp(1.5rem,5vw,2.1rem);
@@ -920,8 +945,16 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 #gallery::after{-webkit-mask-image:var(--s-seal-gallery);mask-image:var(--s-seal-gallery)}
 /* Same faint breathing medallion already used behind #countdown/#lovenote/
    #blessings — the closest precedent to a single centered "message" screen
-   like this one, rather than one of the seals tied to a specific section. */
-#postWedding::after{-webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(560px,86vw)}
+   like this one, rather than one of the seals tied to a specific section.
+   A second animation (CSS allows stacking several by name) layers a slow
+   opacity pulse on top of the shared scale-breathe, so the watermark isn't
+   just gently growing but visibly fading in and out of the dark — the
+   "living, cinematic depth" this one screen calls for on its own. */
+#postWedding::after{
+  -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(560px,86vw);
+  animation:orn-breathe 11s ease-in-out infinite, pw-glow-breathe 13s ease-in-out infinite;
+}
+@keyframes pw-glow-breathe{0%,100%{opacity:.02}50%{opacity:.08}}
 
 /* ── Card hover polish (subtle champagne aura) ── */
 .inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
