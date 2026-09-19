@@ -1605,19 +1605,39 @@ async function refreshPostWeddingFromServer() {
   } catch (e) { /* offline or transient — fall through on whatever S already has */ }
   applyPostWeddingState();
 }
+/* The data-freshness watchdog above (refreshPostWeddingFromServer) can only
+   ever run the JS that's already loaded in this tab — and there is no
+   service worker on this site, so a <script type="module"> loads once per
+   navigation and can NEVER hot-reload. A visitor who opened the page
+   before a fix shipped is running that old code forever, no matter how
+   many more fixes ship after — every earlier round of hardening here was
+   silently unable to reach a tab like that. This closes that gap at the
+   root: periodically re-fetch this exact page (bypassing cache) and
+   compare its build marker against this tab's own; a mismatch means a
+   newer deploy exists, so force a real reload to pick it up, rather than
+   patching around symptoms in code that visitor will never actually run. */
+async function checkForNewBuildAndReload() {
+  try {
+    const res = await fetch("/?_=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) return;
+    const html = await res.text();
+    const m = html.match(/__BUILD_V__\s*=\s*"([^"]+)"/);
+    if (m && m[1] && window.__BUILD_V__ && m[1] !== window.__BUILD_V__) location.reload();
+  } catch (e) { /* offline or transient — try again on the next tick */ }
+}
 let pwWatchStarted = false;
 function startPostWeddingWatch() {
   if (pwWatchStarted) return;
   pwWatchStarted = true;
-  setInterval(refreshPostWeddingFromServer, 30000);
+  setInterval(() => { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); }, 30000);
   /* Mobile browsers throttle or fully suspend background-tab timers and
      network connections — a visitor who backgrounds the tab right as an
      admin flips the switch could otherwise be stuck on the wrong state
      until the (also-throttled) 30s poll eventually gets to run. Resyncing
      the instant the tab becomes visible/foregrounded again closes that gap
      immediately instead of waiting on the poll. */
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPostWeddingFromServer(); });
-  window.addEventListener("pageshow", () => refreshPostWeddingFromServer());
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); } });
+  window.addEventListener("pageshow", () => { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); });
 }
 
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
