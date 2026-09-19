@@ -1584,18 +1584,24 @@ function renderPostWedding() {
    visitor has any real content to read, so the language toggle has nothing
    meaningful to switch between yet. */
 function renderSitePaused() {
+  // Pre-launch privacy: unlike the post-wedding thank-you screen, this
+  // screen can be shown to strangers who found the link before the couple
+  // ever intended it to be public, so it must never reveal who the couple
+  // is -- no names, no alt text naming them.
   const port = document.getElementById("spPortrait");
   if (port) {
-    const b = S.brideName || "කෞශානි", g = S.groomName || "ගෞරව";
     if (S.heroImageUrl) {
-      port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(b + " සහ " + g) + '" loading="eager" decoding="async">';
+      port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="" loading="eager" decoding="async">';
       port.classList.remove("is-mono");
     } else {
       port.innerHTML = '<div class="hero-emblem" aria-hidden="true"></div>';
       port.classList.add("is-mono");
     }
-    const sig = document.getElementById("spSignature");
-    if (sig) sig.textContent = b + " සහ " + g;
+  }
+  const sig = document.getElementById("spSignature");
+  if (sig) {
+    sig.textContent = "";
+    sig.style.display = "none";
   }
   const msgEl = document.getElementById("spMessage");
   if (msgEl) {
