@@ -72,7 +72,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
   font-family:var(--f-body);font-size:clamp(1rem,0.96rem + .25vw,1.14rem);
   color:var(--ink);line-height:1.8;background:var(--bg);min-height:100vh;overflow-x:hidden;
-  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
 }
 /* layered noir backdrop: warm pools + faint gold grain */
 body::before{
@@ -320,7 +320,7 @@ body.lite .hero-aurora{animation:none}
 @media (prefers-reduced-motion:reduce){.hero-aurora{animation:none}}
 
 .hero-inner{position:relative;z-index:2;grid-row:1;align-self:center;display:flex;flex-direction:column;align-items:center}
-.hero-portrait{width:clamp(150px,34vw,232px);aspect-ratio:1/1;border-radius:50%;overflow:hidden;margin-bottom:1.6rem;
+.hero-portrait{width:clamp(150px,34vw,232px);height:clamp(150px,34vw,232px);aspect-ratio:1/1;border-radius:50%;overflow:hidden;margin-bottom:1.6rem;
   background:radial-gradient(120% 120% at 50% 25%,#1b1810,#0c0a07);
   box-shadow:0 0 0 1px var(--line),0 0 0 8px rgba(232,201,135,.06),0 26px 60px rgba(0,0,0,.6),var(--glow)}
 .hero-portrait img{width:100%;height:100%;object-fit:cover}
