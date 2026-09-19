@@ -10,7 +10,7 @@
    once per navigation and can never hot-reload) notices a new deploy
    went out and force-reloads itself, instead of running stale JS forever
    no matter how many fixes ship after it was first opened. */
-window.__BUILD_V__ = "2026091914";
+window.__BUILD_V__ = "2026091915";
 </script>
 <script>
 /* GitHub auto-publishes this exact repo via Pages (it's literally named
@@ -45,7 +45,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 <link rel="preconnect" href="https://iili.io" crossorigin>
 <link rel="dns-prefetch" href="https://iili.io">
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-<link rel="preload" href="styles.css?v=2026091914" as="style">
+<link rel="preload" href="styles.css?v=2026091915" as="style">
 <!-- crest preload removed: that Cloudinary asset returns 404 -->
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg" fetchpriority="high">
@@ -61,7 +61,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
      connection; the <noscript> fallback covers the no-JS case. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="styles.css?v=2026091914">
+<link rel="stylesheet" href="styles.css?v=2026091915">
 </head>
 <body>
 
@@ -338,9 +338,26 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 
 </main>
 
+<!-- ░░ SITE LAUNCH GATE · "ළඟදීම" SCREEN ░░
+     Hidden by default. Shown in place of #nav/main/.footer (all `hidden`
+     together — see applySiteState() in app.js) whenever siteLive is
+     explicitly false. Checked AFTER Post-Wedding in computeSiteScreenState(),
+     so the two full-screen gates can never fight over which one wins. Always
+     pure Sinhala, same reasoning as the Post-Wedding screen below. -->
+<div id="sitePaused" class="post-wedding" hidden>
+  <div class="pw-inner wrap center">
+    <div id="spPortrait" class="hero-portrait pw-portrait"></div>
+    <p class="eyebrow">ළඟදීම එළිදැක්වේ...</p>
+    <h1 class="pw-title foil">ළඟදීම</h1>
+    <div class="hansa-divider" aria-hidden="true"><span class="hansa-mark"></span></div>
+    <p id="spMessage" class="pw-message"></p>
+    <div id="spSignature" class="pw-signature foil"></div>
+  </div>
+</div>
+
 <!-- ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░
      Hidden by default. Shown in place of #nav/main/.footer (all `hidden`
-     together — see applyPostWeddingState() in app.js) once postWeddingMode
+     together — see applySiteState() in app.js) once postWeddingMode
      is on or the SLT schedule has passed. Always pure Sinhala, regardless
      of the EN/TA language toggle. -->
 <div id="postWedding" class="post-wedding" hidden>
@@ -383,7 +400,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script type="module" src="app.js?v=2026091914"></script>
+<script type="module" src="app.js?v=2026091915"></script>
 <script>
 /* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
 (function(){
