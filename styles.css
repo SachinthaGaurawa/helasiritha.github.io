@@ -43,12 +43,28 @@
 }
 .amp{font-family:var(--f-en);font-style:italic;color:var(--gold-2);-webkit-text-fill-color:var(--gold-2);margin:0 .12em;font-weight:600}
 
+/* background-clip:text goes fully invisible (0 pixels painted — confirmed by
+   direct render test, not a guess) whenever its ancestor also uses
+   backdrop-filter, on some browser/GPU combinations — a real compositing
+   interaction, not something worth chasing per-browser. .glass cards use
+   backdrop-filter, so any gradient-clip text inside one must fall back to a
+   plain, always-visible solid gold fill. (.cd-num gets the same fallback
+   directly on its own rule below, since it sits in a backdrop-filter cell too.) */
 .glass .foil{
   background:none;-webkit-background-clip:initial;background-clip:initial;
   color:var(--gold-bright);-webkit-text-fill-color:var(--gold-bright);
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+/* The browser's own [hidden]{display:none} rule lives in the UA stylesheet,
+   which loses to ANY author rule that sets display on the same element —
+   regardless of specificity, since origin is resolved before specificity
+   is ever compared. #postWedding's own `display:flex` (below) was silently
+   winning that fight: app.js correctly set/cleared the hidden attribute,
+   but the element kept rendering at display:flex regardless, staying
+   visible on top of the just-unhidden main content. This single global
+   rule re-asserts hidden's real priority for every element on the page,
+   so no future component's own display rule can accidentally repeat this. */
 [hidden]{display:none !important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -58,6 +74,7 @@ body{
   color:var(--ink);line-height:1.8;background:var(--bg);min-height:100vh;overflow-x:hidden;
   text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
 }
+/* layered noir backdrop: warm pools + faint gold grain */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
@@ -76,6 +93,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 body.noscroll{overflow:hidden}
 
+/* Layout */
 main{position:relative;z-index:1}
 .wrap{max-width:var(--maxw);margin-inline:auto;width:100%}
 .section{position:relative;z-index:1;padding:clamp(4rem,9vw,8.5rem) clamp(1.1rem,5vw,2.5rem)}
@@ -89,6 +107,7 @@ main{position:relative;z-index:1}
 .sec-title{font-family:var(--f-disp);font-weight:800;line-height:1.18;letter-spacing:.01em;font-size:clamp(2rem,6vw,3.6rem)}
 .sec-sub{font-family:var(--f-body);font-style:italic;color:var(--mut);font-size:clamp(1.05rem,2.6vw,1.35rem);margin-top:.6rem}
 
+/* Glassmorphism card — embossed in noir */
 .glass{position:relative;background:var(--glass);
   -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
   border-radius:var(--r-lg);box-shadow:var(--raise);overflow:hidden}
@@ -96,20 +115,43 @@ main{position:relative;z-index:1}
   background:linear-gradient(180deg,rgba(255,250,232,.06),transparent 30%)}
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line-soft)}
 
+/* Reveal on scroll.
+   .reveal-tracking (app.js observeReveals/revealFrame) means this element's
+   opacity/transform are being driven directly, every frame, from its actual
+   scroll position — so the transition below must not fight that: each
+   direct style write would otherwise itself kick off a fresh 1s transition
+   toward the new value, compounding into a laggy blur that never keeps up
+   with the scroll. Elements that are already past the reveal point the
+   moment observeReveals() runs (on load, or right after dynamic content
+   renders, with no scroll left to tie an animation to) skip tracking and
+   get this timed transition instead — the classic staggered fade-in. */
 .reveal{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease-soft),transform 1s var(--ease-soft)}
 .reveal.in{opacity:1;transform:none}
 .reveal.reveal-tracking{transition:none}
 body.lite .reveal{transition-duration:.4s}
 @media (prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none}}
 
+/* Language-swap micro fade */
 body.lang-swap main,body.lang-swap .nav-inner{animation:swap .42s var(--ease)}
 @keyframes swap{0%{opacity:.25;filter:blur(2px)}100%{opacity:1;filter:blur(0)}}
 body.lite.lang-swap main{animation:none}
 
-/* ════════ PRELOADER ════════ */
+/* ════════ PRELOADER ════════
+   Kept to four elements on purpose — greeting, portrait, one ornament, the
+   loading dots — so the "wow" comes from motion and warmth, not from adding
+   more things to look at. Every element below is staggered in once via
+   preRise rather than appearing flat/static the instant the preloader
+   mounts; app.js holds the preloader up for a minimum time (see its own
+   comment) specifically so this sequence is never cut short on a fast or
+   cached load. */
 .preloader{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:var(--bg);transition:opacity .9s ease,visibility .9s ease;overflow:hidden}
 .preloader.gone{opacity:0;visibility:hidden}
 .pre-inner{position:relative;display:grid;place-items:center;gap:1rem;text-align:center;padding:0 1.4rem}
+/* The user's own tested recipe for this glow (exact gradient stops/colors,
+   circular shape, blur, fade-in-then-pulse curve) — sized/positioned
+   against .pre-inner's own box (this card) instead of the full viewport
+   their standalone demo used, since this glow lives inside a compact
+   preloader card rather than filling the whole screen. */
 .pre-inner::before{content:"";position:absolute;top:50%;left:50%;z-index:-1;pointer-events:none;
   width:190%;height:190%;border-radius:50%;transform:translate(-50%,-50%);
   background:radial-gradient(circle at center,
@@ -121,11 +163,24 @@ body.lite.lang-swap main{animation:none}
 @keyframes preRise{0%{opacity:0;transform:translateY(16px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .pre-greet{font-family:var(--f-royal);font-weight:700;letter-spacing:.03em;font-size:clamp(2.25rem,9.6vw,3.42rem);
   animation:preRise .9s var(--ease-soft) .1s both,sheen 9s ease-in-out infinite}
+/* The couple linework is the preloader's one asset fetched over the network
+   (every other element here is CSS/font, guaranteed to paint) — a slow or
+   failed load must never leave a broken-image glyph on the very first thing
+   a visitor sees. onerror hides the <img> outright; the greeting and dots
+   already carry the moment on their own. */
 .pre-couple{position:relative;width:clamp(148px,40vw,210px);margin-block:.1rem;
   animation:preRise 1s var(--ease-soft) .35s both}
+/* The source artwork's linework is plain sepia/brown. --goldify (tuned for
+   the hero's paler champagne flourishes) reads too pale against this card's
+   own much warmer amber glow (255,215,120 -> 153,101,36) — richer saturation,
+   slightly less brightness and a small hue pull toward orange keeps the
+   couple's outline in the same amber family as the light behind them. */
 .pre-couple img{width:100%;height:auto;display:block;
   filter:grayscale(1) sepia(1) saturate(3) brightness(.98) hue-rotate(-4deg) drop-shadow(0 10px 26px rgba(0,0,0,.55))}
 .pre-couple img.broken{display:none}
+/* .hansa-mark.pre-mark (not .pre-mark alone) so this beats the plain
+   .hansa-mark rule's own width/height/animation regardless of the two
+   rules' order in the file, instead of depending on source position. */
 .hansa-mark.pre-mark{width:clamp(34px,8vw,46px);height:clamp(34px,8vw,46px);
   animation:preRise .8s var(--ease-soft) .6s both,hansaGlow 4.6s ease-in-out infinite}
 .pre-dots{display:flex;gap:.5rem;animation:preRise .7s var(--ease-soft) .8s both}
@@ -178,19 +233,52 @@ body.lite .pre-dots span{animation:none;opacity:.7}
 .nav-drawer{position:fixed;inset:0 0 0 auto;width:min(80vw,320px);z-index:49;display:flex;flex-direction:column;gap:.3rem;
   padding:5.5rem 1.6rem 2rem;background:rgba(12,12,16,.96);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border-left:1px solid var(--line);transform:translateX(105%);transition:transform .5s var(--ease);box-shadow:-20px 0 60px rgba(0,0,0,.6);
+  /* The drawer is pinned to the FULL viewport height (inset:0 0 0 auto) with
+     no scroll of its own — on shorter screens, or once the bottom flourish's
+     real (now-known) height is added on top of the nav links, the flex
+     column's content can run taller than that fixed box. Without its own
+     scroll, that overflow doesn't get clipped OR reveal itself: a
+     position:fixed element's overflow lands below the viewport's own bottom
+     edge, which no amount of scrolling the PAGE behind it can ever reach
+     (the drawer doesn't move with page scroll — that's the whole point of
+     fixed). overflow-y:auto makes the drawer scroll internally instead, so
+     every item — flourish included — stays reachable on any device height,
+     without hand-tuning a breakpoint per screen size. */
   overflow-y:auto;overscroll-behavior:contain}
 .nav-drawer.open{transform:none}
 .nav-drawer a{font-family:var(--f-disp);font-size:1.35rem;color:var(--ink);padding:.7rem .2rem;border-bottom:1px solid var(--line-soft);transition:color .3s,padding-left .3s}
 .nav-drawer a:hover{color:var(--gold-bright);padding-left:.5rem}
+/* Closing crown flourish — pinned to the very bottom of the drawer (flex's
+   margin-top:auto) and bled edge-to-edge to exactly the drawer's own width
+   (negative margins cancel the drawer's side/bottom padding) on every
+   device, since the drawer's width itself is already responsive
+   (min(80vw,320px)). A real <img>, not a CSS mask, so it lays out at its
+   own true aspect ratio instead of guessing one. */
 .nav-drawer-arch{
+  /* The drawer's own border-left:1px eats 1px of its content box (box-sizing:
+     border-box) that plain padding-cancelling margins don't reach — the left
+     margin/width account for that extra pixel so this touches the drawer's
+     true left edge exactly, not one pixel short of it. Width is tied to the
+     drawer's own responsive width (min(80vw,320px)), so it matches exactly
+     on every device without a breakpoint; height:auto keeps the source
+     asset's own (now square) aspect ratio instead of guessing one. */
   margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
   width:calc(100% + 3.2rem + 1px);max-width:none;height:auto;
   display:block;pointer-events:none;user-select:none;
+  /* The art is a full-color mandala (not dark line-work), so this keeps its
+     actual colors instead of forcing grayscale — brightness(.6) just dims
+     it down to sit quietly behind the nav links, the way a reduced-
+     brightness photo would, while staying recognizably itself. The upward
+     drop-shadow grounds it against the drawer floor it's bled flush to. */
   filter:brightness(.6) blur(.3px)
     drop-shadow(0 -8px 20px rgba(0,0,0,.55))
     drop-shadow(0 0 22px rgba(232,201,135,.24));
 }
 .nav-drawer-arch.broken{display:none}
+/* Graceful degrade if the Cloudinary asset ever fails to load (network
+   hiccup, an edit that breaks the URL) — a pure-CSS glow needing no
+   external resource, so the drawer is never left with silently nothing
+   where the flourish should be. */
 .nav-drawer-arch-fallback{
   display:none;margin:auto -1.6rem -2rem calc(-1.6rem - 1px);
   width:calc(100% + 3.2rem + 1px);height:130px;pointer-events:none;
@@ -256,17 +344,20 @@ body.lite .hero-aurora{animation:none}
 @keyframes cue{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}100%{opacity:0;transform:translate(-50%,13px)}}
 body.lite .cue-dot::after{animation:none}
 
+/* Foil sheen only on marquee names (perf-gated) */
 .hero-names.foil,.foot-names.foil,.pre-greet.foil,.pw-title.foil,.pw-signature.foil{animation:sheen 9s ease-in-out infinite}
 @keyframes sheen{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 body.lite .foil{animation:none!important}
 @media (prefers-reduced-motion:reduce){.foil{animation:none!important}}
 .cue-lbl{font-family:var(--f-si);letter-spacing:.22em;text-transform:uppercase}
+/* Landscape phones / very short screens: no vertical room for a scroll hint → hide it, tighten hero */
 @media (max-height:640px){
   .hero{padding-top:4.4rem;padding-bottom:1rem}
   .hero-portrait{margin-bottom:1rem}
   .scroll-cue{display:none}
 }
 
+/* Hero entrance — JS-gated via body.loaded (fallback: fully visible if JS absent) */
 body.loaded .hero-inner>*{opacity:0;animation:heroIn 1s var(--ease) forwards}
 body.loaded .hero-inner>*:nth-child(1){animation-delay:.10s}
 body.loaded .hero-inner>*:nth-child(2){animation-delay:.22s}
@@ -302,6 +393,9 @@ body.lite .hero-inner>*{opacity:1!important;animation:none!important}
   border-radius:var(--r-md);background:var(--glass);box-shadow:var(--raise);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .cd-cell::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,250,232,.07),transparent 40%)}
 .cd-num{font-family:var(--f-disp);font-weight:800;font-size:clamp(2rem,8vw,3.4rem);line-height:1;
+  /* solid fill, not a gradient background-clip — .cd-cell uses backdrop-filter,
+     and clipped gradient text renders fully invisible under that combination
+     on some browsers (see the .glass .foil note near the top of this file) */
   color:var(--gold-bright);-webkit-text-fill-color:var(--gold-bright)}
 .cd-lbl{font-family:var(--f-si);font-size:clamp(.7rem,2vw,.86rem);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
 .cd-done{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.5rem,5vw,2.4rem);margin-top:1rem}
@@ -371,8 +465,15 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .masonry img{width:100%;height:auto;display:block;transition:transform .8s var(--ease)}
 .masonry figure:hover img{transform:scale(1.07)}
 .fig-ring{position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .5s}
+/* Reserve space BEFORE the photo arrives. Without this a slow or failed image
+   collapses its figure to ~0px: the picture is invisible and, worse, there is
+   nothing left to tap — which is exactly how 'images do not open' presented. */
 .masonry figure img{aspect-ratio:4/5;width:100%;height:auto;object-fit:cover;background:#14141a;min-height:120px}
 @media (min-width:700px){.masonry figure img{min-height:150px}}
+/* A photo whose Cloudinary source 404s: app.js hides the <img> (so the browser
+   never paints its own broken-image glyph + raw alt text) and marks the figure
+   .fig-broken instead — this keeps the tile's shape in the grid and shows one
+   quiet gold mark, matching the site's own ornamental "✦", rather than a bug. */
 .masonry figure.fig-broken{aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;cursor:default;pointer-events:none}
 .masonry figure.fig-broken::after{content:"✦";color:var(--gold-2);opacity:.35;font-size:1.6rem}
 .masonry figure.fig-broken:hover{transform:none;box-shadow:none}
@@ -380,7 +481,12 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .masonry figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem .9rem;color:#fff;font-family:var(--f-si);font-size:.9rem;background:linear-gradient(0deg,rgba(5,5,7,.85),transparent)}
 .gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;column-span:all;-webkit-column-span:all;text-align:center;letter-spacing:normal;width:100%}
 
-/* ── Sinhala glyph-shaping fix ────────────────────────────────────────────── */
+/* ── Sinhala glyph-shaping fix ──────────────────────────────────────────────
+   CSS letter-spacing inserts space between a consonant and its vowel sign
+   (ා ැ ෑ ි ී …), visually detaching Sinhala clusters ("ඡ ා ය ා ..."). We
+   neutralise all tracking while the page is Sinhala, and restore the elegant
+   wide tracking only when the page switches to English (Latin). app.js keeps
+   <html lang> in sync, so this flips automatically on the Translate toggle. */
 html:not([lang="en"]) :is(
   .eyebrow, .pre-greet, .cue-lbl, .scroll-cue, .entry-eyebrow, .entry-cta,
   .inv-when .lbl, .cd-lbl, .counter-cap, .ag-time, .hero-date, .hero-names, .sec-title,
@@ -445,12 +551,18 @@ html:not([lang="en"]) :is(
 @keyframes eq{0%,100%{height:5px}50%{height:14px}}
 body.lite .music .eq i{animation:none;height:9px}
 
-/* ════════ RESPONSIVE TIERS ════════ */
+/* ════════════════════════════════════════════════════════════════════════
+   RESPONSIVE TIERS — Large desktop · Tablet · Large phone · Small phone
+   ════════════════════════════════════════════════════════════════════════ */
 @media (min-width:1280px){ :root{--maxw:1240px} .section{padding-block:clamp(5rem,8vw,9rem)} }
+
+/* Tablet & below — collapse nav to drawer */
 @media (max-width:880px){
   .nav-links{display:none}
   .nav-burger{display:flex}
 }
+
+/* Large phones */
 @media (max-width:600px){
   body{line-height:1.78}
   .section{padding:clamp(3.4rem,10vw,4.5rem) 1.1rem}
@@ -458,6 +570,8 @@ body.lite .music .eq i{animation:none;height:9px}
   .bless-grid{grid-template-columns:1fr}
   .hero-meta{gap:.6rem}
 }
+
+/* Small phones (iPhone SE etc.) */
 @media (max-width:380px){
   .hero-names{font-size:clamp(2.6rem,15vw,3.4rem)}
   .inv-name{font-size:clamp(1.8rem,12vw,2.4rem)}
@@ -466,6 +580,7 @@ body.lite .music .eq i{animation:none;height:9px}
   .section{padding-inline:.95rem}
 }
 
+/* Print — clean invitation */
 @media print{
   .preloader,.nav,.scroll-progress,.fab,.fx-canvas,.hero-aurora,.scroll-cue,.foot-actions,.bless-form{display:none!important}
   body{background:#fff;color:#1a140a}
@@ -473,20 +588,37 @@ body.lite .music .eq i{animation:none;height:9px}
   .foil,.cd-num,.counter-num{-webkit-text-fill-color:#9a7a3a;color:#9a7a3a}
 }
 
-/* ════════ KANDYAN ROYAL ORNAMENTS ════════ */
+/* ════════════════════════════════════════════════════════════════════════
+   KANDYAN ROYAL ORNAMENTS · champagne gold-mask emboss on noir
+   • Transparent line-art (crest / arch / thorana / medallion / seal)
+       → recoloured to champagne via CSS mask over --foil + emboss shadow
+   • Filled maroon borders (floral / pineapple)
+       → goldified (grayscale+sepia+saturate) + mix-blend screen
+   Pure CSS: pseudo-elements + 2 invitation hooks + footer emblem.
+   app.js is NOT touched. All motifs load from the user's Cloudinary CDN.
+   ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --o-crest:none;
+  /* --o-crest / --o-seal: the Cloudinary source PNGs are gone (404) and
+     there is no local replacement to mask with — `mask:none` does NOT hide
+     an element, it disables clipping, so every consumer below was painting
+     a solid gold-foil rectangle instead of an ornament. Each consumer is
+     explicitly hidden further down (search "ornament fallback") until real
+     replacement art is uploaded and these variables point at a working URL
+     again. --o-arch got its replacement upload — same design, re-exported
+     under a new Cloudinary asset id. */
+  --o-crest:none  /* asset deleted from Cloudinary (HTTP 404) — was Copy_of_WealthFlow_Logo_q49zoz.png */;
   --o-arch:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967325/Photoroom_20260715_020528_ati7wa.png');
   --o-thorana:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_900/v1784967318/IMG_9974_lwhjah.png');
   --o-medallion:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967324/Untitled_design_c2xoaw.png');
-  --o-seal:none;
+  --o-seal:none  /* asset deleted from Cloudinary (HTTP 404) — was IMG_9976_ojsagn.png */;
   --o-pineapple:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784079452/IMG_9965_swzusp.png');
-  --o-floral:none;
+  --o-floral:none  /* asset deleted from Cloudinary (HTTP 404) — was IMG_9964_crpqqm.jpg */;
   --goldify:grayscale(1) sepia(1) saturate(2.5) brightness(1.06) hue-rotate(2deg);
   --orn-emboss:drop-shadow(0 1px 0 rgba(255,250,232,.35)) drop-shadow(0 2px 6px rgba(0,0,0,.55));
 }
 .section>.wrap{position:relative;z-index:1}
 
+/* Champagne-mask base (shared) */
 .orn-crest-seal,.orn-emblem,.section::before,
 #countdown::after,#lovenote::after,#blessings::after,#lamp::after{
   background:var(--foil);
@@ -496,12 +628,14 @@ body.lite .music .eq i{animation:none;height:9px}
   pointer-events:none;
 }
 
+/* Section crown divider — Makara Thorana (04) */
 .section::before{
   content:"";position:absolute;top:0;left:50%;transform:translate(-50%,-52%);
   width:min(330px,58%);height:34px;z-index:2;opacity:.9;
   -webkit-mask-image:var(--o-thorana);mask-image:var(--o-thorana);filter:var(--orn-emboss);
 }
 
+/* Hero crown arch (03) + top running border band — pineapple (02) */
 .hero::before{
   content:"";position:absolute;left:50%;top:15%;transform:translateX(-50%);
   width:min(780px,94vw);aspect-ratio:2/1;z-index:2;opacity:.2;pointer-events:none;
@@ -514,37 +648,48 @@ body.lite .music .eq i{animation:none;height:9px}
   background:var(--o-pineapple) center/auto 100% repeat-x;filter:var(--goldify);mix-blend-mode:screen;
 }
 
+/* Faint breathing watermarks — medallion (05) behind feature sections */
 #countdown::after,#lovenote::after,#blessings::after{
   content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(560px,86vw);aspect-ratio:1/1;z-index:0;opacity:.055;
   -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);
   animation:orn-breathe 9s ease-in-out infinite;
 }
+/* Seal (07) behind the celebration counter */
 #lamp::after{
   content:"";position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
   width:min(380px,72vw);aspect-ratio:1/1;z-index:0;opacity:.09;
   -webkit-mask-image:var(--o-seal);mask-image:var(--o-seal);
   animation:orn-breathe 8s ease-in-out infinite;
-  display:none;
+  display:none  /* ornament fallback — see --o-seal note above */;
 }
 
+/* Invitation floral crown (01) + crest seal (06) */
 .orn-floral{height:46px;width:min(430px,82%);margin:.2rem auto .1rem;
   background:var(--o-floral) center/auto 100% no-repeat;filter:var(--goldify);mix-blend-mode:screen;opacity:.82;pointer-events:none}
 .orn-crest-seal{height:118px;width:118px;margin:1.5rem auto 0;opacity:.96;filter:var(--orn-emboss);
   -webkit-mask-image:var(--o-crest);mask-image:var(--o-crest);
-  display:none}
+  display:none  /* ornament fallback — see --o-crest note above */}
 
+/* Footer emblem — the medallion's own outline powerclipped with the same
+   champagne-foil gradient every other Kandyan ornament on the page uses
+   (see "Champagne-mask base" above), not the photo's flat colors — matches
+   .orn-crest-seal's treatment exactly, just at the footer's smaller size.
+   Opacity stays near-full: unlike the same asset's use as a faint 5%
+   background watermark elsewhere, this is a real, clearly visible mark. */
 .orn-emblem{height:96px;width:96px;margin:0 auto .8rem;opacity:.96;filter:var(--orn-emboss);
   -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion)}
 
 @keyframes orn-arch{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
 @keyframes orn-breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06)}}
 
+/* Motion off for lite / reduced-motion */
 body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,body.lite #blessings::after,body.lite #lamp::after{animation:none}
 @media (prefers-reduced-motion:reduce){
   .hero::before,#countdown::after,#lovenote::after,#blessings::after,#lamp::after{animation:none}
 }
 
+/* Responsive ornament tuning */
 @media (max-width:600px){
   .hero::after{display:none}
   .section::before{width:min(250px,66%);height:28px}
@@ -555,28 +700,58 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
   .orn-crest-seal{height:96px;width:96px}
 }
 
+/* Print — hide decorative ornaments */
 @media print{
   .hero::before,.hero::after,.section::before,
   #countdown::after,#lovenote::after,#blessings::after,#lamp::after,
   .orn-floral,.orn-crest-seal,.orn-emblem{display:none!important}
 }
 
-/* ════════ CINEMATIC ENTRY GATEWAY ════════ */
+/* ════════════════════════════════════════════════════════════════════════
+   NEW ROYAL IMAGERY (9 pieces) + CINEMATIC ENTRY GATEWAY
+   Scenes → darkened atmospheric layers · line-art/motifs → champagne mask.
+   Gateway dismissal is handled by a standalone inline script (never traps).
+   ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --s-entry:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg');
-  --s-hero-bg:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103105/IMG_0010_d9wjfl.jpg');
-  --s-arch2:url('https://iili.io/CGU3TaR.png');
-  --s-lamp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png');
-  --s-corner:url('https://iili.io/CGU2ZpS.png');
-  --s-flourish:url('https://iili.io/CGU2UhX.png');
-  --s-seal-agenda:url('https://iili.io/CGU9tsf.png');
-  --s-seal-rsvp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784968049/Pahana_xhigym.png');
-  --s-seal-gallery:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784826543/tonjuuwankoeimeub6e6.jpg');
+  --s-entry:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg');       /* img1 scene → gateway backdrop */
+  --s-hero-bg:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103105/IMG_0010_d9wjfl.jpg');      /* img2 scene → hero depth */
+  --s-arch2:url('https://iili.io/CGU3TaR.png');        /* img4 line-art → gateway arch */
+  --s-lamp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png');         /* img7 tall gold → lamp */
+  --s-corner:url('https://iili.io/CGU2ZpS.png');       /* img5 filigree → corners */
+  --s-flourish:url('https://iili.io/CGU2UhX.png');     /* img6 filigree → invitation */
+  --s-seal-agenda:url('https://iili.io/CGU9tsf.png');  /* img3 medallion */
+  --s-seal-rsvp:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784968049/Pahana_xhigym.png');    /* img8 medallion */
+  --s-seal-gallery:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_620/v1784826543/tonjuuwankoeimeub6e6.jpg'); /* img9 medallion */
 }
 
+/* ── Entry gateway ── */
 .entry{position:fixed;inset:0;z-index:300;display:grid;place-items:center;overflow:hidden;background:#08080a;text-align:center;will-change:opacity,transform;
+  /* Staged, not simultaneous: the lamp ignites and the screen floods with gold
+     light FIRST (see .entry-flash / .lamp-glow / .lamp-flame below, all fast
+     sub-.5s beats) — only THEN does the gate itself visibly dissolve, so
+     tapping the lamp reads as "ignite → flood with light → the light clears
+     to reveal the invitation", not everything crossfading at once in a
+     blink. The scale starts almost immediately (feels instantly responsive
+     to the tap); the fade that actually reveals the page waits for the
+     flash to peak. Tuned so the ENTIRE sequence — tap to fully-revealed
+     hero — lands at ~1.05s, safely inside a 1.2s hard cap: fast enough to
+     never read as "waiting", long enough for the flood-then-clear beat to
+     still register as a deliberate effect rather than an abrupt cut. */
   transition:opacity .8s var(--ease) .12s,transform 1s var(--ease) .05s}
+/* No animated filter:blur() here on purpose — animating blur over this whole
+   fixed, full-viewport element (stacked with its own kenburns background,
+   the flash overlay, and the lamp burst, all at once) is expensive enough on
+   real phones to drop frames for the entire dismiss sequence: the browser
+   ends up skipping past the flash's peak-visibility window entirely and only
+   painting the far end of the transition, which is exactly why the flash
+   read as invisible on-device despite rendering correctly in the (unthrottled,
+   GPU-accelerated) sandbox used to verify it. Opacity+transform alone are
+   cheap to composite and don't cost the flash its frames. */
 .entry.go{opacity:0;transform:scale(1.16);pointer-events:none}
+/* Continuous decorative loops (Ken Burns pan, floating arch, CTA pulse, the
+   foil text sheen) serve no purpose once dismissal starts and the whole gate
+   is on its way out within ~1.15s — freeze them right on tap so every spare
+   compositor frame during that window goes to the flash/burst instead. */
 .entry.go .entry-bg,.entry.go .entry-arch,.entry.go .entry-cta,.entry.go .entry-names.foil{animation-play-state:paused}
 .entry-bg{position:absolute;inset:0;background:var(--s-entry) center/cover no-repeat;transform:scale(1.06);opacity:.5;animation:kenburns 20s ease-in-out infinite alternate}
 .entry-veil{position:absolute;inset:0;background:
@@ -592,10 +767,15 @@ body.lite .hero::before,body.lite #countdown::after,body.lite #lovenote::after,b
 .entry-corner.bl{bottom:16px;left:16px;transform:scaleY(-1)}
 .entry-corner.br{bottom:16px;right:16px;transform:scale(-1)}
 .entry-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1.4rem;opacity:0;transform:translateY(28px)}
+/* The rise-in plays only once the preloader actually lifts (html.gw-ready,
+   toggled in app.js alongside dismissPreloader) — otherwise, now that the
+   preloader genuinely covers the gateway while its images load, this one-
+   shot entrance would finish off-screen during that wait and never be seen. */
 html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
 .entry-crest{width:clamp(64px,14vw,104px);aspect-ratio:.88;background:var(--foil);
   -webkit-mask:var(--o-crest) center/contain no-repeat;mask:var(--o-crest) center/contain no-repeat;filter:var(--orn-emboss);margin-bottom:.3rem;
-  display:none}
+  display:none  /* ornament fallback — see --o-crest note above; would otherwise paint
+                   a solid gold square above the entry gateway names */}
 .entry-eyebrow{font-family:var(--f-si);letter-spacing:.34em;text-transform:uppercase;color:var(--gold-2);font-size:.8rem}
 .entry-names{font-family:var(--f-disp);font-weight:800;font-size:clamp(2.6rem,10vw,5.4rem);line-height:1.05;margin:.15rem 0}
 .entry-names .amp{font-size:.5em;vertical-align:.14em}
@@ -608,6 +788,29 @@ html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
 .lamp-glow{position:absolute;left:50%;top:-8%;width:64%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
   background:radial-gradient(circle,rgba(255,206,120,.5),rgba(255,206,120,0) 70%);animation:glow 2.6s ease-in-out infinite}
 .entry-cta{margin-top:1.1rem;font-family:var(--f-si);letter-spacing:.12em;color:var(--gold-bright);font-size:.86rem;animation:ctaPulse 2.2s ease-in-out infinite}
+/* Two compounding reasons the ignite flash read as "not there" before:
+   (1) its gradient faded to transparent at 74% of the circle's radius, so
+   most of the screen (top edge, corners) never actually lit up — only a
+   modest halo around the lamp; and (2) as a CHILD of .entry, it rode along
+   with the gate's own opacity fade AND its filter:blur(7px) as .entry.go
+   dissolves — both starting ~120ms after the flash itself, multiplying its
+   peak brightness down and softening it exactly when it should have read
+   as a crisp flood of light. Fixed both: the gradient now has a genuine
+   white-hot flashbulb core (not just a warm tint) fading through gold all
+   the way to 100% of the radius, and the element itself moved to be a
+   SIBLING of #entry in the markup — its own independent position:fixed
+   overlay, one z-index above the gate — so its opacity is the only thing
+   governing how bright it looks, undiminished by how the gate is fading.
+   Triggered via the ~ general sibling combinator, since .go still only
+   ever gets added to #entry itself. */
+/* --flash-x/--flash-y: the flame's OWN on-screen position, measured fresh
+   at tap time (see enter() in index.html) and written as inline custom
+   properties on <html> — not a guessed percentage. The flame sits at a
+   different height depending on font scaling, language (Sinhala/Tamil/
+   English line counts differ), and viewport, so a fixed "50% 55%" was
+   only ever an approximation; this makes the flood of light originate
+   from the actual flame on every device, not near it. Falls back to that
+   same approximation if the measurement ever fails. */
 .entry-flash{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at var(--flash-x,50%) var(--flash-y,55%),
   #fff 0%, rgba(255,246,224,.99) 10%, rgba(255,228,172,.94) 26%, rgba(255,208,138,.72) 48%, rgba(255,196,110,.34) 74%, rgba(255,196,110,0) 100%)}
 .entry.go ~ .entry-flash{animation:flash .85s ease-out}
@@ -615,83 +818,114 @@ html.gw-ready .entry-inner{animation:entry-rise 1.3s var(--ease) both}
 .entry.go .lamp-flame{animation:flameBurst .42s ease-out forwards}
 .entry-names.foil{animation:sheen 8s ease-in-out infinite}
 
+/* ── Gateway scroll-lock: no page scroll (and no bleed) until the visitor enters ── */
 html.entry-lock, html.entry-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
 html.entry-lock .entry{ touch-action:auto }
 @media (scripting: none){ html, html body{ overflow:auto !important; height:auto } }
 
-/* ── Post-wedding lockdown ── */
+/* ── Post-wedding lockdown: mirrors .entry-lock — #postWedding itself keeps
+   its own overflow-y so an unusually long custom message stays reachable
+   even though the page underneath can no longer scroll. ── */
 html.pw-lock, html.pw-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
 html.pw-lock #postWedding{ touch-action:pan-y }
 
-/* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN (ULTRA-LUXURY ROYAL OVERHAUL) ░░ ── */
+/* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░ ──────────────────────────────── */
 .post-wedding{
   position:fixed; inset:0; z-index:120; overflow-y:auto;
   display:flex; align-items:center; justify-content:center;
   background:
-    radial-gradient(circle 800px at 50% 18%, rgba(232,201,135,.15), transparent 70%),
-    radial-gradient(ellipse 100% 70% at 50% 100%, rgba(120,80,30,.25), transparent 60%),
-    linear-gradient(180deg, #09090b 0%, #030304 100%);
+    radial-gradient(ellipse 80% 60% at 50% 18%, rgba(232,201,135,.10), transparent 60%),
+    var(--bg);
   padding:max(3.2rem,env(safe-area-inset-top)) 1.4rem max(3.2rem,env(safe-area-inset-bottom));
 }
-.pw-inner{ position:relative; z-index:1; max-width:580px; display:flex; flex-direction:column; align-items:center; text-align:center }
-
+.pw-inner{ position:relative; z-index:1; max-width:560px; display:flex; flex-direction:column; align-items:center; text-align:center }
+/* .pw-portrait KEEPS every one of .hero-portrait's own layers (ring line,
+   faint halo, deep drop shadow, var(--glow) ambient bloom — an earlier flat
+   override here once quietly replaced that whole stack, which is what made
+   the portrait read as a dim, broken circle) and ADDS to that same stack:
+   a thin embossed bevel (a bright top edge + dark underside, the standard
+   two-line trick for a metal ring reading as 3D rather than flat) and one
+   much wider, very soft bloom behind it, so the portrait reads as glowing
+   from within a dark chamber rather than sitting flush on the background. */
 .pw-portrait{
   margin-bottom:1.8rem;
   box-shadow:
-    0 0 0 1px rgba(232,201,135,.4),
-    0 0 0 8px rgba(232,201,135,.08),
-    inset 0 2px 4px rgba(255,250,232,.4),
-    inset 0 -4px 8px rgba(0,0,0,.7),
-    0 26px 60px rgba(0,0,0,.7),
+    0 0 0 1px var(--line),
+    0 0 0 8px rgba(232,201,135,.06),
+    inset 0 1px 0 rgba(255,250,232,.24),
+    inset 0 -2px 5px rgba(0,0,0,.5),
+    0 26px 60px rgba(0,0,0,.6),
     var(--glow),
-    0 0 120px 30px rgba(232,201,135,.22);
+    0 0 110px 26px rgba(232,201,135,.16);
 }
-.post-wedding .eyebrow{ 
-  margin-bottom:.8rem; 
-  color:var(--gold-bright); 
-  text-shadow:0 0 12px rgba(232,201,135,.3); 
-}
+.post-wedding .eyebrow{ margin-bottom:.7rem }
 .pw-title{
   font-family:var(--f-royal); font-weight:800; letter-spacing:.02em;
-  font-size:clamp(3.2rem,14vw,5.6rem); line-height:1.15; padding-block:.06em; margin:0 0 1.2rem;
-  background:linear-gradient(105deg, #FFF5DA 0%, #F5DEAA 20%, #C9A35C 40%, #FFE9B8 55%, #A87F42 75%, #F5DEAA 90%, #FFEFC7 100%) !important;
-  background-size:130% 100% !important;
-  -webkit-background-clip:text !important;
-  background-clip:text !important;
-  color:transparent !important;
-  -webkit-text-fill-color:transparent !important;
+  font-size:clamp(3rem,13vw,5.4rem); line-height:1.16; padding-block:.06em; margin:0 0 1.4rem;
+  /* .foil's background-size:220% 100% is tuned for long runs (hero names,
+     footer names) where a wide gradient sweep reads as a traveling sheen.
+     "ස්තූතියි" is 4-5 glyphs — at 220% only a narrow slice of the 7-stop
+     gradient falls across that short a run at any one animation frame, so
+     the color spread that's actually there reads as closer to a single
+     flat tone. Tightening the size for this element alone packs more of
+     the same stops across the shorter text, without touching the shared
+     .foil rule or its colors. */
+  background-size:130% 100%;
+  /* text-shadow shadows the glyph OUTLINE using its own color, independent
+     of how the fill itself is painted — combined with .foil's
+     color:transparent + -webkit-background-clip:text, that's mixing two
+     different paint mechanisms on the same clipped run, which is a fragile
+     pattern across engines. filter:drop-shadow() instead shadows the
+     element's actual composited (post-clip) pixels, so it's unconditionally
+     safe with clipped gradient text everywhere. Because .foil already sets
+     its own two-layer filter, and `filter` (unlike text-shadow) doesn't
+     merge across rules on the same element, this repeats .foil's exact two
+     layers verbatim and chains the "stamped gold" depth + glow on as more
+     drop-shadow() functions in the same property, rather than losing .foil's
+     layers to full override. */
+  /* The two glow layers (not the stamp/emboss ones above them, which are
+     about physical depth, not radiance) widened and intensified — against
+     the vast dark canvas here, the original glow read as too contained. */
   filter:
-    drop-shadow(0 2px 0 rgba(255,250,232,.35))
-    drop-shadow(0 4px 12px rgba(0,0,0,.7))
-    drop-shadow(0 0 35px rgba(232,201,135,.85))
-    drop-shadow(0 0 80px rgba(212,175,106,.5)) !important;
+    drop-shadow(0 1px 0 rgba(255,250,232,.18))
+    drop-shadow(0 2px 10px rgba(0,0,0,.5))
+    drop-shadow(0 2px 1px rgba(0,0,0,.4))
+    drop-shadow(0 0 40px rgba(232,201,135,.65))
+    drop-shadow(0 0 85px rgba(212,175,106,.4));
 }
-
+/* Scoped to this screen only — the shared .hansa-mark (hero section etc.)
+   stays at its own size; here it reads a touch larger and adds its own
+   soft glow on top of the class's existing emboss filter (filter functions
+   chain, so both apply together). */
 .post-wedding .hansa-mark{
-  width:clamp(64px,14.5vw,92px); height:clamp(64px,14.5vw,92px);
-  filter:var(--orn-emboss) drop-shadow(0 0 28px rgba(232,201,135,.75));
+  width:clamp(60px,13.5vw,86px); height:clamp(60px,13.5vw,86px);
+  filter:var(--orn-emboss) drop-shadow(0 0 22px rgba(232,201,135,.55));
 }
-.post-wedding .hansa-divider{ 
-  width:min(520px,94%); 
-  margin-bottom:1.8rem;
-  filter:drop-shadow(0 0 10px rgba(232,201,135,.4));
-}
+/* ~35% wider than the shared .hansa-divider (360px/82%) — against this
+   screen's vast, otherwise-empty dark space, the hero size read as
+   proportionally small; this is the one screen that's ENTIRELY this
+   divider's moment, not a small accent among lots of other content. */
+.post-wedding .hansa-divider{ width:min(486px,92%); margin-bottom:1.8rem }
 .pw-message{
-  font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.3rem); line-height:2.05;
-  color:#EDE3CB; max-width:46ch; margin:0 0 2.2rem; padding-inline:.5rem; white-space:pre-wrap;
-  text-shadow:0 2px 10px rgba(0,0,0,.6);
+  font-family:var(--f-si); font-size:clamp(1.05rem,3.2vw,1.28rem); line-height:2;
+  color:#EDE3CB; max-width:44ch; margin:0 0 2rem; padding-inline:.4rem; white-space:pre-wrap;
 }
 .pw-signature{
-  font-family:var(--f-royal); font-weight:700; font-size:clamp(1.6rem,5.2vw,2.2rem);
+  font-family:var(--f-royal); font-weight:700; font-size:clamp(1.5rem,5vw,2.1rem);
   line-height:1.22; padding-block:.06em;
+  /* Same reasoning as .pw-title's background-size above: short text, so
+     tighten the gradient's sweep to pack more of .foil's own stops across it. */
   background-size:130% 100%;
+  /* Same reasoning as .pw-title above: drop-shadow, not text-shadow, on a
+     .foil-clipped element — repeats .foil's own two layers, then chains the
+     glow on as a third. */
   filter:
-    drop-shadow(0 1px 0 rgba(255,250,232,.25))
-    drop-shadow(0 2px 10px rgba(0,0,0,.6))
-    drop-shadow(0 0 28px rgba(232,201,135,.45));
+    drop-shadow(0 1px 0 rgba(255,250,232,.18))
+    drop-shadow(0 2px 10px rgba(0,0,0,.5))
+    drop-shadow(0 0 22px rgba(232,201,135,.35));
 }
 
-/* ── Zoom-crash guard ── */
+/* ── Zoom-crash guard: soften GPU-heavy effects only while the user is pinch/zoomed in ── */
 html.vv-zoom .nav, html.vv-zoom .lightbox, html.vv-zoom .drawer, html.vv-zoom .nav-drawer{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important }
 html.vv-zoom .aurora, html.vv-zoom #fxCanvas, html.vv-zoom body::before, html.vv-zoom body::after{ opacity:0 !important }
 html.vv-zoom .hero-emblem{ animation:none !important }
@@ -703,13 +937,39 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 @keyframes glow{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.16)}}
 @keyframes ctaPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes flash{0%{opacity:0}16%{opacity:1}45%{opacity:.9}72%{opacity:.4}100%{opacity:0}}
+/* Scaling the flame/glow up to 3-4x their size (an earlier attempt at
+   "bursting") stretched the tall, thin flame into a huge smeared cone —
+   it read as a rendering glitch, not light. The actual flame stays
+   EXACTLY its normal size and shape the whole time (no transform here at
+   all now, so its own static transform is simply never touched); what
+   "flashes" is its brightness — filter:brightness() spikes it hot, near
+   white, right as .entry-flash (already anchored to this same point,
+   see --flash-x/--flash-y) floods the rest of the screen — so the small
+   flame reads as the actual source of that flood, not a separate,
+   distorted shape next to it. Neither keyframe fades back to opacity:0
+   on its own either — they hold lit and only dim later as part of
+   #entry's own opacity transition, together with everything else in the
+   gate. Same two durations as before (.5s / .42s). */
 @keyframes lampBurst{0%{opacity:.5}42%{opacity:1}100%{opacity:1}}
 @keyframes flameBurst{0%{opacity:.95;filter:blur(.6px) brightness(1)}40%{opacity:1;filter:blur(.6px) brightness(2.6)}100%{opacity:1;filter:blur(.6px) brightness(1.15)}}
+/* There used to be a pageIn animation here that faded <body> in from 40%
+   opacity once 'entered' was added. Everything underneath #entry (hero,
+   nav, the rest) is already fully rendered and painted at full opacity
+   the whole time it's covered — #entry's removal is what reveals it, and
+   that removal is instant by nature, nothing needs easing in. Adding an
+   opacity animation with fill-mode:both AFTER that removal (the only
+   timing that doesn't dilute the ignite flash — see the note that used
+   to be here) meant body's opacity SNAPPED to .4 the instant the fully-
+   revealed, already-bright hero appeared, then slowly climbed back to 1
+   over the next ~700ms — a jarring dimming of content the visitor could
+   already see, not a reveal of anything new. Removed outright rather
+   than re-timed again: there was never content here that actually needed
+   fading in. */
 
-/* ── Hero depth ── */
+/* ── Hero atmospheric depth (img2, heavily darkened for legibility) ── */
 .hero{background:linear-gradient(rgba(10,10,12,.85),rgba(10,10,12,.93)),var(--s-hero-bg) center/cover no-repeat}
 
-/* ── Section seals & Watermark ── */
+/* ── New section seals (champagne mask, faint, breathing) ── */
 #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{
   content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(520px,84vw);aspect-ratio:1;z-index:0;opacity:.05;pointer-events:none;background:var(--foil);
@@ -719,69 +979,112 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 #rsvp::after{-webkit-mask-image:var(--s-seal-rsvp);mask-image:var(--s-seal-rsvp)}
 #agenda::after{-webkit-mask-image:var(--s-seal-agenda);mask-image:var(--s-seal-agenda)}
 #gallery::after{-webkit-mask-image:var(--s-seal-gallery);mask-image:var(--s-seal-gallery)}
-
+/* Same faint breathing medallion already used behind #countdown/#lovenote/
+   #blessings — the closest precedent to a single centered "message" screen
+   like this one, rather than one of the seals tied to a specific section.
+   A second animation (CSS allows stacking several by name) layers a slow
+   opacity pulse on top of the shared scale-breathe, so the watermark isn't
+   just gently growing but visibly fading in and out of the dark — the
+   "living, cinematic depth" this one screen calls for on its own. */
 #postWedding::after{
-  -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(620px,92vw);
-  animation:orn-breathe 10s ease-in-out infinite, pw-glow-breathe 8s ease-in-out infinite;
+  -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(560px,86vw);
+  animation:orn-breathe 11s ease-in-out infinite, pw-glow-breathe 13s ease-in-out infinite;
 }
-@keyframes pw-glow-breathe{0%,100%{opacity:.08}50%{opacity:.22}}
+@keyframes pw-glow-breathe{0%,100%{opacity:.06}50%{opacity:.16}}
 
+/* ── Card hover polish (subtle champagne aura) ── */
 .inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
 
+/* ── Motion off: lite / reduced-motion ── */
 body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after,body.lite #postWedding::after{animation:none}
 @media (prefers-reduced-motion:reduce){
   .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
   #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{animation:none}
+  /* Keep the gateway → site handoff visible even with Reduce Motion:
+     fade the veil (drop the scale, which is the vestibular part) — the
+     page underneath is already fully rendered, so there's nothing to
+     additionally fade in once the gate itself is gone (see the note
+     where pageIn used to be, above). */
   .entry{transition:opacity .95s ease}
   .entry.go{transform:none}
   .entry.go .lamp-glow,.entry.go .lamp-flame{animation:none}
 }
 
+/* ── Responsive gateway ── */
 @media (max-width:600px){
   .entry-arch{opacity:.16}
   .entry-corner{width:clamp(58px,18vw,100px);opacity:.42}
 }
 @media (max-width:380px){ .entry-corner.bl,.entry-corner.br{display:none} }
 
+/* ── No-JS fallback: never trap the visitor ── */
 @media (scripting: none){ #entry{display:none!important} }
 .noscript-banner{position:relative;z-index:400;margin:0;padding:1.4rem 1.2rem;
   background:#0a0a0c;color:var(--gold);font-family:var(--f-si);
   font-size:1rem;line-height:1.6;text-align:center;border-bottom:1px solid rgba(232,201,135,.3)}
 
+/* ── Print ── */
 @media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{display:none!important} }
 
-/* ════════ SANNASA INVITATION SCROLL ════════ */
+/* ════════════════════════════════════════════════════════════════════════
+   SANNASA INVITATION SCROLL · HERO EMBLEM · SINHALA-GLYPH FIX · DEVICE POLISH
+   ════════════════════════════════════════════════════════════════════════ */
 :root{
-  --s-sannasa:url('https://iili.io/CGiC8Dg.png');
-  --s-emblem:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967399/Untitled_design_czoesd.png');
-  --s-hansa:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784967754/Untitled_design_xfsalx.png');
-  --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  --s-sannasa:url('https://iili.io/CGiC8Dg.png');   /* proclamation scroll */
+  --s-emblem:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_820/v1784967399/Untitled_design_czoesd.png');     /* royal couple emblem */
+  --s-hansa:url('https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1400/v1784967754/Untitled_design_xfsalx.png');      /* Hansa Puttuwa — auspicious swan-knot (transparent → gold mask) */
+  --s-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");  /* parchment grain */
 }
 
+/* ── Sannasa — embedded standalone scroll (isolated iframe, verbatim) ── */
+/* Iframe sits in normal flow; app.js (setupSannasaScroll) drives the scroll-unroll from
+   the iframe's position in the viewport, so the invitation reveals on every device & deploy. */
 .sannasa-embed{position:relative; width:100vw; margin-left:calc(50% - 50vw); margin-top:1.4rem; margin-bottom:clamp(1.8rem,5vw,3rem);
   background:radial-gradient(120% 66% at 50% 28%, rgba(120,72,20,.10) 0%, transparent 56%)}
 .sannasa-frame {
   display: block;
   width: 100%;
-  height: auto;
-  min-height: 420px;
+  height: auto;              /* app.js (height message) sets the exact content-fit height */
+  min-height: 420px;         /* pre-measurement fallback only, before the first height message */
   border: 0;
+  /* Matches sannasa.html's own body background (#030303) exactly. Not
+     transparent: an iframe's OWN document starts as an opaque white
+     about:blank canvas before it navigates to sannasa.html and that
+     document's CSS paints — the outer element's `background` is what shows
+     through during that gap, so `transparent` let the browser's white
+     default flash through on every load, worst on a slow connection. */
   background: #030303;
   pointer-events: none;
+  /* Promotes the IFRAME ELEMENT ITSELF to its own persistent GPU layer at
+     the parent page's compositing level — a different, untried angle from
+     the will-change hints already inside sannasa.html's own document (which
+     only ask the browser to cache individual filtered elements' raster
+     output). This asks the browser to keep the whole iframe's compositing
+     surface stable across scroll instead of potentially tearing it down and
+     rebuilding it, which is a separate, real mechanism for the same
+     symptom (the sannasa briefly going black on scrolling back to it) on
+     mobile browsers. Doesn't touch anything the iframe itself renders. */
   will-change: transform;
   transform: translateZ(0);
+  /* No transition here on purpose: the real height arrives within the first
+     load cycle, well before a visitor can have scrolled this far down — an
+     animated grow only risked visibly PUSHING already-scrolled content if a
+     late correction (a font swap, a live admin edit) landed while the
+     visitor was already past the hero, which read as a scroll "jerk". */
 }
 @media (max-width:560px){ .sannasa-frame{ min-height: 360px } }
+/* keep app.js's #inviteBody target alive but invisible (no layout, no a11y noise) */
 .sannasa-hidden{position:absolute!important; width:1px; height:1px; overflow:hidden;
   clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none}
 
-.hero-portrait.is-mono{background:radial-gradient(120% 120% at 50% 22%,rgba(42,34,26,.55),rgba(120,12,14,.5))}
+/* ── Hero emblem (royal couple) — replaces the K&G monogram ── */
+.hero-portrait.is-mono{background:radial-gradient(120% 120% at 50% 22%,rgba(42,34,26,.55),rgba(12,12,14,.5))}
 .hero-emblem{width:100%;height:100%;background:var(--s-emblem) center 42%/116% no-repeat;
   filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));animation:emblemFloat 7s ease-in-out infinite;
   -webkit-mask:linear-gradient(to bottom,#000 76%,rgba(0,0,0,0) 99%);
           mask:linear-gradient(to bottom,#000 76%,rgba(0,0,0,0) 99%)}
 @keyframes emblemFloat{0%,100%{transform:translateY(0) scale(1) rotate(0deg)}50%{transform:translateY(-7px) scale(1.02) rotate(.4deg)}}
-
+/* slow gold rim-light sweeping the medallion edge — premium touch */
 .hero-portrait.is-mono{position:relative}
 .hero-portrait.is-mono::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
   background:conic-gradient(from 210deg,rgba(232,201,135,0) 0 16%,rgba(245,224,166,.55) 30%,rgba(232,201,135,0) 48%,rgba(232,201,135,0) 70%,rgba(245,224,166,.34) 84%,rgba(232,201,135,0) 100%);
@@ -792,6 +1095,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
 body.lite .hero-portrait.is-mono::after,html.vv-zoom .hero-portrait.is-mono::after{animation:none}
 @media (prefers-reduced-motion:reduce){ .hero-portrait.is-mono::after{animation:none} }
 
+/* ── Hansa Puttuwa — auspicious swan-knot divider (rendered as pure gold via mask) ── */
 .hansa-divider{display:flex;align-items:center;justify-content:center;gap:clamp(.7rem,2.4vw,1.3rem);
   width:min(360px,82%);margin:clamp(1.3rem,3.4vw,2.2rem) auto}
 .hansa-divider::before,.hansa-divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-2) 55%,var(--gold))}
@@ -805,6 +1109,7 @@ body.lite .hansa-mark,html.vv-zoom .hansa-mark{animation:none}
 body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
 @media (prefers-reduced-motion:reduce){ .hansa-mark{animation:none} }
 
+/* ── Sinhala combining-mark clipping fix (roomier line-box + padded paint box) ── */
 .hero-names{line-height:1.16;padding-block:.06em}
 .entry-names{line-height:1.16;padding-block:.06em}
 .pre-greet{line-height:1.2;padding-block:.06em}
@@ -819,13 +1124,27 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
 .btn{line-height:1.35}
 .eyebrow{line-height:1.7}
 
+/* ── Device-by-device polish (320 → 4K) ── */
 @media (min-width:1800px){ .wrap{max-width:1340px} }
 @media (max-width:400px){ .entry-names{font-size:clamp(2.2rem,13vw,3rem)} }
 
+/* ── Motion gates (hero emblem) ── */
 body.lite .hero-emblem{animation:none}
 @media (prefers-reduced-motion:reduce){ .hero-emblem{animation:none} }
 @media print{ .hero-emblem{animation:none} }
 
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PERFORMANCE / SAFETY notes
+   • `content-visibility:auto` was tried here and REMOVED. On a section it applies
+     size containment until the section nears the viewport, so gallery figures
+     reported 0px height — the photos were invisible AND unclickable. Native
+     `loading="lazy"` plus correctly-sized srcset gives the same benefit safely.
+   • `content-visibility` must never be set on <img> for the same reason.
+   ════════════════════════════════════════════════════════════════════════════ */
 body { overflow-x: hidden; }
 h1, h2, h3, p, .val, .lbl, .lbl2 { overflow-wrap: break-word; }
+
+/* While the gateway fades out it still covers the page for 1.6s. Make it
+   click-through immediately so nothing is swallowed during the transition. */
 #entry.go{ pointer-events:none !important; }
