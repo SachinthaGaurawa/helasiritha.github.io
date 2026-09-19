@@ -412,7 +412,7 @@ const TEXT = {
 
 /* ── Built-in DEFAULT content (bride-first). Live Firestore overrides this. ── */
 const DEFAULTS = {
-  brideName: "කෞශානි", groomName: "ගෞරව",
+  brideName: "කෞෂානි", groomName: "ගෞරව",
   brideNameEn: "Kaushani", groomNameEn: "Gaurawa",
   brideNameTa: "கௌஷானி", groomNameTa: "கௌரவ",
   brideFather: "", brideFatherEn: "", brideFatherTa: "",
@@ -428,7 +428,7 @@ const DEFAULTS = {
   ceremonyTime: "පෙ.ව. 09.00 සිට සවස 04.00 දක්වා", ceremonyTimeEn: "9.15 a.m. onwards", ceremonyTimeTa: "மு.ப. 9.15 மணி முதல்",
   poruwaTime: "පෙ.ව. 09.28",
   heroImageUrl: "",
-  loveNote: "", loveSign: "කෞශානි & ගෞරව",
+  loveNote: "", loveSign: "කෞෂානි & ගෞරව",
   phone: "", whatsapp: "", ambientAudioUrl: "",
   rsvpOpen: true,
   show: { countdown: true, agenda: true, gallery: true, lovenote: true, lamp: true, blessings: true, rsvp: true },
@@ -489,7 +489,7 @@ function byLang(base) {
    corrected afterwards: nothing ever went back to swap in the live
    admin-configured names once Firestore actually answered, so a couple
    who changed their names in admin kept seeing the original placeholder
-   ("කෞශානි & ගෞරව") on this one screen forever. Patching it here, the
+   ("කෞෂානි & ගෞරව") on this one screen forever. Patching it here, the
    instant live content arrives, closes that gap without touching the
    gate's markup/CSS at all -- if it's already been dismissed and removed
    from the DOM (the common case once someone lingers), this is a no-op. */
@@ -1581,7 +1581,7 @@ function computeSiteScreenState() {
 function renderPostWedding() {
   const port = document.getElementById("pwPortrait");
   if (port) {
-    const b = S.brideName || "කෞශානි", g = S.groomName || "ගෞරව";
+    const b = S.brideName || "කෞෂානි", g = S.groomName || "ගෞරව";
     if (S.heroImageUrl) {
       port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(b + " සහ " + g) + '" loading="eager" decoding="async">';
       port.classList.remove("is-mono");
