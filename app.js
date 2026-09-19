@@ -1585,19 +1585,39 @@ function applyPostWeddingState() {
    set far enough in the future would overflow setTimeout's ~24.8-day
    (2^31-1ms) cap. Started once, from inside whenEntryGone (see connect()
    below), so it never stacks a second interval across repeated snapshots. */
+/* Re-checking isPostWeddingActive() against the in-memory S alone (as this
+   used to do) is worthless if the thing that's actually stale is S itself:
+   iOS Safari (and other mobile browsers) can fully kill a backgrounded
+   tab's underlying Firestore connection without the onSnapshot listener
+   ever noticing or redelivering — S then sits frozen on whatever it last
+   saw, indefinitely, and re-evaluating it just re-confirms the same wrong
+   answer forever. So this force-fetches site/content straight from the
+   server (bypassing any local cache) and rebuilds S from that, exactly the
+   way the live listener itself does — a real resync, not just a recheck. */
+async function refreshPostWeddingFromServer() {
+  if (!fb) { applyPostWeddingState(); return; }
+  try {
+    const read = fb.getDocFromServer || fb.getDoc;
+    const snap = await read(fb.doc(fb.db, "site", "content"));
+    const data = snap.exists() ? snap.data() : {};
+    S = Object.assign({}, DEFAULTS, data);
+    S.show = Object.assign({}, DEFAULTS.show, data.show || {});
+  } catch (e) { /* offline or transient — fall through on whatever S already has */ }
+  applyPostWeddingState();
+}
 let pwWatchStarted = false;
 function startPostWeddingWatch() {
   if (pwWatchStarted) return;
   pwWatchStarted = true;
-  setInterval(applyPostWeddingState, 30000);
+  setInterval(refreshPostWeddingFromServer, 30000);
   /* Mobile browsers throttle or fully suspend background-tab timers and
      network connections — a visitor who backgrounds the tab right as an
      admin flips the switch could otherwise be stuck on the wrong state
-     until the (also-throttled) 30s poll eventually gets to run. Re-checking
+     until the (also-throttled) 30s poll eventually gets to run. Resyncing
      the instant the tab becomes visible/foregrounded again closes that gap
      immediately instead of waiting on the poll. */
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) applyPostWeddingState(); });
-  window.addEventListener("pageshow", () => applyPostWeddingState());
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPostWeddingFromServer(); });
+  window.addEventListener("pageshow", () => refreshPostWeddingFromServer());
 }
 
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
@@ -1609,7 +1629,7 @@ async function connect() {
     ]);
     const app = initializeApp(FB);
     const db = fs.getFirestore(app);
-    fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp };
+    fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp, getDoc: fs.getDoc, getDocFromServer: fs.getDocFromServer };
 
     trackVisit(fs, db);
 
