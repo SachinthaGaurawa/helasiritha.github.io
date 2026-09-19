@@ -1590,6 +1590,14 @@ function startPostWeddingWatch() {
   if (pwWatchStarted) return;
   pwWatchStarted = true;
   setInterval(applyPostWeddingState, 30000);
+  /* Mobile browsers throttle or fully suspend background-tab timers and
+     network connections — a visitor who backgrounds the tab right as an
+     admin flips the switch could otherwise be stuck on the wrong state
+     until the (also-throttled) 30s poll eventually gets to run. Re-checking
+     the instant the tab becomes visible/foregrounded again closes that gap
+     immediately instead of waiting on the poll. */
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) applyPostWeddingState(); });
+  window.addEventListener("pageshow", () => applyPostWeddingState());
 }
 
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
