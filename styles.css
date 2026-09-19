@@ -827,7 +827,7 @@ html.entry-lock .entry{ touch-action:auto }
    its own overflow-y so an unusually long custom message stays reachable
    even though the page underneath can no longer scroll. ── */
 html.pw-lock, html.pw-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
-html.pw-lock #postWedding{ touch-action:pan-y }
+html.pw-lock #postWedding,html.pw-lock #sitePaused{ touch-action:pan-y }
 
 /* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░ ──────────────────────────────── */
 .post-wedding{
@@ -983,7 +983,7 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 .hero{background:linear-gradient(rgba(10,10,12,.85),rgba(10,10,12,.93)),var(--s-hero-bg) center/cover no-repeat}
 
 /* ── New section seals (champagne mask, faint, breathing) ── */
-#invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{
+#invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after,#sitePaused::after{
   content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(520px,84vw);aspect-ratio:1;z-index:0;opacity:.05;pointer-events:none;background:var(--foil);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;
@@ -998,8 +998,10 @@ html.vv-zoom .hero-emblem{ animation:none !important }
    A second animation (CSS allows stacking several by name) layers a slow
    opacity pulse on top of the shared scale-breathe, so the watermark isn't
    just gently growing but visibly fading in and out of the dark — the
-   "living, cinematic depth" this one screen calls for on its own. */
-#postWedding::after{
+   "living, cinematic depth" this one screen calls for on its own. Shared
+   verbatim with #sitePaused, the other full-screen gate — same visual
+   language, same depth treatment. */
+#postWedding::after,#sitePaused::after{
   -webkit-mask-image:var(--o-medallion);mask-image:var(--o-medallion);width:min(620px,92vw);
   animation:orn-breathe 10s ease-in-out infinite, pw-glow-breathe 8s ease-in-out infinite;
 }
@@ -1009,10 +1011,10 @@ html.vv-zoom .hero-emblem{ animation:none !important }
 .inv-card:hover,.rsvp-card:hover,.love-card:hover,.bless-form:hover{box-shadow:var(--raise),0 0 42px rgba(232,201,135,.12)}
 
 /* ── Motion off: lite / reduced-motion ── */
-body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after,body.lite #postWedding::after{animation:none}
+body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,body.lite #gallery::after,body.lite #postWedding::after,body.lite #sitePaused::after{animation:none}
 @media (prefers-reduced-motion:reduce){
   .entry-bg,.entry-arch,.entry-inner,.lamp-flame,.lamp-glow,.entry-cta,.entry-names.foil{animation:none}
-  #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{animation:none}
+  #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after,#sitePaused::after{animation:none}
   /* Keep the gateway → site handoff visible even with Reduce Motion:
      fade the veil (drop the scale, which is the vestibular part) — the
      page underneath is already fully rendered, so there's nothing to
@@ -1037,7 +1039,7 @@ body.lite #invitation::after,body.lite #rsvp::after,body.lite #agenda::after,bod
   font-size:1rem;line-height:1.6;text-align:center;border-bottom:1px solid rgba(232,201,135,.3)}
 
 /* ── Print ── */
-@media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after{display:none!important} }
+@media print{ #entry{display:none!important} #invitation::after,#rsvp::after,#agenda::after,#gallery::after,#postWedding::after,#sitePaused::after{display:none!important} }
 
 /* ════════════════════════════════════════════════════════════════════════
    SANNASA INVITATION SCROLL · HERO EMBLEM · SINHALA-GLYPH FIX · DEVICE POLISH

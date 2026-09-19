@@ -433,10 +433,16 @@ const DEFAULTS = {
   rsvpOpen: true,
   show: { countdown: true, agenda: true, gallery: true, lovenote: true, lamp: true, blessings: true, rsvp: true },
   /* Post-wedding "Thank You" lockdown — see isPostWeddingActive()/
-     applyPostWeddingState() below. Mirrors the admin panel's own schema
+     applySiteState() below. Mirrors the admin panel's own schema
      exactly (postWeddingScheduleAt is an SLT ISO string, same
      "+05:30"-suffixed format as dateISO). */
-  postWeddingMode: false, postWeddingScheduleAt: "", postWeddingMessage: ""
+  postWeddingMode: false, postWeddingScheduleAt: "", postWeddingMessage: "",
+  /* Site launch gate — the mirror-image switch at the OTHER end of the
+     lifecycle. Defaults to true (site visible): if this field is entirely
+     absent from the Firestore doc, the site must behave exactly as it
+     always has, never silently go dark. See isSiteLive()/
+     computeSiteScreenState() below. */
+  siteLive: true, sitePausedMessage: ""
 };
 /* Default schedule — bilingual; admin items (titleSi/descSi) override and fall back gracefully */
 const AGENDA_DEFAULT = [
@@ -1535,6 +1541,23 @@ function isPostWeddingActive() {
   }
   return false;
 }
+/* Site launch gate — mirrors isPostWeddingActive() at the other end of the
+   lifecycle. Missing/undefined siteLive (e.g. an older cached S, or a
+   Firestore doc from before this field existed) must read as "live", not
+   "paused" — hence the !== false check rather than a truthy one. */
+function isSiteLive() {
+  return S.siteLive !== false;
+}
+/* Single source of truth for which of the three full-screen states the site
+   is in. Post-wedding is checked FIRST and wins outright: an event that has
+   already happened overrides any earlier "not launched yet" state, so the
+   two gates can never contend over which screen to show even in the
+   (practically impossible) case both flags were ever on at once. */
+function computeSiteScreenState() {
+  if (isPostWeddingActive()) return "postwedding";
+  if (!isSiteLive()) return "paused";
+  return "normal";
+}
 /* Always pure Sinhala — this screen ignores LANG entirely, per spec. */
 function renderPostWedding() {
   const port = document.getElementById("pwPortrait");
@@ -1556,37 +1579,74 @@ function renderPostWedding() {
       "අපගේ ජීවිතයේ මෙම අතිශය සුවිශේෂී දිනය වඩාත් අර්ථවත් හා සුන්දර මතකයක් බවට පත්කිරීමට ආශිර්වාද කළ ඔබ සැමට, අපගේ හදපිරි ගෞරවනීය ස්තූතිය පුදකරමු.";
   }
 }
+/* Mirrors renderPostWedding() above for the "coming soon" gate. Also pure
+   Sinhala regardless of LANG, for the same reason: it's shown before a
+   visitor has any real content to read, so the language toggle has nothing
+   meaningful to switch between yet. */
+function renderSitePaused() {
+  const port = document.getElementById("spPortrait");
+  if (port) {
+    const b = S.brideName || "කෞශානි", g = S.groomName || "ගෞරව";
+    if (S.heroImageUrl) {
+      port.innerHTML = '<img src="' + esc(S.heroImageUrl) + '" alt="' + esc(b + " සහ " + g) + '" loading="eager" decoding="async">';
+      port.classList.remove("is-mono");
+    } else {
+      port.innerHTML = '<div class="hero-emblem" aria-hidden="true"></div>';
+      port.classList.add("is-mono");
+    }
+    const sig = document.getElementById("spSignature");
+    if (sig) sig.textContent = b + " සහ " + g;
+  }
+  const msgEl = document.getElementById("spMessage");
+  if (msgEl) {
+    msgEl.textContent = String(S.sitePausedMessage || "").trim() ||
+      "අපගේ විශේෂ දිනය සඳහා ආරාධනය සූදානම් වෙමින් පවතී. ඉතා ඉක්මනින් අප ඔබ වෙත එමු.";
+  }
+}
 /* Structural show/hide only runs on an actual state change (cheap `hidden`
-   toggles); the text content refreshes on every call so an admin editing
-   the message while the screen is already live is reflected without a
-   spurious re-toggle of the surrounding layout. */
-let pwActive = null;
-function applyPostWeddingState() {
-  const active = isPostWeddingActive();
-  if (active !== pwActive) {
-    pwActive = active;
-    document.documentElement.classList.toggle("pw-lock", active);
+   toggles); the text content refreshes on every call so an admin editing a
+   message while its screen is already live is reflected without a
+   spurious re-toggle of the surrounding layout. Single function driving
+   BOTH gate screens (not two independent apply-functions) so they can never
+   race each other over the shared nav/main/footer hidden state — see
+   computeSiteScreenState() above for the one place that decides which of
+   the three states wins. */
+let siteScreenState = null;
+function applySiteState() {
+  const state = computeSiteScreenState();
+  if (state !== siteScreenState) {
+    siteScreenState = state;
+    const locked = state !== "normal";
+    document.documentElement.classList.toggle("pw-lock", locked);
     const navEl = document.getElementById("nav");
     const mainEl = document.querySelector("main");
     const footEl = document.querySelector(".footer");
     const pw = document.getElementById("postWedding");
-    if (navEl) navEl.hidden = active;
-    if (mainEl) mainEl.hidden = active;
-    if (footEl) footEl.hidden = active;
+    const sp = document.getElementById("sitePaused");
+    if (navEl) navEl.hidden = locked;
+    if (mainEl) mainEl.hidden = locked;
+    if (footEl) footEl.hidden = locked;
+    /* Belt-and-suspenders on both screens: their own `display:flex`
+       (styles.css) is an author-stylesheet rule, which always beats the
+       browser's built-in [hidden]{display:none} — regardless of
+       specificity, since rule origin is resolved before specificity is
+       ever compared. The global [hidden]{display:none!important} rule
+       already fixes that for every element on the page, but setting each
+       screen's own inline style directly too means its visibility never
+       again depends on getting that cascade order right. */
     if (pw) {
-      pw.hidden = !active;
-      /* Belt-and-suspenders: .post-wedding's own `display:flex` (styles.css)
-         is an author-stylesheet rule, which always beats the browser's
-         built-in [hidden]{display:none} — regardless of specificity, since
-         rule origin is resolved before specificity is ever compared. The
-         global [hidden]{display:none!important} rule already fixes that for
-         every element on the page, but setting this element's own inline
-         style directly too means its visibility never again depends on
-         getting that cascade order right. */
-      pw.style.display = active ? "flex" : "none";
+      const pwOn = state === "postwedding";
+      pw.hidden = !pwOn;
+      pw.style.display = pwOn ? "flex" : "none";
+    }
+    if (sp) {
+      const spOn = state === "paused";
+      sp.hidden = !spOn;
+      sp.style.display = spOn ? "flex" : "none";
     }
   }
-  if (active) renderPostWedding();
+  if (state === "postwedding") renderPostWedding();
+  else if (state === "paused") renderSitePaused();
 }
 /* Catches the "site already open when the scheduled SLT time arrives" edge
    case: the Firestore doc itself doesn't change at that instant (only
@@ -1605,8 +1665,8 @@ function applyPostWeddingState() {
    answer forever. So this force-fetches site/content straight from the
    server (bypassing any local cache) and rebuilds S from that, exactly the
    way the live listener itself does — a real resync, not just a recheck. */
-async function refreshPostWeddingFromServer() {
-  if (!fb) { applyPostWeddingState(); return; }
+async function refreshSiteStateFromServer() {
+  if (!fb) { applySiteState(); return; }
   try {
     const read = fb.getDocFromServer || fb.getDoc;
     const snap = await read(fb.doc(fb.db, "site", "content"));
@@ -1614,9 +1674,9 @@ async function refreshPostWeddingFromServer() {
     S = Object.assign({}, DEFAULTS, data);
     S.show = Object.assign({}, DEFAULTS.show, data.show || {});
   } catch (e) { /* offline or transient — fall through on whatever S already has */ }
-  applyPostWeddingState();
+  applySiteState();
 }
-/* The data-freshness watchdog above (refreshPostWeddingFromServer) can only
+/* The data-freshness watchdog above (refreshSiteStateFromServer) can only
    ever run the JS that's already loaded in this tab — and there is no
    service worker on this site, so a <script type="module"> loads once per
    navigation and can NEVER hot-reload. A visitor who opened the page
@@ -1636,19 +1696,19 @@ async function checkForNewBuildAndReload() {
     if (m && m[1] && window.__BUILD_V__ && m[1] !== window.__BUILD_V__) location.reload();
   } catch (e) { /* offline or transient — try again on the next tick */ }
 }
-let pwWatchStarted = false;
-function startPostWeddingWatch() {
-  if (pwWatchStarted) return;
-  pwWatchStarted = true;
-  setInterval(() => { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); }, 30000);
+let siteWatchStarted = false;
+function startSiteStateWatch() {
+  if (siteWatchStarted) return;
+  siteWatchStarted = true;
+  setInterval(() => { refreshSiteStateFromServer(); checkForNewBuildAndReload(); }, 30000);
   /* Mobile browsers throttle or fully suspend background-tab timers and
      network connections — a visitor who backgrounds the tab right as an
-     admin flips the switch could otherwise be stuck on the wrong state
-     until the (also-throttled) 30s poll eventually gets to run. Resyncing
-     the instant the tab becomes visible/foregrounded again closes that gap
+     admin flips a switch could otherwise be stuck on the wrong state until
+     the (also-throttled) 30s poll eventually gets to run. Resyncing the
+     instant the tab becomes visible/foregrounded again closes that gap
      immediately instead of waiting on the poll. */
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); } });
-  window.addEventListener("pageshow", () => { refreshPostWeddingFromServer(); checkForNewBuildAndReload(); });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { refreshSiteStateFromServer(); checkForNewBuildAndReload(); } });
+  window.addEventListener("pageshow", () => { refreshSiteStateFromServer(); checkForNewBuildAndReload(); });
 }
 
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
@@ -1682,8 +1742,8 @@ async function connect() {
       /* Runs immediately — even while the entry gate is still up — so
          scrolling is disabled and the main content hidden the instant
          Firestore says so, not only once the visitor taps past the gate. */
-      applyPostWeddingState();
-      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startPostWeddingWatch(); });
+      applySiteState();
+      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startSiteStateWatch(); });
     }, (err) => console.warn("content listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
