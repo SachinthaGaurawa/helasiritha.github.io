@@ -1573,7 +1573,18 @@ function applyPostWeddingState() {
     if (navEl) navEl.hidden = active;
     if (mainEl) mainEl.hidden = active;
     if (footEl) footEl.hidden = active;
-    if (pw) pw.hidden = !active;
+    if (pw) {
+      pw.hidden = !active;
+      /* Belt-and-suspenders: .post-wedding's own `display:flex` (styles.css)
+         is an author-stylesheet rule, which always beats the browser's
+         built-in [hidden]{display:none} — regardless of specificity, since
+         rule origin is resolved before specificity is ever compared. The
+         global [hidden]{display:none!important} rule already fixes that for
+         every element on the page, but setting this element's own inline
+         style directly too means its visibility never again depends on
+         getting that cascade order right. */
+      pw.style.display = active ? "flex" : "none";
+    }
   }
   if (active) renderPostWedding();
 }

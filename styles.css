@@ -56,6 +56,16 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+/* The browser's own [hidden]{display:none} rule lives in the UA stylesheet,
+   which loses to ANY author rule that sets display on the same element —
+   regardless of specificity, since origin is resolved before specificity
+   is ever compared. #postWedding's own `display:flex` (below) was silently
+   winning that fight: app.js correctly set/cleared the hidden attribute,
+   but the element kept rendering at display:flex regardless, staying
+   visible on top of the just-unhidden main content. This single global
+   rule re-asserts hidden's real priority for every element on the page,
+   so no future component's own display rule can accidentally repeat this. */
+[hidden]{display:none !important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
