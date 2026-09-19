@@ -469,7 +469,20 @@ if (/\.github\.io$/i.test(location.hostname)) {
         set('vVenue', ov('venue') || plain('venue') || t.venue);
         var cityKey = (lang() === 'si') ? 'venueCity' : (lang() === 'ta' ? 'venueCityTa' : 'venueCityEn');
         set('vCity', ov('city') || plain(cityKey) || t.city);
-        set('poruwa', ov('poruwa') || t.poruwa);
+        /* Admin's "පෝරු වේලාව" field (site/content.poruwaTime) is a single,
+           language-agnostic time string with no Si/En/Ta variants of its
+           own -- it was being saved to Firestore but never read anywhere,
+           so setting it in admin had zero visible effect. Splice it into
+           the Sinhala default sentence's time slot (the one language it
+           was clearly authored for); English/Tamil keep their own static
+           defaults, already independently overridable via poruwaEn/poruwaTa
+           above if the admin wants custom wording there too. */
+        var poruwaDefault = t.poruwa;
+        if(l === 'si'){
+          var pTime = plain('poruwaTime');
+          if(pTime) poruwaDefault = 'පෝරුවේ චාරිත්‍ර සඳහා සුබ මොහොත — ' + pTime + 'ට';
+        }
+        set('poruwa', ov('poruwa') || poruwaDefault);
         set('swasti', t.swasti);  
         var cue=document.querySelector('.scroll-instruction'); if(cue) cue.textContent = ov('cue') || t.cue;
         try{ fitSannasa(); }catch(_){} 
