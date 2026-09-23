@@ -234,7 +234,21 @@ body.lite .pre-dots span{animation:none;opacity:.7}
 .nav-links a:hover,.nav-links a.active{color:var(--gold-bright)}
 .nav-links a:hover::after,.nav-links a.active::after{right:0}
 .nav-actions{display:flex;align-items:center;gap:.7rem}
-.lang-toggle{font-family:var(--f-si);font-weight:600;font-size:.82rem;letter-spacing:.06em;color:#1a140a;
+/* Fixed at the page's top level (sibling of #preloader/#entry/.nav, not a
+   nav-actions child) and given a z-index above both #preloader(400) and
+   #entry(300) -- the two full-screen overlays that used to hide this
+   button behind them (.nav itself only reaches z-index:50) -- so it's
+   live on the very first frame, not just once a viewer has already
+   entered. Same corner, same row it always occupied.
+   right's offset is deliberately keyed to .entry-corner's own
+   clamp(78px,16vw,158px): that gold filigree already owns the true
+   top-right corner on the entry gate (and, past 1200px, the preloader
+   too, see .pre-corner) at every viewport width, so this clears it by
+   construction instead of a guessed fixed inset that only happens to
+   work at the widths it was eyeballed against. The same math comfortably
+   clears the mobile nav-burger too once a viewer is past the gate. */
+.lang-toggle{position:fixed;top:clamp(.7rem,2vw,1.05rem);right:calc(16px + clamp(78px,16vw,158px) + 14px);z-index:410;
+  font-family:var(--f-si);font-weight:600;font-size:.82rem;letter-spacing:.06em;color:#1a140a;
   background:var(--foil-metal);padding:.46rem .9rem;border-radius:999px;min-width:48px;
   box-shadow:inset 0 1px 0 rgba(255,250,232,.6),0 6px 16px rgba(0,0,0,.4);transition:transform .3s,box-shadow .3s}
 .lang-toggle:hover{transform:translateY(-1px);box-shadow:var(--glow),inset 0 1px 0 rgba(255,250,232,.6)}
@@ -1209,6 +1223,38 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
 /* ── Device-by-device polish (320 → 4K) ── */
 @media (min-width:1800px){ .wrap{max-width:1340px} }
 @media (max-width:400px){ .entry-names{font-size:clamp(2.2rem,13vw,3rem)} }
+
+/* Preloader: on any screen past ~600px the mobile-tuned clamp()s above were
+   already pinned at their max (9.6vw/40vw/8vw all cap out by ~570-600px),
+   so a 1920px or 2560px monitor rendered the exact same small greeting+
+   portrait as a 600px tablet -- a tiny lit island in a mostly-empty frame.
+   This picks the scaling back up for wider screens only; the base rules
+   (and every mobile/tablet screenshot already approved) are untouched. */
+@media (min-width:640px){
+  .pre-greet{font-size:clamp(3.4rem,3.6vw,4.8rem)}
+  .pre-couple{width:clamp(210px,16vw,300px)}
+  .hansa-mark.pre-mark{width:clamp(46px,3.2vw,62px);height:clamp(46px,3.2vw,62px)}
+  .pre-inner{gap:1.3rem}
+  .pre-inner::before{width:min(190%,720px);height:min(190%,900px)}
+}
+/* Past ~1200px there's enough clear stage around the card that the same
+   gold corner motif already trusted to frame the entry gate (.entry-corner)
+   reads as deliberate palace-invitation framing instead of clutter --
+   subtle, static, low-opacity, so the lit card stays the one thing the eye
+   is drawn to. Off entirely below this width: on a laptop/tablet the card
+   already sits close enough to the edges that corner ornaments would
+   crowd it rather than frame it. */
+.pre-corner{position:absolute;display:none;width:clamp(90px,7vw,200px);aspect-ratio:1;z-index:1;
+  opacity:0;background:var(--foil);-webkit-mask:var(--s-corner) center/contain no-repeat;mask:var(--s-corner) center/contain no-repeat;
+  filter:var(--orn-emboss);pointer-events:none;animation:preCornerIn 1.4s ease-out .3s forwards}
+.pre-corner.tl{top:26px;left:26px}
+.pre-corner.tr{top:26px;right:26px;transform:scaleX(-1)}
+.pre-corner.bl{bottom:26px;left:26px;transform:scaleY(-1)}
+.pre-corner.br{bottom:26px;right:26px;transform:scale(-1)}
+@keyframes preCornerIn{to{opacity:.32}}
+@media (min-width:1200px){ .pre-corner{display:block} }
+body.lite .pre-corner{animation:none;opacity:.26}
+@media (prefers-reduced-motion:reduce){ .pre-corner{animation:none;opacity:.26} }
 
 /* ── Motion gates (hero emblem) ── */
 body.lite .hero-emblem{animation:none}
