@@ -26,6 +26,8 @@ const TEXT = {
     footCredit: 'හෙළ සිරිත · ආදරයෙන් <span class="heart">♥</span>',
     nav: { invitation: "ආරාධනය", agenda: "වැඩසටහන", gallery: "මතකයන්", blessings: "සුබ පැතුම්", rsvp: "පැමිණීම" },
     langLabel: "EN", langTitle: "Switch to English",
+    entryEyebrow: "ශුභ මංගලම්", entrySub: "අපගේ විවාහ මංගල්‍යයට ඔබ සාදරයෙන් ආරාධනා කරමු",
+    entryCta: "පහන දැල්වීමට ස්පර්ශ කරන්න", entryEnterAria: "පහන දැල්වීම — ඇතුළු වන්න",
     loading: "සූදානම් වෙමින්…",
     heroEyebrow: "ආයුබෝවන්",
     heroTag: "අපගේ විවාහ මංගල්‍යය සැමරීමට ඔබට සාදරයෙන් ආරාධනා කරමු",
@@ -152,6 +154,8 @@ const TEXT = {
     footCredit: 'Helasiritha · with love <span class="heart">♥</span>',
     nav: { invitation: "Invitation", agenda: "Schedule", gallery: "Moments", blessings: "Wishes", rsvp: "RSVP" },
     langLabel: "தமிழ்", langTitle: "தமிழுக்கு மாறவும்",
+    entryEyebrow: "The Wedding Of", entrySub: "We joyfully invite you to celebrate our wedding day",
+    entryCta: "Tap the lamp to enter", entryEnterAria: "Light the lamp — enter",
     loading: "Preparing…",
     heroEyebrow: "Welcome",
     heroTag: "We warmly invite you to celebrate our wedding",
@@ -278,6 +282,8 @@ const TEXT = {
     footCredit: 'ஹெல சிரித · அன்புடன் <span class="heart">♥</span>',
     nav: { invitation: "அழைப்பிதழ்", agenda: "நிகழ்ச்சி நிரல்", gallery: "நினைவுகள்", blessings: "வாழ்த்துகள்", rsvp: "வருகை" },
     langLabel: "සිං", langTitle: "සිංහලට මාරු වන්න",
+    entryEyebrow: "திருமண மங்களம்", entrySub: "எங்கள் திருமண நாளைக் கொண்டாட உங்களை அன்புடன் அழைக்கிறோம்",
+    entryCta: "விளக்கை ஏற்ற தொடவும்", entryEnterAria: "விளக்கை ஏற்றி உள்ளே செல்லவும்",
     loading: "தயாராகிறது…",
     heroEyebrow: "வரவேற்பு",
     heroTag: "எங்கள் திருமண விழாவைக் கொண்டாட உங்களை அன்புடன் அழைக்கிறோம்",
@@ -472,6 +478,26 @@ function byLang(base) {
   return S[base];
 }
 
+/* That same standalone inline script (index.html) also paints the entry
+   gate's eyebrow/sub/cta text once, at boot, from whatever language
+   localStorage held on THAT load -- correct for the very first frame, but
+   it never runs again. The langToggle click handler only ever called
+   renderAll(), which -- like the rest of this module -- has no idea the
+   gate even exists, so tapping EN/Tamil while still looking at the entry
+   gate visibly changed nothing there: the nav, hero, etc. switched the
+   instant the gate was dismissed, but the gate's own text stayed stuck in
+   whatever language the page happened to boot in. Mirrors the inline
+   script's own TX table so the two never visibly disagree; a no-op once
+   the gate's been dismissed and removed from the DOM. */
+function paintEntryGateLang(T) {
+  const e = $("#entry"); if (!e) return;
+  const eb = e.querySelector(".entry-eyebrow"); if (eb) eb.textContent = T.entryEyebrow;
+  const sb = e.querySelector(".entry-sub"); if (sb) sb.textContent = T.entrySub;
+  const ct = e.querySelector(".entry-cta"); if (ct) ct.textContent = T.entryCta;
+  e.setAttribute("aria-label", T.nav.invitation);
+  const btn = $("#entryEnter"); if (btn) btn.setAttribute("aria-label", T.entryEnterAria);
+}
+
 /* The entry gate (index.html's own standalone inline script) paints the
    couple's names INSTANTLY from a hardcoded default, deliberately before
    this module or Firestore have loaded anything -- see that script's own
@@ -517,6 +543,7 @@ function renderAll() {
   $("#nav-rsvp").textContent = T.nav.rsvp;
   $$(".js-drawer-link").forEach(a => { const k = a.dataset.k; if (k) a.textContent = T.nav[k]; });
   const lt = $("#langToggle"); if (lt) { lt.textContent = T.langLabel; lt.title = T.langTitle; lt.setAttribute("aria-label", T.langTitle); }
+  paintEntryGateLang(T);
 
   renderHero(); renderInvitation(); renderCountdown(); renderRsvpShell();
   applyVisibility(); observeReveals();
