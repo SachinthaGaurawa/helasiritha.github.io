@@ -241,17 +241,26 @@ body.lite .pre-dots span{animation:none;opacity:.7}
    live on the very first frame, not just once a viewer has already
    entered. Same corner, same row it always occupied.
    right's offset is deliberately keyed to .entry-corner's own
-   clamp(78px,16vw,158px): that gold filigree already owns the true
-   top-right corner on the entry gate (and, past 1200px, the preloader
-   too, see .pre-corner) at every viewport width, so this clears it by
-   construction instead of a guessed fixed inset that only happens to
-   work at the widths it was eyeballed against. The same math comfortably
-   clears the mobile nav-burger too once a viewer is past the gate. */
+   clamp(78px,16vw,158px): that gold lamp motif already owns the true
+   top-right corner on the entry gate at every viewport width, so this
+   clears it by construction instead of a guessed fixed inset that only
+   happens to work at the widths it was eyeballed against. The same math
+   comfortably clears the mobile nav-burger too once a viewer is past
+   the gate. */
 .lang-toggle{position:fixed;top:clamp(.7rem,2vw,1.05rem);right:calc(16px + clamp(78px,16vw,158px) + 14px);z-index:410;
   font-family:var(--f-si);font-weight:600;font-size:.82rem;letter-spacing:.06em;color:#1a140a;
   background:var(--foil-metal);padding:.46rem .9rem;border-radius:999px;min-width:48px;
   box-shadow:inset 0 1px 0 rgba(255,250,232,.6),0 6px 16px rgba(0,0,0,.4);transition:transform .3s,box-shadow .3s}
 .lang-toggle:hover{transform:translateY(-1px);box-shadow:var(--glow),inset 0 1px 0 rgba(255,250,232,.6)}
+/* Not on the loading screen itself -- only once the entry gate takes over,
+   and from then on through the rest of the site. #langToggle is a later
+   DOM sibling of #preloader (see index.html), so this general-sibling rule
+   hides it purely on preloader state with no JS: dismissPreloader() adds
+   .gone the instant it starts lifting, which is also the instant this
+   selector stops matching -- the button appears exactly when the entry
+   gate becomes the active screen, not 1.1s later when the (by-then
+   invisible) preloader node is actually removed. */
+#preloader:not(.gone) ~ #langToggle{display:none}
 .nav-burger{display:none;flex-direction:column;gap:5px;width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center;border:1px solid var(--line)}
 .nav-burger span{width:20px;height:2px;background:var(--gold);border-radius:2px;transition:transform .35s var(--ease),opacity .3s}
 .nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -1229,32 +1238,22 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
    so a 1920px or 2560px monitor rendered the exact same small greeting+
    portrait as a 600px tablet -- a tiny lit island in a mostly-empty frame.
    This picks the scaling back up for wider screens only; the base rules
-   (and every mobile/tablet screenshot already approved) are untouched. */
+   (and every mobile/tablet screenshot already approved) are untouched.
+   The glow itself is decoupled from .pre-inner's own (portrait-tall) box
+   here and sized off vmin instead, so it grows as a true circle, evenly
+   in every direction, rather than inheriting the card's own width/height
+   imbalance -- the same warm bloom mobile already gets, just given more
+   canvas to spread into on a bigger screen. Corner ornaments were tried
+   here too, but read as clutter next to the entry gate's own lamp-lighting
+   moment one screen later, so the glow alone carries the large-screen
+   presence. */
 @media (min-width:640px){
   .pre-greet{font-size:clamp(3.4rem,3.6vw,4.8rem)}
   .pre-couple{width:clamp(210px,16vw,300px)}
   .hansa-mark.pre-mark{width:clamp(46px,3.2vw,62px);height:clamp(46px,3.2vw,62px)}
   .pre-inner{gap:1.3rem}
-  .pre-inner::before{width:min(190%,720px);height:min(190%,900px)}
+  .pre-inner::before{width:min(88vmin,1240px);height:min(88vmin,1240px);filter:blur(36px)}
 }
-/* Past ~1200px there's enough clear stage around the card that the same
-   gold corner motif already trusted to frame the entry gate (.entry-corner)
-   reads as deliberate palace-invitation framing instead of clutter --
-   subtle, static, low-opacity, so the lit card stays the one thing the eye
-   is drawn to. Off entirely below this width: on a laptop/tablet the card
-   already sits close enough to the edges that corner ornaments would
-   crowd it rather than frame it. */
-.pre-corner{position:absolute;display:none;width:clamp(90px,7vw,200px);aspect-ratio:1;z-index:1;
-  opacity:0;background:var(--foil);-webkit-mask:var(--s-corner) center/contain no-repeat;mask:var(--s-corner) center/contain no-repeat;
-  filter:var(--orn-emboss);pointer-events:none;animation:preCornerIn 1.4s ease-out .3s forwards}
-.pre-corner.tl{top:26px;left:26px}
-.pre-corner.tr{top:26px;right:26px;transform:scaleX(-1)}
-.pre-corner.bl{bottom:26px;left:26px;transform:scaleY(-1)}
-.pre-corner.br{bottom:26px;right:26px;transform:scale(-1)}
-@keyframes preCornerIn{to{opacity:.32}}
-@media (min-width:1200px){ .pre-corner{display:block} }
-body.lite .pre-corner{animation:none;opacity:.26}
-@media (prefers-reduced-motion:reduce){ .pre-corner{animation:none;opacity:.26} }
 
 /* ── Motion gates (hero emblem) ── */
 body.lite .hero-emblem{animation:none}
