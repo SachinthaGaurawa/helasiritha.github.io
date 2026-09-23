@@ -1252,7 +1252,7 @@ body.lite .hansa-divider,html.vv-zoom .hansa-mark{filter:none}
   .pre-couple{width:clamp(210px,16vw,300px)}
   .hansa-mark.pre-mark{width:clamp(46px,3.2vw,62px);height:clamp(46px,3.2vw,62px)}
   .pre-inner{gap:1.3rem}
-  .pre-inner::before{width:min(132vmin,1760px);height:min(132vmin,1760px);filter:blur(46px)}
+  .pre-inner::before{width:min(150vmin,2600px);height:min(150vmin,2600px);filter:blur(52px)}
 }
 
 /* ── Motion gates (hero emblem) ── */
