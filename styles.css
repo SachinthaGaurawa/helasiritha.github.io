@@ -473,9 +473,32 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .ag-desc{color:var(--mut);font-size:clamp(1rem,2.5vw,1.12rem);line-height:1.7}
 
 /* ════════ GALLERY ════════ */
-.masonry{columns:3 250px;column-gap:clamp(.6rem,2vw,1rem);max-width:1060px;margin:1.8rem auto 0}
-.masonry figure{position:relative;break-inside:avoid;margin:0 0 clamp(.6rem,2vw,1rem);border-radius:var(--r-md);overflow:hidden;cursor:zoom-in;
-  box-shadow:0 16px 36px rgba(0,0,0,.5);transition:transform .5s var(--ease),box-shadow .5s}
+/* A multi-column layout (the previous approach here) flows items down
+   whichever column is currently shortest -- CSS balances the columns'
+   total heights, not the count of items in each, so a photo count that
+   isn't a clean multiple of the column count left one column visibly
+   short, an empty gap sitting at the bottom of an otherwise tidy grid.
+   Reported directly, across devices, with the exact math: 20 photos in
+   3-per-row read as 6 full rows and a lonely last row of 2.
+
+   Grid on a 6-track base (the LCM of the two column counts this gallery
+   actually uses, 3 desktop / 2 mobile) fixes this exactly, on every
+   photo count, without ever needing a specific number to look right:
+   a normal photo spans 2 of the 6 tracks at the 3-per-row breakpoint (or
+   3 of 6 at 2-per-row) -- fixGalleryLastRow() below then simply widens
+   however many photos are left in an incomplete final row so they
+   jointly span the full 6 tracks instead of leaving the remainder empty.
+   One photo left over becomes one full-width closing photo instead of a
+   gap; two left over each take half the row. Both read as a deliberate
+   collage choice, never as something broken. */
+.masonry{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(.6rem,2vw,1rem);max-width:1060px;margin:1.8rem auto 0}
+.masonry figure{position:relative;grid-column:span 2;border-radius:var(--r-md);overflow:hidden;cursor:zoom-in;
+  box-shadow:0 16px 36px rgba(0,0,0,.5);transition:transform .5s var(--ease),box-shadow .5s,grid-column .3s var(--ease)}
+/* The one/two photos completing an otherwise-short last row -- see
+   fixGalleryLastRow() in app.js, which is the only place these are
+   ever added or removed. */
+.masonry figure.fig-fill-half{grid-column:span 3}
+.masonry figure.fig-fill-full{grid-column:span 6}
 .masonry figure:hover{transform:translateY(-5px);box-shadow:0 26px 54px rgba(0,0,0,.6)}
 .masonry img{width:100%;height:auto;display:block;transition:transform .8s var(--ease)}
 .masonry figure:hover img{transform:scale(1.07)}
@@ -494,7 +517,7 @@ textarea.inp{resize:vertical;min-height:110px;line-height:1.7;font-family:var(--
 .masonry figure.fig-broken:hover{transform:none;box-shadow:none}
 .masonry figure:hover .fig-ring{box-shadow:inset 0 0 0 1.5px var(--gold)}
 .masonry figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem .9rem;color:#fff;font-family:var(--f-si);font-size:.9rem;background:linear-gradient(0deg,rgba(5,5,7,.85),transparent)}
-.gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;column-span:all;-webkit-column-span:all;text-align:center;letter-spacing:normal;width:100%}
+.gallery-empty{color:var(--faint);font-style:italic;margin-top:1rem;grid-column:1/-1;text-align:center;letter-spacing:normal;width:100%}
 
 /* ── Sinhala glyph-shaping fix ──────────────────────────────────────────────
    CSS letter-spacing inserts space between a consonant and its vowel sign
@@ -507,7 +530,14 @@ html:not([lang="en"]) :is(
   .inv-when .lbl, .cd-lbl, .counter-cap, .ag-time, .hero-date, .hero-names, .sec-title,
   .inv-name, .foot-date, .foot-credit, .lang-toggle, .nav-link, .btn, .hero-venue
 ){ letter-spacing: normal !important; }
-@media (max-width:540px){.masonry{columns:2 140px}}
+/* 2-per-row on phones: a normal photo now spans 3 of the 6 base tracks
+   instead of 2. fixGalleryLastRow() re-checks this same breakpoint at
+   the same width, so the two stay in lockstep. */
+@media (max-width:540px){
+  .masonry figure{grid-column:span 3}
+  .masonry figure.fig-fill-full{grid-column:span 6}
+  .masonry figure.fig-fill-half{grid-column:span 6}
+}
 
 /* Lightbox */
 .lightbox{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:1.2rem;background:rgba(4,4,6,.985)}
