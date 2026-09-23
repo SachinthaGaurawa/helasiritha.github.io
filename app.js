@@ -644,7 +644,30 @@ function renderGallery() {
     (g.caption ? '<figcaption>' + esc(g.caption) + '</figcaption>' : "") + '<span class="fig-ring"></span></figure>'
   ).join("");
   box.querySelectorAll("img").forEach(function (im) { if (im.complete) im.style.opacity = 1; });
+  fixGalleryLastRow();
 }
+
+/* Widens however many photos are left in an incomplete final gallery row
+   so together they fill it exactly, instead of leaving an empty gap where
+   the row falls short of a full one -- see the longer note on .masonry in
+   styles.css for why. Re-run on every render AND on any resize that
+   crosses the 540px column-count breakpoint, since the number of columns
+   (and therefore what counts as "a full row") changes there. Purely a
+   class toggle -- the underlying GALLERY data/order is never touched. */
+function fixGalleryLastRow() {
+  const box = $("#masonry");
+  const figs = box ? $$("figure", box) : [];
+  figs.forEach(f => f.classList.remove("fig-fill-half", "fig-fill-full"));
+  if (!figs.length) return;
+  const cols = matchMedia("(max-width:540px)").matches ? 2 : 3;
+  const remainder = figs.length % cols;
+  if (remainder === 0) return;
+  const trailing = figs.slice(figs.length - remainder);
+  const cls = remainder === 1 ? "fig-fill-full" : "fig-fill-half";
+  trailing.forEach(f => f.classList.add(cls));
+}
+let galleryFillT;
+window.addEventListener("resize", () => { clearTimeout(galleryFillT); galleryFillT = setTimeout(fixGalleryLastRow, 120); }, { passive: true });
 
 function renderLove() {
   const T = L(), n = names();
