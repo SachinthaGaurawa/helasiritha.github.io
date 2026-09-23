@@ -57,10 +57,7 @@ const TEXT = {
     selectName: "කරුණාකර ඔබගේ නම තෝරන්න",
     willAttend: "ඔබ පැමිණෙනවා ද?",
     yesAttend: "ඔව්, සතුටින් පැමිණෙමි", noAttend: "කණගාටුයි, බැරිවෙයි",
-    liquor: "මත්පැන් අවශ්‍යද?", yes: "ඔව්", no: "නැහැ",
     guestCount: "පැමිණෙන ගණන",
-    dietary: "ආහාර අවශ්‍යතා (ඇත්නම්)",
-    dietaryPh: "නිර්මාංශ, අසාත්මික ආදී…",
     confirmRsvp: "පිළිතුර එවන්න",
     rsvpThanks: "බොහොම ස්තූතියි!",
     rsvpYesMsg: "ඔබව මුණගැසීමට අපි මහත් ඕනෑකමින් සිටිමු ✦",
@@ -186,10 +183,7 @@ const TEXT = {
     selectName: "Please select your name",
     willAttend: "Will you be attending?",
     yesAttend: "Yes, with joy", noAttend: "Sorry, can't make it",
-    liquor: "Liquor preferred?", yes: "Yes", no: "No",
     guestCount: "Number attending",
-    dietary: "Dietary needs (if any)",
-    dietaryPh: "Vegetarian, allergies…",
     confirmRsvp: "Send response",
     rsvpThanks: "Thank you so much!",
     rsvpYesMsg: "We can't wait to celebrate with you ✦",
@@ -315,10 +309,7 @@ const TEXT = {
     selectName: "உங்கள் பெயரைத் தேர்ந்தெடுக்கவும்",
     willAttend: "நீங்கள் வருகிறீர்களா?",
     yesAttend: "ஆம், மகிழ்ச்சியுடன் வருகிறேன்", noAttend: "மன்னிக்கவும், வர இயலாது",
-    liquor: "மதுபானம் தேவையா?", yes: "ஆம்", no: "இல்லை",
     guestCount: "வருகை தரும் எண்ணிக்கை",
-    dietary: "உணவுத் தேவைகள் (ஏதேனும் இருந்தால்)",
-    dietaryPh: "சைவம், ஒவ்வாமை போன்றவை…",
     confirmRsvp: "பதிலை அனுப்பு",
     rsvpThanks: "மிக்க நன்றி!",
     rsvpYesMsg: "உங்களைச் சந்திக்க நாங்கள் ஆவலுடன் காத்திருக்கிறோம் ✦",
@@ -727,11 +718,7 @@ function renderRsvpShell() {
   $("#willAttendQ").textContent = T.willAttend;
   $("#choiceYes").textContent = T.yesAttend;
   $("#choiceNo").textContent = T.noAttend;
-  $("#liquorQ").textContent = T.liquor;
-  $("#liqYes").textContent = T.yes; $("#liqNo").textContent = T.no;
   $("#countQ").textContent = T.guestCount;
-  $("#dietLbl").textContent = T.dietary;
-  $("#rsvpDiet").placeholder = T.dietaryPh;
   $("#rsvpSubmit").textContent = T.confirmRsvp;
   $("#rsvpBack").textContent = T.back;
   $("#rsvpAgain").textContent = T.changeResponse;
@@ -1184,7 +1171,7 @@ function stableSlug(s) {
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
   return (h >>> 0).toString(36);
 }
-const rsvp = { guest: null, attending: null, liquor: false, party: 1, dietary: "" };
+const rsvp = { guest: null, attending: null, party: 1 };
 function showStage(id) { $$(".rsvp-stage").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
 function pickGuest(g) {
   rsvp.guest = g;
@@ -1234,14 +1221,12 @@ function setupRsvp() {
   $("#rsvpSearchInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#rsvpSearchBtn").click(); } });
   $("#choiceYes").onclick = () => { rsvp.attending = true; $("#choiceYes").classList.add("sel"); $("#choiceNo").classList.remove("sel"); $("#attendExtras").style.display = "block"; $("#rsvpError").style.display = "none"; };
   $("#choiceNo").onclick = () => { rsvp.attending = false; $("#choiceNo").classList.add("sel"); $("#choiceYes").classList.remove("sel"); $("#attendExtras").style.display = "none"; $("#rsvpError").style.display = "none"; };
-  $("#liqYes").onclick = () => { rsvp.liquor = true; $("#liqYes").classList.add("sel"); $("#liqNo").classList.remove("sel"); };
-  $("#liqNo").onclick = () => { rsvp.liquor = false; $("#liqNo").classList.add("sel"); $("#liqYes").classList.remove("sel"); };
   $("#pMinus").onclick = () => { rsvp.party = Math.max(1, rsvp.party - 1); $("#pVal").textContent = rsvp.party; };
   $("#pPlus").onclick = () => { rsvp.party = Math.min(20, rsvp.party + 1); $("#pVal").textContent = rsvp.party; };
   $("#rsvpBack").onclick = () => showStage("#stSearch");
   $("#rsvpAgain").onclick = () => {
-    Object.assign(rsvp, { guest: null, attending: null, liquor: false, party: 1, dietary: "" });
-    $("#rsvpSearchInput").value = ""; $("#rsvpResults").innerHTML = ""; $("#pVal").textContent = "1"; $("#rsvpDiet").value = "";
+    Object.assign(rsvp, { guest: null, attending: null, party: 1 });
+    $("#rsvpSearchInput").value = ""; $("#rsvpResults").innerHTML = ""; $("#pVal").textContent = "1";
     showStage("#stSearch");
   };
   $("#rsvpSubmit").onclick = submitRsvp;
@@ -1254,12 +1239,11 @@ async function submitRsvp() {
     if (errEl) { errEl.textContent = T.rsvpPickFirst; errEl.style.display = ""; }
     return;
   }
-  rsvp.dietary = $("#rsvpDiet").value.trim();
   const party = rsvp.attending ? rsvp.party : 0;
   const payload = {
     guestId: rsvp.guest.id, name: rsvp.guest.name, family: rsvp.guest.family || "", side: rsvp.guest.side || "",
-    attending: rsvp.attending, liquor: rsvp.attending ? rsvp.liquor : false,
-    party: party, count: party, dietary: rsvp.dietary
+    attending: rsvp.attending,
+    party: party, count: party
   };
   const btn = $("#rsvpSubmit"), errEl = $("#rsvpError");
   btn.disabled = true; btn.textContent = T.sending;
@@ -1512,6 +1496,14 @@ function setupLang() {
     try { localStorage.setItem("hs_lang", LANG); } catch (e) {}
     document.body.classList.add("lang-swap");
     renderAll();
+    /* renderAll() only re-renders THIS document -- the same-origin sannasa
+       iframe (loaded once at page load) never got told the toggle fired, so
+       it stayed in whatever language was active on its own first load no
+       matter how many times a guest switched here. It shares this page's
+       own localStorage already; this is just the missing nudge to re-read
+       it and re-render right now, instead of only on the next full reload. */
+    const sf = $(".sannasa-frame");
+    if (sf && sf.contentWindow) { try { sf.contentWindow.postMessage({ __sannasa: "lang" }, "*"); } catch (e) {} }
     setTimeout(() => document.body.classList.remove("lang-swap"), 420);
   };
 }

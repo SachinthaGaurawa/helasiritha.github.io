@@ -489,8 +489,22 @@ if (/\.github\.io$/i.test(location.hostname)) {
       }
       
       render();
-      fitSannasa(); 
-      
+      fitSannasa();
+
+      /* The language toggle lives on the PARENT page and re-renders it in
+         place (no reload) -- this document only ever re-read lang()/
+         localStorage on its OWN initial load or its own Firestore snapshot,
+         so switching to English/Tamil never reached the sannasa at all: it
+         stayed pinned to whatever language was active when the iframe first
+         loaded (Sinhala, on a guest's first-ever visit) until a full page
+         reload. Same-origin embeds share this page's own localStorage
+         already; this message is just the missing "re-render now" nudge,
+         sent right after setupLang() writes the new value. */
+      window.addEventListener('message', function(e){
+        var d = e && e.data;
+        if(d && d.__sannasa === 'lang') render();
+      }, { passive:true });
+
       window.addEventListener('load', fitSannasa, { passive:true });
       window.addEventListener('resize', fitSannasaOnResize, { passive:true });
       if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitSannasa).catch(function(){}); }
