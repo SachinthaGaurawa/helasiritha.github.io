@@ -749,6 +749,12 @@ function renderFooter() {
   $("#footDate").textContent = f.dd + " " + f.mo + " " + f.y + " · " + byLang("venue") + ", " + byLang("venueCity");
   const acts = $("#footActions"); acts.innerHTML = "";
   if (S.phone) acts.insertAdjacentHTML("beforeend", '<a class="btn ghost sm" href="tel:' + esc(S.phone) + '">☎ ' + esc(T.callUs) + '</a>');
+  /* S.whatsapp was being saved by admin's "WhatsApp අංකය" field but never
+     read anywhere -- setting it there had zero effect on the public site.
+     wa.me needs digits only (no +, spaces or dashes), which the admin's
+     own field hint ("94…") already asks for, but stripped defensively
+     here in case a + or separator slips in. */
+  if (S.whatsapp) acts.insertAdjacentHTML("beforeend", '<a class="btn ghost sm" href="https://wa.me/' + esc(String(S.whatsapp).replace(/\D/g, "")) + '" target="_blank" rel="noopener noreferrer">' + esc(T.shareWa) + '</a>');
   acts.insertAdjacentHTML("beforeend", '<button class="btn ghost sm" id="calBtn">⌖ ' + esc(T.addCal) + '</button>');
   $("#calBtn").onclick = downloadIcs;
 }
