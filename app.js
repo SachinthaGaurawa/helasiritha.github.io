@@ -461,11 +461,15 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (x) => String(x == null ? "" : x).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const L = () => TEXT[LANG];
 const amp = (s) => String(s).replace(/&amp;|&/g, '<span class="amp">&amp;</span>');
-function names() {
-  if (LANG === "en") return { b: S.brideNameEn || S.brideName, g: S.groomNameEn || S.groomName };
-  if (LANG === "ta") return { b: S.brideNameTa || S.brideName, g: S.groomNameTa || S.groomName };
-  return { b: S.brideName, g: S.groomName };
-}
+/* Delegates to byLang() (defined just below) instead of the plain
+   `S.brideNameEn || S.brideName` this used to be: that pattern falls
+   straight to the SINHALA name the moment brideNameEn/groomNameEn exists
+   in Firestore but is an unsaved empty string -- Object.assign(DEFAULTS,
+   data) lets that empty string win over DEFAULTS' own "Kaushani" -- the
+   exact bug byLang()'s own comment already describes for every OTHER
+   admin-editable field ("කුරුණෑගල" leaking onto the English/Tamil pages).
+   Names were never routed through that same fix. */
+function names() { return { b: byLang("brideName"), g: byLang("groomName") }; }
 function byLang(base) {
   var key = LANG === "en" ? base + "En" : LANG === "ta" ? base + "Ta" : base;
   var live = S[key];
@@ -544,6 +548,14 @@ function renderAll() {
   $$(".js-drawer-link").forEach(a => { const k = a.dataset.k; if (k) a.textContent = T.nav[k]; });
   const lt = $("#langToggle"); if (lt) { lt.textContent = T.langLabel; lt.title = T.langTitle; lt.setAttribute("aria-label", T.langTitle); }
   paintEntryGateLang(T);
+  /* paintEntryGateLive() only used to run off the Firestore snapshot
+     handler, which fires once, early, at whatever LANG happened to be
+     active at that moment -- so the names it painted onto the entry gate
+     were never revisited on a later language switch, the same gap
+     paintEntryGateLang(T) above just closed for the eyebrow/sub/cta text.
+     Calling it here too keeps the couple's name in step with every
+     toggle, using names()'s own already-language-aware lookup. */
+  paintEntryGateLive();
 
   renderHero(); renderInvitation(); renderCountdown(); renderRsvpShell();
   applyVisibility(); observeReveals();
