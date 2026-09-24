@@ -18,11 +18,27 @@
    styles.css) is already present on <html> the instant each of them is
    inserted, so the CSS rule applies immediately, with no gap for
    anything to paint into. Kept separate from the entry gateway's own
-   script below (which still runs its full ceremony/text-blanking logic
+   script below (which still runs its full ceremony/interactivity setup
    once those elements actually exist) rather than merging the two --
-   this one file/one decision stays minimal and has nothing else to do. */
+   this one file/one decision stays minimal and has nothing else to do.
+
+   Condition inverted from `=== 'locked'` to `!== 'normal'`, at explicit
+   request: admin having disconnected the site, or turned on the
+   post-wedding screen, must go DIRECTLY there -- no preloader ("ආයුබෝවන්"),
+   no lamp-tap ceremony, not even briefly, for ANY visitor, not only a
+   returning one with a matching cached hint. The only way to know that
+   for certain before Firestore answers is a hint that positively says
+   "normal" (this exact tab confirmed the site live last time); a
+   first-time visit (no hint at all) or a stale "locked" hint must both
+   default to suppressed now, same as a confirmed-locked one -- there is
+   no safe "assume live" default any more. app.js's applySiteState() (the
+   only other place that ever touches this class) removes it the instant
+   Firestore's forced, guaranteed-fresh read confirms the site is actually
+   live -- typically well under a second -- so a genuinely live site still
+   reaches its normal ceremony almost immediately; it just no longer
+   free-runs on an unconfirmed assumption first. */
 try {
-  if (localStorage.getItem('hs_gate_state') === 'locked') {
+  if (localStorage.getItem('hs_gate_state') !== 'normal') {
     document.documentElement.classList.add('gate-suppressed');
   }
 } catch (_) {}
@@ -35,7 +51,7 @@ try {
    once per navigation and can never hot-reload) notices a new deploy
    went out and force-reloads itself, instead of running stale JS forever
    no matter how many fixes ship after it was first opened. */
-window.__BUILD_V__ = "2026092318";
+window.__BUILD_V__ = "2026092320";
 </script>
 <script>
 /* GitHub auto-publishes this exact repo via Pages (it's literally named
@@ -70,7 +86,21 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 <link rel="preconnect" href="https://iili.io" crossorigin>
 <link rel="dns-prefetch" href="https://iili.io">
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-<link rel="preload" href="styles.css?v=2026092318" as="style">
+<!-- app.js's connect() dynamically imports these two the instant it runs --
+     that import() call itself can't start fetching the actual module bytes
+     any earlier than the moment app.js's own module graph finishes
+     evaluating and reaches that line. modulepreload starts the fetch (and,
+     once fetched, the parse) the instant the HTML parser reaches this tag
+     instead -- in parallel with every other resource on this early list --
+     so by the time connect() actually calls import(), it's very likely
+     already in flight or done. This is the one piece of JS every render
+     guard in app.js is waiting on before it can answer "is the site even
+     live right now", so shaving any real time off it directly shortens how
+     long a first-time visitor spends on the generic preloader/entry
+     ceremony before the real (or correctly-paused) content can appear. -->
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js" crossorigin>
+<link rel="preload" href="styles.css?v=2026092320" as="style">
 <!-- crest preload removed: that Cloudinary asset returns 404 -->
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg" fetchpriority="high">
@@ -86,7 +116,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
      connection; the <noscript> fallback covers the no-JS case. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="styles.css?v=2026092318">
+<link rel="stylesheet" href="styles.css?v=2026092320">
 </head>
 <body>
 
@@ -465,7 +495,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script type="module" src="app.js?v=2026092318"></script>
+<script type="module" src="app.js?v=2026092320"></script>
 <script>
 /* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
 (function(){
@@ -476,40 +506,25 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   var e=document.getElementById('entry');
   if(!e){ document.documentElement.classList.remove('entry-lock'); return; }
 
-  /* Fast local hint only (never authoritative) -- see applySiteState() in
-     app.js, which is the one place that actually writes hs_gate_state and
-     decides the real answer moments from now. If the last confirmed
-     Firestore state was locked (site paused pre-launch, or post-wedding),
-     skip the whole entry-gate ceremony from this very first frame instead
-     of running it and only hiding it once Firestore's real answer arrives
-     -- closes the sub-second flash a RETURNING visitor could otherwise
-     still see. Wrong at worst for the rare case the admin flipped the
-     switch since this visitor's last visit; applySiteState() corrects
-     that for real within the same short window this always used to take
-     regardless. */
-  try{
-    if(localStorage.getItem('hs_gate_state') === 'locked'){
-      /* The class alone (its styles.css rule is !important) is enough to
-         hide #preloader/#entry immediately -- deliberately NOT also
-         setting an inline display:none here, which would keep hiding
-         them even after applySiteState() (app.js) later removes this
-         class because the site turned out to be live after all: an
-         inline style always beats a class-based rule regardless of the
-         class list, so it would never come back. */
-      document.documentElement.classList.add('gate-suppressed');
-      /* .entry-names itself ships empty now (see #entry above) -- nothing
-         to blank here any more. eyebrow/sub/cta are generic (no names/
-         dates, safe either way) and this branch returns below without
-         ever reaching the TX-painting block that would otherwise fill
-         them in -- blanked here anyway, matching app.js's own
-         renderAll() guard taking the same position that none of the
-         gate has anything to say while locked. */
-      var eb0=e.querySelector('.entry-eyebrow'); if(eb0) eb0.textContent='';
-      var sb0=e.querySelector('.entry-sub'); if(sb0) sb0.textContent='';
-      var ct0=e.querySelector('.entry-cta'); if(ct0) ct0.textContent='';
-      return;
-    }
-  }catch(_){}
+  /* Visual suppression is now decided entirely by the head script (see its
+     own comment): gate-suppressed is already present on <html> before this
+     script ever runs, for every case except a hint that positively
+     confirms the site was live last time. This script used to ALSO have
+     its own copy of that same check here, returning early (skipping
+     inert-setting, TX-painting, and -- critically -- binding the lamp's
+     click handler) whenever the hint said "locked". That early return is
+     gone on purpose: this gate must stay fully wired up and ready to use
+     regardless of whatever the hint guessed, because app.js's
+     applySiteState() removes gate-suppressed the moment Firestore's real,
+     forced-fresh read confirms the site actually IS live -- including the
+     case where a returning visitor's stale "locked" hint from a PAST visit
+     no longer matches (the admin re-opened the site since). Skipping this
+     setup for that case used to leave a visually-revealed but completely
+     non-functional entry gate (no click handler ever bound) behind for
+     exactly that visitor. Running it unconditionally instead costs nothing
+     while the gate is suppressed -- it's just wiring up listeners and
+     classes on elements nobody can see yet -- and guarantees the gate
+     works the instant it's actually shown, however it got there. */
 
   /* role=dialog alone doesn't stop a keyboard user from Tabbing straight past
      the gate's own button into the nav/hero/RSVP controls sitting behind it
