@@ -18,6 +18,19 @@ const FB = {
   measurementId: "G-PBJWLXWVD9"
 };
 const SDK = "https://www.gstatic.com/firebasejs/12.14.0";
+/* Public reCAPTCHA v3 site key for Firebase App Check — safe to ship in
+   client code, same "public but rules-enforced" story as FB.apiKey above
+   (App Check's real protection is the private secret Google holds
+   server-side; this key only tells the browser which site to score
+   requests against). Get one at Firebase Console -> Build -> App Check
+   -> Apps -> register this app -> reCAPTCHA v3 (Firebase can generate
+   the key for you directly, no separate trip to the reCAPTCHA admin
+   console needed). Left empty until that's done: connect() below skips
+   App Check entirely rather than breaking anything -- Firestore's rules
+   don't require an App Check token yet either, so this stays a pure
+   no-op until a real key is filled in AND rules are updated to expect
+   one, both deliberately separate follow-ups from wiring the client up. */
+const APP_CHECK_SITE_KEY = "";
 
 /* ── Bilingual dictionary ─ keys identical in both languages ─────────────── */
 const TEXT = {
@@ -1827,11 +1840,31 @@ function startSiteStateWatch() {
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
 async function connect() {
   try {
-    const [{ initializeApp }, fs] = await Promise.all([
+    const [{ initializeApp }, fs, appCheck] = await Promise.all([
       import(SDK + "/firebase-app.js"),
-      import(SDK + "/firebase-firestore.js")
+      import(SDK + "/firebase-firestore.js"),
+      APP_CHECK_SITE_KEY ? import(SDK + "/firebase-app-check.js") : Promise.resolve(null)
     ]);
     const app = initializeApp(FB);
+    /* Attaches an App Check token to every Firestore request this tab
+       makes from here on -- proof (once rules are updated to require it,
+       a deliberately separate follow-up) that the request came from this
+       real page and not a script calling the Firestore API directly with
+       the same public project config. A visitor never sees or does
+       anything: reCAPTCHA v3 scores real browsing behavior silently in
+       the background, no checkbox, no puzzle. Wrapped in try/catch since
+       this must never be able to break the site actually loading --
+       Firestore reads/writes still work exactly as before if this fails
+       (e.g. the key is wrong, or reCAPTCHA's own script is blocked), same
+       as they do today with no App Check key configured at all. */
+    if (APP_CHECK_SITE_KEY && appCheck) {
+      try {
+        appCheck.initializeAppCheck(app, {
+          provider: new appCheck.ReCaptchaV3Provider(APP_CHECK_SITE_KEY),
+          isTokenAutoRefreshEnabled: true
+        });
+      } catch (e) { console.warn("App Check init failed", e); }
+    }
     const db = fs.getFirestore(app);
     fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp, getDoc: fs.getDoc, getDocFromServer: fs.getDocFromServer };
 
