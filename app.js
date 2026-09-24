@@ -2034,6 +2034,9 @@ async function connect() {
       import(SDK + "/firebase-firestore.js")
     ]);
     const app = initializeApp(FB);
+    const db = fs.getFirestore(app);
+    fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp, getDoc: fs.getDoc, getDocFromServer: fs.getDocFromServer };
+
     /* Attaches an App Check token to every Firestore request this tab
        makes from here on -- proof (once rules are updated to require it,
        a deliberately separate follow-up) that the request came from this
@@ -2041,25 +2044,27 @@ async function connect() {
        the same public project config. A visitor never sees or does
        anything: reCAPTCHA Enterprise scores real browsing behavior
        silently in the background, no checkbox, no puzzle.
-       Deliberately its OWN try/catch, not folded into the Promise.all
-       above: that Promise.all is the critical path (no Firestore without
-       it), and a third-party script (reCAPTCHA's own, loaded from Google)
-       failing for any real-world visitor -- an ad-blocker, a flaky
-       connection, a corporate firewall -- must never be able to take the
-       whole thing down with it. Firestore reads/writes (RSVP included)
-       still work exactly as before if this fails, same as they do today
-       with no App Check key configured at all. */
+       Fires here WITHOUT an await, deliberately -- it used to sit in front
+       of the forced content read below (await import(...) then
+       await ...initializeApp(...)), which measurably delayed the very
+       answer the site's whole first paint is waiting on for no functional
+       reason: the comment already below explained App Check must never be
+       able to take Firestore down if it fails, but the code still made it
+       take Firestore's TIMING down even when it succeeded. Loading and
+       initializing it concurrently instead means a slow reCAPTCHA script
+       fetch (Google's own, subject to an ad-blocker, a flaky connection, a
+       corporate firewall) can never hold up the status check even by a
+       millisecond; a request or two right at the very start simply goes
+       out without a token, exactly like today's already-accepted fallback
+       for when this key isn't configured at all. */
     if (APP_CHECK_SITE_KEY) {
-      try {
-        const appCheck = await import(SDK + "/firebase-app-check.js");
+      import(SDK + "/firebase-app-check.js").then((appCheck) => {
         appCheck.initializeAppCheck(app, {
           provider: new appCheck.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),
           isTokenAutoRefreshEnabled: true
         });
-      } catch (e) { console.warn("App Check init failed", e); }
+      }).catch((e) => console.warn("App Check init failed", e));
     }
-    const db = fs.getFirestore(app);
-    fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp, getDoc: fs.getDoc, getDocFromServer: fs.getDocFromServer };
 
     trackVisit(fs, db);
 
