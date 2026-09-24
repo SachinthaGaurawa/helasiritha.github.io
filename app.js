@@ -2099,11 +2099,25 @@ async function connect() {
          (even while the entry gate is still up) — otherwise the <img> tag
          isn't created until whenEntryGone() below, and the reveal has to
          wait out a fresh network fetch + decode right at the critical
-         moment instead of reusing an already-fetched image. */
+         moment instead of reusing an already-fetched image. Confirmed from a
+         fresh screen recording that this alone wasn't quite enough on a real
+         connection: a plain `new Image()` gets the browser's default (auto)
+         fetch priority, competing against whatever else is still in flight
+         at that exact moment (the Firebase SDK chunks, other Firestore
+         reads) -- explicitly marking it "high" tells the browser this is
+         the one image the very next screen depends on, not a speculative
+         background fetch. And a decoded byte stream sitting in the network
+         cache still has to be decoded before it can paint; calling
+         decode() here forces that work to happen now, off the critical
+         path, instead of synchronously, for the first time, the instant
+         renderHero() actually inserts the visible <img> and the browser
+         has no choice but to decode it before it can show anything. */
       if (S.heroImageUrl && S.heroImageUrl !== prevHero) {
         const pre = new Image();
         pre.decoding = "async";
+        pre.fetchPriority = "high";
         pre.src = S.heroImageUrl;
+        pre.decode && pre.decode().catch(() => {});
       }
       /* Runs immediately — even while the entry gate is still up — so
          scrolling is disabled and the main content hidden the instant
