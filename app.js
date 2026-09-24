@@ -1349,9 +1349,23 @@ function stableSlug(s) {
 }
 const rsvp = { guest: null, attending: null, party: 1 };
 function showStage(id) { $$(".rsvp-stage").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
+/* A guest's name/family can carry up to three linked variants now (see the
+   admin repo's wireNameTrio()/nameVariants() -- generated automatically as
+   the admin types in any one language, so the public search below works
+   regardless of which script a guest searches in). These two pick whichever
+   variant matches the CURRENTLY active site language, for display only --
+   falling back to whatever the canonical name/family already holds (every
+   guest added before this feature, or one whose variant generation failed,
+   still has exactly that single field). The RSVP record itself still stores
+   the canonical name/family unchanged, matching the admin's own guest list. */
+function langVariant(g, base, lang) {
+  const key = base + (lang === "si" ? "Si" : lang === "ta" ? "Ta" : "En");
+  return (g[key] || g[base] || "");
+}
 function pickGuest(g) {
   rsvp.guest = g;
-  $("#confName").textContent = g.name + (g.family ? " · " + g.family : "");
+  const dispName = langVariant(g, "name", LANG), dispFamily = langVariant(g, "family", LANG);
+  $("#confName").textContent = dispName + (dispFamily ? " · " + dispFamily : "");
   $("#choiceYes").classList.remove("sel"); $("#choiceNo").classList.remove("sel");
   $("#attendExtras").style.display = "none"; rsvp.attending = null;
   const errEl = $("#rsvpError"); if (errEl) errEl.style.display = "none";
@@ -1374,7 +1388,16 @@ function setupRsvp() {
       box.innerHTML = '<p class="note">' + esc(T().guestsLoading) + '</p>';
       return;
     }
-    const hits = GUESTS.filter(g => (g.name || "").toLowerCase().includes(q) || (g.family || "").toLowerCase().includes(q)).slice(0, 12);
+    /* Matches against every stored variant (name/nameSi/nameEn/nameTa and
+       the family equivalents), not just the canonical name/family -- a
+       guest whose name was entered in one script by the admin can now be
+       found by a search typed in any of the three, which is the entire
+       point of generating those variants in the first place. Guests added
+       before this feature (or where auto-generation failed) simply have
+       fewer variants to match against; the canonical name/family alone
+       still works exactly as before. */
+    const NAME_KEYS = ["name", "nameSi", "nameEn", "nameTa", "family", "familySi", "familyEn", "familyTa"];
+    const hits = GUESTS.filter(g => NAME_KEYS.some(k => (g[k] || "").toLowerCase().includes(q))).slice(0, 12);
     if (!hits.length) {
       box.innerHTML = '<p class="note">' + esc(T().noGuest) + '</p>' +
         '<button class="btn ghost sm" id="proceedTyped">' + esc(T().proceedTyped) + '</button>';
@@ -1389,9 +1412,11 @@ function setupRsvp() {
       };
       return;
     }
-    box.innerHTML = hits.map((g, i) =>
-      '<button class="guest-pick" data-i="' + i + '"><span class="gn">' + esc(g.name) + '</span>' +
-      (g.family ? '<span class="gfam">' + esc(g.family) + '</span>' : "") + '</button>').join("");
+    box.innerHTML = hits.map((g, i) => {
+      const n = langVariant(g, "name", LANG), f = langVariant(g, "family", LANG);
+      return '<button class="guest-pick" data-i="' + i + '"><span class="gn">' + esc(n) + '</span>' +
+        (f ? '<span class="gfam">' + esc(f) + '</span>' : "") + '</button>';
+    }).join("");
     $$("#rsvpResults .guest-pick").forEach((b, i) => b.onclick = () => pickGuest(hits[i]));
   };
   $("#rsvpSearchInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#rsvpSearchBtn").click(); } });
@@ -2184,9 +2209,10 @@ async function connect() {
       BLESSINGS = arr; whenEntryGone(() => runIdle(() => { renderBlessings(); observeReveals(); }));
     }, (err) => console.warn("blessings listener", err));
 
-    /* Only the {name, family, side} mirror — never the full `guests` doc, which
-       also carries status/tableNumber. That keeps every other guest's RSVP
-       details private from a visitor using this search box. */
+    /* Only the {name, family, side} mirror (plus their Sinhala/English/Tamil
+       search variants — see langVariant()/NAME_KEYS above) — never the full
+       `guests` doc, which also carries status/tableNumber. That keeps every
+       other guest's RSVP details private from a visitor using this search box. */
     fs.onSnapshot(fs.collection(db, "guestsPublic"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
       guestsLoaded = true;
