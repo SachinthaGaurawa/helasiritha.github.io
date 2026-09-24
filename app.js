@@ -464,6 +464,29 @@ const AGENDA_DEFAULT = [
 
 /* ── State + helpers ─────────────────────────────────────────────────────── */
 let S = Object.assign({}, DEFAULTS);
+/* init() below paints S (i.e. DEFAULTS) immediately, synchronously, before
+   Firestore has ever answered -- by design, so a real live site doesn't sit
+   waiting on a network round-trip for its very first paint. The problem:
+   DEFAULTS isn't placeholder text, it's the real couple's real name/date/
+   venue, so that instant first paint happens unconditionally regardless of
+   whether the site is actually paused right now -- computeSiteScreenState()
+   only ever gets to say "paused" once Firestore's real siteLive:false comes
+   back, moments later. hs_gate_state (written by applySiteState() below,
+   read here) is the one signal available before that round-trip completes:
+   a RETURNING visitor to an already-paused site carries it from their last
+   load, so this first paint can correctly skip from the very start. A
+   first-ever visitor has no hint yet and still gets one brief real paint --
+   contentPainted below exists to catch exactly that gap and force a reload
+   the moment Firestore's real answer confirms it should never have
+   happened, so the reload the user actually SAW in the recording. */
+try { if (localStorage.getItem("hs_gate_state") === "locked") S.siteLive = false; } catch (e) {}
+/* Set to true the moment renderAll() actually paints real content (its own
+   guard passed) -- lets applySiteState() below tell "real content is
+   genuinely sitting in the DOM right now" apart from "nothing has ever been
+   rendered", which prevState alone can't distinguish once the line above
+   exists (prevState starts at null, not "normal", even when this module's
+   very first renderAll() call did go on to paint from DEFAULTS). */
+let contentPainted = false;
 let AGENDA = AGENDA_DEFAULT.slice();
 let GALLERY = [], GUESTS = [], BLESSINGS = [], guestsLoaded = false;
 let fb = null;
@@ -528,6 +551,16 @@ function paintEntryGateLang(T) {
    gate's markup/CSS at all -- if it's already been dismissed and removed
    from the DOM (the common case once someone lingers), this is a no-op. */
 function paintEntryGateLive() {
+  /* Never paint the real couple name while a full-screen gate is showing
+     instead of the real site -- .gate-suppressed only hides #entry
+     visually (display:none), and text sitting in a hidden element's DOM
+     is still there to be read by anything that inspects the document
+     rather than the rendered page: confirmed directly, from a screen
+     recording, that Safari's Reader Mode does exactly this -- it
+     extracts a page's text from the DOM tree, entirely ignoring
+     hidden/display:none. The only real fix is to never let the name
+     exist in the document at all while locked, not just hide it. */
+  if (computeSiteScreenState() !== "normal") return;
   const nm = document.querySelector("#entry .entry-names");
   if (!nm) return;
   const n = names();
@@ -548,6 +581,19 @@ function fmtDate(iso) {
 
 /* ════════════════════════════════ RENDER ════════════════════════════════ */
 function renderAll() {
+  /* Same reasoning as the guard now at the top of paintEntryGateLive():
+     nothing here may write real hero/invitation/date/venue/agenda/
+     gallery/blessings/footer text into the DOM while a full-screen gate
+     is showing instead of the real site. [hidden] and .gate-suppressed
+     only ever hide #nav/main/.footer visually -- Reader Mode (and
+     anything else that inspects the document rather than the rendered
+     page) reads straight past that. Whatever called this -- the entry
+     gate's own dismissal, a language toggle, a resync -- none of it may
+     ever populate real content while locked; the gate screens have
+     nothing of app.js's to say regardless, and paintEntryGateLang(T)
+     already covers their own (non-couple-specific) text on its own. */
+  if (computeSiteScreenState() !== "normal") return;
+  contentPainted = true;
   const T = L();
   document.documentElement.lang = LANG;
   document.body.dir = "ltr";
@@ -666,6 +712,12 @@ function renderCountdown() {
 }
 
 function renderAgenda() {
+  /* Reachable directly off the "site/agenda" Firestore listener via
+     whenEntryGone() (below), entirely independent of renderAll()'s own
+     guard -- a full-screen gate hides #nav/main/.footer visually, but a
+     second Firestore listener bypassing renderAll() doesn't know that.
+     Same guard, same reasoning as renderAll()/paintEntryGateLive() above. */
+  if (computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#agEyebrow").textContent = T.agEyebrow;
   $("#agendaTitle").textContent = T.agendaTitle;
@@ -681,6 +733,9 @@ function renderAgenda() {
 }
 
 function renderGallery() {
+  /* Same as renderAgenda() above: reachable directly off the "gallery"
+     collection listener via whenEntryGone(), independent of renderAll(). */
+  if (computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#galEyebrow").textContent = T.galEyebrow;
   $("#galleryTitle").textContent = T.galleryTitle;
@@ -722,6 +777,10 @@ let galleryFillT;
 window.addEventListener("resize", () => { clearTimeout(galleryFillT); galleryFillT = setTimeout(fixGalleryLastRow, 120); }, { passive: true });
 
 function renderLove() {
+  /* Only ever called from renderAll()'s own guarded batch today, but
+     guarded directly too -- the couple's real name/love note has no
+     business rendering while locked regardless of which path gets here. */
+  if (computeSiteScreenState() !== "normal") return;
   const T = L(), n = names();
   $("#loveEyebrow").textContent = T.loveEyebrow;
   $("#loveTitle").textContent = T.loveTitle;
@@ -752,6 +811,11 @@ function availableWishes(lang) {
 }
 
 function renderBlessings() {
+  /* Same as renderAgenda()/renderGallery() above: reachable directly off
+     the "blessings" collection listener via whenEntryGone(), independent
+     of renderAll() -- and blessings carry a real guest's real name and
+     message, the most personal content of all to leak while locked. */
+  if (computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#blEyebrow").textContent = T.blEyebrow;
   $("#blessingsTitle").textContent = T.blessingsTitle;
@@ -806,6 +870,10 @@ function applyRsvpOpen() {
 }
 
 function renderFooter() {
+  /* Only ever called from renderAll()'s own guarded batch today, but
+     guarded directly too, same reasoning as renderLove() above -- the
+     footer repeats the couple's real name and real wedding date/venue. */
+  if (computeSiteScreenState() !== "normal") return;
   const T = L(), n = names(), f = fmtDate(S.dateISO);
   $("#footNames").innerHTML = esc(n.b) + ' <span class="amp">' + esc(T.and) + '</span> ' + esc(n.g);
   $("#footDate").textContent = f.dd + " " + f.mo + " " + f.y + " · " + byLang("venue") + ", " + byLang("venueCity");
@@ -1720,8 +1788,41 @@ let siteScreenState = null;
 function applySiteState() {
   const state = computeSiteScreenState();
   if (state !== siteScreenState) {
+    const prevState = siteScreenState;
     siteScreenState = state;
     const locked = state !== "normal";
+    /* renderAll()'s own guard (see there) stops any FUTURE render from
+       writing real hero/invitation/date/venue/etc. text into the DOM
+       while locked -- but a visitor who already had real content painted
+       into the document, whether from a live session the admin just
+       paused OR from THIS module's own synchronous, pre-Firestore first
+       paint (init() -> renderAll(), which runs off DEFAULTS -- the real
+       couple's real details, not placeholders -- before this function
+       ever gets to say "paused" for the first time; see contentPainted's
+       own comment above S), still has all of that sitting in the document
+       from before. [hidden]/.gate-suppressed only hide it visually;
+       confirmed directly (a screen recording) that Safari's Reader Mode
+       reads straight past that. A reload is the simplest, fully robust
+       way to guarantee it is actually gone: the fresh boot lands directly
+       on the correctly-suppressed gate, via the same hs_gate_state hint
+       this function writes below (which that next boot's own S
+       initialization now reads BEFORE its first renderAll() call, so a
+       returning visitor never repaints real content at all, and this
+       branch never re-fires on their next load either).
+       Guarded on contentPainted, not prevState === "normal": a first-ever
+       visit (no hs_gate_state hint yet) to an already-paused site still
+       gets that one brief real paint from DEFAULTS before Firestore's
+       answer arrives, same as a live-session pause -- prevState alone
+       (null, not "normal", on a first load) can't tell those apart from
+       a load that genuinely never rendered anything.
+       Written FIRST, before deciding whether to reload: the hint has to
+       already say "locked" on disk by the time location.reload() actually
+       fires, or the fresh boot this triggers reads nothing back, seeds
+       S.siteLive from the (still live) DEFAULTS again, and repaints the
+       same real content the reload exists to clear -- an infinite
+       reload loop, not a fix. */
+    try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
+    if (locked && contentPainted) { location.reload(); return; }
     document.documentElement.classList.toggle("pw-lock", locked);
     /* See the .gate-suppressed rule (styles.css) for why: the preloader,
        entry gate (with its couple-names paint and lamp-tap ceremony),
@@ -1736,13 +1837,6 @@ function applySiteState() {
        it even after the admin re-opens it, with no way to notice short
        of a manual reload. */
     document.documentElement.classList.toggle("gate-suppressed", locked);
-    /* Written for index.html's own standalone inline bootstrap to read on
-       its NEXT load, before this module has even started -- see the
-       hs_gate_state check there. Purely a fast local hint, never the
-       source of truth: this line is the only place that ever sets it,
-       and it's always the freshest confirmed Firestore answer at the
-       moment it's written. */
-    try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
     if (locked) startSiteStateWatch();
     const navEl = document.getElementById("nav");
     const mainEl = document.querySelector("main");
@@ -1752,6 +1846,21 @@ function applySiteState() {
     if (navEl) navEl.hidden = locked;
     if (mainEl) mainEl.hidden = locked;
     if (footEl) footEl.hidden = locked;
+    /* Mirror of the small inline script next to the iframe itself
+       (index.html): that script only ever loads sannasa.html eagerly when
+       its OWN early hs_gate_state check doesn't say "locked" -- so a stale
+       "locked" hint (the admin re-opened the site since this visitor's
+       last visit) leaves the real .sannasa-frame permanently blank unless
+       something else corrects it once Firestore's real answer says the
+       site is actually live. This is that correction: only acts once,
+       exactly like that script (no-op the instant src already matches
+       data-src), so the eager/high-priority load timing is otherwise
+       untouched for the far more common case where the hint already
+       had it right or wasn't stale. */
+    if (!locked) {
+      const sf = document.querySelector(".sannasa-frame");
+      if (sf && sf.dataset.src && sf.getAttribute("src") !== sf.dataset.src) sf.src = sf.dataset.src;
+    }
     /* Belt-and-suspenders on both screens: their own `display:flex`
        (styles.css) is an author-stylesheet rule, which always beats the
        browser's built-in [hidden]{display:none} — regardless of

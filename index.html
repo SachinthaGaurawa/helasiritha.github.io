@@ -10,7 +10,7 @@
    once per navigation and can never hot-reload) notices a new deploy
    went out and force-reloads itself, instead of running stale JS forever
    no matter how many fixes ship after it was first opened. */
-window.__BUILD_V__ = "2026092313";
+window.__BUILD_V__ = "2026092314";
 </script>
 <script>
 /* GitHub auto-publishes this exact repo via Pages (it's literally named
@@ -45,7 +45,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
 <link rel="preconnect" href="https://iili.io" crossorigin>
 <link rel="dns-prefetch" href="https://iili.io">
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-<link rel="preload" href="styles.css?v=2026092313" as="style">
+<link rel="preload" href="styles.css?v=2026092314" as="style">
 <!-- crest preload removed: that Cloudinary asset returns 404 -->
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_760/v1784967326/Pahana_gaeard.png" fetchpriority="high">
 <link rel="preload" as="image" href="https://res.cloudinary.com/dzrfpc9be/image/upload/f_auto,q_auto,w_1600/v1784103121/IMG_0007_hhiu9s.jpg" fetchpriority="high">
@@ -61,7 +61,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
      connection; the <noscript> fallback covers the no-JS case. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="styles.css?v=2026092313">
+<link rel="stylesheet" href="styles.css?v=2026092314">
 </head>
 <body>
 
@@ -200,10 +200,40 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
          back (see setupSannasaScroll() in app.js) well before a visitor
          actually scrolls down to it, instead of still being blank/mid-load
          at that moment. This only changes WHEN the browser fetches the
-         unmodified file — sannasa.html itself is untouched. -->
+         unmodified file — sannasa.html itself is untouched.
+         No `src` here on purpose (see data-src + the tiny script right
+         below): sannasa.html carries the couple's real names in its own
+         static markup, same as #entry above, so an unconditional eager
+         `src` would fetch and load that real document into the DOM the
+         instant the parser reaches this tag -- regardless of whether the
+         site is paused -- well before any gate/lock logic gets a say.
+         `title` deliberately carries no names for the same reason: it's
+         readable from the DOM/accessibility tree without the iframe's own
+         document ever loading at all. -->
     <div class="sannasa-embed reveal">
-      <iframe class="sannasa-frame" src="sannasa.html" title="ආරාධනා සන්නස · Kaushani &amp; Gaurawa" style="background-color:#030303" loading="eager" fetchpriority="high"></iframe>
+      <iframe class="sannasa-frame" data-src="sannasa.html" title="ආරාධනා සන්නස" style="background-color:#030303" loading="eager" fetchpriority="high"></iframe>
     </div>
+    <script>
+    /* Same fast, non-authoritative hint applySiteState() (app.js) writes
+       and the entry gateway script below reads -- checked here too, this
+       early, purely to decide whether it's safe to start this iframe's
+       real fetch immediately. A real live visit still gets the eager load
+       exactly as before (the whole point of loading="eager"/
+       fetchpriority="high" above); a RETURNING visitor to a site already
+       known to be paused never fetches sannasa.html at all. A first-ever
+       visit with no hint yet still loads it eagerly here -- app.js's own
+       contentPainted-driven reload (see applySiteState()) is what catches
+       that gap once Firestore's real answer says otherwise, the same
+       safety net it already provides for the rest of the page. */
+    (function(){
+      var f = document.querySelector('.sannasa-frame');
+      if (!f) return;
+      try {
+        if (localStorage.getItem('hs_gate_state') === 'locked') return;
+      } catch (_) {}
+      f.src = f.dataset.src;
+    })();
+    </script>
     <!-- hidden stub so app.js (#inviteBody) keeps working without error -->
     <div class="sannasa-hidden" aria-hidden="true"><div id="inviteBody"></div></div>
   </section>
@@ -398,7 +428,7 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script type="module" src="app.js?v=2026092313"></script>
+<script type="module" src="app.js?v=2026092314"></script>
 <script>
 /* Entry gateway — standalone, independent of app.js so it can never trap a visitor */
 (function(){
@@ -430,6 +460,21 @@ html{background:#0a0a0c}body{margin:0;background:#0a0a0c}
          inline style always beats a class-based rule regardless of the
          class list, so it would never come back. */
       document.documentElement.classList.add('gate-suppressed');
+      /* .entry-names ships with the REAL couple's real name baked straight
+         into this file's static markup (see #entry above) -- not a
+         placeholder, so gate-suppressed's display:none on #entry was never
+         enough by itself: the text is still sitting in the DOM for
+         anything that reads the document rather than the rendered page
+         (confirmed directly, from a screen recording, that Safari's Reader
+         Mode does exactly this). Blanking it here, the instant a returning
+         visitor's own last-known state says locked, is the earliest this
+         script can possibly act -- clearing the eyebrow/sub/cta too since
+         none of the gate has anything to say while locked (app.js's own
+         renderAll() guard takes the same position once it loads). */
+      var eb0=e.querySelector('.entry-eyebrow'); if(eb0) eb0.textContent='';
+      var nm0=e.querySelector('.entry-names'); if(nm0) nm0.textContent='';
+      var sb0=e.querySelector('.entry-sub'); if(sb0) sb0.textContent='';
+      var ct0=e.querySelector('.entry-cta'); if(ct0) ct0.textContent='';
       return;
     }
   }catch(_){}
