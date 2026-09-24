@@ -471,28 +471,45 @@ const AGENDA_DEFAULT = [
 
 /* ── State + helpers ─────────────────────────────────────────────────────── */
 let S = Object.assign({}, DEFAULTS);
-/* init() below paints S (i.e. DEFAULTS) immediately, synchronously, before
-   Firestore has ever answered -- by design, so a real live site doesn't sit
-   waiting on a network round-trip for its very first paint. The problem:
-   DEFAULTS isn't placeholder text, it's the real couple's real name/date/
-   venue, so that instant first paint happens unconditionally regardless of
-   whether the site is actually paused right now -- computeSiteScreenState()
-   only ever gets to say "paused" once Firestore's real siteLive:false comes
-   back, moments later. hs_gate_state (written by applySiteState() below,
-   read here) is the one signal available before that round-trip completes:
-   a RETURNING visitor to an already-paused site carries it from their last
-   load, so this first paint can correctly skip from the very start. A
-   first-ever visitor has no hint yet and still gets one brief real paint --
-   contentPainted below exists to catch exactly that gap and force a reload
-   the moment Firestore's real answer confirms it should never have
-   happened, so the reload the user actually SAW in the recording. */
+/* hs_gate_state (written by applySiteState() below, read here) is a fast,
+   non-authoritative hint: a RETURNING visitor to an already-paused site
+   carries it from their last visit, letting S start out already correct
+   before Firestore has said anything at all. Purely a speed-up now, not
+   load-bearing for correctness -- see firestoreAnswered below for why a
+   first-ever visitor (no hint yet) is covered too. */
 try { if (localStorage.getItem("hs_gate_state") === "locked") S.siteLive = false; } catch (e) {}
+/* init() used to call renderAll() synchronously, immediately, straight off
+   S (i.e. DEFAULTS -- the real couple's real name/date/venue, not a
+   placeholder) before Firestore had ever answered -- by design, so a real
+   live site didn't sit waiting on a network round-trip for its very first
+   paint. The problem, confirmed directly from two separate screen
+   recordings: that instant paint happened unconditionally regardless of
+   whether the site was actually paused right now, and for a genuinely
+   first-ever visitor (private browsing -- no hs_gate_state hint at all) on
+   a slow or cold connection, the real couple's name sat fully visible on
+   the entry gate for several real seconds -- however long the Firebase SDK
+   + Firestore round-trip actually took -- before anything downstream ever
+   got a chance to notice and correct it. A reload firing only once
+   Firestore's answer eventually arrives is a fix for what happens AFTER
+   that window, not during it; the window itself needed closing.
+   firestoreAnswered is that fix: every render guard below now also
+   requires this to be true, so NOTHING paints -- entry name included --
+   until Firestore has actually answered at least once, however long that
+   takes. Two things keep this from breaking the "works offline" goal the
+   old instant-DEFAULTS paint existed for: the connect() timeout below
+   forces it true (falling back to whatever S currently holds, DEFAULTS on
+   a truly dead connection) after a bounded wait, and a RETURNING visitor's
+   hs_gate_state hint above already has S pre-corrected the instant this
+   does flip true, so the common case only ever waits on Firestore once. */
+let firestoreAnswered = false;
 /* Set to true the moment renderAll() actually paints real content (its own
    guard passed) -- lets applySiteState() below tell "real content is
    genuinely sitting in the DOM right now" apart from "nothing has ever been
-   rendered", which prevState alone can't distinguish once the line above
-   exists (prevState starts at null, not "normal", even when this module's
-   very first renderAll() call did go on to paint from DEFAULTS). */
+   rendered", which prevState alone can't distinguish (prevState starts at
+   null, not "normal", even after a render this module's own timeout
+   fallback forced through). Still needed even with firestoreAnswered above:
+   a live session that gets paused mid-visit has real content sitting in
+   the DOM from before that pause, same as ever. */
 let contentPainted = false;
 let AGENDA = AGENDA_DEFAULT.slice();
 let GALLERY = [], GUESTS = [], BLESSINGS = [], guestsLoaded = false;
@@ -545,18 +562,20 @@ function paintEntryGateLang(T) {
   const btn = $("#entryEnter"); if (btn) btn.setAttribute("aria-label", T.entryEnterAria);
 }
 
-/* The entry gate (index.html's own standalone inline script) paints the
-   couple's names INSTANTLY from a hardcoded default, deliberately before
-   this module or Firestore have loaded anything -- see that script's own
-   comment ("standalone, independent of app.js so it can never trap a
-   visitor"). That's correct for the very first frame, but it never gets
-   corrected afterwards: nothing ever went back to swap in the live
-   admin-configured names once Firestore actually answered, so a couple
-   who changed their names in admin kept seeing the original placeholder
-   ("කෞෂානි & ගෞරව") on this one screen forever. Patching it here, the
-   instant live content arrives, closes that gap without touching the
-   gate's markup/CSS at all -- if it's already been dismissed and removed
-   from the DOM (the common case once someone lingers), this is a no-op. */
+/* .entry-names ships empty -- index.html's own standalone inline script
+   deliberately paints everything else on the gate (eyebrow/sub/cta)
+   instantly, before this module or Firestore have loaded anything, but
+   NOT the couple's real name: a real name living in that inline script's
+   own hardcoded TX table used to show on screen, for real, for several
+   seconds on a genuinely first-ever (no hs_gate_state hint yet) visit to
+   an already-paused site, well before Firestore's answer could ever
+   correct it -- confirmed directly from a screen recording. This
+   function is now the ONLY thing that ever paints a real name in here,
+   and only once computeSiteScreenState() has confirmed "normal" -- so a
+   couple who changed their names in admin also sees that reflected here
+   the instant live content arrives, same as it always did; if the gate's
+   already been dismissed and removed from the DOM (the common case once
+   someone lingers), this is a no-op either way. */
 function paintEntryGateLive() {
   /* Never paint the real couple name while a full-screen gate is showing
      instead of the real site -- .gate-suppressed only hides #entry
@@ -567,7 +586,7 @@ function paintEntryGateLive() {
      extracts a page's text from the DOM tree, entirely ignoring
      hidden/display:none. The only real fix is to never let the name
      exist in the document at all while locked, not just hide it. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const nm = document.querySelector("#entry .entry-names");
   if (!nm) return;
   const n = names();
@@ -599,7 +618,7 @@ function renderAll() {
      ever populate real content while locked; the gate screens have
      nothing of app.js's to say regardless, and paintEntryGateLang(T)
      already covers their own (non-couple-specific) text on its own. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   contentPainted = true;
   const T = L();
   document.documentElement.lang = LANG;
@@ -724,7 +743,7 @@ function renderAgenda() {
      guard -- a full-screen gate hides #nav/main/.footer visually, but a
      second Firestore listener bypassing renderAll() doesn't know that.
      Same guard, same reasoning as renderAll()/paintEntryGateLive() above. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#agEyebrow").textContent = T.agEyebrow;
   $("#agendaTitle").textContent = T.agendaTitle;
@@ -742,7 +761,7 @@ function renderAgenda() {
 function renderGallery() {
   /* Same as renderAgenda() above: reachable directly off the "gallery"
      collection listener via whenEntryGone(), independent of renderAll(). */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#galEyebrow").textContent = T.galEyebrow;
   $("#galleryTitle").textContent = T.galleryTitle;
@@ -787,7 +806,7 @@ function renderLove() {
   /* Only ever called from renderAll()'s own guarded batch today, but
      guarded directly too -- the couple's real name/love note has no
      business rendering while locked regardless of which path gets here. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const T = L(), n = names();
   $("#loveEyebrow").textContent = T.loveEyebrow;
   $("#loveTitle").textContent = T.loveTitle;
@@ -822,7 +841,7 @@ function renderBlessings() {
      the "blessings" collection listener via whenEntryGone(), independent
      of renderAll() -- and blessings carry a real guest's real name and
      message, the most personal content of all to leak while locked. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const T = L();
   $("#blEyebrow").textContent = T.blEyebrow;
   $("#blessingsTitle").textContent = T.blessingsTitle;
@@ -880,7 +899,7 @@ function renderFooter() {
   /* Only ever called from renderAll()'s own guarded batch today, but
      guarded directly too, same reasoning as renderLove() above -- the
      footer repeats the couple's real name and real wedding date/venue. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   const T = L(), n = names(), f = fmtDate(S.dateISO);
   $("#footNames").innerHTML = esc(n.b) + ' <span class="amp">' + esc(T.and) + '</span> ' + esc(n.g);
   $("#footDate").textContent = f.dd + " " + f.mo + " " + f.y + " · " + byLang("venue") + ", " + byLang("venueCity");
@@ -1292,7 +1311,7 @@ function tryAutoplayMusic() {
      correct even if that ever changes, and it's what actually stops
      ambient music from starting on the pre-launch "paused" gate, which
      has no lamp-tap moment of its own to gate on in the first place. */
-  if (computeSiteScreenState() !== "normal") return;
+  if (!firestoreAnswered || computeSiteScreenState() !== "normal") return;
   if (autoplayAttempted || playing) return;
   const a = getAudio();
   if (!a) return; // ambientAudioUrl not known yet — a later settings update retries this
@@ -2025,6 +2044,13 @@ async function connect() {
     trackVisit(fs, db);
 
     fs.onSnapshot(fs.doc(db, "site", "content"), (snap) => {
+      /* First thing, every time this fires -- but what actually matters is
+         the FIRST time: every render guard in this module also requires
+         this before it'll paint anything at all (see firestoreAnswered's
+         own comment, above S). Set before S itself is reassigned below on
+         purpose: a render triggered synchronously by something later in
+         this same callback must see it already true. */
+      firestoreAnswered = true;
       const data = snap.exists() ? snap.data() : {};
       const prevHero = S.heroImageUrl;
       S = Object.assign({}, DEFAULTS, data);
@@ -2211,6 +2237,21 @@ function init() {
   setTimeout(dismissPreloader, 2500); // safety — never leave the visitor waiting, even if an asset stalls
   setTimeout(fitHero, 260); setTimeout(fitHero, 1200);
   connect();
+  /* Bounded fallback for a genuinely dead connection (offline, Firestore
+     unreachable, blocked, etc.) -- preserves the "works offline" goal the
+     old instant-from-DEFAULTS paint existed for, without reopening the
+     window firestoreAnswered (see its own comment, above S) exists to
+     close: a real answer arriving first -- the overwhelming common case,
+     typically well under a second -- already has firestoreAnswered true
+     by the time this fires, so it's a no-op. 6s is generous enough that
+     any reasonably-working connection's real answer wins the race, and
+     short enough that a visitor with a genuinely broken one isn't looking
+     at an empty gate for long. */
+  setTimeout(() => {
+    if (firestoreAnswered) return;
+    firestoreAnswered = true;
+    renderAll();
+  }, 6000);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
