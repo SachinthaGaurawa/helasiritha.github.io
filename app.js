@@ -1723,6 +1723,13 @@ function applySiteState() {
        it even after the admin re-opens it, with no way to notice short
        of a manual reload. */
     document.documentElement.classList.toggle("gate-suppressed", locked);
+    /* Written for index.html's own standalone inline bootstrap to read on
+       its NEXT load, before this module has even started -- see the
+       hs_gate_state check there. Purely a fast local hint, never the
+       source of truth: this line is the only place that ever sets it,
+       and it's always the freshest confirmed Firestore answer at the
+       moment it's written. */
+    try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
     if (locked) startSiteStateWatch();
     const navEl = document.getElementById("nav");
     const mainEl = document.querySelector("main");
