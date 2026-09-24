@@ -1198,6 +1198,13 @@ function syncMusicBtn() { const b = $("#musicBtn"); if (!b) return; b.classList.
    edit) must never restart music a visitor has deliberately paused. */
 let autoplayAttempted = false;
 function tryAutoplayMusic() {
+  /* Belt-and-suspenders alongside .gate-suppressed (styles.css): the
+     lamp tap that would normally lead here can't fire while a full-screen
+     gate is up (it's display:none, so non-interactive), but this stays
+     correct even if that ever changes, and it's what actually stops
+     ambient music from starting on the pre-launch "paused" gate, which
+     has no lamp-tap moment of its own to gate on in the first place. */
+  if (computeSiteScreenState() !== "normal") return;
   if (autoplayAttempted || playing) return;
   const a = getAudio();
   if (!a) return; // ambientAudioUrl not known yet — a later settings update retries this
@@ -1703,6 +1710,20 @@ function applySiteState() {
     siteScreenState = state;
     const locked = state !== "normal";
     document.documentElement.classList.toggle("pw-lock", locked);
+    /* See the .gate-suppressed rule (styles.css) for why: the preloader,
+       entry gate (with its couple-names paint and lamp-tap ceremony),
+       language toggle and music FAB all belong to "arriving at the live
+       site", which isn't what's happening on either full-screen gate.
+       Tapping the (now-hidden, non-interactive) lamp can no longer fire
+       whenEntryGone()'s callback while locked, which is exactly what
+       stops tryAutoplayMusic() from ever running here too -- so the
+       periodic re-check that callback also used to kick off
+       (startSiteStateWatch, below) is started directly instead, or a
+       visitor who loaded straight into a locked site would stay stuck on
+       it even after the admin re-opens it, with no way to notice short
+       of a manual reload. */
+    document.documentElement.classList.toggle("gate-suppressed", locked);
+    if (locked) startSiteStateWatch();
     const navEl = document.getElementById("nav");
     const mainEl = document.querySelector("main");
     const footEl = document.querySelector(".footer");

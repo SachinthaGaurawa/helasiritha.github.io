@@ -913,6 +913,21 @@ html.entry-lock .entry{ touch-action:auto }
 html.pw-lock, html.pw-lock body{ overflow:hidden !important; height:100%; overscroll-behavior:none; touch-action:none }
 html.pw-lock #postWedding,html.pw-lock #sitePaused{ touch-action:pan-y }
 
+/* Post-wedding/site-paused takeover: the loading ceremony (preloader,
+   entry gate, its couple-names reveal, the lamp tap, the language
+   toggle, the ambient-music FAB) has nothing to lead into once one of
+   those full-screen gates is showing instead of the real site -- and on
+   the pre-launch "paused" gate specifically, that ceremony is also a
+   privacy leak: the entry gate paints the couple's real name while the
+   screen meant to hide it entirely is the one about to replace it.
+   applySiteState() (app.js) toggles this the instant it knows the state,
+   same moment it hides nav/main/footer, so none of this is a matter of
+   timing against the gate's own animations -- display:none removes it
+   from the render (and hit-test/tab) tree outright, same as [hidden]
+   already does for nav/main/footer. */
+html.gate-suppressed #preloader, html.gate-suppressed #entry,
+html.gate-suppressed #langToggle, html.gate-suppressed #musicBtn{ display:none !important }
+
 /* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░ ──────────────────────────────── */
 .post-wedding{
   position:fixed; inset:0; z-index:120; overflow-y:auto;
