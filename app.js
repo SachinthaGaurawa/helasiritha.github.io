@@ -1791,51 +1791,32 @@ function applySiteState() {
     const prevState = siteScreenState;
     siteScreenState = state;
     const locked = state !== "normal";
-    /* renderAll()'s own guard (see there) stops any FUTURE render from
-       writing real hero/invitation/date/venue/etc. text into the DOM
-       while locked -- but a visitor who already had real content painted
-       into the document, whether from a live session the admin just
-       paused OR from THIS module's own synchronous, pre-Firestore first
-       paint (init() -> renderAll(), which runs off DEFAULTS -- the real
-       couple's real details, not placeholders -- before this function
-       ever gets to say "paused" for the first time; see contentPainted's
-       own comment above S), still has all of that sitting in the document
-       from before. [hidden]/.gate-suppressed only hide it visually;
-       confirmed directly (a screen recording) that Safari's Reader Mode
-       reads straight past that. A reload is the simplest, fully robust
-       way to guarantee it is actually gone: the fresh boot lands directly
-       on the correctly-suppressed gate, via the same hs_gate_state hint
-       this function writes below (which that next boot's own S
-       initialization now reads BEFORE its first renderAll() call, so a
-       returning visitor never repaints real content at all, and this
-       branch never re-fires on their next load either).
-       Guarded on contentPainted, not prevState === "normal": a first-ever
-       visit (no hs_gate_state hint yet) to an already-paused site still
-       gets that one brief real paint from DEFAULTS before Firestore's
-       answer arrives, same as a live-session pause -- prevState alone
-       (null, not "normal", on a first load) can't tell those apart from
-       a load that genuinely never rendered anything.
-       Written FIRST, before deciding whether to reload: the hint has to
-       already say "locked" on disk by the time location.reload() actually
-       fires, or the fresh boot this triggers reads nothing back, seeds
-       S.siteLive from the (still live) DEFAULTS again, and repaints the
-       same real content the reload exists to clear -- an infinite
-       reload loop, not a fix. */
-    try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
-    if (locked && contentPainted) { location.reload(); return; }
+    /* Everything that actually SUPPRESSES the page (class + hidden
+       attributes + the two gate screens) has to happen HERE, before any
+       return -- including the reload branch further down. Caught directly
+       from a screen recording: the reload used to fire (and the hint used
+       to get written) BEFORE this block ever ran, so for the exact split
+       second between deciding "locked" and location.reload() actually
+       navigating away, #nav/main/.footer sat fully visible (structural
+       shell, hero background, an empty RSVP button) -- none of it was
+       covered by [hidden] or the gate-suppressed class yet. Doing all the
+       suppression first means that even in a reload's case, the very last
+       thing the soon-to-be-discarded document does is look exactly like
+       the settled, correctly-locked page -- nothing new to see in that
+       gap, whether or not a reload follows. */
     document.documentElement.classList.toggle("pw-lock", locked);
     /* See the .gate-suppressed rule (styles.css) for why: the preloader,
        entry gate (with its couple-names paint and lamp-tap ceremony),
-       language toggle and music FAB all belong to "arriving at the live
-       site", which isn't what's happening on either full-screen gate.
-       Tapping the (now-hidden, non-interactive) lamp can no longer fire
-       whenEntryGone()'s callback while locked, which is exactly what
-       stops tryAutoplayMusic() from ever running here too -- so the
-       periodic re-check that callback also used to kick off
-       (startSiteStateWatch, below) is started directly instead, or a
-       visitor who loaded straight into a locked site would stay stuck on
-       it even after the admin re-opens it, with no way to notice short
-       of a manual reload. */
+       language toggle, music FAB, and now #nav/main/.footer too all belong
+       to "arriving at the live site", which isn't what's happening on
+       either full-screen gate. Tapping the (now-hidden, non-interactive)
+       lamp can no longer fire whenEntryGone()'s callback while locked,
+       which is exactly what stops tryAutoplayMusic() from ever running
+       here too -- so the periodic re-check that callback also used to
+       kick off (startSiteStateWatch, below) is started directly instead,
+       or a visitor who loaded straight into a locked site would stay
+       stuck on it even after the admin re-opens it, with no way to notice
+       short of a manual reload. */
     document.documentElement.classList.toggle("gate-suppressed", locked);
     if (locked) startSiteStateWatch();
     const navEl = document.getElementById("nav");
@@ -1843,6 +1824,12 @@ function applySiteState() {
     const footEl = document.querySelector(".footer");
     const pw = document.getElementById("postWedding");
     const sp = document.getElementById("sitePaused");
+    /* Belt-and-suspenders alongside the gate-suppressed CSS rule (which
+       now also covers #nav/main/.footer directly, so they're already
+       display:none the instant the class above lands, with no dependency
+       on this JS actually running first): the [hidden] attribute is a
+       second, independent mechanism, same reasoning as the pw/sp inline
+       styles just below. */
     if (navEl) navEl.hidden = locked;
     if (mainEl) mainEl.hidden = locked;
     if (footEl) footEl.hidden = locked;
@@ -1879,6 +1866,40 @@ function applySiteState() {
       sp.hidden = !spOn;
       sp.style.display = spOn ? "flex" : "none";
     }
+    /* renderAll()'s own guard (see there) stops any FUTURE render from
+       writing real hero/invitation/date/venue/etc. text into the DOM
+       while locked -- but a visitor who already had real content painted
+       into the document, whether from a live session the admin just
+       paused OR from THIS module's own synchronous, pre-Firestore first
+       paint (init() -> renderAll(), which runs off DEFAULTS -- the real
+       couple's real details, not placeholders -- before this function
+       ever gets to say "paused" for the first time; see contentPainted's
+       own comment above S), still has all of that sitting in the document
+       from before. Everything above this point already correctly hides
+       it, visually and structurally -- but that only ever protects the
+       CURRENT document; a reload is still the simplest, fully robust way
+       to guarantee the real content doesn't just sit there in the DOM
+       waiting for the next thing (Reader Mode, a DOM inspector) to read
+       past the CSS. The fresh boot lands directly on the correctly-
+       suppressed gate, via the same hs_gate_state hint written below
+       (which that next boot's own S initialization reads BEFORE its
+       first renderAll() call, so a returning visitor never repaints real
+       content at all, and this branch never re-fires on their next load
+       either).
+       Guarded on contentPainted, not prevState === "normal": a first-ever
+       visit (no hs_gate_state hint yet) to an already-paused site still
+       gets that one brief real paint from DEFAULTS before Firestore's
+       answer arrives, same as a live-session pause -- prevState alone
+       (null, not "normal", on a first load) can't tell those apart from
+       a load that genuinely never rendered anything.
+       hs_gate_state is written here, AFTER everything above has already
+       run, but still before the reload itself fires -- it has to already
+       say "locked" on disk by the time location.reload() actually
+       navigates away, or the fresh boot this triggers reads nothing back,
+       seeds S.siteLive from the (still live) DEFAULTS again, and repaints
+       the same real content the reload exists to clear. */
+    try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
+    if (locked && contentPainted) { location.reload(); return; }
   }
   if (state === "postwedding") renderPostWedding();
   else if (state === "paused") renderSitePaused();
