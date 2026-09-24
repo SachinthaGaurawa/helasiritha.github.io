@@ -920,13 +920,21 @@ html.pw-lock #postWedding,html.pw-lock #sitePaused{ touch-action:pan-y }
    the pre-launch "paused" gate specifically, that ceremony is also a
    privacy leak: the entry gate paints the couple's real name while the
    screen meant to hide it entirely is the one about to replace it.
-   applySiteState() (app.js) toggles this the instant it knows the state,
-   same moment it hides nav/main/footer, so none of this is a matter of
-   timing against the gate's own animations -- display:none removes it
-   from the render (and hit-test/tab) tree outright, same as [hidden]
-   already does for nav/main/footer. */
+   #nav/main/.footer belong in this same rule, not left to the [hidden]
+   attribute alone (applySiteState() in app.js still sets that too, as a
+   second, independent mechanism): confirmed directly from a screen
+   recording that for a RETURNING visitor, this class gets applied by
+   index.html's own early inline bootstrap script -- reading the
+   hs_gate_state hint, well before app.js has even loaded, let alone run
+   applySiteState() and set the [hidden] attribute -- and for that whole
+   gap, #nav's real brand/menu and main's real hero background/RSVP
+   button sat fully visible, covered by nothing. Putting them in this CSS
+   rule means the exact same class toggle that hides the gate screens
+   also hides the real site underneath, in the same instant, with no
+   dependency on which script (or which order) gets there first. */
 html.gate-suppressed #preloader, html.gate-suppressed #entry,
-html.gate-suppressed #langToggle, html.gate-suppressed #musicBtn{ display:none !important }
+html.gate-suppressed #langToggle, html.gate-suppressed #musicBtn,
+html.gate-suppressed #nav, html.gate-suppressed main, html.gate-suppressed .footer{ display:none !important }
 
 /* ── ░░ POST-WEDDING · "ස්තූතියි" SCREEN ░░ ──────────────────────────────── */
 .post-wedding{
