@@ -2185,8 +2185,8 @@ async function connect() {
     }, (err) => console.warn("blessings listener", err));
 
     /* Only the {name, family, side} mirror — never the full `guests` doc, which
-       also carries status/liquor/dietary/tableNumber. That keeps every other
-       guest's RSVP details private from a visitor using this search box. */
+       also carries status/tableNumber. That keeps every other guest's RSVP
+       details private from a visitor using this search box. */
     fs.onSnapshot(fs.collection(db, "guestsPublic"), (snap) => {
       const arr = []; snap.forEach(d => arr.push(Object.assign({ id: d.id }, d.data()))); GUESTS = arr;
       guestsLoaded = true;
