@@ -18,19 +18,26 @@ const FB = {
   measurementId: "G-PBJWLXWVD9"
 };
 const SDK = "https://www.gstatic.com/firebasejs/12.14.0";
-/* Public reCAPTCHA v3 site key for Firebase App Check — safe to ship in
-   client code, same "public but rules-enforced" story as FB.apiKey above
-   (App Check's real protection is the private secret Google holds
-   server-side; this key only tells the browser which site to score
-   requests against). Get one at Firebase Console -> Build -> App Check
-   -> Apps -> register this app -> reCAPTCHA v3 (Firebase can generate
-   the key for you directly, no separate trip to the reCAPTCHA admin
-   console needed). Left empty until that's done: connect() below skips
-   App Check entirely rather than breaking anything -- Firestore's rules
-   don't require an App Check token yet either, so this stays a pure
-   no-op until a real key is filled in AND rules are updated to expect
-   one, both deliberately separate follow-ups from wiring the client up. */
-const APP_CHECK_SITE_KEY = "";
+/* Public reCAPTCHA Enterprise site key for Firebase App Check — safe to
+   ship in client code, same "public but rules-enforced" story as FB.apiKey
+   above (App Check's real protection lives server-side, verified against
+   this project via Firebase/Google Cloud's own backend — there is no
+   matching "secret key" to ever put anywhere in THIS integration; that
+   only exists for the older reCAPTCHA v2/v3 admin-console flow, not
+   Enterprise, and even there it would never belong in client code).
+   Registered at Firebase Console -> Build -> App Check -> Apps ->
+   reCAPTCHA Enterprise. connect() below (new appCheck.
+   ReCaptchaEnterpriseProvider(...), NOT ReCaptchaV3Provider — Enterprise
+   keys are verified against a different backend and a v3 provider would
+   silently fail to validate them) only ever attaches a token to Firestore
+   requests; Firestore's own rules do NOT require that token yet. That
+   enforcement step is a deliberate, separate follow-up: it can't safely
+   be turned on until the token pipeline is confirmed working end-to-end
+   against the real deployed site (this sandbox's network policy can't
+   reach reCAPTCHA's/Google's services to verify that itself) — turning
+   it on blind risks silently blocking real guests' RSVP submissions,
+   which is a materially worse failure than the abuse case this closes. */
+const APP_CHECK_SITE_KEY = "6LfksswtAAAAADCY0dX--_9c5l93Ziqa9T-R1vRn";
 
 /* ── Bilingual dictionary ─ keys identical in both languages ─────────────── */
 const TEXT = {
@@ -1818,7 +1825,20 @@ function applySiteState() {
        stuck on it even after the admin re-opens it, with no way to notice
        short of a manual reload. */
     document.documentElement.classList.toggle("gate-suppressed", locked);
-    if (locked) startSiteStateWatch();
+    /* Unconditional, not "if (locked)": a tab that was live, fully
+       rendered, then backgrounded (or bfcache-restored) while the admin
+       paused the site in the meantime never reaches this branch at all if
+       it's gated on locked -- state only ever went normal -> normal from
+       this tab's own point of view, so the periodic resync + pageshow/
+       visibilitychange listeners (startSiteStateWatch(), below) would
+       never even start, and real content already sitting in the DOM from
+       before would have nothing left to notice the pause and clear it.
+       Starting the watch the first time this function ever runs, live or
+       not, means that gap is covered too -- cheap (one poll every 30s,
+       otherwise idle) and harmless for a genuinely live site the whole
+       time, since refreshSiteStateFromServer() is a no-op once nothing's
+       actually changed. */
+    startSiteStateWatch();
     const navEl = document.getElementById("nav");
     const mainEl = document.querySelector("main");
     const footEl = document.querySelector(".footer");
@@ -1970,10 +1990,9 @@ function startSiteStateWatch() {
 /* ════════════════════════════ FIRESTORE SYNC ═════════════════════════════ */
 async function connect() {
   try {
-    const [{ initializeApp }, fs, appCheck] = await Promise.all([
+    const [{ initializeApp }, fs] = await Promise.all([
       import(SDK + "/firebase-app.js"),
-      import(SDK + "/firebase-firestore.js"),
-      APP_CHECK_SITE_KEY ? import(SDK + "/firebase-app-check.js") : Promise.resolve(null)
+      import(SDK + "/firebase-firestore.js")
     ]);
     const app = initializeApp(FB);
     /* Attaches an App Check token to every Firestore request this tab
@@ -1981,16 +2000,21 @@ async function connect() {
        a deliberately separate follow-up) that the request came from this
        real page and not a script calling the Firestore API directly with
        the same public project config. A visitor never sees or does
-       anything: reCAPTCHA v3 scores real browsing behavior silently in
-       the background, no checkbox, no puzzle. Wrapped in try/catch since
-       this must never be able to break the site actually loading --
-       Firestore reads/writes still work exactly as before if this fails
-       (e.g. the key is wrong, or reCAPTCHA's own script is blocked), same
-       as they do today with no App Check key configured at all. */
-    if (APP_CHECK_SITE_KEY && appCheck) {
+       anything: reCAPTCHA Enterprise scores real browsing behavior
+       silently in the background, no checkbox, no puzzle.
+       Deliberately its OWN try/catch, not folded into the Promise.all
+       above: that Promise.all is the critical path (no Firestore without
+       it), and a third-party script (reCAPTCHA's own, loaded from Google)
+       failing for any real-world visitor -- an ad-blocker, a flaky
+       connection, a corporate firewall -- must never be able to take the
+       whole thing down with it. Firestore reads/writes (RSVP included)
+       still work exactly as before if this fails, same as they do today
+       with no App Check key configured at all. */
+    if (APP_CHECK_SITE_KEY) {
       try {
+        const appCheck = await import(SDK + "/firebase-app-check.js");
         appCheck.initializeAppCheck(app, {
-          provider: new appCheck.ReCaptchaV3Provider(APP_CHECK_SITE_KEY),
+          provider: new appCheck.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),
           isTokenAutoRefreshEnabled: true
         });
       } catch (e) { console.warn("App Check init failed", e); }
