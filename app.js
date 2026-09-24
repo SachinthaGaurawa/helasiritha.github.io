@@ -1938,7 +1938,27 @@ function applySiteState() {
        seeds S.siteLive from the (still live) DEFAULTS again, and repaints
        the same real content the reload exists to clear. */
     try { localStorage.setItem("hs_gate_state", locked ? "locked" : "normal"); } catch (e) {}
-    if (locked && contentPainted) { location.reload(); return; }
+    /* Belt-and-suspenders against a genuine reload loop (see the comment on
+       the forced content read in connect(), which closes the actual cause):
+       this reload's whole point is "start completely fresh", but a fresh
+       load runs this exact module from scratch too, so if anything ever
+       gets this branch to fire twice in quick succession on the same tab,
+       reloading a third time would just repeat it forever -- sessionStorage
+       (not localStorage: this is a same-tab-session safety valve, not a
+       lasting record) counts consecutive fires within a short window and
+       refuses to reload past two, leaving the suppression already applied
+       above (the CSS class, [hidden], the two gate screens) as the fallback
+       instead of an unbounded reload storm. */
+    if (locked && contentPainted) {
+      let n = 0;
+      try {
+        const last = +sessionStorage.getItem("hs_lock_reload_ts") || 0;
+        n = (Date.now() - last < 15000) ? ((+sessionStorage.getItem("hs_lock_reload_n") || 0) + 1) : 1;
+        sessionStorage.setItem("hs_lock_reload_ts", String(Date.now()));
+        sessionStorage.setItem("hs_lock_reload_n", String(n));
+      } catch (e) { n = 1; }
+      if (n <= 2) { location.reload(); return; }
+    }
   }
   if (state === "postwedding") renderPostWedding();
   else if (state === "paused") renderSitePaused();
@@ -2043,13 +2063,28 @@ async function connect() {
 
     trackVisit(fs, db);
 
-    fs.onSnapshot(fs.doc(db, "site", "content"), (snap) => {
+    const contentRef = fs.doc(db, "site", "content");
+    /* Confirmed via a live production recording: onSnapshot's own FIRST
+       delivered value -- the cold-start response of a freshly-established
+       realtime Listen stream -- is NOT guaranteed to already reflect a
+       write that landed moments earlier. On an already-paused site, that
+       first callback delivered "live" (painting the real couple's real
+       name) for a full ~5 real seconds before a SECOND, later callback on
+       the same stream finally corrected it. firestoreAnswered only ever
+       guarded against painting from DEFAULTS before Firestore answered at
+       all -- it had no defense against Firestore's own first answer being
+       stale. getDoc(FromServer) is a plain one-shot document read, not a
+       streaming Listen -- lighter to establish, and Firestore's own
+       consistency guarantee for a direct document read is immediate, not
+       eventually-consistent the way a fresh Listen stream's cold start can
+       be. Applied below, shared by both sources. */
+    function applyContentSnapshot(snap) {
       /* First thing, every time this fires -- but what actually matters is
          the FIRST time: every render guard in this module also requires
          this before it'll paint anything at all (see firestoreAnswered's
          own comment, above S). Set before S itself is reassigned below on
          purpose: a render triggered synchronously by something later in
-         this same callback must see it already true. */
+         this same call must see it already true. */
       firestoreAnswered = true;
       const data = snap.exists() ? snap.data() : {};
       const prevHero = S.heroImageUrl;
@@ -2075,6 +2110,36 @@ async function connect() {
          hero underneath it. */
       paintEntryGateLive();
       whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startSiteStateWatch(); });
+    }
+    /* Fired here, before the listener is attached below -- not raced against
+       it, UNCONDITIONALLY relied on for the first paint instead. Testing the
+       two possible orderings directly (a Playwright simulation forcing each
+       one in turn) showed why a race isn't enough: whichever of the two
+       answers first, the stream's own untrustworthy cold-start value can
+       still land on a LATER page load too (a fresh module load runs this
+       exact same code from scratch), and if it does, it paints real content
+       long enough to flip contentPainted true before self-correcting via
+       reload -- which then repeats the exact same race on the fresh load
+       that reload just produced. On a network where the pattern reproduces
+       identically, that is a genuine infinite reload loop, not just a
+       one-off flash -- confirmed directly in that same simulation, and
+       plausibly the real explanation for a separate screen recording showing
+       several tabs simultaneously crashed. Skipping the stream's first call
+       unconditionally (below) closes that loop at the root: nothing can ever
+       paint from a value this module hasn't independently confirmed fresh. */
+    (fs.getDocFromServer || fs.getDoc)(contentRef).then(applyContentSnapshot)
+      .catch(() => { /* offline/blocked -- the listener's own later calls, or the 6s fallback in init(), still cover it */ });
+
+    let contentSnapshotCount = 0;
+    fs.onSnapshot(contentRef, (snap) => {
+      contentSnapshotCount++;
+      /* Never trust the stream's own first delivery (see the comment above)
+         -- only a call from the second one on is a genuine observed change,
+         which was always live-updated correctly and still is. The forced
+         read above (or, failing that, the 6s DEFAULTS fallback in init())
+         is what actually answers the very first time. */
+      if (contentSnapshotCount === 1) return;
+      applyContentSnapshot(snap);
     }, (err) => console.warn("content listener", err));
 
     fs.onSnapshot(fs.doc(db, "site", "agenda"), (snap) => {
