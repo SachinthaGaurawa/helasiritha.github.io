@@ -2190,10 +2190,29 @@ async function connect() {
 
 /* Anonymous arrival telemetry for the admin dashboard.
    Records ONE row per browser session — never an IP, cookie or identifier.
-     • ?src=qr  (printed invitation QR)  → "qr"
-     • arrived from another site/app     → "web"
-     • typed the address / bookmark      → "direct"
-   Any failure is silent: telemetry must never affect a guest's experience. */
+     • ?src=qr/card/print/invite (printed invitation QR, any variant) → "qr"
+     • any OTHER explicit ?src= tag (web, whatsapp, social, fb, ig, ...) → "web"
+     • arrived from another site/app, no tag, but a real cross-origin
+       referrer  → "web"
+     • typed the address / bookmark / opened from a native app's in-app
+       browser with no referrer and no tag → "direct"
+   Any failure is silent: telemetry must never affect a guest's experience.
+
+   The referrer-only fallback above (still kept, for organic/no-tag
+   arrivals) UNDERCOUNTS real WhatsApp/social shares: those apps open
+   links in an in-app browser and simply never set document.referrer at
+   all -- confirmed directly against a production dashboard showing
+   "0 වෙබ් සබැඳියෙන්" despite real sharing having happened. That gap can't
+   be closed by reading the referrer more cleverly (there is nothing there
+   to read); it needs a link that already carries its own source tag, which
+   survives regardless of what the receiving app does with headers. The
+   admin panel's own link generator now offers exactly that (a plain
+   ?src=web link meant for pasting into WhatsApp/social, next to the
+   existing QR-code one) -- this is the other half of that fix, the half
+   that makes a correctly-tagged link actually recognized once someone
+   taps it. Broadened to treat ANY non-qr-variant tag as "web" (not only
+   the literal string "web") so admin doesn't have to match this file's
+   exact spelling to get counted correctly. */
 function trackVisit(fs, db) {
   try {
     if (sessionStorage.getItem("hs_visited") === "1") return;
@@ -2202,8 +2221,8 @@ function trackVisit(fs, db) {
     const q = new URLSearchParams(location.search);
     const src = String(q.get("src") || "").trim().toLowerCase();
     let kind = "direct";
-    if (src === "qr") kind = "qr";
-    else if (src === "web") kind = "web";
+    if (src === "qr" || src === "card" || src === "print" || src === "invite") kind = "qr";
+    else if (src) kind = "web";
     else if (document.referrer) {
       let host = "";
       try { host = new URL(document.referrer).hostname; } catch (_) {}
