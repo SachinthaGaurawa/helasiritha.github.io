@@ -2283,6 +2283,16 @@ function applyTheme(t) {
 }
 
 function init() {
+  /* First statement in this function, on purpose: connect() kicks off the
+     Firebase SDK imports and the forced Firestore status read -- the one
+     network round trip every render guard in this module is waiting on.
+     Everything else below (nav/lang/RSVP/lightbox/parallax/particles/zoom-
+     guard/sannasa wiring) is synchronous DOM setup that doesn't need to run
+     first and was, until now, adding its own CPU time in front of that
+     request's start. None of it depends on connect() having run yet
+     either -- renderAll() and friends already no-op until firestoreAnswered
+     flips true (see their own guards) regardless of call order. */
+  connect();
   if (liteMode()) document.body.classList.add("lite");
   document.body.classList.add("loaded");
   renderAll();
@@ -2306,7 +2316,6 @@ function init() {
   Promise.all([fontsReady, gatewayReady, minShow]).then(dismissPreloader);
   setTimeout(dismissPreloader, 2500); // safety — never leave the visitor waiting, even if an asset stalls
   setTimeout(fitHero, 260); setTimeout(fitHero, 1200);
-  connect();
   /* Bounded fallback for a genuinely dead connection (offline, Firestore
      unreachable, blocked, etc.) -- preserves the "works offline" goal the
      old instant-from-DEFAULTS paint existed for, without reopening the
