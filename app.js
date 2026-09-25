@@ -1755,6 +1755,40 @@ function whenEntryGone(fn) {
   mo.observe(document.body, { childList: true });
 }
 
+/* Reported directly, with a screen recording: a visitor who taps the lamp
+   before Firestore's answer has arrived used to see the hero underneath
+   reveal itself EMPTY -- a blank portrait circle, a blank RSVP button --
+   which then visibly popped in a moment later once this module's own
+   deferred whenEntryGone(renderAll) callback finally ran. That callback
+   only ever fired relative to the GATE's own state (queued the instant
+   #entry is removed from the DOM), never relative to whether real data
+   had actually arrived by then -- if the visitor tapped fast, #entry was
+   already gone by the time Firestore answered, so renderAll() landed
+   AFTER the (empty) hero was already on screen instead of before it.
+
+   This is the fix: paint the hero (and flip the readiness signal below)
+   the INSTANT data is ready, regardless of whether the gate has been
+   tapped yet -- if it hasn't, that's invisible work behind the still-
+   opaque gate, exactly as intended; the only unsafe moment is while the
+   gate's own opacity/transform fade is actually mid-flight (see
+   whenEntryGone's own comment above for why a render landing there can
+   stall the CSS transition), so that one case still defers the same way
+   as before. index.html's own entry-gate script (standalone, independent
+   of this file on purpose) reads window.__hsHeroReady / listens for
+   "hs:hero-ready" to hold the lamp's reveal open just long enough for
+   this to have already run at least once -- so by the time the gate
+   actually starts fading, the hero is never empty underneath it. */
+function revealHeroWhenSafe() {
+  const entryEl = document.getElementById("entry");
+  const midFade = entryEl && entryEl.classList.contains("go");
+  const paint = () => {
+    renderAll(); syncMusicBtn(); tryAutoplayMusic(); startSiteStateWatch();
+    window.__hsHeroReady = true;
+    try { window.dispatchEvent(new CustomEvent("hs:hero-ready")); } catch (_) {}
+  };
+  if (midFade) whenEntryGone(paint); else paint();
+}
+
 /* Runs fn once the browser has idle time, bounded by a worst-case timeout —
    requestIdleCallback doesn't exist in Safari (iOS included) at all, so this
    falls back to a short setTimeout there, which at minimum still yields the
@@ -2176,7 +2210,7 @@ async function connect() {
          only after whenEntryGone's render of the (already correct) real
          hero underneath it. */
       paintEntryGateLive();
-      whenEntryGone(() => { renderAll(); syncMusicBtn(); tryAutoplayMusic(); startSiteStateWatch(); });
+      revealHeroWhenSafe();
     }
     /* Fired here, before the listener is attached below -- not raced against
        it, UNCONDITIONALLY relied on for the first paint instead. Testing the
@@ -2411,7 +2445,15 @@ function init() {
   setTimeout(() => {
     if (firestoreAnswered) return;
     firestoreAnswered = true;
-    renderAll();
+    /* revealHeroWhenSafe() (not a bare renderAll()) so this path ALSO
+       flips window.__hsHeroReady / fires "hs:hero-ready" -- index.html's
+       entry-gate script has its own hard 6300ms timeout as a last-resort
+       safety net independent of this file entirely, but the two are
+       meant to agree in the merely-slow case: by the time that timeout
+       could fire, this one has already run and the DEFAULTS-painted hero
+       is sitting there ready, so the gate opens on that signal instead of
+       its own independent bound. */
+    revealHeroWhenSafe();
   }, 6000);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
