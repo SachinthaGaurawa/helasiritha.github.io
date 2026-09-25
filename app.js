@@ -1461,12 +1461,30 @@ async function submitRsvp() {
      (a dropped connection mid-submit). The guest would believe they'd RSVP'd
      while nothing was ever saved, with no way for them or the couple to know.
      Now a failure keeps them on the form with a visible, localized error and a
-     re-enabled button, matching how the blessings form already handles this. */
-  try {
-    if (!fb) throw new Error("Firestore not connected");
-    await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true });
-  } catch (e) {
-    console.warn("RSVP save failed", e);
+     re-enabled button, matching how the blessings form already handles this.
+
+     Retries a genuinely transient failure (a dropped connection, a venue's
+     flaky wifi/cellular right at submit time) up to twice more with a short
+     backoff before giving up — reported directly as guests hitting the error
+     screen when the couple's own testing found the connection fine, exactly
+     the signature of a brief drop rather than a real, permanent problem. A
+     guest gets exactly one shot at this button; failing on the very first
+     blip with no retry at all was the worst possible time to give up. */
+  const ATTEMPTS = 3;
+  let lastErr = null;
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    try {
+      if (!fb) throw new Error("Firestore not connected");
+      await fb.setDoc(fb.doc(fb.db, "rsvps", payload.guestId), Object.assign({}, payload, { ts: fb.serverTimestamp() }), { merge: true });
+      lastErr = null;
+      break;
+    } catch (e) {
+      lastErr = e;
+      console.warn("RSVP save attempt " + attempt + " failed", e);
+      if (attempt < ATTEMPTS) await new Promise((r) => setTimeout(r, attempt * 900));
+    }
+  }
+  if (lastErr) {
     btn.disabled = false; btn.textContent = T.confirmRsvp;
     if (errEl) { errEl.textContent = T.rsvpError; errEl.style.display = ""; }
     return;
