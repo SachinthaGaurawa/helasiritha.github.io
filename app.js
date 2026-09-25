@@ -811,7 +811,12 @@ function renderLove() {
   $("#loveEyebrow").textContent = T.loveEyebrow;
   $("#loveTitle").textContent = T.loveTitle;
   $("#loveSub").textContent = T.loveSub;
-  const note = (LANG === "si" && S.loveNote) ? S.loveNote : T.loveNoteDefault;
+  /* Previously only Sinhala could ever be customised here -- English/Tamil
+     silently ignored anything the admin set and always fell back to the
+     hardcoded default below, since those two per-language override fields
+     never existed until now (see admin's loveNoteEn/loveNoteTa). */
+  const customNote = LANG === "si" ? S.loveNote : LANG === "ta" ? S.loveNoteTa : S.loveNoteEn;
+  const note = customNote || T.loveNoteDefault;
   $("#loveText").textContent = note;
   const sign = LANG === "si" ? (S.loveSign || (n.b + " & " + n.g)) : (n.b + " & " + n.g);
   $("#loveSign").innerHTML = amp(sign);
