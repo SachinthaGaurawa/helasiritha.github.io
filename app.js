@@ -514,6 +514,20 @@ let contentPainted = false;
 let AGENDA = AGENDA_DEFAULT.slice();
 let GALLERY = [], GUESTS = [], BLESSINGS = [], guestsLoaded = false;
 let fb = null;
+/* Resolved the instant connect() actually finishes setting fb (below) --
+   lets a caller that needs Firestore WAIT for it instead of treating
+   "not ready yet" as "broken". See submitRsvp()'s own comment for the
+   real guest-reported failure this exists to fix: the two Firebase SDK
+   modules connect() dynamically imports can genuinely take several real
+   seconds on a slow venue connection, and a guest who searches their name
+   and taps "යැවීම" within that window used to get an unconditional,
+   unrecoverable "Firestore not connected" on every one of its 3 retries
+   (all landing well inside that same still-loading window, since the
+   retry backoff itself is only ~2.7s total) -- a false "connection error"
+   for a guest whose connection was never actually the problem, just slow
+   to finish one SDK load. */
+let fbReadyResolve;
+const fbReady = new Promise((resolve) => { fbReadyResolve = resolve; });
 let LANG = (function () { try { var x = localStorage.getItem("hs_lang"); return (x === "en" || x === "ta") ? x : "si"; } catch (e) { return "si"; } })();
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -1469,7 +1483,26 @@ async function submitRsvp() {
      screen when the couple's own testing found the connection fine, exactly
      the signature of a brief drop rather than a real, permanent problem. A
      guest gets exactly one shot at this button; failing on the very first
-     blip with no retry at all was the worst possible time to give up. */
+     blip with no retry at all was the worst possible time to give up.
+
+     Reported AGAIN after that fix shipped -- dug further and found the real
+     remaining cause: connect() (this module's own Firestore setup) dynamically
+     imports two Firebase SDK modules over the network, which can genuinely take
+     several real seconds on slow venue wifi/cellular -- completely separate
+     from anything going wrong with the RSVP write itself. A guest who searches
+     their name and taps this button within that window used to hit `if (!fb)
+     throw` immediately, on EVERY one of the 3 retries -- the whole retry
+     window above is only ~2.7s, well short of a slow SDK load, so all three
+     attempts landed on the exact same "not ready yet" condition and none of
+     them could ever have helped. That is not a connection failure to retry
+     around; it's a normal, recoverable "not finished loading yet" that just
+     needs waiting for. So: wait for fb to actually become ready (fbReady,
+     declared above near `let fb = null`) for up to 8s BEFORE starting the
+     write attempts at all -- a guest who already tapped "send" is not going
+     anywhere for a few extra seconds, and this is a completely different,
+     much larger budget than the short inter-attempt backoff below, which is
+     for a genuinely dropped connection mid-write, not a not-yet-loaded SDK. */
+  if (!fb) { await Promise.race([fbReady, new Promise((r) => setTimeout(r, 8000))]); }
   const ATTEMPTS = 3;
   let lastErr = null;
   for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
@@ -1487,6 +1520,28 @@ async function submitRsvp() {
   if (lastErr) {
     btn.disabled = false; btn.textContent = T.confirmRsvp;
     if (errEl) { errEl.textContent = T.rsvpError; errEl.style.display = ""; }
+    /* Every prior fix here (retry-with-backoff, then waiting for a slow SDK
+       load) was built on a GUESS about why guests still hit this screen --
+       reasonable guesses, but never confirmed against a real failure. This
+       leaves actual evidence behind instead: a best-effort, fire-and-forget
+       write of exactly what failed (never awaited, never allowed to affect
+       what the guest sees -- a guest who is already looking at a failure
+       screen must never be blocked on ANOTHER network call, let alone shown
+       a second error if this one fails too). isValidRsvpFailure in
+       firestore.rules only accepts small, fixed-shape diagnostic fields --
+       never anything free-form from the client -- and only the admin can
+       read it back. */
+    try {
+      if (fb) {
+        fb.addDoc(fb.collection(fb.db, "rsvpFailures"), {
+          guestId: String(payload.guestId || "").slice(0, 200),
+          code: String((lastErr && lastErr.code) || "unknown").slice(0, 60),
+          message: String((lastErr && lastErr.message) || "").slice(0, 300),
+          ua: String(navigator.userAgent || "").slice(0, 200),
+          ts: fb.serverTimestamp()
+        }).catch(() => {});
+      }
+    } catch (_) {}
     return;
   }
   btn.disabled = false; btn.textContent = T.confirmRsvp;
@@ -2116,8 +2171,27 @@ async function connect() {
       import(SDK + "/firebase-firestore.js")
     ]);
     const app = initializeApp(FB);
-    const db = fs.getFirestore(app);
+    /* Plain getFirestore(app) defaults to Firestore's WebChannel streaming
+       transport, which a real, non-trivial slice of guests can never
+       actually use: this invitation link is shared almost entirely over
+       WhatsApp, and WhatsApp's (and Instagram's/Facebook's) built-in in-app
+       browser -- not the guest's real Chrome/Safari -- is exactly where
+       that guest opens it. Those in-app webviews are well documented to
+       block or break persistent streaming connections (corporate proxies
+       and some mobile carriers do the same), while the couple's own
+       testing happens in a normal browser and sees nothing wrong -- which
+       is exactly the mismatch behind "connection error, couple can't
+       reproduce it" being reported more than once despite two earlier
+       retry-focused fixes. A dropped connection retries around; a
+       transport the guest's browser can never open in the first place
+       does not, no matter how many attempts. experimentalAutoDetectLongPolling
+       has this client detect that case itself and fall back to long-polling
+       (works everywhere, slightly higher latency) only when the faster
+       streaming transport doesn't work -- everyone else keeps the fast
+       path untouched. */
+    const db = fs.initializeFirestore(app, { experimentalAutoDetectLongPolling: true, useFetchStreams: false });
     fb = { db, addDoc: fs.addDoc, collection: fs.collection, doc: fs.doc, setDoc: fs.setDoc, serverTimestamp: fs.serverTimestamp, getDoc: fs.getDoc, getDocFromServer: fs.getDocFromServer };
+    fbReadyResolve();
 
     /* Attaches an App Check token to every Firestore request this tab
        makes from here on -- proof (once rules are updated to require it,
