@@ -1381,9 +1381,40 @@ function langVariant(g, base, lang) {
   const key = base + (lang === "si" ? "Si" : lang === "ta" ? "Ta" : "En");
   return (g[key] || g[base] || "");
 }
+/* A guest's optional honorific title (Dr./Prof./Rev./...), set by the admin
+   on the guests panel and mirrored here via guestsPublic (see this repo's
+   admin app.js — GUEST_TITLES/titledName() there, which this table must
+   stay identical to). A FIXED lookup, not an AI translation call: a title
+   is one of a small, known set, so this is actually more accurate across
+   all three languages than any per-guest translation could be — the same
+   title always reads the same way for every guest who carries it, in
+   every language, with no model variance. `siAfter` matters for grammar,
+   not just vocabulary: Sinhala places මහතා/මහත්මිය/කුමරිය/මිය AFTER the
+   full name ("සුනිල් පෙරේරා මහතා"), unlike English/Tamil and unlike the
+   other Sinhala titles here, which all go before the name as usual. */
+const GUEST_TITLES = [
+  { key: "",     si: "",            en: "",       ta: "" },
+  { key: "mr",   si: "මහතා",        en: "Mr.",    ta: "திரு.",       siAfter: true },
+  { key: "mrs",  si: "මහත්මිය",     en: "Mrs.",   ta: "திருமதி.",    siAfter: true },
+  { key: "miss", si: "කුමරිය",      en: "Miss",   ta: "செல்வி",      siAfter: true },
+  { key: "ms",   si: "මිය",         en: "Ms.",    ta: "செல்வி",      siAfter: true },
+  { key: "dr",   si: "ආචාර්ය",      en: "Dr.",    ta: "டாக்டர்." },
+  { key: "prof", si: "මහාචාර්ය",    en: "Prof.",  ta: "பேராசிரியர்." },
+  { key: "rev",  si: "පූජ්‍ය",       en: "Rev.",   ta: "அருட்திரு." },
+  { key: "hon",  si: "ගෞරවනීය",    en: "Hon.",   ta: "மேதகு." },
+  { key: "eng",  si: "ඉංජිනේරු",    en: "Eng.",   ta: "பொறியாளர்." }
+];
+function titledName(name, titleKey, lang) {
+  const n = name || "";
+  const t = GUEST_TITLES.find(x => x.key === titleKey);
+  const label = t && t[lang];
+  if (!label) return n;
+  if (lang === "si" && t.siAfter) return n ? (n + " " + label) : label;
+  return n ? (label + " " + n) : label;
+}
 function pickGuest(g) {
   rsvp.guest = g;
-  const dispName = langVariant(g, "name", LANG), dispFamily = langVariant(g, "family", LANG);
+  const dispName = titledName(langVariant(g, "name", LANG), g.title, LANG), dispFamily = langVariant(g, "family", LANG);
   $("#confName").textContent = dispName + (dispFamily ? " · " + dispFamily : "");
   $("#choiceYes").classList.remove("sel"); $("#choiceNo").classList.remove("sel");
   $("#attendExtras").style.display = "none"; rsvp.attending = null;
@@ -1432,7 +1463,7 @@ function setupRsvp() {
       return;
     }
     box.innerHTML = hits.map((g, i) => {
-      const n = langVariant(g, "name", LANG), f = langVariant(g, "family", LANG);
+      const n = titledName(langVariant(g, "name", LANG), g.title, LANG), f = langVariant(g, "family", LANG);
       return '<button class="guest-pick" data-i="' + i + '"><span class="gn">' + esc(n) + '</span>' +
         (f ? '<span class="gfam">' + esc(f) + '</span>' : "") + '</button>';
     }).join("");
