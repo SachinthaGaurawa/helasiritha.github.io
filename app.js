@@ -1392,17 +1392,21 @@ function langVariant(g, base, lang) {
    not just vocabulary: Sinhala places මහතා/මහත්මිය/කුමරිය/මිය AFTER the
    full name ("සුනිල් පෙරේරා මහතා"), unlike English/Tamil and unlike the
    other Sinhala titles here, which all go before the name as usual. */
+/* "Dr." in English covers two genuinely different Sinhala honorifics --
+   වෛද්‍ය (a practising medical doctor) and ආචාර්ය (a PhD/doctorate holder)
+   -- kept as two separate entries so neither collapses into the other;
+   see this table's identical twin in the admin repo's app.js for why. */
 const GUEST_TITLES = [
-  { key: "",     si: "",            en: "",       ta: "" },
-  { key: "mr",   si: "මහතා",        en: "Mr.",    ta: "திரு.",       siAfter: true },
-  { key: "mrs",  si: "මහත්මිය",     en: "Mrs.",   ta: "திருமதி.",    siAfter: true },
-  { key: "miss", si: "කුමරිය",      en: "Miss",   ta: "செல்வி",      siAfter: true },
-  { key: "ms",   si: "මිය",         en: "Ms.",    ta: "செல்வி",      siAfter: true },
-  { key: "dr",   si: "ආචාර්ය",      en: "Dr.",    ta: "டாக்டர்." },
-  { key: "prof", si: "මහාචාර්ය",    en: "Prof.",  ta: "பேராசிரியர்." },
-  { key: "rev",  si: "පූජ්‍ය",       en: "Rev.",   ta: "அருட்திரு." },
-  { key: "hon",  si: "ගෞරවනීය",    en: "Hon.",   ta: "மேதகு." },
-  { key: "eng",  si: "ඉංජිනේරු",    en: "Eng.",   ta: "பொறியாளர்." }
+  { key: "",      si: "",            en: "",       ta: "" },
+  { key: "mr",    si: "මහතා",        en: "Mr.",    ta: "திரு.",         siAfter: true },
+  { key: "mrs",   si: "මහත්මිය",     en: "Mrs.",   ta: "திருமதி.",      siAfter: true },
+  { key: "miss",  si: "කුමරිය",      en: "Miss",   ta: "செல்வி",        siAfter: true },
+  { key: "ms",    si: "මිය",         en: "Ms.",    ta: "செல்வி",        siAfter: true },
+  { key: "drmed", si: "වෛද්‍ය",       en: "Dr.",    ta: "மருத்துவர்." },
+  { key: "dr",    si: "ආචාර්ය",      en: "Dr.",    ta: "டாக்டர்." },
+  { key: "prof",  si: "මහාචාර්ය",    en: "Prof.",  ta: "பேராசிரியர்." },
+  { key: "rev",   si: "පූජ්‍ය",       en: "Rev.",   ta: "அருட்திரு." },
+  { key: "hon",   si: "ගෞරවනීය",    en: "Hon.",   ta: "மேதகு." }
 ];
 function titledName(name, titleKey, lang) {
   const n = name || "";
